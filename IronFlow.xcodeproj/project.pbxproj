@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		2F60ACDA2F65A7C400B0CB5C /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2C3D42E5F6789012345AC /* Sentry */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		2F60AB762F64DAF100B0CB5C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F60ACDA2F65A7C400B0CB5C /* Sentry in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +117,7 @@
 			);
 			name = IronFlow;
 			packageProductDependencies = (
+				A1B2C3D42E5F6789012345AC /* Sentry */,
 			);
 			productName = IronFlow;
 			productReference = 2F60AB682F64DAEC00B0CB5C /* IronFlow.app */;
@@ -195,6 +201,9 @@
 			);
 			mainGroup = 2F60AB5F2F64DAEC00B0CB5C;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				A1B2C3D42E5F6789012345AB /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2F60AB692F64DAEC00B0CB5C /* Products */;
 			projectDirPath = "";
@@ -395,11 +404,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = IronFlow/IronFlow.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "IronFlow læser træningsdata fra Health (puls, kalorier) så du kan se dem i historik.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "IronFlow gemmer dine træninger i Health så de vises i Health-appen og på Apple Watch.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -427,11 +439,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = IronFlow/IronFlow.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "IronFlow læser træningsdata fra Health (puls, kalorier) så du kan se dem i historik.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "IronFlow gemmer dine træninger i Health så de vises i Health-appen og på Apple Watch.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -578,6 +593,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A1B2C3D42E5F6789012345AB /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getsentry/sentry-cocoa";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A1B2C3D42E5F6789012345AC /* Sentry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1B2C3D42E5F6789012345AB /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
+			productName = Sentry;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2F60AB602F64DAEC00B0CB5C /* Project object */;
 }
