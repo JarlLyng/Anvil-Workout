@@ -1,0 +1,33 @@
+{
+  "originHash" : "3f66d5692e3dad34dbb5e47f6277e4bd0a6150f727ccfc1026c46c2f37442322",
+  "pins" : [
+    {
+      "identity" : "iamjarl-design",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JarlLyng/iamjarl-design",
+      "state" : {
+        "branch" : "main",
+        "revision" : "74a254fefce09ad54354308acee3e7fd0563ded2"
+      }
+    },
+    {
+      "identity" : "sentry-cocoa",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/getsentry/sentry-cocoa",
+      "state" : {
+        "revision" : "c63a66f1b5107eec3792249bb03e65015eeba905",
+        "version" : "9.7.0"
+      }
+    },
+    {
+      "identity" : "swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/phosphor-icons/swift",
+      "state" : {
+        "revision" : "9a9467181782bbe319ad4935d0993c77cd8a5fbc",
+        "version" : "2.1.0"
+      }
+    }
+  ],
+  "version" : 3
+}

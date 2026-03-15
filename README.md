@@ -1,4 +1,4 @@
-# IronFlow
+# Iron Workout
 
 iOS-app til at planlægge og gennemføre styrketræning: opret skabeloner, kør træningen i hallen, og få det gemt i historik og Apple Health uden unødigt ballast.
 
@@ -15,8 +15,8 @@ iOS-app til at planlægge og gennemføre styrketræning: opret skabeloner, kør 
 
 ### Kør appen
 
-1. Clone repo og åbn `IronFlow.xcodeproj` i Xcode.
-2. Vælg scheme **IronFlow** og en simulator (fx iPhone 17) eller et fysisk device.
+1. Clone repo og åbn `Iron Workout.xcodeproj` i Xcode.
+2. Vælg scheme **Iron Workout** og en simulator (fx iPhone 17) eller et fysisk device.
 3. Run (⌘R).
 
 Appen kører uden yderligere konfiguration. Øvelsesbiblioteket seedes automatisk ved første start.
@@ -25,8 +25,8 @@ Appen kører uden yderligere konfiguration. Øvelsesbiblioteket seedes automatis
 
 Appen bruger [Sentry](https://sentry.io) (sentry-cocoa) til crash reporting og performance.
 
-- **Konfiguration:** Åbn `IronFlow/Shared/Services/SentryConfig.swift` og sæt `dsn` til din DSN-streng fra Sentry-projektet (Project Settings → Client Keys). Hvis `dsn` er `nil` eller tom, startes Sentry ikke.
-- **Sentry-projekt:** `ironflow-ios` (opret evt. projekt i Sentry og brug dens DSN).
+- **Konfiguration:** Åbn `Iron Workout/Shared/Services/SentryConfig.swift` og sæt `dsn` til din DSN-streng fra Sentry-projektet (Project Settings → Client Keys). Hvis `dsn` er `nil` eller tom, startes Sentry ikke.
+- **Sentry-projekt:** `iron-workout-ios` (opret evt. projekt i Sentry og brug dens DSN).
 
 ### HealthKit på device
 
@@ -51,8 +51,8 @@ Ingen backend, login eller eksterne APIs ud over Health og Sentry.
 ## Projektstruktur
 
 ```
-IronFlow/
-├── IronFlowApp.swift              # App-entry, SwiftData container, Sentry init
+Iron Workout/
+├── Iron_WorkoutApp.swift          # App-entry, SwiftData container, Sentry init
 ├── ContentView.swift              # Tab-bar (Træning, Historik, Øvelser, Indstillinger)
 │
 ├── Features/
@@ -130,8 +130,8 @@ Relationer: `WorkoutTemplate` → `[WorkoutTemplateExercise]`. `WorkoutSession` 
 
 ## Design og UI
 
-- **Design system:** IronFlow bruger **IAMJARL design system** ([iamjarl-design](https://github.com/JarlLyng/iamjarl-design)) via Swift Package — farver, spacing, radius og typografi kommer fra `IAMJARLDesignTokens`. Tab-bar tint og eksempelvis afslutningsskærmen er allerede opdateret; øvrige skærme kan gradvist skiftes til tokens (`.foregroundStyle(DesignTokens.Common.Text.primary(colorScheme))`, `DesignTokens.Spacing.md`, osv.).
-- **Tilføjelse:** I Xcode: File → Add Package Dependencies → `https://github.com/JarlLyng/iamjarl-design` (branch `main` indtil der er version-tags). Hjælpe-API: `IronFlow/Shared/Components/DesignSystem.swift`.
+- **Design system:** Iron Workout bruger **IAMJARL design system** ([iamjarl-design](https://github.com/JarlLyng/iamjarl-design)) via Swift Package — farver, spacing, radius og typografi kommer fra `IAMJARLDesignTokens`. Tab-bar tint og eksempelvis afslutningsskærmen er allerede opdateret; øvrige skærme kan gradvist skiftes til tokens (`.foregroundStyle(DesignTokens.Common.Text.primary(colorScheme))`, `DesignTokens.Spacing.md`, osv.).
+- **Tilføjelse:** I Xcode: File → Add Package Dependencies → `https://github.com/JarlLyng/iamjarl-design` (branch `main` indtil der er version-tags). Hjælpe-API: `Iron Workout/Shared/Components/DesignSystem.swift`.
 - **Tone:** Native iOS, rolig, rummelig, store tap-targets. Undgå overfyldte tabeller og meget tekniske formularer.
 
 ---
@@ -139,7 +139,7 @@ Relationer: `WorkoutTemplate` → `[WorkoutTemplateExercise]`. `WorkoutSession` 
 ## Konfiguration og capabilities
 
 - **Sentry:** DSN i `Shared/Services/SentryConfig.swift`. Uden DSN kører appen normalt; Sentry slås bare ikke til.
-- **HealthKit:** Entitlement `com.apple.developer.healthkit` er tilføjet (`IronFlow.entitlements`). Info.plist-keys for Health (læs/skriv) er sat i projektets build settings.
+- **HealthKit:** Entitlement `com.apple.developer.healthkit` er tilføjet (`Iron Workout.entitlements`). Info.plist-keys for Health (læs/skriv) er sat i projektets build settings.
 - **Sprog:** UI er på dansk (tekster i koden og i empty states).
 
 ---
@@ -148,7 +148,7 @@ Relationer: `WorkoutTemplate` → `[WorkoutTemplateExercise]`. `WorkoutSession` 
 
 - **Arkitektur:** Feature-baseret mapper, få dependencies. SwiftData + `@Query` / `@Bindable` i views. Ingen formel view-model-lag; logik i services eller direkte i views hvor det er simpelt.
 - **Nye features:** Tilføj views under passende `Features/`-mappe; delte modeller i `Shared/Models`, delte services i `Shared/Services`.
-- **Tests:** Unit/UI-targets findes (`IronFlowTests`, `IronFlowUITests`); udvid efter behov.
+- **Tests:** Unit/UI-targets findes (`Iron WorkoutTests`, `Iron WorkoutUITests`); udvid efter behov.
 - **Kodestil:** Korte, læsbare filer; native SwiftUI; undgå unødvendige dependencies.
 
 ---
@@ -162,6 +162,6 @@ Relationer: `WorkoutTemplate` → `[WorkoutTemplateExercise]`. `WorkoutSession` 
 
 ## App Store-retning
 
-- **Navn:** IronFlow  
+- **Navn:** Iron Workout
 - **Undertekst:** fx "Workout Planner" / "Plan and Track Workouts"  
 - **Positionering:** Plan din træning. Følg flowet.
