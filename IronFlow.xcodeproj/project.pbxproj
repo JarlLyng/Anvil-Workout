@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2F60ACDA2F65A7C400B0CB5C /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2C3D42E5F6789012345AC /* Sentry */; };
+		2F60ACDB2F65A7C400B0CB5C /* IAMJARLDesignTokens in Frameworks */ = {isa = PBXBuildFile; productRef = B2C3D42E5F6789012345AB02 /* IAMJARLDesignTokens */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2F60ACDA2F65A7C400B0CB5C /* Sentry in Frameworks */,
+				2F60ACDB2F65A7C400B0CB5C /* IAMJARLDesignTokens in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,6 +120,7 @@
 			name = IronFlow;
 			packageProductDependencies = (
 				A1B2C3D42E5F6789012345AC /* Sentry */,
+				B2C3D42E5F6789012345AB02 /* IAMJARLDesignTokens */,
 			);
 			productName = IronFlow;
 			productReference = 2F60AB682F64DAEC00B0CB5C /* IronFlow.app */;
@@ -203,6 +206,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				A1B2C3D42E5F6789012345AB /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
+				B2C3D42E5F6789012345AB01 /* XCRemoteSwiftPackageReference "iamjarl-design" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2F60AB692F64DAEC00B0CB5C /* Products */;
@@ -603,6 +607,14 @@
 				minimumVersion = 9.0.0;
 			};
 		};
+		B2C3D42E5F6789012345AB01 /* XCRemoteSwiftPackageReference "iamjarl-design" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/JarlLyng/iamjarl-design";
+			requirement = {
+				kind = branch;
+				branch = main;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -610,6 +622,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A1B2C3D42E5F6789012345AB /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
 			productName = Sentry;
+		};
+		B2C3D42E5F6789012345AB02 /* IAMJARLDesignTokens */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B2C3D42E5F6789012345AB01 /* XCRemoteSwiftPackageReference "iamjarl-design" */;
+			productName = IAMJARLDesignTokens;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

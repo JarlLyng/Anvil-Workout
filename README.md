@@ -130,8 +130,8 @@ Relationer: `WorkoutTemplate` → `[WorkoutTemplateExercise]`. `WorkoutSession` 
 
 ## Design og UI
 
-- **Nuværende:** Ren SwiftUI, systemkomponenter, dansk copy. Ingen ekstern design-system-pakke i brug endnu.
-- **Fremtid:** README beskriver at IronFlow skal bruge **IAMJARL design system** ([iamjarl-design](https://github.com/JarlLyng/iamjarl-design)) til knapper, kort, typografi, farver og spacing. Når pakken er tilgængelig som Swift Package, bør nye og ændrede skærme bygges med komponenter derfra og visuel stil holdes ens med andre IAMJARL-apps.
+- **Design system:** IronFlow bruger **IAMJARL design system** ([iamjarl-design](https://github.com/JarlLyng/iamjarl-design)) via Swift Package — farver, spacing, radius og typografi kommer fra `IAMJARLDesignTokens`. Tab-bar tint og eksempelvis afslutningsskærmen er allerede opdateret; øvrige skærme kan gradvist skiftes til tokens (`.foregroundStyle(DesignTokens.Common.Text.primary(colorScheme))`, `DesignTokens.Spacing.md`, osv.).
+- **Tilføjelse:** I Xcode: File → Add Package Dependencies → `https://github.com/JarlLyng/iamjarl-design` (branch `main` indtil der er version-tags). Hjælpe-API: `IronFlow/Shared/Components/DesignSystem.swift`.
 - **Tone:** Native iOS, rolig, rummelig, store tap-targets. Undgå overfyldte tabeller og meget tekniske formularer.
 
 ---
@@ -156,7 +156,7 @@ Relationer: `WorkoutTemplate` → `[WorkoutTemplateExercise]`. `WorkoutSession` 
 ## Roadmap (kort)
 
 - **Færdig (MVP):** Skabeloner, træningsflow, historik, HealthKit, Sentry, pause/skip øvelse, polish.
-- **Senere:** Apple Watch-companion, personlige rekorder, mere avanceret historik/statistik, evt. IAMJARL design-system-integration, export/import af skabeloner.
+- **Senere:** Apple Watch-companion, personlige rekorder, mere avanceret historik/statistik, fuld UI-migration til design-tokens, export/import af skabeloner.
 
 ---
 

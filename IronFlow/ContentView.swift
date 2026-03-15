@@ -7,8 +7,11 @@
 
 import SwiftUI
 import SwiftData
+import IAMJARLDesignTokens
 
 struct ContentView: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     var body: some View {
         TabView {
             WorkoutsView()
@@ -28,6 +31,7 @@ struct ContentView: View {
                     Label("Indstillinger", systemImage: "gearshape")
                 }
         }
+        .tint(DesignTokens.Common.primary(colorScheme))
     }
 }
 

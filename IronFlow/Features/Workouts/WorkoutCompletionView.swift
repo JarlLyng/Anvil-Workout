@@ -7,8 +7,10 @@
 
 import SwiftUI
 import SwiftData
+import IAMJARLDesignTokens
 
 struct WorkoutCompletionView: View {
+    @Environment(\.colorScheme) private var colorScheme
     var session: WorkoutSession
     var onDone: () -> Void
 
@@ -20,29 +22,31 @@ struct WorkoutCompletionView: View {
     }
 
     var body: some View {
-        VStack(spacing: 28) {
+        VStack(spacing: DesignTokens.Spacing.xxl) {
             Spacer()
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 70))
-                .foregroundStyle(.green)
+                .foregroundStyle(DesignTokens.ColorToken.State.success)
             Text("Træning afsluttet")
                 .font(.title.bold())
-            VStack(spacing: 8) {
+                .foregroundStyle(DesignTokens.Common.Text.primary(colorScheme))
+            VStack(spacing: DesignTokens.Spacing.sm) {
                 Label(session.templateName, systemImage: "list.bullet")
                 Label(durationText, systemImage: "timer")
                 Label("\(session.completedSetCount) sæt", systemImage: "checkmark.circle")
                 Label("\(session.exerciseCount) øvelser", systemImage: "figure.strengthtraining.traditional")
             }
             .font(.body)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(DesignTokens.Common.Text.secondary(colorScheme))
             Spacer()
             Button("Færdig") {
                 onDone()
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
-            .padding(.horizontal, 32)
-            .padding(.bottom, 40)
+            .padding(.horizontal, DesignTokens.Spacing.xxxl)
+            .padding(.bottom, DesignTokens.Spacing.xl)
         }
+        .background(DesignTokens.Common.Background.app(colorScheme))
     }
 }
