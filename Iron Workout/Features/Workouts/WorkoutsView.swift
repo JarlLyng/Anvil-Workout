@@ -12,6 +12,7 @@ struct WorkoutsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \WorkoutTemplate.updatedAt, order: .reverse) private var templates: [WorkoutTemplate]
     @State private var templateToCreate: WorkoutTemplate?
+    @State private var errorMessage: String?
 
     var body: some View {
         NavigationStack {
@@ -23,10 +24,7 @@ struct WorkoutsView: View {
                         Text("Opret dit første træningsprogram med øvelser, sæt og reps. Derefter kan du starte træningen med et enkelt tryk.")
                     } actions: {
                         Button("Opret program") {
-                            let newTemplate = WorkoutTemplate(name: "Nyt program")
-                            modelContext.insert(newTemplate)
-                            try? modelContext.save()
-                            templateToCreate = newTemplate
+                            createTemplate()
                         }
                         .buttonStyle(.borderedProminent)
                     }
@@ -48,6 +46,7 @@ struct WorkoutsView: View {
                                     if template.isFavorite {
                                         Image(systemName: "star.fill")
                                             .foregroundStyle(.yellow)
+                                            .accessibilityLabel("Favorit")
                                     }
                                 }
                             }
@@ -67,12 +66,10 @@ struct WorkoutsView: View {
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
-                        let newTemplate = WorkoutTemplate(name: "Nyt program")
-                        modelContext.insert(newTemplate)
-                        try? modelContext.save()
-                        templateToCreate = newTemplate
+                        createTemplate()
                     } label: {
                         Image(systemName: "plus.circle.fill")
+                            .accessibilityLabel("Opret program")
                     }
                 }
             }
@@ -84,6 +81,23 @@ struct WorkoutsView: View {
                     CreateEditTemplateView(template: template)
                 }
             }
+            .alert("Fejl", isPresented: .init(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
+                Button("OK") { errorMessage = nil }
+            } message: {
+                Text(errorMessage ?? "")
+            }
+        }
+    }
+
+    private func createTemplate() {
+        let newTemplate = WorkoutTemplate(name: "Nyt program")
+        modelContext.insert(newTemplate)
+        do {
+            try modelContext.save()
+            templateToCreate = newTemplate
+        } catch {
+            modelContext.delete(newTemplate)
+            errorMessage = "Kunne ikke oprette program. Prøv igen."
         }
     }
 
@@ -91,7 +105,11 @@ struct WorkoutsView: View {
         for index in offsets {
             modelContext.delete(templates[index])
         }
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            errorMessage = "Kunne ikke slette program."
+        }
     }
 
     private func duplicateTemplate(_ source: WorkoutTemplate) {
@@ -117,7 +135,11 @@ struct WorkoutsView: View {
             modelContext.insert(newItem)
         }
         copy.updatedAt = .now
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            errorMessage = "Kunne ikke duplikere program."
+        }
     }
 }
 

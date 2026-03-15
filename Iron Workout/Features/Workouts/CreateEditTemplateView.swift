@@ -17,6 +17,7 @@ struct CreateEditTemplateView: View {
     @State private var showExercisePicker = false
     @State private var showEditExercise: WorkoutTemplateExercise?
     @State private var showDeleteConfirm = false
+    @State private var errorMessage: String?
 
     private var sortedExercises: [WorkoutTemplateExercise] {
         template.exercises.sorted { $0.sortOrder < $1.sortOrder }
@@ -87,7 +88,7 @@ struct CreateEditTemplateView: View {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Done") {
                     template.updatedAt = .now
-                    try? modelContext.save()
+                    do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
                     dismiss()
                 }
             }
@@ -105,10 +106,15 @@ struct CreateEditTemplateView: View {
         .sheet(item: $showEditExercise) { item in
             EditTemplateExerciseSheet(templateExercise: item)
         }
+        .alert("Fejl", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
+            Button("OK") { errorMessage = nil }
+        } message: {
+            Text(errorMessage ?? "")
+        }
         .confirmationDialog("Slet program?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
             Button("Slet", role: .destructive) {
                 modelContext.delete(template)
-                try? modelContext.save()
+                do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
                 dismiss()
             }
             Button("Behold", role: .cancel) { }
@@ -129,7 +135,7 @@ struct CreateEditTemplateView: View {
         template.exercises.append(te)
         modelContext.insert(te)
         template.updatedAt = .now
-        try? modelContext.save()
+        do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
     }
 
     private func deleteExercises(at offsets: IndexSet) {
@@ -139,7 +145,7 @@ struct CreateEditTemplateView: View {
         }
         reorderSortOrder()
         template.updatedAt = .now
-        try? modelContext.save()
+        do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
     }
 
     private func moveExercises(from source: IndexSet, to destination: Int) {
@@ -149,7 +155,7 @@ struct CreateEditTemplateView: View {
             item.sortOrder = i
         }
         template.updatedAt = .now
-        try? modelContext.save()
+        do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
     }
 
     private func reorderSortOrder() {

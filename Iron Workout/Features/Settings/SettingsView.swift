@@ -7,6 +7,7 @@
 
 import SwiftUI
 import HealthKit
+import IAMJARLDesignTokens
 
 struct SettingsView: View {
     private let health = HealthKitService.shared
@@ -21,7 +22,7 @@ struct SettingsView: View {
                     if health.isAvailable {
                         HStack {
                             Image(systemName: "heart.fill")
-                                .foregroundStyle(.red)
+                                .foregroundStyle(DesignTokens.ColorToken.State.error)
                             Text("Apple Health")
                             Spacer()
                             if requestInProgress {
@@ -36,7 +37,7 @@ struct SettingsView: View {
                         if let msg = message {
                             HStack(spacing: 8) {
                                 Image(systemName: messageIsError ? "exclamationmark.circle" : "checkmark.circle")
-                                    .foregroundStyle(messageIsError ? .red : .green)
+                                    .foregroundStyle(messageIsError ? DesignTokens.ColorToken.State.error : DesignTokens.ColorToken.State.success)
                                 Text(msg)
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)

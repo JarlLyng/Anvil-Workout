@@ -7,8 +7,8 @@
 
 import Foundation
 import SwiftData
+import Sentry
 
-/// Seeds and provides the built-in exercise library.
 struct ExerciseLibraryService {
 
     static let builtinExercises: [(name: String, muscleGroup: MuscleGroup, equipment: String)] = [
@@ -39,7 +39,6 @@ struct ExerciseLibraryService {
         ("Hanging Leg Raise", .core, "Bodyweight"),
     ]
 
-    /// Seeds the model context with built-in exercises if not already present.
     static func seedIfNeeded(modelContext: ModelContext) {
         let descriptor = FetchDescriptor<Exercise>(predicate: #Predicate { $0.isBuiltin == true })
         let existing = (try? modelContext.fetch(descriptor)) ?? []
@@ -54,6 +53,10 @@ struct ExerciseLibraryService {
             )
             modelContext.insert(exercise)
         }
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            SentrySDK.capture(error: error)
+        }
     }
 }

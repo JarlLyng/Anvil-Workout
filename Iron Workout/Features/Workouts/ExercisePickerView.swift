@@ -54,6 +54,7 @@ struct ExercisePickerView: View {
                         Spacer()
                         Image(systemName: "plus.circle.fill")
                             .foregroundStyle(.tint)
+                            .accessibilityLabel("Tilføj \(exercise.name)")
                     }
                 }
             }
@@ -72,6 +73,7 @@ struct ExercisePickerView: View {
                         }
                     } label: {
                         Image(systemName: "line.3.horizontal.decrease.circle")
+                            .accessibilityLabel("Filtrer muskelgrupper")
                     }
                 }
             }

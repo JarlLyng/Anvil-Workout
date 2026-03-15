@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import IAMJARLDesignTokens
 
 struct SessionDetailView: View {
     var session: WorkoutSession
@@ -80,8 +81,9 @@ struct SessionDetailView: View {
     private func setRow(set: PerformedSet) -> some View {
         HStack(spacing: 12) {
             Image(systemName: set.isCompleted ? "checkmark.circle.fill" : "circle")
-                .foregroundStyle(set.isCompleted ? .green : .secondary)
+                .foregroundStyle(set.isCompleted ? DesignTokens.ColorToken.State.success : .secondary)
                 .font(.caption)
+                .accessibilityLabel(set.isCompleted ? "Fuldført" : "Ikke fuldført")
             if set.isCompleted {
                 if let reps = set.actualReps {
                     Text("Sæt \(set.setIndex + 1): \(reps) reps")

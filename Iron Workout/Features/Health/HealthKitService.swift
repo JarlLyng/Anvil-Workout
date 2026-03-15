@@ -88,7 +88,8 @@ final class HealthKitService {
                 quantityType: calType,
                 quantitySamplePredicate: predicate,
                 options: .cumulativeSum
-            ) { _, result, _ in
+            ) { _, result, error in
+                if error != nil { cont.resume(returning: nil); return }
                 let value = result?.sumQuantity()?.doubleValue(for: .kilocalorie())
                 cont.resume(returning: value)
             }
@@ -102,7 +103,8 @@ final class HealthKitService {
                 predicate: predicate,
                 limit: HKObjectQueryNoLimit,
                 sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)]
-            ) { _, samples, _ in
+            ) { _, samples, error in
+                if error != nil { cont.resume(returning: nil); return }
                 guard let samples = samples as? [HKQuantitySample], !samples.isEmpty else {
                     cont.resume(returning: nil)
                     return

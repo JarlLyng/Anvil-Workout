@@ -13,6 +13,7 @@ struct TemplateDetailView: View {
     @Bindable var template: WorkoutTemplate
     @Query(sort: \Exercise.name) private var allExercises: [Exercise]
     @State private var activeSession: WorkoutSession?
+    @State private var errorMessage: String?
 
     private var sortedExercises: [WorkoutTemplateExercise] {
         template.exercises.sorted { $0.sortOrder < $1.sortOrder }
@@ -82,6 +83,11 @@ struct TemplateDetailView: View {
                 .disabled(sortedExercises.isEmpty)
             }
         }
+        .alert("Fejl", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
+            Button("OK") { errorMessage = nil }
+        } message: {
+            Text(errorMessage ?? "")
+        }
         .fullScreenCover(item: $activeSession) { session in
             ActiveWorkoutView(
                 session: session,
@@ -96,7 +102,7 @@ struct TemplateDetailView: View {
             let session = try WorkoutSessionService.createSession(from: template, modelContext: modelContext)
             activeSession = session
         } catch {
-            // TODO: vis fejl
+            errorMessage = "Kunne ikke starte træning: \(error.localizedDescription)"
         }
     }
 }

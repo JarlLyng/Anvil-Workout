@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import IAMJARLDesignTokens
 
 struct HistoryView: View {
     @Query(sort: \WorkoutSession.startedAt, order: .reverse) private var sessions: [WorkoutSession]
@@ -46,12 +47,12 @@ struct HistoryView: View {
                                         if let cal = session.calories, cal > 0 {
                                             Label("\(Int(cal)) kcal", systemImage: "flame")
                                                 .font(.caption2)
-                                                .foregroundStyle(.orange)
+                                                .foregroundStyle(DesignTokens.ColorToken.State.warning)
                                         }
                                         if let hr = session.averageHeartRate, hr > 0 {
                                             Label("\(Int(hr)) bpm", systemImage: "heart")
                                                 .font(.caption2)
-                                                .foregroundStyle(.red)
+                                                .foregroundStyle(DesignTokens.ColorToken.State.error)
                                         }
                                     }
                                 }

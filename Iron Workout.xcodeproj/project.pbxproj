@@ -415,7 +415,9 @@
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Iron Workout/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Iron Workout";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Iron Workout læser træningsdata fra Health (puls, kalorier) så du kan se dem i historik.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Iron Workout gemmer dine træninger i Health så de vises i Health-appen og på Apple Watch.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -430,6 +432,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.iamjarl.Iron-Workout";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SENTRY_DSN = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -451,7 +454,9 @@
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Iron Workout/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Iron Workout";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Iron Workout læser træningsdata fra Health (puls, kalorier) så du kan se dem i historik.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Iron Workout gemmer dine træninger i Health så de vises i Health-appen og på Apple Watch.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -459,6 +464,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				SENTRY_DSN = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

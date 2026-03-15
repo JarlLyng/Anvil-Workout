@@ -8,7 +8,13 @@
 import Foundation
 
 enum SentryConfig {
-    /// DSN fra Sentry-projektet (Project Settings → Client Keys (DSN)).
-    /// Erstat med din egen DSN fra iron-workout-ios.
-    static let dsn: String? = "https://b803137de24433fd18597b3c216c5f93@o4510472891334656.ingest.de.sentry.io/4511043298197584"
+    /// DSN læses fra Info.plist (sat via Secrets.xcconfig → build settings).
+    /// Se Config/Secrets.xcconfig.example for opsætning.
+    static var dsn: String? {
+        guard let value = Bundle.main.infoDictionary?["SENTRY_DSN"] as? String,
+              !value.isEmpty, value != "YOUR_SENTRY_DSN_HERE" else {
+            return nil
+        }
+        return value
+    }
 }

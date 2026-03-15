@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import IAMJARLDesignTokens
 
 struct ActiveWorkoutView: View {
     @Environment(\.modelContext) private var modelContext
@@ -24,6 +25,7 @@ struct ActiveWorkoutView: View {
     @State private var isPaused = false
     @State private var pausedAt: Date?
     @State private var totalPausedSeconds: Int = 0
+    @State private var errorMessage: String?
 
     private var sortedExercises: [WorkoutSessionExercise] {
         session.exercises.sorted { $0.sortOrder < $1.sortOrder }
@@ -90,6 +92,7 @@ struct ActiveWorkoutView: View {
                             }
                         } label: {
                             Image(systemName: "ellipsis.circle")
+                                .accessibilityLabel("Flere muligheder")
                         }
                     }
                 }
@@ -104,12 +107,20 @@ struct ActiveWorkoutView: View {
             }
             .sheet(item: $showSetEditor) { set in
                 EditPerformedSetSheet(performedSet: set) {
-                    try? modelContext.save()
+                    do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
                     showSetEditor = nil
                 }
             }
             .onAppear {
                 startHealthKitIfAvailable()
+            }
+            .onDisappear {
+                stopRestTimer()
+            }
+            .alert("Fejl", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
+                Button("OK") { errorMessage = nil }
+            } message: {
+                Text(errorMessage ?? "")
             }
         }
             }
@@ -137,7 +148,7 @@ struct ActiveWorkoutView: View {
                 if isPaused {
                     Text("Pauset")
                         .font(.caption)
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(DesignTokens.ColorToken.State.warning)
                 }
                 Spacer()
             }
@@ -150,7 +161,7 @@ struct ActiveWorkoutView: View {
         VStack(spacing: 24) {
             Image(systemName: "pause.circle.fill")
                 .font(.system(size: 60))
-                .foregroundStyle(.orange)
+                .foregroundStyle(DesignTokens.ColorToken.State.warning)
             Text("Træning sat på pause")
                 .font(.title2.bold())
             Text("Timeren er stoppet. Tryk Fortsæt for at fortsætte.")
@@ -171,7 +182,7 @@ struct ActiveWorkoutView: View {
     private func restBar(seconds: Int) -> some View {
         HStack {
             Image(systemName: "pause.circle.fill")
-                .foregroundStyle(.orange)
+                .foregroundStyle(DesignTokens.ColorToken.State.warning)
             Text("Rest: \(seconds) sek")
                 .font(.headline.monospacedDigit())
             Spacer()
@@ -182,7 +193,7 @@ struct ActiveWorkoutView: View {
             .buttonStyle(.borderedProminent)
         }
         .padding()
-        .background(.orange.opacity(0.15))
+        .background(DesignTokens.ColorToken.State.warning.opacity(0.15))
     }
 
     private func exerciseContent(exercise: WorkoutSessionExercise) -> some View {
@@ -222,7 +233,7 @@ struct ActiveWorkoutView: View {
         return HStack {
             if set.isCompleted {
                 Image(systemName: "checkmark.circle.fill")
-                    .foregroundStyle(.green)
+                    .foregroundStyle(DesignTokens.ColorToken.State.success)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Sæt \(set.setIndex + 1)")
                         .font(.subheadline.weight(.medium))
@@ -276,7 +287,7 @@ struct ActiveWorkoutView: View {
             Spacer()
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 60))
-                .foregroundStyle(.green)
+                .foregroundStyle(DesignTokens.ColorToken.State.success)
             Text("Alle øvelser gennemført")
                 .font(.title2.bold())
             Text("\(session.completedSetCount) sæt i alt")
@@ -294,7 +305,7 @@ struct ActiveWorkoutView: View {
         set.isCompleted = true
         set.completedAt = .now
         session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
-        try? modelContext.save()
+        do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
         startRestIfNeeded(exercise: exercise)
         if restSecondsRemaining == nil { advanceToNextExerciseIfNeeded() }
     }
@@ -305,7 +316,7 @@ struct ActiveWorkoutView: View {
         set.actualReps = nil
         set.actualWeight = nil
         session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
-        try? modelContext.save()
+        do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
         startRestIfNeeded(exercise: exercise)
         if restSecondsRemaining == nil { advanceToNextExerciseIfNeeded() }
     }
@@ -328,7 +339,7 @@ struct ActiveWorkoutView: View {
             set.actualWeight = nil
         }
         session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
-        try? modelContext.save()
+        do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
         if currentExerciseIndex < sortedExercises.count - 1 {
             currentExerciseIndex += 1
         }
@@ -383,7 +394,7 @@ struct ActiveWorkoutView: View {
                 }
             }
             await MainActor.run {
-                try? WorkoutSessionService.finalizeSession(session, modelContext: context)
+                do { try WorkoutSessionService.finalizeSession(session, modelContext: context) } catch { errorMessage = "Kunne ikke afslutte træning: \(error.localizedDescription)" }
                 showCompletionSummary = true
             }
         }
