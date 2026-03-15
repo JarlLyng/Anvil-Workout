@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import IAMJARLDesignTokens
+import PhosphorSwift
 
 struct WorkoutCompletionView: View {
     @Environment(\.colorScheme) private var colorScheme
@@ -24,17 +25,17 @@ struct WorkoutCompletionView: View {
     var body: some View {
         VStack(spacing: DesignTokens.Spacing.xxl) {
             Spacer()
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 70))
-                .foregroundStyle(DesignTokens.ColorToken.State.success)
+            Ph.checkCircle.fill
+                .color(DesignTokens.ColorToken.State.success)
+                .frame(width: 70, height: 70)
             Text("Træning afsluttet")
                 .font(.title.bold())
                 .foregroundStyle(DesignTokens.Common.Text.primary(colorScheme))
             VStack(spacing: DesignTokens.Spacing.sm) {
-                Label(session.templateName, systemImage: "list.bullet")
-                Label(durationText, systemImage: "timer")
-                Label("\(session.completedSetCount) sæt", systemImage: "checkmark.circle")
-                Label("\(session.exerciseCount) øvelser", systemImage: "figure.strengthtraining.traditional")
+                Label { Text(session.templateName) } icon: { Ph.listBullets.regular }
+                Label { Text(durationText) } icon: { Ph.timer.regular }
+                Label { Text("\(session.completedSetCount) sæt") } icon: { Ph.checkCircle.regular }
+                Label { Text("\(session.exerciseCount) øvelser") } icon: { Ph.barbell.regular }
             }
             .font(.body)
             .foregroundStyle(DesignTokens.Common.Text.secondary(colorScheme))

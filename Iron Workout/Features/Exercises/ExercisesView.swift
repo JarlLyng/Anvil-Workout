@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import PhosphorSwift
 
 struct ExercisesView: View {
     @Query(sort: \Exercise.name) private var exercises: [Exercise]
@@ -63,7 +64,8 @@ struct ExercisesView: View {
                         Button(group.rawValue) { selectedMuscleGroup = group }
                     }
                 } label: {
-                    Image(systemName: "line.3.horizontal.decrease.circle")
+                    Ph.funnelSimple.regular
+                        .frame(width: 24, height: 24)
                         .accessibilityLabel("Filtrer muskelgrupper")
                 }
             }

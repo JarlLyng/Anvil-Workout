@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import IAMJARLDesignTokens
+import PhosphorSwift
 
 struct ActiveWorkoutView: View {
     @Environment(\.modelContext) private var modelContext
@@ -91,7 +92,8 @@ struct ActiveWorkoutView: View {
                                 Button("Spring over øvelse", role: .destructive) { skipCurrentExercise() }
                             }
                         } label: {
-                            Image(systemName: "ellipsis.circle")
+                            Ph.dotsThreeCircle.regular
+                                .frame(width: 24, height: 24)
                                 .accessibilityLabel("Flere muligheder")
                         }
                     }
@@ -141,8 +143,16 @@ struct ActiveWorkoutView: View {
     private var timerBar: some View {
         TimelineView(.periodic(from: .now, by: 1)) { context in
             HStack {
-                Image(systemName: isPaused ? "pause.circle.fill" : "timer")
-                    .foregroundStyle(isPaused ? .orange : .primary)
+                Group {
+                    if isPaused {
+                        Ph.pauseCircle.fill
+                            .color(DesignTokens.ColorToken.State.warning)
+                            .frame(width: 20, height: 20)
+                    } else {
+                        Ph.timer.regular
+                            .frame(width: 20, height: 20)
+                    }
+                }
                 Text(formatElapsed(elapsedSeconds(at: context.date)))
                     .font(.title2.monospacedDigit().weight(.medium))
                 if isPaused {
@@ -159,9 +169,9 @@ struct ActiveWorkoutView: View {
 
     private var pauseOverlay: some View {
         VStack(spacing: 24) {
-            Image(systemName: "pause.circle.fill")
-                .font(.system(size: 60))
-                .foregroundStyle(DesignTokens.ColorToken.State.warning)
+            Ph.pauseCircle.fill
+                .color(DesignTokens.ColorToken.State.warning)
+                .frame(width: 60, height: 60)
             Text("Træning sat på pause")
                 .font(.title2.bold())
             Text("Timeren er stoppet. Tryk Fortsæt for at fortsætte.")
@@ -181,8 +191,9 @@ struct ActiveWorkoutView: View {
 
     private func restBar(seconds: Int) -> some View {
         HStack {
-            Image(systemName: "pause.circle.fill")
-                .foregroundStyle(DesignTokens.ColorToken.State.warning)
+            Ph.pauseCircle.fill
+                .color(DesignTokens.ColorToken.State.warning)
+                .frame(width: 20, height: 20)
             Text("Rest: \(seconds) sek")
                 .font(.headline.monospacedDigit())
             Spacer()
@@ -232,8 +243,9 @@ struct ActiveWorkoutView: View {
         let targetWeight = set.targetWeight.map { " @ \($0.formatted(.number.precision(.fractionLength(0)))) kg" } ?? ""
         return HStack {
             if set.isCompleted {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundStyle(DesignTokens.ColorToken.State.success)
+                Ph.checkCircle.fill
+                    .color(DesignTokens.ColorToken.State.success)
+                    .frame(width: 20, height: 20)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Sæt \(set.setIndex + 1)")
                         .font(.subheadline.weight(.medium))
@@ -247,8 +259,9 @@ struct ActiveWorkoutView: View {
                 Button("Rediger") { showSetEditor = set }
                     .font(.caption)
             } else {
-                Image(systemName: "circle")
-                    .foregroundStyle(.secondary)
+                Ph.circle.regular
+                    .color(.secondary)
+                    .frame(width: 20, height: 20)
                 Text("Sæt \(set.setIndex + 1): \(set.targetReps) reps\(targetWeight)")
                     .font(.subheadline)
                 Spacer()
@@ -270,7 +283,8 @@ struct ActiveWorkoutView: View {
             if currentExerciseIndex + 1 < sortedExercises.count {
                 let next = sortedExercises[currentExerciseIndex + 1]
                 HStack {
-                    Image(systemName: "arrow.down.circle")
+                    Ph.arrowCircleDown.regular
+                        .frame(width: 20, height: 20)
                     Text("Næste: \(next.exerciseName)")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
@@ -285,9 +299,9 @@ struct ActiveWorkoutView: View {
     private var completedAllView: some View {
         VStack(spacing: 24) {
             Spacer()
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 60))
-                .foregroundStyle(DesignTokens.ColorToken.State.success)
+            Ph.checkCircle.fill
+                .color(DesignTokens.ColorToken.State.success)
+                .frame(width: 60, height: 60)
             Text("Alle øvelser gennemført")
                 .font(.title2.bold())
             Text("\(session.completedSetCount) sæt i alt")
@@ -406,4 +420,3 @@ struct ActiveWorkoutView: View {
         return String(format: "%d:%02d", m, s)
     }
 }
-

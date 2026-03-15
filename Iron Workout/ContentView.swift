@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import IAMJARLDesignTokens
+import PhosphorSwift
 
 struct ContentView: View {
     @Environment(\.colorScheme) private var colorScheme
@@ -16,19 +17,19 @@ struct ContentView: View {
         TabView {
             WorkoutsView()
                 .tabItem {
-                    Label("Træning", systemImage: "figure.strengthtraining.traditional")
+                    Label { Text("Træning") } icon: { Ph.barbell.regular }
                 }
             HistoryView()
                 .tabItem {
-                    Label("Historik", systemImage: "clock.arrow.circlepath")
+                    Label { Text("Historik") } icon: { Ph.clockCounterClockwise.regular }
                 }
             ExercisesView()
                 .tabItem {
-                    Label("Øvelser", systemImage: "list.bullet")
+                    Label { Text("Øvelser") } icon: { Ph.listBullets.regular }
                 }
             SettingsView()
                 .tabItem {
-                    Label("Indstillinger", systemImage: "gearshape")
+                    Label { Text("Indstillinger") } icon: { Ph.gear.regular }
                 }
         }
         .tint(DesignTokens.Common.primary(colorScheme))

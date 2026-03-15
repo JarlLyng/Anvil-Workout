@@ -34,9 +34,23 @@
 		2F60AB7F2F64DAF100B0CB5C /* Iron WorkoutUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Iron WorkoutUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2F60ACDC2F65A7C500B0CB5C /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+				"Config/Secrets.xcconfig",
+			);
+			target = 2F60AB672F64DAEC00B0CB5C /* Iron Workout */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		2F60AB6A2F64DAEC00B0CB5C /* Iron Workout */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2F60ACDC2F65A7C500B0CB5C /* PBXFileSystemSynchronizedBuildFileExceptionSet */,
+			);
 			path = "Iron Workout";
 			sourceTree = "<group>";
 		};
@@ -121,6 +135,7 @@
 			packageProductDependencies = (
 				A1B2C3D42E5F6789012345AC /* Sentry */,
 				B2C3D42E5F6789012345AB02 /* IAMJARLDesignTokens */,
+				2F2546FC2F675BE400BB5A6C /* PhosphorSwift */,
 			);
 			productName = "Iron Workout";
 			productReference = 2F60AB682F64DAEC00B0CB5C /* Iron Workout.app */;
@@ -464,7 +479,6 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				SENTRY_DSN = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -472,6 +486,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.iamjarl.Iron-Workout";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SENTRY_DSN = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -644,6 +659,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B2C3D42E5F6789012345AB01 /* XCRemoteSwiftPackageReference "iamjarl-design" */;
 			productName = IAMJARLDesignTokens;
+		};
+		2F2546FC2F675BE400BB5A6C /* PhosphorSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F2546FB2F675BE400BB5A6C /* XCRemoteSwiftPackageReference "swift" */;
+			productName = PhosphorSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

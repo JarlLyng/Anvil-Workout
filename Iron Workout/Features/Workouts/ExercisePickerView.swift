@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import PhosphorSwift
 
 struct ExercisePickerView: View {
     @Environment(\.dismiss) private var dismiss
@@ -52,7 +53,8 @@ struct ExercisePickerView: View {
                             }
                         }
                         Spacer()
-                        Image(systemName: "plus.circle.fill")
+                        Ph.plusCircle.fill
+                            .frame(width: 20, height: 20)
                             .foregroundStyle(.tint)
                             .accessibilityLabel("Tilføj \(exercise.name)")
                     }
@@ -72,7 +74,8 @@ struct ExercisePickerView: View {
                             Button(group.rawValue) { selectedMuscleGroup = group }
                         }
                     } label: {
-                        Image(systemName: "line.3.horizontal.decrease.circle")
+                        Ph.funnelSimple.regular
+                            .frame(width: 24, height: 24)
                             .accessibilityLabel("Filtrer muskelgrupper")
                     }
                 }

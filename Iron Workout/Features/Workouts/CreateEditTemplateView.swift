@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import PhosphorSwift
 
 struct CreateEditTemplateView: View {
     @Environment(\.modelContext) private var modelContext
@@ -62,8 +63,8 @@ struct CreateEditTemplateView: View {
                                 }
                             }
                             Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.caption.weight(.semibold))
+                            Ph.caretRight.regular
+                                .frame(width: 20, height: 20)
                                 .foregroundStyle(.secondary)
                         }
                     }
@@ -74,7 +75,7 @@ struct CreateEditTemplateView: View {
                 Button {
                     showExercisePicker = true
                 } label: {
-                    Label("Tilføj øvelse", systemImage: "plus.circle.fill")
+                    Label { Text("Tilføj øvelse") } icon: { Ph.plusCircle.fill }
                 }
             } header: {
                 Text("Øvelser")

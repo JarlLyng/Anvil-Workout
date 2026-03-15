@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import IAMJARLDesignTokens
+import PhosphorSwift
 
 struct SessionDetailView: View {
     var session: WorkoutSession
@@ -33,9 +34,9 @@ struct SessionDetailView: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                     HStack(spacing: 20) {
-                        Label(durationText, systemImage: "timer")
-                        Label("\(session.completedSetCount) sæt", systemImage: "checkmark.circle")
-                        Label("\(session.exerciseCount) øvelser", systemImage: "list.bullet")
+                        Label { Text(durationText) } icon: { Ph.timer.regular }
+                        Label { Text("\(session.completedSetCount) sæt") } icon: { Ph.checkCircle.regular }
+                        Label { Text("\(session.exerciseCount) øvelser") } icon: { Ph.listBullets.regular }
                     }
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
@@ -66,10 +67,10 @@ struct SessionDetailView: View {
             if session.calories != nil || session.averageHeartRate != nil {
                 Section("Health") {
                     if let cal = session.calories, cal > 0 {
-                        Label("\(Int(cal)) kcal forbrugt", systemImage: "flame")
+                        Label { Text("\(Int(cal)) kcal forbrugt") } icon: { Ph.flame.regular }
                     }
                     if let hr = session.averageHeartRate, hr > 0 {
-                        Label("Gns. puls \(Int(hr)) bpm", systemImage: "heart")
+                        Label { Text("Gns. puls \(Int(hr)) bpm") } icon: { Ph.heart.regular }
                     }
                 }
             }
@@ -80,10 +81,17 @@ struct SessionDetailView: View {
 
     private func setRow(set: PerformedSet) -> some View {
         HStack(spacing: 12) {
-            Image(systemName: set.isCompleted ? "checkmark.circle.fill" : "circle")
-                .foregroundStyle(set.isCompleted ? DesignTokens.ColorToken.State.success : .secondary)
-                .font(.caption)
-                .accessibilityLabel(set.isCompleted ? "Fuldført" : "Ikke fuldført")
+            Group {
+                if set.isCompleted {
+                    Ph.checkCircle.fill
+                        .color(DesignTokens.ColorToken.State.success)
+                } else {
+                    Ph.circle.regular
+                        .color(.secondary)
+                }
+            }
+            .frame(width: 16, height: 16)
+            .accessibilityLabel(set.isCompleted ? "Fuldført" : "Ikke fuldført")
             if set.isCompleted {
                 if let reps = set.actualReps {
                     Text("Sæt \(set.setIndex + 1): \(reps) reps")

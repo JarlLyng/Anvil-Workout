@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import PhosphorSwift
 
 struct TemplateDetailView: View {
     @Environment(\.modelContext) private var modelContext
@@ -35,11 +36,11 @@ struct TemplateDetailView: View {
             }
             Section("Øvelser") {
                 if sortedExercises.isEmpty {
-                    ContentUnavailableView(
-                        "Ingen øvelser",
-                        systemImage: "list.bullet",
-                        description: Text("Tilføj øvelser ved at trykke på Rediger øverst.")
-                    )
+                    ContentUnavailableView {
+                        Label { Text("Ingen øvelser") } icon: { Ph.listBullets.regular }
+                    } description: {
+                        Text("Tilføj øvelser ved at trykke på Rediger øverst.")
+                    }
                 } else {
                     ForEach(sortedExercises, id: \.id) { item in
                         VStack(alignment: .leading, spacing: 4) {
@@ -77,7 +78,7 @@ struct TemplateDetailView: View {
                 Button {
                     startWorkout()
                 } label: {
-                    Label("Start træning", systemImage: "play.fill")
+                    Label { Text("Start træning") } icon: { Ph.play.fill }
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(sortedExercises.isEmpty)

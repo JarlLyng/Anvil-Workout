@@ -8,6 +8,7 @@
 import SwiftUI
 import HealthKit
 import IAMJARLDesignTokens
+import PhosphorSwift
 
 struct SettingsView: View {
     private let health = HealthKitService.shared
@@ -21,8 +22,9 @@ struct SettingsView: View {
                 Section {
                     if health.isAvailable {
                         HStack {
-                            Image(systemName: "heart.fill")
-                                .foregroundStyle(DesignTokens.ColorToken.State.error)
+                            Ph.heart.fill
+                                .color(DesignTokens.ColorToken.State.error)
+                                .frame(width: 20, height: 20)
                             Text("Apple Health")
                             Spacer()
                             if requestInProgress {
@@ -36,8 +38,16 @@ struct SettingsView: View {
                         }
                         if let msg = message {
                             HStack(spacing: 8) {
-                                Image(systemName: messageIsError ? "exclamationmark.circle" : "checkmark.circle")
-                                    .foregroundStyle(messageIsError ? DesignTokens.ColorToken.State.error : DesignTokens.ColorToken.State.success)
+                                Group {
+                                    if messageIsError {
+                                        Ph.warningCircle.regular
+                                            .color(DesignTokens.ColorToken.State.error)
+                                    } else {
+                                        Ph.checkCircle.regular
+                                            .color(DesignTokens.ColorToken.State.success)
+                                    }
+                                }
+                                .frame(width: 20, height: 20)
                                 Text(msg)
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
@@ -45,7 +55,7 @@ struct SettingsView: View {
                             .padding(.vertical, 4)
                         }
                     } else {
-                        Label("Health er ikke tilgængelig på denne enhed", systemImage: "heart.slash")
+                        Label { Text("Health er ikke tilgængelig på denne enhed") } icon: { Ph.heartBreak.regular }
                             .foregroundStyle(.secondary)
                     }
                 } header: {

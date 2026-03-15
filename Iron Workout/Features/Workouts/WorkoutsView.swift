@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import PhosphorSwift
 
 struct WorkoutsView: View {
     @Environment(\.modelContext) private var modelContext
@@ -19,7 +20,7 @@ struct WorkoutsView: View {
             Group {
                 if templates.isEmpty {
                     ContentUnavailableView {
-                        Label("Ingen programmer endnu", systemImage: "figure.strengthtraining.traditional")
+                        Label { Text("Ingen programmer endnu") } icon: { Ph.barbell.regular }
                     } description: {
                         Text("Opret dit første træningsprogram med øvelser, sæt og reps. Derefter kan du starte træningen med et enkelt tryk.")
                     } actions: {
@@ -44,8 +45,9 @@ struct WorkoutsView: View {
                                     }
                                     Spacer()
                                     if template.isFavorite {
-                                        Image(systemName: "star.fill")
-                                            .foregroundStyle(.yellow)
+                                        Ph.star.fill
+                                            .color(.yellow)
+                                            .frame(width: 20, height: 20)
                                             .accessibilityLabel("Favorit")
                                     }
                                 }
@@ -54,7 +56,7 @@ struct WorkoutsView: View {
                                 Button {
                                     duplicateTemplate(template)
                                 } label: {
-                                    Label("Dupliker", systemImage: "doc.on.doc")
+                                    Label { Text("Dupliker") } icon: { Ph.copySimple.regular }
                                 }
                             }
                         }
@@ -68,7 +70,8 @@ struct WorkoutsView: View {
                     Button {
                         createTemplate()
                     } label: {
-                        Image(systemName: "plus.circle.fill")
+                        Ph.plusCircle.fill
+                            .frame(width: 24, height: 24)
                             .accessibilityLabel("Opret program")
                     }
                 }

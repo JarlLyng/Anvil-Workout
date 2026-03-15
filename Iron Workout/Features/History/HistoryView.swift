@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import IAMJARLDesignTokens
+import PhosphorSwift
 
 struct HistoryView: View {
     @Query(sort: \WorkoutSession.startedAt, order: .reverse) private var sessions: [WorkoutSession]
@@ -17,7 +18,7 @@ struct HistoryView: View {
             Group {
                 if sessions.isEmpty {
                     ContentUnavailableView {
-                        Label("Ingen træninger endnu", systemImage: "clock.arrow.circlepath")
+                        Label { Text("Ingen træninger endnu") } icon: { Ph.clockCounterClockwise.regular }
                     } description: {
                         Text("Når du har fuldført en træning fra fanen Træning, vises den her med varighed, sæt og evt. puls og kalorier fra Health.")
                     }
@@ -34,10 +35,10 @@ struct HistoryView: View {
                                         .foregroundStyle(.secondary)
                                 }
                                 HStack(spacing: 16) {
-                                    Label("\(session.exerciseCount) øvelser", systemImage: "list.bullet")
-                                    Label("\(session.completedSetCount) sæt", systemImage: "checkmark.circle")
+                                    Label { Text("\(session.exerciseCount) øvelser") } icon: { Ph.listBullets.regular }
+                                    Label { Text("\(session.completedSetCount) sæt") } icon: { Ph.checkCircle.regular }
                                     if session.durationSeconds > 0 {
-                                        Label(formatDuration(session.durationSeconds), systemImage: "timer")
+                                        Label { Text(formatDuration(session.durationSeconds)) } icon: { Ph.timer.regular }
                                     }
                                 }
                                 .font(.caption)
@@ -45,12 +46,12 @@ struct HistoryView: View {
                                 if session.calories != nil || session.averageHeartRate != nil {
                                     HStack(spacing: 12) {
                                         if let cal = session.calories, cal > 0 {
-                                            Label("\(Int(cal)) kcal", systemImage: "flame")
+                                            Label { Text("\(Int(cal)) kcal") } icon: { Ph.flame.regular }
                                                 .font(.caption2)
                                                 .foregroundStyle(DesignTokens.ColorToken.State.warning)
                                         }
                                         if let hr = session.averageHeartRate, hr > 0 {
-                                            Label("\(Int(hr)) bpm", systemImage: "heart")
+                                            Label { Text("\(Int(hr)) bpm") } icon: { Ph.heart.regular }
                                                 .font(.caption2)
                                                 .foregroundStyle(DesignTokens.ColorToken.State.error)
                                         }
