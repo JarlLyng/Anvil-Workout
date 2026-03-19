@@ -34,9 +34,9 @@ struct SessionDetailView: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                     HStack(spacing: 20) {
-                        Label { Text(durationText) } icon: { Ph.timer.regular }
-                        Label { Text("\(session.completedSetCount) sæt") } icon: { Ph.checkCircle.regular }
-                        Label { Text("\(session.exerciseCount) øvelser") } icon: { Ph.listBullets.regular }
+                        Label { Text(durationText) } icon: { Ph.timer.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 18, height: 18) }
+                        Label { Text("\(session.completedSetCount) sæt") } icon: { Ph.checkCircle.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 18, height: 18) }
+                        Label { Text("\(session.exerciseCount) øvelser") } icon: { Ph.listBullets.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 18, height: 18) }
                     }
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
@@ -67,10 +67,10 @@ struct SessionDetailView: View {
             if session.calories != nil || session.averageHeartRate != nil {
                 Section("Health") {
                     if let cal = session.calories, cal > 0 {
-                        Label { Text("\(Int(cal)) kcal forbrugt") } icon: { Ph.flame.regular }
+                        Label { Text("\(Int(cal)) kcal forbrugt") } icon: { Ph.flame.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
                     }
                     if let hr = session.averageHeartRate, hr > 0 {
-                        Label { Text("Gns. puls \(Int(hr)) bpm") } icon: { Ph.heart.regular }
+                        Label { Text("Gns. puls \(Int(hr)) bpm") } icon: { Ph.heart.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
                     }
                 }
             }
@@ -84,10 +84,14 @@ struct SessionDetailView: View {
             Group {
                 if set.isCompleted {
                     Ph.checkCircle.fill
-                        .color(DesignTokens.ColorToken.State.success)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .foregroundStyle(DesignTokens.ColorToken.State.success)
                 } else {
                     Ph.circle.regular
-                        .color(.secondary)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .foregroundStyle(.secondary)
                 }
             }
             .frame(width: 16, height: 16)

@@ -65,6 +65,8 @@ struct ExercisesView: View {
                     }
                 } label: {
                     Ph.funnelSimple.regular
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
                         .frame(width: 24, height: 24)
                         .accessibilityLabel("Filtrer muskelgrupper")
                 }

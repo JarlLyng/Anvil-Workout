@@ -18,7 +18,7 @@ struct HistoryView: View {
             Group {
                 if sessions.isEmpty {
                     ContentUnavailableView {
-                        Label { Text("Ingen træninger endnu") } icon: { Ph.clockCounterClockwise.regular }
+                        Label { Text("Ingen træninger endnu") } icon: { Ph.clockCounterClockwise.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 24, height: 24) }
                     } description: {
                         Text("Når du har fuldført en træning fra fanen Træning, vises den her med varighed, sæt og evt. puls og kalorier fra Health.")
                     }
@@ -35,10 +35,10 @@ struct HistoryView: View {
                                         .foregroundStyle(.secondary)
                                 }
                                 HStack(spacing: 16) {
-                                    Label { Text("\(session.exerciseCount) øvelser") } icon: { Ph.listBullets.regular }
-                                    Label { Text("\(session.completedSetCount) sæt") } icon: { Ph.checkCircle.regular }
+                                    Label { Text("\(session.exerciseCount) øvelser") } icon: { Ph.listBullets.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 16, height: 16) }
+                                    Label { Text("\(session.completedSetCount) sæt") } icon: { Ph.checkCircle.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 16, height: 16) }
                                     if session.durationSeconds > 0 {
-                                        Label { Text(formatDuration(session.durationSeconds)) } icon: { Ph.timer.regular }
+                                        Label { Text(formatDuration(session.durationSeconds)) } icon: { Ph.timer.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 16, height: 16) }
                                     }
                                 }
                                 .font(.caption)
@@ -46,12 +46,12 @@ struct HistoryView: View {
                                 if session.calories != nil || session.averageHeartRate != nil {
                                     HStack(spacing: 12) {
                                         if let cal = session.calories, cal > 0 {
-                                            Label { Text("\(Int(cal)) kcal") } icon: { Ph.flame.regular }
+                                            Label { Text("\(Int(cal)) kcal") } icon: { Ph.flame.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 14, height: 14) }
                                                 .font(.caption2)
                                                 .foregroundStyle(DesignTokens.ColorToken.State.warning)
                                         }
                                         if let hr = session.averageHeartRate, hr > 0 {
-                                            Label { Text("\(Int(hr)) bpm") } icon: { Ph.heart.regular }
+                                            Label { Text("\(Int(hr)) bpm") } icon: { Ph.heart.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 14, height: 14) }
                                                 .font(.caption2)
                                                 .foregroundStyle(DesignTokens.ColorToken.State.error)
                                         }

@@ -26,16 +26,18 @@ struct WorkoutCompletionView: View {
         VStack(spacing: DesignTokens.Spacing.xxl) {
             Spacer()
             Ph.checkCircle.fill
-                .color(DesignTokens.ColorToken.State.success)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
                 .frame(width: 70, height: 70)
+                .foregroundStyle(DesignTokens.ColorToken.State.success)
             Text("Træning afsluttet")
                 .font(.title.bold())
                 .foregroundStyle(DesignTokens.Common.Text.primary(colorScheme))
             VStack(spacing: DesignTokens.Spacing.sm) {
-                Label { Text(session.templateName) } icon: { Ph.listBullets.regular }
-                Label { Text(durationText) } icon: { Ph.timer.regular }
-                Label { Text("\(session.completedSetCount) sæt") } icon: { Ph.checkCircle.regular }
-                Label { Text("\(session.exerciseCount) øvelser") } icon: { Ph.barbell.regular }
+                Label { Text(session.templateName) } icon: { Ph.listBullets.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
+                Label { Text(durationText) } icon: { Ph.timer.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
+                Label { Text("\(session.completedSetCount) sæt") } icon: { Ph.checkCircle.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
+                Label { Text("\(session.exerciseCount) øvelser") } icon: { Ph.barbell.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
             }
             .font(.body)
             .foregroundStyle(DesignTokens.Common.Text.secondary(colorScheme))

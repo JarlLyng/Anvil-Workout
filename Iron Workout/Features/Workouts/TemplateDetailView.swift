@@ -37,7 +37,7 @@ struct TemplateDetailView: View {
             Section("Øvelser") {
                 if sortedExercises.isEmpty {
                     ContentUnavailableView {
-                        Label { Text("Ingen øvelser") } icon: { Ph.listBullets.regular }
+                        Label { Text("Ingen øvelser") } icon: { Ph.listBullets.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 24, height: 24) }
                     } description: {
                         Text("Tilføj øvelser ved at trykke på Rediger øverst.")
                     }
@@ -78,7 +78,7 @@ struct TemplateDetailView: View {
                 Button {
                     startWorkout()
                 } label: {
-                    Label { Text("Start træning") } icon: { Ph.play.fill }
+                    Label { Text("Start træning") } icon: { Ph.play.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(sortedExercises.isEmpty)

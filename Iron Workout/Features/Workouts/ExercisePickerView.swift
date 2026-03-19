@@ -54,6 +54,8 @@ struct ExercisePickerView: View {
                         }
                         Spacer()
                         Ph.plusCircle.fill
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
                             .frame(width: 20, height: 20)
                             .foregroundStyle(.tint)
                             .accessibilityLabel("Tilføj \(exercise.name)")
@@ -75,6 +77,8 @@ struct ExercisePickerView: View {
                         }
                     } label: {
                         Ph.funnelSimple.regular
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
                             .frame(width: 24, height: 24)
                             .accessibilityLabel("Filtrer muskelgrupper")
                     }

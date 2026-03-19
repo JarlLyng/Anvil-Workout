@@ -20,7 +20,7 @@ struct WorkoutsView: View {
             Group {
                 if templates.isEmpty {
                     ContentUnavailableView {
-                        Label { Text("Ingen programmer endnu") } icon: { Ph.barbell.regular }
+                        Label { Text("Ingen programmer endnu") } icon: { Ph.barbell.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 24, height: 24) }
                     } description: {
                         Text("Opret dit første træningsprogram med øvelser, sæt og reps. Derefter kan du starte træningen med et enkelt tryk.")
                     } actions: {
@@ -46,8 +46,10 @@ struct WorkoutsView: View {
                                     Spacer()
                                     if template.isFavorite {
                                         Ph.star.fill
-                                            .color(.yellow)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
                                             .frame(width: 20, height: 20)
+                                            .foregroundStyle(.yellow)
                                             .accessibilityLabel("Favorit")
                                     }
                                 }
@@ -56,7 +58,7 @@ struct WorkoutsView: View {
                                 Button {
                                     duplicateTemplate(template)
                                 } label: {
-                                    Label { Text("Dupliker") } icon: { Ph.copySimple.regular }
+                                    Label { Text("Dupliker") } icon: { Ph.copySimple.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
                                 }
                             }
                         }
@@ -71,6 +73,8 @@ struct WorkoutsView: View {
                         createTemplate()
                     } label: {
                         Ph.plusCircle.fill
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
                             .frame(width: 24, height: 24)
                             .accessibilityLabel("Opret program")
                     }

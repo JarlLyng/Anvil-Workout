@@ -17,19 +17,19 @@ struct ContentView: View {
         TabView {
             WorkoutsView()
                 .tabItem {
-                    Label { Text("Træning") } icon: { Ph.barbell.regular }
+                    Label { Text("Træning") } icon: { Ph.barbell.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 24, height: 24) }
                 }
             HistoryView()
                 .tabItem {
-                    Label { Text("Historik") } icon: { Ph.clockCounterClockwise.regular }
+                    Label { Text("Historik") } icon: { Ph.clockCounterClockwise.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 24, height: 24) }
                 }
             ExercisesView()
                 .tabItem {
-                    Label { Text("Øvelser") } icon: { Ph.listBullets.regular }
+                    Label { Text("Øvelser") } icon: { Ph.listBullets.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 24, height: 24) }
                 }
             SettingsView()
                 .tabItem {
-                    Label { Text("Indstillinger") } icon: { Ph.gear.regular }
+                    Label { Text("Indstillinger") } icon: { Ph.gear.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 24, height: 24) }
                 }
         }
         .tint(DesignTokens.Common.primary(colorScheme))

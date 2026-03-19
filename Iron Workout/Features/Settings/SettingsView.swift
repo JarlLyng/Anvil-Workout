@@ -23,8 +23,10 @@ struct SettingsView: View {
                     if health.isAvailable {
                         HStack {
                             Ph.heart.fill
-                                .color(DesignTokens.ColorToken.State.error)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
                                 .frame(width: 20, height: 20)
+                                .foregroundStyle(DesignTokens.ColorToken.State.error)
                             Text("Apple Health")
                             Spacer()
                             if requestInProgress {
@@ -41,10 +43,14 @@ struct SettingsView: View {
                                 Group {
                                     if messageIsError {
                                         Ph.warningCircle.regular
-                                            .color(DesignTokens.ColorToken.State.error)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .foregroundStyle(DesignTokens.ColorToken.State.error)
                                     } else {
                                         Ph.checkCircle.regular
-                                            .color(DesignTokens.ColorToken.State.success)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .foregroundStyle(DesignTokens.ColorToken.State.success)
                                     }
                                 }
                                 .frame(width: 20, height: 20)
@@ -55,7 +61,7 @@ struct SettingsView: View {
                             .padding(.vertical, 4)
                         }
                     } else {
-                        Label { Text("Health er ikke tilgængelig på denne enhed") } icon: { Ph.heartBreak.regular }
+                        Label { Text("Health er ikke tilgængelig på denne enhed") } icon: { Ph.heartBreak.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
                             .foregroundStyle(.secondary)
                     }
                 } header: {

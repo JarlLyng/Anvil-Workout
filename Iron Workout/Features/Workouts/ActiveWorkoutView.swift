@@ -93,6 +93,8 @@ struct ActiveWorkoutView: View {
                             }
                         } label: {
                             Ph.dotsThreeCircle.regular
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
                                 .frame(width: 24, height: 24)
                                 .accessibilityLabel("Flere muligheder")
                         }
@@ -146,10 +148,14 @@ struct ActiveWorkoutView: View {
                 Group {
                     if isPaused {
                         Ph.pauseCircle.fill
-                            .color(DesignTokens.ColorToken.State.warning)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
                             .frame(width: 20, height: 20)
+                            .foregroundStyle(DesignTokens.ColorToken.State.warning)
                     } else {
                         Ph.timer.regular
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
                             .frame(width: 20, height: 20)
                     }
                 }
@@ -170,8 +176,10 @@ struct ActiveWorkoutView: View {
     private var pauseOverlay: some View {
         VStack(spacing: 24) {
             Ph.pauseCircle.fill
-                .color(DesignTokens.ColorToken.State.warning)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
                 .frame(width: 60, height: 60)
+                .foregroundStyle(DesignTokens.ColorToken.State.warning)
             Text("Træning sat på pause")
                 .font(.title2.bold())
             Text("Timeren er stoppet. Tryk Fortsæt for at fortsætte.")
@@ -192,8 +200,10 @@ struct ActiveWorkoutView: View {
     private func restBar(seconds: Int) -> some View {
         HStack {
             Ph.pauseCircle.fill
-                .color(DesignTokens.ColorToken.State.warning)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
                 .frame(width: 20, height: 20)
+                .foregroundStyle(DesignTokens.ColorToken.State.warning)
             Text("Rest: \(seconds) sek")
                 .font(.headline.monospacedDigit())
             Spacer()
@@ -244,8 +254,10 @@ struct ActiveWorkoutView: View {
         return HStack {
             if set.isCompleted {
                 Ph.checkCircle.fill
-                    .color(DesignTokens.ColorToken.State.success)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
                     .frame(width: 20, height: 20)
+                    .foregroundStyle(DesignTokens.ColorToken.State.success)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Sæt \(set.setIndex + 1)")
                         .font(.subheadline.weight(.medium))
@@ -260,8 +272,10 @@ struct ActiveWorkoutView: View {
                     .font(.caption)
             } else {
                 Ph.circle.regular
-                    .color(.secondary)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
                     .frame(width: 20, height: 20)
+                    .foregroundStyle(.secondary)
                 Text("Sæt \(set.setIndex + 1): \(set.targetReps) reps\(targetWeight)")
                     .font(.subheadline)
                 Spacer()
@@ -284,6 +298,8 @@ struct ActiveWorkoutView: View {
                 let next = sortedExercises[currentExerciseIndex + 1]
                 HStack {
                     Ph.arrowCircleDown.regular
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
                         .frame(width: 20, height: 20)
                     Text("Næste: \(next.exerciseName)")
                         .font(.subheadline)
@@ -300,8 +316,10 @@ struct ActiveWorkoutView: View {
         VStack(spacing: 24) {
             Spacer()
             Ph.checkCircle.fill
-                .color(DesignTokens.ColorToken.State.success)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
                 .frame(width: 60, height: 60)
+                .foregroundStyle(DesignTokens.ColorToken.State.success)
             Text("Alle øvelser gennemført")
                 .font(.title2.bold())
             Text("\(session.completedSetCount) sæt i alt")

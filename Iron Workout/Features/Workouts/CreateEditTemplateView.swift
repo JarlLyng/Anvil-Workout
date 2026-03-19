@@ -64,6 +64,8 @@ struct CreateEditTemplateView: View {
                             }
                             Spacer()
                             Ph.caretRight.regular
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
                                 .frame(width: 20, height: 20)
                                 .foregroundStyle(.secondary)
                         }
@@ -75,7 +77,7 @@ struct CreateEditTemplateView: View {
                 Button {
                     showExercisePicker = true
                 } label: {
-                    Label { Text("Tilføj øvelse") } icon: { Ph.plusCircle.fill }
+                    Label { Text("Tilføj øvelse") } icon: { Ph.plusCircle.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
                 }
             } header: {
                 Text("Øvelser")
