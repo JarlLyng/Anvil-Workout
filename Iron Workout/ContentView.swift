@@ -8,28 +8,34 @@
 import SwiftUI
 import SwiftData
 import IAMJARLDesignTokens
-import PhosphorSwift
-
 struct ContentView: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         TabView {
+            DashboardView()
+                .tabItem {
+                    Label("Hjem", systemImage: "house.fill")
+                }
             WorkoutsView()
                 .tabItem {
-                    Label { Text("Træning") } icon: { Ph.barbell.regular.frame(width: 24, height: 24) }
+                    Label("Træning", systemImage: "dumbbell.fill")
                 }
             HistoryView()
                 .tabItem {
-                    Label { Text("Historik") } icon: { Ph.clockCounterClockwise.regular.frame(width: 24, height: 24) }
+                    Label("Historik", systemImage: "clock.arrow.counterclockwise")
                 }
             ExercisesView()
                 .tabItem {
-                    Label { Text("Øvelser") } icon: { Ph.listBullets.regular.frame(width: 24, height: 24) }
+                    Label("Øvelser", systemImage: "list.bullet")
+                }
+            StatsView()
+                .tabItem {
+                    Label("Statistik", systemImage: "chart.bar.fill")
                 }
             SettingsView()
                 .tabItem {
-                    Label { Text("Indstillinger") } icon: { Ph.gear.regular.frame(width: 24, height: 24) }
+                    Label("Indstillinger", systemImage: "gearshape.fill")
                 }
         }
         .tint(DesignTokens.Common.primary(colorScheme))

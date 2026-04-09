@@ -18,7 +18,7 @@ struct HistoryView: View {
             Group {
                 if sessions.isEmpty {
                     ContentUnavailableView {
-                        Label { Text("Ingen træninger endnu") } icon: { Ph.clockCounterClockwise.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 24, height: 24) }
+                        Label("Ingen træninger endnu", systemImage: "clock.arrow.counterclockwise")
                     } description: {
                         Text("Når du har fuldført en træning fra fanen Træning, vises den her med varighed, sæt og evt. puls og kalorier fra Health.")
                     }

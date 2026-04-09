@@ -37,7 +37,7 @@ struct TemplateDetailView: View {
             Section("Øvelser") {
                 if sortedExercises.isEmpty {
                     ContentUnavailableView {
-                        Label { Text("Ingen øvelser") } icon: { Ph.listBullets.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 24, height: 24) }
+                        Label("Ingen øvelser", systemImage: "list.bullet")
                     } description: {
                         Text("Tilføj øvelser ved at trykke på Rediger øverst.")
                     }

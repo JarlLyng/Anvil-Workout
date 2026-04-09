@@ -20,7 +20,7 @@ struct WorkoutsView: View {
             Group {
                 if templates.isEmpty {
                     ContentUnavailableView {
-                        Label { Text("Ingen programmer endnu") } icon: { Ph.barbell.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 24, height: 24) }
+                        Label("Ingen programmer endnu", systemImage: "dumbbell.fill")
                     } description: {
                         Text("Opret dit første træningsprogram med øvelser, sæt og reps. Derefter kan du starte træningen med et enkelt tryk.")
                     } actions: {
@@ -30,39 +30,56 @@ struct WorkoutsView: View {
                         .buttonStyle(.borderedProminent)
                     }
                 } else {
-                    List {
-                        ForEach(templates) { template in
-                            NavigationLink(value: template) {
-                                HStack {
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text(template.name.isEmpty ? "Uden navn" : template.name)
-                                            .font(.headline)
-                                        if !template.note.isEmpty {
-                                            Text(template.note)
-                                                .font(.caption)
+                    ScrollView {
+                        VStack(spacing: 16) {
+                            ForEach(templates) { template in
+                                NavigationLink(value: template) {
+                                    HStack {
+                                        VStack(alignment: .leading, spacing: 6) {
+                                            Text(template.name.isEmpty ? "Uden navn" : template.name)
+                                                .font(.headline)
+                                                .foregroundStyle(.primary)
+                                            if !template.note.isEmpty {
+                                                Text(template.note)
+                                                    .font(.subheadline)
+                                                    .foregroundStyle(.secondary)
+                                            }
+                                        }
+                                        Spacer()
+                                        if template.isFavorite {
+                                            Ph.star.fill
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(width: 20, height: 20)
+                                                .foregroundStyle(.yellow)
+                                                .accessibilityLabel("Favorit")
+                                        } else {
+                                            Ph.caretRight.regular
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(width: 20, height: 20)
                                                 .foregroundStyle(.secondary)
                                         }
                                     }
-                                    Spacer()
-                                    if template.isFavorite {
-                                        Ph.star.fill
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(width: 20, height: 20)
-                                            .foregroundStyle(.yellow)
-                                            .accessibilityLabel("Favorit")
+                                    .padding()
+                                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
+                                }
+                                .buttonStyle(.plain)
+                                .contextMenu {
+                                    Button {
+                                        duplicateTemplate(template)
+                                    } label: {
+                                        Label { Text("Dupliker") } icon: { Ph.copySimple.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
+                                    }
+                                    Button(role: .destructive) {
+                                        deleteTemplate(template)
+                                    } label: {
+                                        Label { Text("Slet") } icon: { Ph.trash.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
                                     }
                                 }
                             }
-                            .contextMenu {
-                                Button {
-                                    duplicateTemplate(template)
-                                } label: {
-                                    Label { Text("Dupliker") } icon: { Ph.copySimple.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
-                                }
-                            }
                         }
-                        .onDelete(perform: deleteTemplates)
+                        .padding()
                     }
                 }
             }
@@ -108,10 +125,8 @@ struct WorkoutsView: View {
         }
     }
 
-    private func deleteTemplates(at offsets: IndexSet) {
-        for index in offsets {
-            modelContext.delete(templates[index])
-        }
+    private func deleteTemplate(_ template: WorkoutTemplate) {
+        modelContext.delete(template)
         do {
             try modelContext.save()
         } catch {
