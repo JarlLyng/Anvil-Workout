@@ -12,6 +12,8 @@ struct EditPerformedSetSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Bindable var performedSet: PerformedSet
     var onSave: () -> Void
+    
+    @FocusState private var isInputActive: Bool
 
     var body: some View {
         NavigationStack {
@@ -23,6 +25,8 @@ struct EditPerformedSetSheet: View {
                         TextField("Reps", value: $performedSet.actualReps, format: .number)
                             .keyboardType(.numberPad)
                             .multilineTextAlignment(.trailing)
+                            .focused($isInputActive)
+                            .accessibilityLabel("Antal reps")
                     }
                     HStack {
                         Text("Vægt (kg)")
@@ -30,6 +34,8 @@ struct EditPerformedSetSheet: View {
                         TextField("Valgfri", value: $performedSet.actualWeight, format: .number.precision(.fractionLength(1)))
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
+                            .focused($isInputActive)
+                            .accessibilityLabel("Vægt i kilogram")
                     }
                 }
             }
@@ -40,6 +46,12 @@ struct EditPerformedSetSheet: View {
                     Button("Gem") {
                         onSave()
                         dismiss()
+                    }
+                }
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Færdig") {
+                        isInputActive = false
                     }
                 }
             }

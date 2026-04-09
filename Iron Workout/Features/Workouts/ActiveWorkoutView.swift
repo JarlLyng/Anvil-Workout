@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import UIKit
 import IAMJARLDesignTokens
 import PhosphorSwift
 
@@ -16,7 +17,7 @@ struct ActiveWorkoutView: View {
     var onComplete: () -> Void
     var onEndWorkout: () -> Void
 
-    @State private var currentExerciseIndex: Int = 0
+    @State private var currentBlockIndex: Int = 0
     @State private var healthKitStarted = false
     @State private var restSecondsRemaining: Int?
     @State private var restTimer: Timer?
@@ -31,14 +32,32 @@ struct ActiveWorkoutView: View {
     private var sortedExercises: [WorkoutSessionExercise] {
         session.exercises.sorted { $0.sortOrder < $1.sortOrder }
     }
-
-    private var currentExercise: WorkoutSessionExercise? {
-        guard currentExerciseIndex >= 0, currentExerciseIndex < sortedExercises.count else { return nil }
-        return sortedExercises[currentExerciseIndex]
+    
+    private var exerciseBlocks: [[WorkoutSessionExercise]] {
+        var blocks: [[WorkoutSessionExercise]] = []
+        var currentBlock: [WorkoutSessionExercise] = []
+        for ex in sortedExercises {
+            if currentBlock.isEmpty {
+                currentBlock.append(ex)
+            } else {
+                if let sid = ex.supersetID, sid == currentBlock.last?.supersetID {
+                    currentBlock.append(ex)
+                } else {
+                    blocks.append(currentBlock)
+                    currentBlock = [ex]
+                }
+            }
+        }
+        if !currentBlock.isEmpty {
+            blocks.append(currentBlock)
+        }
+        return blocks
     }
 
-    private var currentSets: [PerformedSet] {
-        currentExercise?.performedSets.sorted { $0.setIndex < $1.setIndex } ?? []
+    private var currentBlock: [WorkoutSessionExercise]? {
+        let blocks = exerciseBlocks
+        guard currentBlockIndex >= 0, currentBlockIndex < blocks.count else { return nil }
+        return blocks[currentBlockIndex]
     }
 
     private func elapsedSeconds(at date: Date) -> Int {
@@ -66,8 +85,8 @@ struct ActiveWorkoutView: View {
                             if let rest = restSecondsRemaining {
                                 restBar(seconds: rest)
                             }
-                            if let ex = currentExercise {
-                                exerciseContent(exercise: ex)
+                            if let block = currentBlock {
+                                blockContent(block: block)
                             } else {
                                 completedAllView
                             }
@@ -88,8 +107,8 @@ struct ActiveWorkoutView: View {
                     } else {
                         Menu {
                             Button("Pause træning") { pauseWorkout() }
-                            if currentExercise != nil {
-                                Button("Spring over øvelse", role: .destructive) { skipCurrentExercise() }
+                            if currentBlock != nil {
+                                Button("Spring over nuværende", role: .destructive) { skipBlock() }
                             }
                         } label: {
                             Ph.dotsThreeCircle.regular
@@ -207,9 +226,9 @@ struct ActiveWorkoutView: View {
             Text("Rest: \(seconds) sek")
                 .font(.headline.monospacedDigit())
             Spacer()
-            Button("Næste sæt") {
+            Button("Næste") {
                 stopRestTimer()
-                advanceToNextExerciseIfNeeded()
+                advanceToNextBlockIfNeeded()
             }
             .buttonStyle(.borderedProminent)
         }
@@ -217,35 +236,56 @@ struct ActiveWorkoutView: View {
         .background(DesignTokens.ColorToken.State.warning.opacity(0.15))
     }
 
-    private func exerciseContent(exercise: WorkoutSessionExercise) -> some View {
-        let sets = currentSets
-        return ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                HStack {
-                    Text(exercise.exerciseName)
-                        .font(.title2.bold())
-                    Spacer()
-                    Button("Spring over øvelse") {
-                        skipCurrentExercise()
+    private func blockContent(block: [WorkoutSessionExercise]) -> some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                if block.count > 1 {
+                    HStack {
+                        Ph.link.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20).foregroundStyle(DesignTokens.ColorToken.State.warning)
+                        Text("Supersæt").font(.headline).foregroundStyle(DesignTokens.ColorToken.State.warning)
                     }
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .padding(.bottom, -12)
                 }
+                
+                ForEach(block, id: \.id) { exercise in
+                    VStack(alignment: .leading, spacing: 16) {
+                        HStack {
+                            Text(exercise.exerciseName)
+                                .font(.title2.bold())
+                            Spacer()
+                            Button("Spring over") {
+                                skipExercise(exercise)
+                            }
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .accessibilityLabel("Spring \(exercise.exerciseName) over")
+                        }
 
-                Text("Sæt")
-                    .font(.headline)
-                    .foregroundStyle(.secondary)
-
-                ForEach(sets, id: \.id) { set in
-                    setRow(set: set, exercise: exercise)
+                        let sets = exercise.performedSets.sorted { $0.setIndex < $1.setIndex }
+                        ForEach(sets, id: \.id) { set in
+                            setRow(set: set, exercise: exercise)
+                        }
+                    }
+                    if exercise.id != block.last?.id {
+                        Divider().padding(.vertical, 8)
+                    }
                 }
             }
             .padding()
         }
         .safeAreaInset(edge: .bottom) {
-            if currentExerciseIndex < sortedExercises.count - 1 {
-                nextExercisePreview
+            if currentBlockIndex < exerciseBlocks.count - 1 {
+                nextBlockPreview
             }
+        }
+    }
+
+    private func colorForSetType(_ type: SetType) -> Color {
+        switch type {
+        case .working: return .primary
+        case .warmup: return .orange
+        case .drop: return .blue
+        case .failure: return .red
         }
     }
 
@@ -258,9 +298,17 @@ struct ActiveWorkoutView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 20, height: 20)
                     .foregroundStyle(DesignTokens.ColorToken.State.success)
+                    .transition(.scale.combined(with: .opacity))
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Sæt \(set.setIndex + 1)")
-                        .font(.subheadline.weight(.medium))
+                    HStack(spacing: 4) {
+                        Text("Sæt \(set.setIndex + 1)")
+                            .font(.subheadline.weight(.medium))
+                        if set.setType != .working {
+                            Text("(\(set.setType.rawValue))")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(colorForSetType(set.setType))
+                        }
+                    }
                     if let reps = set.actualReps {
                         Text("\(reps) reps\(set.actualWeight.map { " · \($0.formatted(.number.precision(.fractionLength(1)))) kg" } ?? "")")
                             .font(.caption)
@@ -276,8 +324,37 @@ struct ActiveWorkoutView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 20, height: 20)
                     .foregroundStyle(.secondary)
-                Text("Sæt \(set.setIndex + 1): \(set.targetReps) reps\(targetWeight)")
-                    .font(.subheadline)
+                    
+                VStack(alignment: .leading, spacing: 2) {
+                    Menu {
+                        ForEach(SetType.allCases, id: \.self) { type in
+                            Button(type.rawValue) {
+                                withAnimation { set.setType = type }
+                                do { try modelContext.save() } catch { errorMessage = "Fejl: \(error)" }
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text("Sæt \(set.setIndex + 1)")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(.primary)
+                            if set.setType != .working {
+                                Text("(\(set.setType.rawValue))")
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundStyle(colorForSetType(set.setType))
+                            }
+                            Ph.caretDown.regular
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 12, height: 12)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    
+                    Text("\(set.targetReps) reps\(targetWeight)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
                 Spacer()
                 HStack(spacing: 8) {
                     Button("Skip") { markSetSkipped(set, exercise: exercise) }
@@ -292,20 +369,23 @@ struct ActiveWorkoutView: View {
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
     }
 
-    private var nextExercisePreview: some View {
+    private var nextBlockPreview: some View {
         Group {
-            if currentExerciseIndex + 1 < sortedExercises.count {
-                let next = sortedExercises[currentExerciseIndex + 1]
+            if currentBlockIndex + 1 < exerciseBlocks.count {
+                let nextBlock = exerciseBlocks[currentBlockIndex + 1]
+                let names = nextBlock.map(\.exerciseName).joined(separator: " + ")
                 HStack {
                     Ph.arrowCircleDown.regular
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 20, height: 20)
-                    Text("Næste: \(next.exerciseName)")
+                    Text("Næste: \(names)")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
+                        .lineLimit(1)
                 }
                 .padding(.vertical, 8)
+                .padding(.horizontal)
             }
         }
         .frame(maxWidth: .infinity)
@@ -334,47 +414,70 @@ struct ActiveWorkoutView: View {
     private func markSetDone(_ set: PerformedSet, exercise: WorkoutSessionExercise) {
         if set.actualReps == nil { set.actualReps = set.targetReps }
         if set.actualWeight == nil { set.actualWeight = set.targetWeight }
-        set.isCompleted = true
+        
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+            set.isCompleted = true
+        }
         set.completedAt = .now
         session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
         do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
+        
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        
         startRestIfNeeded(exercise: exercise)
-        if restSecondsRemaining == nil { advanceToNextExerciseIfNeeded() }
+        if restSecondsRemaining == nil { advanceToNextBlockIfNeeded() }
     }
 
     private func markSetSkipped(_ set: PerformedSet, exercise: WorkoutSessionExercise) {
-        set.isCompleted = true
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+            set.isCompleted = true
+        }
         set.completedAt = .now
         set.actualReps = nil
         set.actualWeight = nil
         session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
         do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
+        
         startRestIfNeeded(exercise: exercise)
-        if restSecondsRemaining == nil { advanceToNextExerciseIfNeeded() }
+        if restSecondsRemaining == nil { advanceToNextBlockIfNeeded() }
     }
 
-    private func advanceToNextExerciseIfNeeded() {
-        guard let ex = currentExercise else { return }
-        let allDone = ex.performedSets.allSatisfy(\.isCompleted)
-        if allDone, currentExerciseIndex < sortedExercises.count - 1 {
-            currentExerciseIndex += 1
+    private func advanceToNextBlockIfNeeded() {
+        guard let block = currentBlock else { return }
+        let allDone = block.allSatisfy { $0.performedSets.allSatisfy(\.isCompleted) }
+        if allDone, currentBlockIndex < exerciseBlocks.count - 1 {
+            currentBlockIndex += 1
         }
     }
 
-    private func skipCurrentExercise() {
-        guard let ex = currentExercise else { return }
+    private func skipBlock() {
+        guard let block = currentBlock else { return }
         stopRestTimer()
-        for set in ex.performedSets where !set.isCompleted {
+        for ex in block {
+            for set in ex.performedSets where !set.isCompleted {
+                set.isCompleted = true
+                set.completedAt = .now
+                set.actualReps = nil
+                set.actualWeight = nil
+            }
+        }
+        session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
+        do { try modelContext.save() } catch { errorMessage = "Fejl: \(error)" }
+        if currentBlockIndex < exerciseBlocks.count - 1 {
+            currentBlockIndex += 1
+        }
+    }
+
+    private func skipExercise(_ exercise: WorkoutSessionExercise) {
+        for set in exercise.performedSets where !set.isCompleted {
             set.isCompleted = true
             set.completedAt = .now
             set.actualReps = nil
             set.actualWeight = nil
         }
         session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
-        do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
-        if currentExerciseIndex < sortedExercises.count - 1 {
-            currentExerciseIndex += 1
-        }
+        do { try modelContext.save() } catch { errorMessage = "Fejl: \(error)" }
+        advanceToNextBlockIfNeeded()
     }
 
     private func pauseWorkout() {
@@ -402,7 +505,7 @@ struct ActiveWorkoutView: View {
             if restSecondsRemaining == nil {
                 restTimer?.invalidate()
                 restTimer = nil
-                advanceToNextExerciseIfNeeded()
+                advanceToNextBlockIfNeeded()
             }
         }
         RunLoop.main.add(restTimer!, forMode: .common)

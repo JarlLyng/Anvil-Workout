@@ -36,6 +36,7 @@ struct SettingsView: View {
                                 Button("Tillad adgang") {
                                     requestHealthAccess()
                                 }
+                                .accessibilityHint("Anmoder om tilladelse til at læse og skrive sundhedsdata")
                             }
                         }
                         if let msg = message {

@@ -174,6 +174,7 @@ struct DashboardView: View {
                     .buttonStyle(.borderedProminent)
                     .tint(.primary)
                     .foregroundStyle(Color(uiColor: .systemBackground))
+                    .accessibilityLabel("Start \(rec.name)")
                 } else {
                     Text("Opret dit første træningsprogram under fanen Træning for at se anbefalinger her.")
                         .font(.subheadline)
