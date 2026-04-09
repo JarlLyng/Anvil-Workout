@@ -7,13 +7,20 @@
 
 import Foundation
 import SwiftData
+import Sentry
 
 enum WorkoutSessionService {
 
     /// Opretter en ny WorkoutSession fra en skabelon med alle øvelser og sæt.
     static func createSession(from template: WorkoutTemplate, modelContext: ModelContext) throws -> WorkoutSession {
         let descriptor = FetchDescriptor<Exercise>()
-        let exercises = try modelContext.fetch(descriptor)
+        let exercises: [Exercise]
+        do {
+            exercises = try modelContext.fetch(descriptor)
+        } catch {
+            SentrySDK.capture(error: error)
+            throw error
+        }
         let nameByID = Dictionary(uniqueKeysWithValues: exercises.map { ($0.id, $0.name) })
 
         let session = WorkoutSession(
@@ -30,7 +37,8 @@ enum WorkoutSessionService {
                 exerciseName: name,
                 sortOrder: exIndex,
                 note: te.note,
-                restSeconds: te.restSeconds
+                restSeconds: te.restSeconds,
+                supersetID: te.supersetID
             )
             sessionEx.session = session
             session.exercises.append(sessionEx)
@@ -51,7 +59,12 @@ enum WorkoutSessionService {
             }
         }
 
-        try modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            SentrySDK.capture(error: error)
+            throw error
+        }
         return session
     }
 
@@ -61,6 +74,11 @@ enum WorkoutSessionService {
         let duration = session.endedAt!.timeIntervalSince(session.startedAt)
         session.durationSeconds = Int(max(0, duration.rounded()))
         session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
-        try modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            SentrySDK.capture(error: error)
+            throw error
+        }
     }
 }

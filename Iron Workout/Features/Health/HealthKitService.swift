@@ -7,6 +7,7 @@
 
 import Foundation
 import HealthKit
+import Sentry
 
 final class HealthKitService {
     static let shared = HealthKitService()
@@ -35,7 +36,12 @@ final class HealthKitService {
     @MainActor
     func requestAuthorization() async throws {
         guard isAvailable else { return }
-        try await store.requestAuthorization(toShare: Self.typesToShare, read: Self.typesToRead)
+        do {
+            try await store.requestAuthorization(toShare: Self.typesToShare, read: Self.typesToRead)
+        } catch {
+            SentrySDK.capture(error: error)
+            throw error
+        }
     }
 
     /// Tjekker om vi har tilladelse til at skrive workouts (groft check).
@@ -52,8 +58,13 @@ final class HealthKitService {
         config.activityType = .traditionalStrengthTraining
         config.locationType = .indoor
         let builder = HKWorkoutBuilder(healthStore: store, configuration: config, device: nil)
-        try await builder.beginCollection(at: startDate)
-        currentBuilder = builder
+        do {
+            try await builder.beginCollection(at: startDate)
+            currentBuilder = builder
+        } catch {
+            SentrySDK.capture(error: error)
+            throw error
+        }
     }
 
     /// Afslut og gem workout; returnerer kcal og gns. puls for intervallet (fra Health).
@@ -64,7 +75,12 @@ final class HealthKitService {
             return (nil, nil)
         }
         defer { currentBuilder = nil }
-        try await builder.endCollection(at: endDate)
+        do {
+            try await builder.endCollection(at: endDate)
+        } catch {
+            SentrySDK.capture(error: error)
+            throw error
+        }
         guard let workout = try await builder.finishWorkout() else {
             return (nil, nil)
         }
@@ -89,7 +105,7 @@ final class HealthKitService {
                 quantitySamplePredicate: predicate,
                 options: .cumulativeSum
             ) { _, result, error in
-                if error != nil { cont.resume(returning: nil); return }
+                if let error { SentrySDK.capture(error: error); cont.resume(returning: nil); return }
                 let value = result?.sumQuantity()?.doubleValue(for: .kilocalorie())
                 cont.resume(returning: value)
             }
@@ -104,7 +120,7 @@ final class HealthKitService {
                 limit: HKObjectQueryNoLimit,
                 sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)]
             ) { _, samples, error in
-                if error != nil { cont.resume(returning: nil); return }
+                if let error { SentrySDK.capture(error: error); cont.resume(returning: nil); return }
                 guard let samples = samples as? [HKQuantitySample], !samples.isEmpty else {
                     cont.resume(returning: nil)
                     return
