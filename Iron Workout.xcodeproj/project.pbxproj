@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2F60ACDA2F65A7C400B0CB5C /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2C3D42E5F6789012345AC /* Sentry */; };
 		2F60ACDB2F65A7C400B0CB5C /* IAMJARLDesignTokens in Frameworks */ = {isa = PBXBuildFile; productRef = B2C3D42E5F6789012345AB02 /* IAMJARLDesignTokens */; };
+		2FC2F7D32F806938009E294F /* PhosphorSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 2F2546FC2F675BE400BB5A6C /* PhosphorSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,14 +33,16 @@
 		2F60AB682F64DAEC00B0CB5C /* Iron Workout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Iron Workout.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F60AB752F64DAF100B0CB5C /* Iron WorkoutTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Iron WorkoutTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F60AB7F2F64DAF100B0CB5C /* Iron WorkoutUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Iron WorkoutUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2F60ACDF2F65A7C800B0CB5C /* Iron Workout/Config/DeveloperSettings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Iron Workout/Config/DeveloperSettings.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		2F60ACDC2F65A7C500B0CB5C /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		2F60ACDC2F65A7C500B0CB5C /* Exceptions for "Iron Workout" folder in "Iron Workout" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Config/DeveloperSettings.xcconfig,
+				Config/Secrets.xcconfig,
 				Info.plist,
-				"Config/Secrets.xcconfig",
 			);
 			target = 2F60AB672F64DAEC00B0CB5C /* Iron Workout */;
 		};
@@ -49,7 +52,7 @@
 		2F60AB6A2F64DAEC00B0CB5C /* Iron Workout */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				2F60ACDC2F65A7C500B0CB5C /* PBXFileSystemSynchronizedBuildFileExceptionSet */,
+				2F60ACDC2F65A7C500B0CB5C /* Exceptions for "Iron Workout" folder in "Iron Workout" target */,
 			);
 			path = "Iron Workout";
 			sourceTree = "<group>";
@@ -71,6 +74,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2FC2F7D32F806938009E294F /* PhosphorSwift in Frameworks */,
 				2F60ACDA2F65A7C400B0CB5C /* Sentry in Frameworks */,
 				2F60ACDB2F65A7C400B0CB5C /* IAMJARLDesignTokens in Frameworks */,
 			);
@@ -96,6 +100,7 @@
 		2F60AB5F2F64DAEC00B0CB5C = {
 			isa = PBXGroup;
 			children = (
+				2F60ACDF2F65A7C800B0CB5C /* Iron Workout/Config/DeveloperSettings.xcconfig */,
 				2F60AB6A2F64DAEC00B0CB5C /* Iron Workout */,
 				2F60AB782F64DAF100B0CB5C /* Iron WorkoutTests */,
 				2F60AB822F64DAF100B0CB5C /* Iron WorkoutUITests */,
@@ -123,6 +128,7 @@
 				2F60AB642F64DAEC00B0CB5C /* Sources */,
 				2F60AB652F64DAEC00B0CB5C /* Frameworks */,
 				2F60AB662F64DAEC00B0CB5C /* Resources */,
+				2F60ACE02F65A7C900B0CB5C /* Upload debug symbols to Sentry */,
 			);
 			buildRules = (
 			);
@@ -195,7 +201,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2630;
-				LastUpgradeCheck = 2630;
+				LastUpgradeCheck = 2640;
 				TargetAttributes = {
 					2F60AB672F64DAEC00B0CB5C = {
 						CreatedOnToolsVersion = 26.3;
@@ -259,6 +265,29 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2F60ACE02F65A7C900B0CB5C /* Upload debug symbols to Sentry */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${EXECUTABLE_NAME}",
+			);
+			name = "Upload debug symbols to Sentry";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Scripts/sentry-upload-dsyms.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		2F60AB642F64DAEC00B0CB5C /* Sources */ = {
@@ -336,7 +365,7 @@
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -357,6 +386,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -400,7 +430,7 @@
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -414,6 +444,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -421,6 +452,7 @@
 		};
 		2F60AB8A2F64DAF100B0CB5C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2F60ACDF2F65A7C800B0CB5C /* Iron Workout/Config/DeveloperSettings.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -447,7 +479,6 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.iamjarl.Iron-Workout";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SENTRY_DSN = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -460,6 +491,7 @@
 		};
 		2F60AB8B2F64DAF100B0CB5C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2F60ACDF2F65A7C800B0CB5C /* Iron Workout/Config/DeveloperSettings.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -486,7 +518,6 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.iamjarl.Iron-Workout";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SENTRY_DSN = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -650,6 +681,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2F2546FC2F675BE400BB5A6C /* PhosphorSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F2546FB2F675BE400BB5A6C /* XCRemoteSwiftPackageReference "swift" */;
+			productName = PhosphorSwift;
+		};
 		A1B2C3D42E5F6789012345AC /* Sentry */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A1B2C3D42E5F6789012345AB /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
@@ -659,11 +695,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B2C3D42E5F6789012345AB01 /* XCRemoteSwiftPackageReference "iamjarl-design" */;
 			productName = IAMJARLDesignTokens;
-		};
-		2F2546FC2F675BE400BB5A6C /* PhosphorSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2F2546FB2F675BE400BB5A6C /* XCRemoteSwiftPackageReference "swift" */;
-			productName = PhosphorSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

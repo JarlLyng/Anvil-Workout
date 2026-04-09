@@ -79,6 +79,15 @@ struct SessionDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
+    private func colorForSetType(_ type: SetType) -> Color {
+        switch type {
+        case .working: return .primary
+        case .warmup: return .orange
+        case .drop: return .blue
+        case .failure: return .red
+        }
+    }
+
     private func setRow(set: PerformedSet) -> some View {
         HStack(spacing: 12) {
             Group {
@@ -98,8 +107,15 @@ struct SessionDetailView: View {
             .accessibilityLabel(set.isCompleted ? "Fuldført" : "Ikke fuldført")
             if set.isCompleted {
                 if let reps = set.actualReps {
-                    Text("Sæt \(set.setIndex + 1): \(reps) reps")
-                        .font(.subheadline)
+                    HStack(spacing: 4) {
+                        Text("Sæt \(set.setIndex + 1): \(reps) reps")
+                            .font(.subheadline)
+                        if set.setType != .working {
+                            Text("(\(set.setType.rawValue))")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(colorForSetType(set.setType))
+                        }
+                    }
                     if let w = set.actualWeight, w > 0 {
                         Text("· \(w.formatted(.number.precision(.fractionLength(1)))) kg")
                             .font(.subheadline)

@@ -1,0 +1,9 @@
+// Basisfil for target "Iron Workout". Committes til git.
+// Hemmeligheder lægges i Secrets.xcconfig (gitignored) — se Secrets.xcconfig.example
+
+SENTRY_DSN =
+SENTRY_AUTH_TOKEN =
+SENTRY_ORG =
+SENTRY_PROJECT = iron-workout-ios
+
+#include? "Secrets.xcconfig"

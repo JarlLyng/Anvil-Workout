@@ -44,9 +44,9 @@ do {
 
 Hemmeligheder (fx Sentry DSN) håndteres via `.xcconfig`-filer:
 
-1. Filen `Iron Workout/Config/Secrets.xcconfig` er **gitignored**.
-2. Der ligger en `Secrets.xcconfig.example` som template.
-3. Build settings læser fra xcconfig → Info.plist → koden læser fra `Bundle.main`.
+1. `Iron Workout/Config/DeveloperSettings.xcconfig` er committet og inkluderer valgfrit `Secrets.xcconfig` (gitignored).
+2. `Secrets.xcconfig.example` er skabelon — kopiér til `Secrets.xcconfig` lokalt.
+3. Build settings → Info.plist → koden læser DSN fra `Bundle.main`.
 
 Commit aldrig secrets til git.
 

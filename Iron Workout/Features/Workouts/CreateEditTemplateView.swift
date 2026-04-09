@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import PhosphorSwift
+import IAMJARLDesignTokens
 
 struct CreateEditTemplateView: View {
     @Environment(\.modelContext) private var modelContext
@@ -30,60 +31,8 @@ struct CreateEditTemplateView: View {
 
     var body: some View {
         Form {
-            Section("Program") {
-                TextField("Navn", text: $template.name)
-                    .font(.headline)
-                TextField("Note (valgfri)", text: $template.note, axis: .vertical)
-                    .lineLimit(2...4)
-                Toggle("Favorit", isOn: $template.isFavorite)
-            }
-
-            Section {
-                ForEach(sortedExercises, id: \.id) { item in
-                    Button {
-                        showEditExercise = item
-                    } label: {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(exerciseName(for: item.exerciseID))
-                                    .font(.subheadline.weight(.medium))
-                                    .foregroundStyle(.primary)
-                                Text("\(item.targetSets) sæt × \(item.targetReps) reps")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                if let w = item.targetWeight, w > 0 {
-                                    Text("\(w, specifier: "%.1f") kg")
-                                        .font(.caption2)
-                                        .foregroundStyle(.secondary)
-                                }
-                                if let r = item.restSeconds, r > 0 {
-                                    Text("\(r) sek rest")
-                                        .font(.caption2)
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                            Spacer()
-                            Ph.caretRight.regular
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 20, height: 20)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                }
-                .onDelete(perform: deleteExercises)
-                .onMove(perform: moveExercises)
-
-                Button {
-                    showExercisePicker = true
-                } label: {
-                    Label { Text("Tilføj øvelse") } icon: { Ph.plusCircle.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
-                }
-            } header: {
-                Text("Øvelser")
-            } footer: {
-                Text("Træk for at omrokere. Tryk på en øvelse for at redigere sæt, reps og rest.")
-            }
+            programSection
+            exercisesSection
         }
         .navigationTitle(template.name.isEmpty ? "Nyt program" : "Rediger program")
         .navigationBarTitleDisplayMode(.inline)
@@ -123,6 +72,83 @@ struct CreateEditTemplateView: View {
             Button("Behold", role: .cancel) { }
         } message: {
             Text("Programmet og alle øvelser i det slettes. Du kan ikke fortryde.")
+        }
+    }
+
+    @ViewBuilder
+    private var programSection: some View {
+        Section("Program") {
+            TextField("Navn", text: $template.name)
+                .font(.headline)
+            TextField("Note (valgfri)", text: $template.note, axis: .vertical)
+                .lineLimit(2...4)
+            Toggle("Favorit", isOn: $template.isFavorite)
+        }
+    }
+
+    @ViewBuilder
+    private var exercisesSection: some View {
+        Section {
+            ForEach(sortedExercises, id: \.id) { item in
+                Button {
+                    showEditExercise = item
+                } label: {
+                    TemplateExerciseRowLabel(
+                        item: item,
+                        exerciseTitle: exerciseName(for: item.exerciseID)
+                    )
+                }
+                .contextMenu {
+                        let sorted = sortedExercises
+                        if let idx = sorted.firstIndex(of: item), idx < sorted.count - 1 {
+                            let next = sorted[idx + 1]
+                            if item.supersetID != nil && item.supersetID == next.supersetID {
+                                Button("Fjern supersæt med næste øvelse") {
+                                    item.supersetID = nil
+                                    next.supersetID = nil
+                                    do { try modelContext.save() } catch { errorMessage = "Fejl: \(error)" }
+                                }
+                            } else {
+                                Button("Kobl i supersæt med næste øvelse") {
+                                    let id = item.supersetID ?? UUID()
+                                    item.supersetID = id
+                                    next.supersetID = id
+                                    do { try modelContext.save() } catch { errorMessage = "Fejl: \(error)" }
+                                }
+                            }
+                        }
+                        if item.supersetID != nil {
+                            Button("Fritstille fra supersæt") {
+                                item.supersetID = nil
+                                do { try modelContext.save() } catch { errorMessage = "Fejl: \(error)" }
+                            }
+                        }
+                    }
+                }
+                .onDelete(perform: deleteExercises)
+                .onMove(perform: moveExercises)
+
+                addExerciseButton
+            } header: {
+                Text("Øvelser")
+            } footer: {
+                Text("Træk for at omrokere. Tryk på en øvelse for at redigere sæt, reps og rest.")
+            }
+    }
+
+    @ViewBuilder
+    private var addExerciseButton: some View {
+        Button {
+            showExercisePicker = true
+        } label: {
+            Label {
+                Text("Tilføj øvelse")
+            } icon: {
+                Ph.plusCircle.fill
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 20, height: 20)
+            }
         }
     }
 
@@ -166,5 +192,60 @@ struct CreateEditTemplateView: View {
         for (i, item) in sorted.enumerated() {
             item.sortOrder = i
         }
+    }
+}
+
+// MARK: - Underkomponenter (lettere type-check for compileren)
+
+private struct TemplateExerciseRowLabel: View {
+    let item: WorkoutTemplateExercise
+    let exerciseTitle: String
+
+    var body: some View {
+        HStack {
+            if item.supersetID != nil {
+                supersetLinkIcon
+            }
+            exerciseMetaColumn
+            Spacer()
+            disclosureChevron
+        }
+    }
+
+    private var supersetLinkIcon: some View {
+        Ph.link.bold
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 16, height: 16)
+            .foregroundStyle(DesignTokens.ColorToken.State.warning)
+    }
+
+    private var exerciseMetaColumn: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(exerciseTitle)
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(.primary)
+            Text("\(item.targetSets) sæt × \(item.targetReps) reps")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            if let w = item.targetWeight, w > 0 {
+                Text("\(w, specifier: "%.1f") kg")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            if let r = item.restSeconds, r > 0 {
+                Text("\(r) sek rest")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var disclosureChevron: some View {
+        Ph.caretRight.regular
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 20, height: 20)
+            .foregroundStyle(.secondary)
     }
 }

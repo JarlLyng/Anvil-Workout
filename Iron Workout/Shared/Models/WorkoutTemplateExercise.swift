@@ -18,6 +18,7 @@ final class WorkoutTemplateExercise: Identifiable {
     var targetWeight: Double?
     var restSeconds: Int?
     var note: String
+    var supersetID: UUID?
 
     var template: WorkoutTemplate?
 
@@ -28,8 +29,9 @@ final class WorkoutTemplateExercise: Identifiable {
         targetSets: Int = 3,
         targetReps: Int = 10,
         targetWeight: Double? = nil,
-        restSeconds: Int? = nil,
-        note: String = ""
+        restSeconds: Int? = 90,
+        note: String = "",
+        supersetID: UUID? = nil
     ) {
         self.id = id
         self.exerciseID = exerciseID
@@ -39,5 +41,6 @@ final class WorkoutTemplateExercise: Identifiable {
         self.targetWeight = targetWeight
         self.restSeconds = restSeconds
         self.note = note
+        self.supersetID = supersetID
     }
 }

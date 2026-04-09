@@ -11,6 +11,8 @@ import SwiftData
 struct EditTemplateExerciseSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Bindable var templateExercise: WorkoutTemplateExercise
+    
+    @FocusState private var isInputActive: Bool
 
     var body: some View {
         NavigationStack {
@@ -24,6 +26,7 @@ struct EditTemplateExerciseSheet: View {
                         TextField("Valgfri", value: $templateExercise.targetWeight, format: .number.precision(.fractionLength(1)))
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
+                            .focused($isInputActive)
                     }
                 }
                 Section("Rest") {
@@ -33,6 +36,7 @@ struct EditTemplateExerciseSheet: View {
                         TextField("Valgfri", value: $templateExercise.restSeconds, format: .number)
                             .keyboardType(.numberPad)
                             .multilineTextAlignment(.trailing)
+                            .focused($isInputActive)
                     }
                 }
                 Section("Note") {
@@ -45,6 +49,12 @@ struct EditTemplateExerciseSheet: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }
+                }
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Færdig") {
+                        isInputActive = false
+                    }
                 }
             }
         }

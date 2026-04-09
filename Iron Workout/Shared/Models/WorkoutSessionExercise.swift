@@ -16,6 +16,7 @@ final class WorkoutSessionExercise: Identifiable {
     var note: String
     /// Rest i sekunder efter hvert sæt (fra skabelon).
     var restSeconds: Int?
+    var supersetID: UUID?
 
     @Relationship(deleteRule: .cascade, inverse: \PerformedSet.sessionExercise)
     var performedSets: [PerformedSet] = []
@@ -28,6 +29,7 @@ final class WorkoutSessionExercise: Identifiable {
         sortOrder: Int,
         note: String = "",
         restSeconds: Int? = nil,
+        supersetID: UUID? = nil,
         performedSets: [PerformedSet] = []
     ) {
         self.id = id
@@ -35,6 +37,7 @@ final class WorkoutSessionExercise: Identifiable {
         self.sortOrder = sortOrder
         self.note = note
         self.restSeconds = restSeconds
+        self.supersetID = supersetID
         self.performedSets = performedSets
     }
 }

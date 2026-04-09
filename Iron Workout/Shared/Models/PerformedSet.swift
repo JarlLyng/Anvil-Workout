@@ -8,6 +8,13 @@
 import Foundation
 import SwiftData
 
+enum SetType: String, Codable, CaseIterable {
+    case working = "Arbejdssæt"
+    case warmup = "Opvarmning"
+    case drop = "Dropsæt"
+    case failure = "Failure"
+}
+
 @Model
 final class PerformedSet: Identifiable {
     var id: UUID
@@ -18,6 +25,12 @@ final class PerformedSet: Identifiable {
     var actualWeight: Double?
     var isCompleted: Bool
     var completedAt: Date?
+    var setTypeRaw: String = SetType.working.rawValue
+
+    var setType: SetType {
+        get { SetType(rawValue: setTypeRaw) ?? .working }
+        set { setTypeRaw = newValue.rawValue }
+    }
 
     var sessionExercise: WorkoutSessionExercise?
 

@@ -13,6 +13,7 @@ struct ExercisesView: View {
     @Query(sort: \Exercise.name) private var exercises: [Exercise]
     @State private var searchText = ""
     @State private var selectedMuscleGroup: MuscleGroup?
+    @State private var showCreateSheet = false
 
     private var filteredExercises: [Exercise] {
         var result = exercises
@@ -58,18 +59,34 @@ struct ExercisesView: View {
             .searchable(text: $searchText, prompt: "Søg øvelser")
             .navigationTitle("Øvelser")
             .toolbar {
-                Menu {
-                    Button("Alle grupper") { selectedMuscleGroup = nil }
-                    ForEach(MuscleGroup.allCases, id: \.self) { group in
-                        Button(group.rawValue) { selectedMuscleGroup = group }
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        showCreateSheet = true
+                    } label: {
+                        Ph.plusCircle.fill
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 24, height: 24)
+                            .accessibilityLabel("Opret øvelse")
                     }
-                } label: {
-                    Ph.funnelSimple.regular
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 24, height: 24)
-                        .accessibilityLabel("Filtrer muskelgrupper")
                 }
+                ToolbarItem(placement: .topBarLeading) {
+                    Menu {
+                        Button("Alle grupper") { selectedMuscleGroup = nil }
+                        ForEach(MuscleGroup.allCases, id: \.self) { group in
+                            Button(group.rawValue) { selectedMuscleGroup = group }
+                        }
+                    } label: {
+                        Ph.funnelSimple.regular
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 24, height: 24)
+                            .accessibilityLabel("Filtrer muskelgrupper")
+                    }
+                }
+            }
+            .sheet(isPresented: $showCreateSheet) {
+                CreateExerciseSheet()
             }
         }
     }
