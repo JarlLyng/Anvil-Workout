@@ -13,6 +13,7 @@ import PhosphorSwift
 
 struct ActiveWorkoutView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.colorScheme) private var colorScheme
     @Bindable var session: WorkoutSession
     var onComplete: () -> Void
     var onEndWorkout: () -> Void
@@ -251,7 +252,7 @@ struct ActiveWorkoutView: View {
                     VStack(alignment: .leading, spacing: 16) {
                         HStack {
                             Text(exercise.exerciseName)
-                                .font(.title2.bold())
+                                .font(.title3.weight(.semibold))
                             Spacer()
                             Button("Spring over") {
                                 skipExercise(exercise)
@@ -283,9 +284,9 @@ struct ActiveWorkoutView: View {
     private func colorForSetType(_ type: SetType) -> Color {
         switch type {
         case .working: return .primary
-        case .warmup: return .orange
-        case .drop: return .blue
-        case .failure: return .red
+        case .warmup: return DesignTokens.ColorToken.State.warning
+        case .drop: return DesignTokens.Common.primary(colorScheme)
+        case .failure: return DesignTokens.ColorToken.State.error
         }
     }
 
@@ -356,17 +357,19 @@ struct ActiveWorkoutView: View {
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
-                HStack(spacing: 8) {
+                HStack(spacing: DesignTokens.Spacing.sm) {
                     Button("Skip") { markSetSkipped(set, exercise: exercise) }
                         .buttonStyle(.bordered)
+                        .controlSize(.regular)
                     Button("Færdig") { markSetDone(set, exercise: exercise) }
                         .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
                 }
             }
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
+        .padding(.vertical, DesignTokens.Spacing.md)
+        .padding(.horizontal, DesignTokens.Spacing.lg)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
     }
 
     private var nextBlockPreview: some View {
@@ -437,7 +440,9 @@ struct ActiveWorkoutView: View {
         set.actualWeight = nil
         session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
         do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
-        
+
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+
         startRestIfNeeded(exercise: exercise)
         if restSecondsRemaining == nil { advanceToNextBlockIfNeeded() }
     }
@@ -484,6 +489,7 @@ struct ActiveWorkoutView: View {
         stopRestTimer()
         isPaused = true
         pausedAt = Date()
+        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
     }
 
     private func resumeWorkout() {
@@ -492,6 +498,7 @@ struct ActiveWorkoutView: View {
         }
         pausedAt = nil
         isPaused = false
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
     }
 
     private func startRestIfNeeded(exercise: WorkoutSessionExercise) {
@@ -505,6 +512,7 @@ struct ActiveWorkoutView: View {
             if restSecondsRemaining == nil {
                 restTimer?.invalidate()
                 restTimer = nil
+                UINotificationFeedbackGenerator().notificationOccurred(.success)
                 advanceToNextBlockIfNeeded()
             }
         }
@@ -519,6 +527,7 @@ struct ActiveWorkoutView: View {
 
     private func endWorkout() {
         stopRestTimer()
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
         let context = modelContext
         Task {
             let health = HealthKitService.shared

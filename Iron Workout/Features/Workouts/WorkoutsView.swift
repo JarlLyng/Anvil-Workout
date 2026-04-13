@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import PhosphorSwift
+import IAMJARLDesignTokens
 
 struct WorkoutsView: View {
     @Environment(\.modelContext) private var modelContext
@@ -31,11 +32,11 @@ struct WorkoutsView: View {
                     }
                 } else {
                     ScrollView {
-                        VStack(spacing: 16) {
+                        VStack(spacing: DesignTokens.Spacing.lg) {
                             ForEach(templates) { template in
                                 NavigationLink(value: template) {
                                     HStack {
-                                        VStack(alignment: .leading, spacing: 6) {
+                                        VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
                                             Text(template.name.isEmpty ? "Uden navn" : template.name)
                                                 .font(.headline)
                                                 .foregroundStyle(.primary)
@@ -51,7 +52,7 @@ struct WorkoutsView: View {
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fit)
                                                 .frame(width: 20, height: 20)
-                                                .foregroundStyle(.yellow)
+                                                .foregroundStyle(DesignTokens.ColorToken.State.warning)
                                                 .accessibilityLabel("Favorit")
                                         } else {
                                             Ph.caretRight.regular
@@ -61,8 +62,8 @@ struct WorkoutsView: View {
                                                 .foregroundStyle(.secondary)
                                         }
                                     }
-                                    .padding()
-                                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
+                                    .padding(DesignTokens.Spacing.lg)
+                                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
                                 }
                                 .buttonStyle(.plain)
                                 .contextMenu {

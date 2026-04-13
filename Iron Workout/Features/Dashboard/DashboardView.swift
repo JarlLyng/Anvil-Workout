@@ -62,7 +62,7 @@ struct DashboardView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: DesignTokens.Spacing.xxl) {
                     greetingSection
                     metricsSection
                     quickStartSection
@@ -96,11 +96,11 @@ struct DashboardView: View {
                 .frame(width: 50, height: 50)
                 .foregroundStyle(Color.primary.opacity(0.8))
         }
-        .padding(.top, 16)
+        .padding(.top, DesignTokens.Spacing.lg)
     }
-    
+
     private var metricsSection: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: DesignTokens.Spacing.lg) {
             dashboardCard(
                 title: "Pas i denne uge",
                 value: "\(thisWeekSessions)",
@@ -118,18 +118,18 @@ struct DashboardView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 24, height: 24)
-                    .foregroundStyle(.orange)
+                    .foregroundStyle(DesignTokens.ColorToken.State.warning)
             )
         }
     }
     
     private func dashboardCard<Icon: View>(title: String, value: String, icon: Icon) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
             HStack {
                 icon
                 Spacer()
             }
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                 Text(value)
                     .font(.title2.bold())
                 Text(title)
@@ -137,19 +137,19 @@ struct DashboardView: View {
                     .foregroundStyle(.secondary)
             }
         }
-        .padding()
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
+        .padding(DesignTokens.Spacing.lg)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
     }
     
     private var quickStartSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
             Text("Anbefalet til dig")
                 .font(.title2.bold())
             
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
                 if let rec = recommendedTemplate {
                     HStack {
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                             Text(rec.name)
                                 .font(.headline)
                             Text(lastWorkoutText)
@@ -181,8 +181,8 @@ struct DashboardView: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            .padding()
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
+            .padding(DesignTokens.Spacing.lg)
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
         }
     }
     

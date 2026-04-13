@@ -11,6 +11,7 @@ import IAMJARLDesignTokens
 import PhosphorSwift
 
 struct SessionDetailView: View {
+    @Environment(\.colorScheme) private var colorScheme
     var session: WorkoutSession
 
     private var durationText: String {
@@ -82,9 +83,9 @@ struct SessionDetailView: View {
     private func colorForSetType(_ type: SetType) -> Color {
         switch type {
         case .working: return .primary
-        case .warmup: return .orange
-        case .drop: return .blue
-        case .failure: return .red
+        case .warmup: return DesignTokens.ColorToken.State.warning
+        case .drop: return DesignTokens.Common.primary(colorScheme)
+        case .failure: return DesignTokens.ColorToken.State.error
         }
     }
 

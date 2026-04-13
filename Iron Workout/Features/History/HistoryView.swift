@@ -25,7 +25,7 @@ struct HistoryView: View {
                 } else {
                     List(sessions) { session in
                         NavigationLink(value: session) {
-                            VStack(alignment: .leading, spacing: 6) {
+                            VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
                                 HStack {
                                     Text(session.templateName)
                                         .font(.headline)
@@ -34,7 +34,7 @@ struct HistoryView: View {
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                 }
-                                HStack(spacing: 16) {
+                                HStack(spacing: DesignTokens.Spacing.lg) {
                                     Label { Text("\(session.exerciseCount) øvelser") } icon: { Ph.listBullets.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 16, height: 16) }
                                     Label { Text("\(session.completedSetCount) sæt") } icon: { Ph.checkCircle.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 16, height: 16) }
                                     if session.durationSeconds > 0 {
@@ -44,7 +44,7 @@ struct HistoryView: View {
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                                 if session.calories != nil || session.averageHeartRate != nil {
-                                    HStack(spacing: 12) {
+                                    HStack(spacing: DesignTokens.Spacing.md) {
                                         if let cal = session.calories, cal > 0 {
                                             Label { Text("\(Int(cal)) kcal") } icon: { Ph.flame.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 14, height: 14) }
                                                 .font(.caption2)
@@ -58,7 +58,7 @@ struct HistoryView: View {
                                     }
                                 }
                             }
-                            .padding(.vertical, 2)
+                            .padding(.vertical, DesignTokens.Spacing.xs)
                         }
                     }
                 }
