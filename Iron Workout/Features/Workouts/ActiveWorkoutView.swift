@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import UIKit
+import ActivityKit
 import IAMJARLDesignTokens
 import PhosphorSwift
 
@@ -138,6 +139,7 @@ struct ActiveWorkoutView: View {
             }
             .onAppear {
                 startHealthKitIfAvailable()
+                startLiveActivity()
             }
             .onDisappear {
                 stopRestTimer()
@@ -161,6 +163,32 @@ struct ActiveWorkoutView: View {
             try? await health.requestAuthorization()
             try? await health.startWorkout(startDate: session.startedAt)
         }
+    }
+
+    // MARK: - Live Activity
+
+    private func startLiveActivity() {
+        let totalSets = session.exercises.flatMap(\.performedSets).count
+        let currentExerciseName = currentBlock?.first?.exerciseName ?? session.templateName
+        LiveActivityService.startLiveActivity(
+            templateName: session.templateName,
+            startedAt: session.startedAt,
+            currentExercise: currentExerciseName,
+            totalSets: totalSets
+        )
+    }
+
+    private func updateLiveActivity() {
+        let totalSets = session.exercises.flatMap(\.performedSets).count
+        let currentExerciseName = currentBlock?.first?.exerciseName ?? "Færdig"
+        let elapsed = elapsedSeconds(at: .now)
+        LiveActivityService.updateLiveActivity(
+            currentExercise: currentExerciseName,
+            completedSets: session.completedSetCount,
+            totalSets: totalSets,
+            elapsedSeconds: elapsed,
+            isPaused: isPaused
+        )
     }
 
     private var timerBar: some View {
@@ -450,7 +478,8 @@ struct ActiveWorkoutView: View {
         do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
         
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        
+        updateLiveActivity()
+
         startRestIfNeeded(exercise: exercise)
         if restSecondsRemaining == nil { advanceToNextBlockIfNeeded() }
     }
@@ -466,6 +495,7 @@ struct ActiveWorkoutView: View {
         do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
 
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        updateLiveActivity()
 
         startRestIfNeeded(exercise: exercise)
         if restSecondsRemaining == nil { advanceToNextBlockIfNeeded() }
@@ -514,6 +544,7 @@ struct ActiveWorkoutView: View {
         isPaused = true
         pausedAt = Date()
         UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+        updateLiveActivity()
     }
 
     private func resumeWorkout() {
@@ -523,6 +554,7 @@ struct ActiveWorkoutView: View {
         pausedAt = nil
         isPaused = false
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        updateLiveActivity()
     }
 
     private func startRestIfNeeded(exercise: WorkoutSessionExercise) {
@@ -553,6 +585,16 @@ struct ActiveWorkoutView: View {
     private func endWorkout() {
         stopRestTimer()
         UINotificationFeedbackGenerator().notificationOccurred(.success)
+
+        // Afslut Live Activity
+        let totalSets = session.exercises.flatMap(\.performedSets).count
+        let elapsed = elapsedSeconds(at: .now)
+        LiveActivityService.endLiveActivity(
+            completedSets: session.completedSetCount,
+            totalSets: totalSets,
+            elapsedSeconds: elapsed
+        )
+
         let context = modelContext
         Task {
             let health = HealthKitService.shared

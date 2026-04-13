@@ -7,12 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F0B866C2F8DAB4400078716 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F0B866B2F8DAB4300078716 /* WidgetKit.framework */; };
+		2F0B866E2F8DAB4400078716 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F0B866D2F8DAB4400078716 /* SwiftUI.framework */; };
+		2F0B867F2F8DAB4700078716 /* IronWorkoutWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2F0B86692F8DAB4300078716 /* IronWorkoutWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		2F60ACDA2F65A7C400B0CB5C /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2C3D42E5F6789012345AC /* Sentry */; };
 		2F60ACDB2F65A7C400B0CB5C /* IAMJARLDesignTokens in Frameworks */ = {isa = PBXBuildFile; productRef = B2C3D42E5F6789012345AB02 /* IAMJARLDesignTokens */; };
 		2FC2F7D32F806938009E294F /* PhosphorSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 2F2546FC2F675BE400BB5A6C /* PhosphorSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		2F0B867D2F8DAB4700078716 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2F60AB602F64DAEC00B0CB5C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2F0B86682F8DAB4300078716;
+			remoteInfo = IronWorkoutWidgetExtension;
+		};
 		2F60AB762F64DAF100B0CB5C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 2F60AB602F64DAEC00B0CB5C /* Project object */;
@@ -29,7 +39,25 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		2F0B86842F8DAB4700078716 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				2F0B867F2F8DAB4700078716 /* IronWorkoutWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		2F0B86692F8DAB4300078716 /* IronWorkoutWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = IronWorkoutWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		2F0B866B2F8DAB4300078716 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		2F0B866D2F8DAB4400078716 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		2F0B86852F8DABF800078716 /* IronWorkoutWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = IronWorkoutWidgetExtension.entitlements; sourceTree = "<group>"; };
 		2F60AB682F64DAEC00B0CB5C /* Iron Workout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Iron Workout.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F60AB752F64DAF100B0CB5C /* Iron WorkoutTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Iron WorkoutTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F60AB7F2F64DAF100B0CB5C /* Iron WorkoutUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Iron WorkoutUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -37,6 +65,23 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2F0B86832F8DAB4700078716 /* Exceptions for "IronWorkoutWidget" folder in "IronWorkoutWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 2F0B86682F8DAB4300078716 /* IronWorkoutWidgetExtension */;
+		};
+		2F0B86872F8DAD5200078716 /* Exceptions for "Iron Workout" folder in "IronWorkoutWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Shared/Models/Exercise.swift,
+				Shared/Models/PerformedSet.swift,
+				Shared/Models/WorkoutSession.swift,
+				Shared/Models/WorkoutSessionExercise.swift,
+			);
+			target = 2F0B86682F8DAB4300078716 /* IronWorkoutWidgetExtension */;
+		};
 		2F60ACDC2F65A7C500B0CB5C /* Exceptions for "Iron Workout" folder in "Iron Workout" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -49,10 +94,19 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		2F0B866F2F8DAB4400078716 /* IronWorkoutWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2F0B86832F8DAB4700078716 /* Exceptions for "IronWorkoutWidget" folder in "IronWorkoutWidgetExtension" target */,
+			);
+			path = IronWorkoutWidget;
+			sourceTree = "<group>";
+		};
 		2F60AB6A2F64DAEC00B0CB5C /* Iron Workout */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				2F60ACDC2F65A7C500B0CB5C /* Exceptions for "Iron Workout" folder in "Iron Workout" target */,
+				2F0B86872F8DAD5200078716 /* Exceptions for "Iron Workout" folder in "IronWorkoutWidgetExtension" target */,
 			);
 			path = "Iron Workout";
 			sourceTree = "<group>";
@@ -70,6 +124,15 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		2F0B86662F8DAB4300078716 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2F0B866E2F8DAB4400078716 /* SwiftUI.framework in Frameworks */,
+				2F0B866C2F8DAB4400078716 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2F60AB652F64DAEC00B0CB5C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -97,13 +160,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2F0B866A2F8DAB4300078716 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2F0B866B2F8DAB4300078716 /* WidgetKit.framework */,
+				2F0B866D2F8DAB4400078716 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		2F60AB5F2F64DAEC00B0CB5C = {
 			isa = PBXGroup;
 			children = (
+				2F0B86852F8DABF800078716 /* IronWorkoutWidgetExtension.entitlements */,
 				2F60ACDF2F65A7C800B0CB5C /* Iron Workout/Config/DeveloperSettings.xcconfig */,
 				2F60AB6A2F64DAEC00B0CB5C /* Iron Workout */,
 				2F60AB782F64DAF100B0CB5C /* Iron WorkoutTests */,
 				2F60AB822F64DAF100B0CB5C /* Iron WorkoutUITests */,
+				2F0B866F2F8DAB4400078716 /* IronWorkoutWidget */,
+				2F0B866A2F8DAB4300078716 /* Frameworks */,
 				2F60AB692F64DAEC00B0CB5C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -114,6 +189,7 @@
 				2F60AB682F64DAEC00B0CB5C /* Iron Workout.app */,
 				2F60AB752F64DAF100B0CB5C /* Iron WorkoutTests.xctest */,
 				2F60AB7F2F64DAF100B0CB5C /* Iron WorkoutUITests.xctest */,
+				2F0B86692F8DAB4300078716 /* IronWorkoutWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -121,6 +197,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		2F0B86682F8DAB4300078716 /* IronWorkoutWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2F0B86802F8DAB4700078716 /* Build configuration list for PBXNativeTarget "IronWorkoutWidgetExtension" */;
+			buildPhases = (
+				2F0B86652F8DAB4300078716 /* Sources */,
+				2F0B86662F8DAB4300078716 /* Frameworks */,
+				2F0B86672F8DAB4300078716 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				2F0B866F2F8DAB4400078716 /* IronWorkoutWidget */,
+			);
+			name = IronWorkoutWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = IronWorkoutWidgetExtension;
+			productReference = 2F0B86692F8DAB4300078716 /* IronWorkoutWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		2F60AB672F64DAEC00B0CB5C /* Iron Workout */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2F60AB892F64DAF100B0CB5C /* Build configuration list for PBXNativeTarget "Iron Workout" */;
@@ -129,10 +227,12 @@
 				2F60AB652F64DAEC00B0CB5C /* Frameworks */,
 				2F60AB662F64DAEC00B0CB5C /* Resources */,
 				2F60ACE02F65A7C900B0CB5C /* Upload debug symbols to Sentry */,
+				2F0B86842F8DAB4700078716 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				2F0B867E2F8DAB4700078716 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				2F60AB6A2F64DAEC00B0CB5C /* Iron Workout */,
@@ -200,9 +300,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2630;
+				LastSwiftUpdateCheck = 2640;
 				LastUpgradeCheck = 2640;
 				TargetAttributes = {
+					2F0B86682F8DAB4300078716 = {
+						CreatedOnToolsVersion = 26.4;
+					};
 					2F60AB672F64DAEC00B0CB5C = {
 						CreatedOnToolsVersion = 26.3;
 					};
@@ -238,11 +341,19 @@
 				2F60AB672F64DAEC00B0CB5C /* Iron Workout */,
 				2F60AB742F64DAF100B0CB5C /* Iron WorkoutTests */,
 				2F60AB7E2F64DAF100B0CB5C /* Iron WorkoutUITests */,
+				2F0B86682F8DAB4300078716 /* IronWorkoutWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		2F0B86672F8DAB4300078716 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2F60AB662F64DAEC00B0CB5C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -290,6 +401,13 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		2F0B86652F8DAB4300078716 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2F60AB642F64DAEC00B0CB5C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -314,6 +432,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		2F0B867E2F8DAB4700078716 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2F0B86682F8DAB4300078716 /* IronWorkoutWidgetExtension */;
+			targetProxy = 2F0B867D2F8DAB4700078716 /* PBXContainerItemProxy */;
+		};
 		2F60AB772F64DAF100B0CB5C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2F60AB672F64DAEC00B0CB5C /* Iron Workout */;
@@ -327,6 +450,72 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		2F0B86812F8DAB4700078716 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = IronWorkoutWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KDWZ3WNLDK;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = IronWorkoutWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = IronWorkoutWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iamjarl.Iron-Workout.IronWorkoutWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		2F0B86822F8DAB4700078716 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = IronWorkoutWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KDWZ3WNLDK;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = IronWorkoutWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = IronWorkoutWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iamjarl.Iron-Workout.IronWorkoutWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		2F60AB872F64DAF100B0CB5C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -615,6 +804,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		2F0B86802F8DAB4700078716 /* Build configuration list for PBXNativeTarget "IronWorkoutWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2F0B86812F8DAB4700078716 /* Debug */,
+				2F0B86822F8DAB4700078716 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		2F60AB632F64DAEC00B0CB5C /* Build configuration list for PBXProject "Iron Workout" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

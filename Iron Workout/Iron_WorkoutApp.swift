@@ -42,7 +42,10 @@ struct Iron_WorkoutApp: App {
             WorkoutSessionExercise.self,
             PerformedSet.self,
         ])
-        let config = ModelConfiguration(isStoredInMemoryOnly: false)
+        let config = ModelConfiguration(
+            isStoredInMemoryOnly: false,
+            groupContainer: .identifier("group.com.iamjarl.Iron-Workout")
+        )
         do {
             return try ModelContainer(for: schema, configurations: [config])
         } catch {
