@@ -4,6 +4,9 @@
 
 set -u
 
+# Xcode har begrænset PATH — tilføj Homebrew så sentry-cli kan findes.
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+
 if [ "${CONFIGURATION:-}" != "Release" ]; then
   exit 0
 fi
