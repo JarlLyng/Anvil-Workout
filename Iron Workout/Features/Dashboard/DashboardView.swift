@@ -33,6 +33,41 @@ struct DashboardView: View {
         let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: .now)?.start ?? .now
         return sessions.filter { $0.startedAt >= startOfWeek && $0.completedSetCount > 0 }.count
     }
+
+    private var lastWeekSessions: Int {
+        let calendar = Calendar.current
+        let thisWeekStart = calendar.dateInterval(of: .weekOfYear, for: .now)?.start ?? .now
+        let lastWeekStart = calendar.date(byAdding: .weekOfYear, value: -1, to: thisWeekStart) ?? thisWeekStart
+        return sessions.filter { $0.startedAt >= lastWeekStart && $0.startedAt < thisWeekStart && $0.completedSetCount > 0 }.count
+    }
+
+    private var currentStreak: Int {
+        let calendar = Calendar.current
+        let completedSessions = sessions.filter { $0.completedSetCount > 0 }
+
+        var streak = 0
+        var checkDate = Date.now
+
+        // If no session today, start checking from yesterday
+        let todayStart = calendar.startOfDay(for: checkDate)
+        let hasTodaySession = completedSessions.contains { calendar.isDate($0.startedAt, inSameDayAs: todayStart) }
+        if !hasTodaySession {
+            checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate
+        }
+
+        while true {
+            let dayStart = calendar.startOfDay(for: checkDate)
+            let hasSession = completedSessions.contains { calendar.isDate($0.startedAt, inSameDayAs: dayStart) }
+            if hasSession {
+                streak += 1
+                checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate
+            } else {
+                break
+            }
+        }
+
+        return streak
+    }
     
     private var lastWorkoutText: String {
         guard let last = sessions.first(where: { $0.completedSetCount > 0 }) else { return "Ingen historie endnu" }
@@ -100,26 +135,50 @@ struct DashboardView: View {
     }
 
     private var metricsSection: some View {
-        HStack(spacing: DesignTokens.Spacing.lg) {
-            dashboardCard(
-                title: "Pas i denne uge",
-                value: "\(thisWeekSessions)",
-                icon: Ph.calendarCheck.fill
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 24, height: 24)
-                    .foregroundStyle(DesignTokens.ColorToken.State.success)
-            )
-            
-            dashboardCard(
-                title: "Totale Pæs",
-                value: "\(sessions.filter({ $0.completedSetCount > 0 }).count)",
-                icon: Ph.trophy.fill
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 24, height: 24)
-                    .foregroundStyle(DesignTokens.ColorToken.State.warning)
-            )
+        VStack(spacing: DesignTokens.Spacing.lg) {
+            HStack(spacing: DesignTokens.Spacing.lg) {
+                dashboardCard(
+                    title: "Pas i denne uge",
+                    value: "\(thisWeekSessions)",
+                    icon: Ph.calendarCheck.fill
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 24, height: 24)
+                        .foregroundStyle(DesignTokens.ColorToken.State.success)
+                )
+
+                dashboardCard(
+                    title: "Forrige uge",
+                    value: "\(lastWeekSessions)",
+                    icon: Ph.clockCounterClockwise.regular
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 24, height: 24)
+                        .foregroundStyle(.secondary)
+                )
+            }
+
+            HStack(spacing: DesignTokens.Spacing.lg) {
+                dashboardCard(
+                    title: "Streak",
+                    value: "\(currentStreak) dage",
+                    icon: Ph.flame.fill
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 24, height: 24)
+                        .foregroundStyle(DesignTokens.ColorToken.State.error)
+                )
+
+                dashboardCard(
+                    title: "Totale pas",
+                    value: "\(sessions.filter({ $0.completedSetCount > 0 }).count)",
+                    icon: Ph.trophy.fill
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 24, height: 24)
+                        .foregroundStyle(DesignTokens.ColorToken.State.warning)
+                )
+            }
         }
     }
     

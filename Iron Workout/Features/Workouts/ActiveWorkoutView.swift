@@ -29,6 +29,7 @@ struct ActiveWorkoutView: View {
     @State private var pausedAt: Date?
     @State private var totalPausedSeconds: Int = 0
     @State private var errorMessage: String?
+    @State private var restTotalSeconds: Int = 0
 
     private var sortedExercises: [WorkoutSessionExercise] {
         session.exercises.sorted { $0.sortOrder < $1.sortOrder }
@@ -218,20 +219,43 @@ struct ActiveWorkoutView: View {
     }
 
     private func restBar(seconds: Int) -> some View {
-        HStack {
-            Ph.pauseCircle.fill
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 20, height: 20)
-                .foregroundStyle(DesignTokens.ColorToken.State.warning)
-            Text("Rest: \(seconds) sek")
-                .font(.headline.monospacedDigit())
-            Spacer()
-            Button("Næste") {
-                stopRestTimer()
-                advanceToNextBlockIfNeeded()
+        let progress = CGFloat(seconds) / CGFloat(max(restTotalSeconds, 1))
+        return HStack(spacing: 16) {
+            ZStack {
+                Circle()
+                    .stroke(DesignTokens.ColorToken.State.warning.opacity(0.3), lineWidth: 6)
+                Circle()
+                    .trim(from: 0, to: progress)
+                    .stroke(DesignTokens.ColorToken.State.warning, style: StrokeStyle(lineWidth: 6, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                    .animation(.linear(duration: 1), value: progress)
+                VStack(spacing: 2) {
+                    Text("\(seconds)")
+                        .font(.title.monospacedDigit().bold())
+                    Text("Hvil")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
             }
-            .buttonStyle(.borderedProminent)
+            .frame(width: 64, height: 64)
+
+            Spacer()
+
+            VStack(spacing: 8) {
+                Button("+30 sek") {
+                    restTotalSeconds += 30
+                    restSecondsRemaining = (restSecondsRemaining ?? 0) + 30
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+
+                Button("Næste") {
+                    stopRestTimer()
+                    advanceToNextBlockIfNeeded()
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.regular)
+            }
         }
         .padding()
         .background(DesignTokens.ColorToken.State.warning.opacity(0.15))
@@ -503,6 +527,7 @@ struct ActiveWorkoutView: View {
 
     private func startRestIfNeeded(exercise: WorkoutSessionExercise) {
         guard let rest = exercise.restSeconds, rest > 0 else { return }
+        restTotalSeconds = rest
         restSecondsRemaining = rest
         restTimer?.invalidate()
         restTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in

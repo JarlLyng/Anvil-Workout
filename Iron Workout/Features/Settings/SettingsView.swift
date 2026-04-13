@@ -12,6 +12,7 @@ import PhosphorSwift
 
 struct SettingsView: View {
     private let health = HealthKitService.shared
+    @AppStorage("weightUnit") private var weightUnit: String = "kg"
     @State private var requestInProgress = false
     @State private var message: String?
     @State private var messageIsError = false
@@ -19,6 +20,48 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
+                Section {
+                    HStack {
+                        Ph.scales.regular
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(.secondary)
+                        Picker("Vægtenhed", selection: $weightUnit) {
+                            Text("kg").tag("kg")
+                            Text("lbs").tag("lbs")
+                        }
+                        .pickerStyle(.segmented)
+                    }
+                } header: {
+                    Text("Enheder")
+                }
+
+                Section {
+                    HStack {
+                        Ph.info.regular
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(.secondary)
+                        Text("Iron Workout")
+                        Spacer()
+                        Text("\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"))")
+                            .foregroundStyle(.secondary)
+                    }
+                    HStack {
+                        Ph.code.regular
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(.secondary)
+                        Text("Udviklet af Jarl Lyng")
+                            .foregroundStyle(.secondary)
+                    }
+                } header: {
+                    Text("Om")
+                }
+
                 Section {
                     if health.isAvailable {
                         HStack {

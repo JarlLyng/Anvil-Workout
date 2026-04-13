@@ -15,6 +15,7 @@ struct WorkoutsView: View {
     @Query(sort: \WorkoutTemplate.updatedAt, order: .reverse) private var templates: [WorkoutTemplate]
     @State private var templateToCreate: WorkoutTemplate?
     @State private var errorMessage: String?
+    @State private var toastMessage: String?
 
     var body: some View {
         NavigationStack {
@@ -111,6 +112,25 @@ struct WorkoutsView: View {
             } message: {
                 Text(errorMessage ?? "")
             }
+            .overlay(alignment: .bottom) {
+                if let toastMessage {
+                    HStack(spacing: DesignTokens.Spacing.sm) {
+                        Ph.checkCircle.fill
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 20, height: 20)
+                        Text(toastMessage)
+                            .font(.subheadline.weight(.medium))
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, DesignTokens.Spacing.lg)
+                    .padding(.vertical, DesignTokens.Spacing.md)
+                    .background(.tint, in: Capsule())
+                    .padding(.bottom, DesignTokens.Spacing.xl)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+            .animation(.easeInOut, value: toastMessage)
         }
     }
 
@@ -127,9 +147,11 @@ struct WorkoutsView: View {
     }
 
     private func deleteTemplate(_ template: WorkoutTemplate) {
+        let name = template.name.isEmpty ? "Uden navn" : template.name
         modelContext.delete(template)
         do {
             try modelContext.save()
+            showToast("\(name) slettet")
         } catch {
             errorMessage = "Kunne ikke slette program."
         }
@@ -160,8 +182,17 @@ struct WorkoutsView: View {
         copy.updatedAt = .now
         do {
             try modelContext.save()
+            showToast("Program duplikeret")
         } catch {
             errorMessage = "Kunne ikke duplikere program."
+        }
+    }
+
+    private func showToast(_ message: String) {
+        toastMessage = message
+        Task {
+            try? await Task.sleep(for: .seconds(2))
+            toastMessage = nil
         }
     }
 }
