@@ -38,6 +38,47 @@ struct StatsView: View {
         return data.map { VolumeDataPoint(date: $0.key, volume: $0.value) }.sorted { $0.date < $1.date }
     }
     
+    private var frequencyData: [FrequencyDataPoint] {
+        let calendar = Calendar.current
+        let now = Date()
+        guard let eightWeeksAgo = calendar.date(byAdding: .weekOfYear, value: -8, to: now) else { return [] }
+
+        // Build last 8 week buckets
+        var weekBuckets: [Date: Int] = [:]
+        for i in 0..<8 {
+            if let weekStart = calendar.date(byAdding: .weekOfYear, value: -(7 - i), to: now),
+               let interval = calendar.dateInterval(of: .weekOfYear, for: weekStart) {
+                weekBuckets[interval.start] = 0
+            }
+        }
+
+        for session in sessions where session.startedAt >= eightWeeksAgo && session.completedSetCount > 0 {
+            if let interval = calendar.dateInterval(of: .weekOfYear, for: session.startedAt) {
+                weekBuckets[interval.start, default: 0] += 1
+            }
+        }
+
+        return weekBuckets.map { FrequencyDataPoint(weekStart: $0.key, count: $0.value) }
+            .sorted { $0.weekStart < $1.weekStart }
+    }
+
+    private var muscleGroupData: [MuscleGroupDataPoint] {
+        var counts: [String: Int] = [:]
+        let exerciseLookup = Dictionary(uniqueKeysWithValues: exercises.map { ($0.name, $0.muscleGroup.rawValue) })
+
+        for session in sessions {
+            for ex in session.exercises {
+                let completedSets = ex.performedSets.filter(\.isCompleted).count
+                guard completedSets > 0 else { continue }
+                let group = exerciseLookup[ex.exerciseName] ?? "Andet"
+                counts[group, default: 0] += completedSets
+            }
+        }
+
+        return counts.map { MuscleGroupDataPoint(muscleGroup: $0.key, setCount: $0.value) }
+            .sorted { $0.setCount > $1.setCount }
+    }
+
     private var oneRepMaxData: [OneRepMaxDataPoint] {
         guard let exercise = selectedExerciseFor1RM else { return [] }
         var data: [Date: Double] = [:]
@@ -67,7 +108,9 @@ struct StatsView: View {
             ScrollView {
                 VStack(spacing: 24) {
                     volumeSection
+                    frequencySection
                     oneRepMaxSection
+                    muscleGroupSection
                 }
                 .padding()
             }
@@ -116,6 +159,40 @@ struct StatsView: View {
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
     }
     
+    private var frequencySection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 6) {
+                Ph.calendarCheck.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20)
+                Text("Træningsfrekvens")
+                    .font(.headline)
+            }
+
+            if frequencyData.isEmpty {
+                Text("Ingen træninger registreret endnu.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            } else {
+                Chart(frequencyData) { item in
+                    BarMark(
+                        x: .value("Uge", item.weekStart, unit: .weekOfYear),
+                        y: .value("Antal", item.count)
+                    )
+                    .foregroundStyle(DesignTokens.ColorToken.State.warning.gradient)
+                }
+                .frame(height: 200)
+                .chartXAxis {
+                    AxisMarks(values: .stride(by: .weekOfYear)) { value in
+                        AxisGridLine()
+                        AxisTick()
+                        AxisValueLabel(format: .dateTime.month().day())
+                    }
+                }
+            }
+        }
+        .padding()
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+    }
+
     private var oneRepMaxSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -167,6 +244,32 @@ struct StatsView: View {
         .padding()
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
     }
+    private var muscleGroupSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 6) {
+                Ph.barbell.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20)
+                Text("Muskelgruppe-fordeling")
+                    .font(.headline)
+            }
+
+            if muscleGroupData.isEmpty {
+                Text("Ingen sæt registreret endnu.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            } else {
+                Chart(muscleGroupData) { item in
+                    BarMark(
+                        x: .value("Sæt", item.setCount),
+                        y: .value("Muskelgruppe", item.muscleGroup)
+                    )
+                    .foregroundStyle(DesignTokens.ColorToken.State.success.gradient)
+                }
+                .frame(height: CGFloat(muscleGroupData.count) * 40)
+            }
+        }
+        .padding()
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+    }
 }
 
 private struct VolumeDataPoint: Identifiable {
@@ -179,6 +282,18 @@ private struct OneRepMaxDataPoint: Identifiable {
     let id = UUID()
     let date: Date
     let estimated1RM: Double
+}
+
+private struct FrequencyDataPoint: Identifiable {
+    let id = UUID()
+    let weekStart: Date
+    let count: Int
+}
+
+private struct MuscleGroupDataPoint: Identifiable {
+    let id = UUID()
+    let muscleGroup: String
+    let setCount: Int
 }
 
 #Preview {

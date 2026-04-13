@@ -12,6 +12,12 @@ import PhosphorSwift
 
 struct HistoryView: View {
     @Query(sort: \WorkoutSession.startedAt, order: .reverse) private var sessions: [WorkoutSession]
+    @State private var searchText = ""
+
+    private var filteredSessions: [WorkoutSession] {
+        if searchText.isEmpty { return sessions }
+        return sessions.filter { $0.templateName.localizedCaseInsensitiveContains(searchText) }
+    }
 
     var body: some View {
         NavigationStack {
@@ -22,8 +28,10 @@ struct HistoryView: View {
                     } description: {
                         Text("Når du har fuldført en træning fra fanen Træning, vises den her med varighed, sæt og evt. puls og kalorier fra Health.")
                     }
+                } else if filteredSessions.isEmpty {
+                    ContentUnavailableView.search(text: searchText)
                 } else {
-                    List(sessions) { session in
+                    List(filteredSessions) { session in
                         NavigationLink(value: session) {
                             VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
                                 HStack {
@@ -63,6 +71,7 @@ struct HistoryView: View {
                     }
                 }
             }
+            .searchable(text: $searchText, prompt: "Søg i historik")
             .navigationTitle("Historik")
             .navigationDestination(for: WorkoutSession.self) { session in
                 SessionDetailView(session: session)

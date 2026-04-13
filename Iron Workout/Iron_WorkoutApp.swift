@@ -11,6 +11,8 @@ import Sentry
 
 @main
 struct Iron_WorkoutApp: App {
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+
     init() {
         if let dsn = SentryConfig.dsn, !dsn.isEmpty {
             SentrySDK.start { options in
@@ -52,8 +54,13 @@ struct Iron_WorkoutApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .onAppear { seedExerciseLibraryIfNeeded() }
+            if hasSeenOnboarding {
+                ContentView()
+                    .onAppear { seedExerciseLibraryIfNeeded() }
+            } else {
+                OnboardingView()
+                    .onAppear { seedExerciseLibraryIfNeeded() }
+            }
         }
         .modelContainer(sharedModelContainer)
     }

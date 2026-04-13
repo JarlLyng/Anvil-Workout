@@ -16,6 +16,12 @@ struct WorkoutsView: View {
     @State private var templateToCreate: WorkoutTemplate?
     @State private var errorMessage: String?
     @State private var toastMessage: String?
+    @State private var searchText = ""
+
+    private var filteredTemplates: [WorkoutTemplate] {
+        if searchText.isEmpty { return templates }
+        return templates.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+    }
 
     var body: some View {
         NavigationStack {
@@ -31,10 +37,12 @@ struct WorkoutsView: View {
                         }
                         .buttonStyle(.borderedProminent)
                     }
+                } else if !searchText.isEmpty && filteredTemplates.isEmpty {
+                    ContentUnavailableView.search(text: searchText)
                 } else {
                     ScrollView {
                         VStack(spacing: DesignTokens.Spacing.lg) {
-                            ForEach(templates) { template in
+                            ForEach(filteredTemplates) { template in
                                 NavigationLink(value: template) {
                                     HStack {
                                         VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
@@ -85,6 +93,7 @@ struct WorkoutsView: View {
                     }
                 }
             }
+            .searchable(text: $searchText, prompt: "Søg programmer")
             .navigationTitle("Træning")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
