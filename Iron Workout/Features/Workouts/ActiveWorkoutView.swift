@@ -314,6 +314,25 @@ struct ActiveWorkoutView: View {
                             .accessibilityLabel("Spring \(exercise.exerciseName) over")
                         }
 
+                        // Note field
+                        HStack(spacing: 8) {
+                            Ph.notepad.regular
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 16, height: 16)
+                                .foregroundStyle(.secondary)
+                            TextField("Tilføj note...", text: Binding(
+                                get: { exercise.note },
+                                set: { newValue in
+                                    exercise.note = newValue
+                                    try? modelContext.save()
+                                }
+                            ), axis: .vertical)
+                            .font(.caption)
+                            .lineLimit(1...3)
+                            .foregroundStyle(.secondary)
+                        }
+
                         let sets = exercise.performedSets.sorted { $0.setIndex < $1.setIndex }
                         ForEach(sets, id: \.id) { set in
                             setRow(set: set, exercise: exercise)

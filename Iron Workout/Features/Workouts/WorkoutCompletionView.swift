@@ -13,6 +13,7 @@ import PhosphorSwift
 struct WorkoutCompletionView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Query(sort: \WorkoutSession.startedAt, order: .reverse) private var allSessions: [WorkoutSession]
+    @State private var showShareSheet = false
     var session: WorkoutSession
     var onDone: () -> Void
 
@@ -96,6 +97,22 @@ struct WorkoutCompletionView: View {
         return records
     }
 
+    private var shareText: String {
+        var text = "Iron Workout — \(session.templateName)\n\n"
+        text += "Tid: \(durationText)\n"
+        text += "Sæt: \(session.completedSetCount)\n"
+        text += "Øvelser: \(session.exerciseCount)"
+
+        if !personalRecords.isEmpty {
+            text += "\n\nNye PRs:"
+            for record in personalRecords {
+                text += "\n- \(record.exerciseName): \(record.value)"
+            }
+        }
+
+        return text
+    }
+
     private func formatWeight(_ weight: Double) -> String {
         if weight.truncatingRemainder(dividingBy: 1) == 0 {
             return "\(Int(weight)) kg"
@@ -154,11 +171,26 @@ struct WorkoutCompletionView: View {
             }
 
             Spacer()
-            Button("Færdig") {
-                onDone()
+            HStack(spacing: DesignTokens.Spacing.md) {
+                ShareLink(item: shareText) {
+                    Label {
+                        Text("Del")
+                    } icon: {
+                        Ph.shareFat.regular
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 20, height: 20)
+                    }
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+
+                Button("Færdig") {
+                    onDone()
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
             .padding(.horizontal, DesignTokens.Spacing.xxxl)
             .padding(.bottom, DesignTokens.Spacing.xl)
         }

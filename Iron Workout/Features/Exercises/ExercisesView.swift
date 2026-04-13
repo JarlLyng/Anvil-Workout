@@ -34,20 +34,24 @@ struct ExercisesView: View {
                 } else {
                     List {
                         ForEach(filteredExercises) { exercise in
-                            HStack {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(exercise.name)
-                                        .font(.headline)
-                                    HStack(spacing: 8) {
-                                        Text(exercise.muscleGroup.rawValue)
-                                            .font(.caption)
-                                            .foregroundStyle(.secondary)
-                                        if !exercise.equipmentType.isEmpty {
-                                            Text("•")
-                                                .foregroundStyle(.secondary)
-                                            Text(exercise.equipmentType)
+                            NavigationLink {
+                                ExerciseDetailView(exercise: exercise)
+                            } label: {
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(exercise.name)
+                                            .font(.headline)
+                                        HStack(spacing: 8) {
+                                            Text(exercise.muscleGroup.rawValue)
                                                 .font(.caption)
                                                 .foregroundStyle(.secondary)
+                                            if !exercise.equipmentType.isEmpty {
+                                                Text("•")
+                                                    .foregroundStyle(.secondary)
+                                                Text(exercise.equipmentType)
+                                                    .font(.caption)
+                                                    .foregroundStyle(.secondary)
+                                            }
                                         }
                                     }
                                 }

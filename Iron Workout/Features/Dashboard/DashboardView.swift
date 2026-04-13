@@ -15,8 +15,25 @@ struct DashboardView: View {
     @Query(sort: \WorkoutSession.startedAt, order: .reverse) private var sessions: [WorkoutSession]
     @Query(sort: \WorkoutTemplate.updatedAt, order: .reverse) private var templates: [WorkoutTemplate]
     
+    @AppStorage("weeklyPlan") private var weeklyPlanJSON: String = "{}"
+    @State private var showPlanEditor = false
     @State private var templateToStart: WorkoutTemplate?
     @State private var activeSession: WorkoutSession?
+
+    private static let danishDayAbbreviations = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
+
+    private var weeklyPlan: [Int: String] {
+        (try? JSONDecoder().decode([String: String].self, from: Data(weeklyPlanJSON.utf8)))?.reduce(into: [Int: String]()) { result, pair in
+            if let key = Int(pair.key) { result[key] = pair.value }
+        } ?? [:]
+    }
+
+    private func saveWeeklyPlan(_ plan: [Int: String]) {
+        let stringKeyed = plan.reduce(into: [String: String]()) { $0["\($1.key)"] = $1.value }
+        if let data = try? JSONEncoder().encode(stringKeyed) {
+            weeklyPlanJSON = String(data: data, encoding: .utf8) ?? "{}"
+        }
+    }
 
     private var morningGreeting: String {
         let hour = Calendar.current.component(.hour, from: .now)
@@ -100,12 +117,18 @@ struct DashboardView: View {
                 VStack(spacing: DesignTokens.Spacing.xxl) {
                     greetingSection
                     metricsSection
+                    weeklyPlanSection
                     quickStartSection
                 }
                 .padding()
             }
             .navigationTitle("Iron Workout")
             .background(Color(uiColor: .systemGroupedBackground))
+            .sheet(isPresented: $showPlanEditor) {
+                WeeklyPlanEditorSheet(plan: weeklyPlan) { newPlan in
+                    saveWeeklyPlan(newPlan)
+                }
+            }
             .fullScreenCover(item: $activeSession) { session in
                 ActiveWorkoutView(session: session) {
                     // completion inside ActiveWorkoutView handles save
@@ -200,6 +223,62 @@ struct DashboardView: View {
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
     }
     
+    private var weeklyPlanSection: some View {
+        let calendar = Calendar.current
+        // ISO weekday: Mon=2..Sun=1 → map to 0-based index
+        let todayWeekday = calendar.component(.weekday, from: .now)
+        let todayIndex = (todayWeekday + 5) % 7  // Mon=0, Tue=1, ..., Sun=6
+
+        return VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
+            HStack {
+                Text("Ugeplan")
+                    .font(.title2.bold())
+                Spacer()
+                Button {
+                    showPlanEditor = true
+                } label: {
+                    Ph.pencilSimple.regular
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 20, height: 20)
+                }
+                .accessibilityLabel("Rediger ugeplan")
+            }
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: DesignTokens.Spacing.md) {
+                    ForEach(0..<7, id: \.self) { index in
+                        let plan = weeklyPlan
+                        let templateName = plan[index]
+                        let isToday = index == todayIndex
+
+                        VStack(spacing: DesignTokens.Spacing.xs) {
+                            Text(Self.danishDayAbbreviations[index])
+                                .font(.caption.bold())
+                                .foregroundStyle(isToday ? Color.white : .secondary)
+
+                            Text(templateName ?? "\u{2014}")
+                                .font(.caption2)
+                                .foregroundStyle(isToday ? Color.white.opacity(0.9) : .primary)
+                                .lineLimit(2)
+                                .multilineTextAlignment(.center)
+                        }
+                        .frame(width: 56, height: 64)
+                        .background(
+                            isToday
+                                ? AnyShapeStyle(Color.accentColor)
+                                : AnyShapeStyle(.regularMaterial),
+                            in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg)
+                        )
+                        .onTapGesture {
+                            showPlanEditor = true
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private var quickStartSection: some View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
             Text("Anbefalet til dig")
