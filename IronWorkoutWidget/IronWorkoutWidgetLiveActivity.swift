@@ -9,20 +9,8 @@ import ActivityKit
 import WidgetKit
 import SwiftUI
 
-// MARK: - Activity Attributes
-
-struct IronWorkoutWidgetAttributes: ActivityAttributes {
-    public struct ContentState: Codable, Hashable {
-        var currentExercise: String
-        var completedSets: Int
-        var totalSets: Int
-        var elapsedSeconds: Int
-        var isPaused: Bool
-    }
-
-    var templateName: String
-    var startedAt: Date
-}
+// IronWorkoutWidgetAttributes is defined in Shared/Models/LiveActivityAttributes.swift
+// and shared between both targets via Target Membership.
 
 // MARK: - Live Activity Widget
 

@@ -50,8 +50,8 @@ struct OnboardingView: View {
         }
     }
 
-    private func onboardingPage<Icon: View>(
-        icon: Icon,
+    private func onboardingPage(
+        icon: Image,
         iconColor: some ShapeStyle,
         title: String,
         subtitle: String,
