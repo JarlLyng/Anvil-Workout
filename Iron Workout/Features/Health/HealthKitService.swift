@@ -19,7 +19,7 @@ final class HealthKitService {
 
     private init() {}
 
-    /// Typer vi vil læse og skrive.
+    /// Types we want to read and write.
     private static var typesToShare: Set<HKSampleType> {
         [HKObjectType.workoutType()]
     }
@@ -32,7 +32,7 @@ final class HealthKitService {
         ]
     }
 
-    /// Anmod om tilladelse (kaldes før første træning eller fra Indstillinger).
+    /// Request authorization (called before first workout or from Settings).
     @MainActor
     func requestAuthorization() async throws {
         guard isAvailable else { return }
@@ -44,12 +44,12 @@ final class HealthKitService {
         }
     }
 
-    /// Tjekker om vi har tilladelse til at skrive workouts (groft check).
+    /// Checks if we have authorization to write workouts.
     func authorizationStatus(for type: HKObjectType) -> HKAuthorizationStatus {
         store.authorizationStatus(for: type)
     }
 
-    /// Start HealthKit-workout (kaldes når brugeren starter træning).
+    /// Start HealthKit workout (called when the user starts a workout).
     @MainActor
     func startWorkout(startDate: Date) async throws {
         guard isAvailable else { return }
@@ -67,7 +67,7 @@ final class HealthKitService {
         }
     }
 
-    /// Afslut og gem workout; returnerer kcal og gns. puls for intervallet (fra Health).
+    /// End and save workout; returns kcal and avg. heart rate for the interval (from Health).
     @MainActor
     func endWorkout(endDate: Date) async throws -> (calories: Double?, averageHeartRate: Double?) {
         guard let builder = currentBuilder else {
@@ -88,13 +88,13 @@ final class HealthKitService {
         return (cal, hr)
     }
 
-    /// Kasser workout uden at gemme (fx ved annullering).
+    /// Discard workout without saving (e.g. on cancel).
     func discardWorkout() {
         currentBuilder?.discardWorkout()
         currentBuilder = nil
     }
 
-    /// Hent forbrugte kcal og gennemsnitlig puls for et tidsinterval fra Health.
+    /// Fetch calories burned and average heart rate for a time interval from Health.
     private func queryWorkoutMetrics(from start: Date, to end: Date) async -> (calories: Double?, averageHeartRate: Double?) {
         let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
 

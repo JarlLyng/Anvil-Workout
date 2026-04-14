@@ -8,8 +8,8 @@
 import Foundation
 
 enum SentryConfig {
-    /// DSN læses fra Info.plist (sat via Secrets.xcconfig → build settings).
-    /// Se Config/Secrets.xcconfig.example for opsætning.
+    /// DSN is read from Info.plist (set via Secrets.xcconfig → build settings).
+    /// See Config/Secrets.xcconfig.example for setup.
     static var dsn: String? {
         guard let value = Bundle.main.infoDictionary?["SENTRY_DSN"] as? String,
               !value.isEmpty, value != "YOUR_SENTRY_DSN_HERE" else {

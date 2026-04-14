@@ -14,7 +14,7 @@ final class WorkoutSessionExercise: Identifiable {
     var exerciseName: String
     var sortOrder: Int
     var note: String
-    /// Rest i sekunder efter hvert sæt (fra skabelon).
+    /// Rest in seconds after each set (from template).
     var restSeconds: Int?
     var supersetID: UUID?
 

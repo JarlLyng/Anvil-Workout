@@ -10,5 +10,5 @@ import AppIntents
 
 struct ConfigurationAppIntent: WidgetConfigurationIntent {
     static var title: LocalizedStringResource { "Iron Workout Widget" }
-    static var description: IntentDescription { "Vis din træningsstreak og ugens fremskridt." }
+    static var description: IntentDescription { "Show your workout streak and weekly progress." }
 }

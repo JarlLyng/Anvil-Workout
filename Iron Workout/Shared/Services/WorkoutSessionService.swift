@@ -11,7 +11,7 @@ import Sentry
 
 enum WorkoutSessionService {
 
-    /// Opretter en ny WorkoutSession fra en skabelon med alle øvelser og sæt.
+    /// Creates a new WorkoutSession from a template with all exercises and sets.
     static func createSession(from template: WorkoutTemplate, modelContext: ModelContext) throws -> WorkoutSession {
         let descriptor = FetchDescriptor<Exercise>()
         let exercises: [Exercise]
@@ -24,7 +24,7 @@ enum WorkoutSessionService {
         let nameByID = Dictionary(uniqueKeysWithValues: exercises.map { ($0.id, $0.name) })
 
         let session = WorkoutSession(
-            templateName: template.name.isEmpty ? "Træning" : template.name,
+            templateName: template.name.isEmpty ? "Workout" : template.name,
             startedAt: .now,
             exerciseCount: template.exercises.count
         )
@@ -32,7 +32,7 @@ enum WorkoutSessionService {
 
         let sorted = template.exercises.sorted { $0.sortOrder < $1.sortOrder }
         for (exIndex, te) in sorted.enumerated() {
-            let name = nameByID[te.exerciseID] ?? "Ukendt øvelse"
+            let name = nameByID[te.exerciseID] ?? "Unknown exercise"
             let sessionEx = WorkoutSessionExercise(
                 exerciseName: name,
                 sortOrder: exIndex,
@@ -68,7 +68,7 @@ enum WorkoutSessionService {
         return session
     }
 
-    /// Opdaterer session med varighed og antal fuldførte sæt; kaldes ved afslutning.
+    /// Finalizes session with duration and completed set count; called when workout ends.
     static func finalizeSession(_ session: WorkoutSession, modelContext: ModelContext) throws {
         session.endedAt = .now
         let duration = session.endedAt!.timeIntervalSince(session.startedAt)
