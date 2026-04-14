@@ -13,6 +13,7 @@ import IAMJARLDesignTokens
 import PhosphorSwift
 
 struct ActiveWorkoutView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.modelContext) private var modelContext
     @Bindable var session: WorkoutSession
     var onComplete: () -> Void
@@ -328,6 +329,7 @@ struct ActiveWorkoutView: View {
                 .foregroundStyle(.secondary)
             Button("End Workout") { endWorkout() }
                 .buttonStyle(.borderedProminent)
+                .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
                 .padding(.top)
             Spacer()
         }

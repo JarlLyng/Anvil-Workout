@@ -11,6 +11,7 @@ import PhosphorSwift
 import IAMJARLDesignTokens
 
 struct WorkoutsView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \WorkoutTemplate.updatedAt, order: .reverse) private var templates: [WorkoutTemplate]
     @State private var templateToCreate: WorkoutTemplate?
@@ -36,6 +37,7 @@ struct WorkoutsView: View {
                             createTemplate()
                         }
                         .buttonStyle(.borderedProminent)
+                        .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
                     }
                 } else if !searchText.isEmpty && filteredTemplates.isEmpty {
                     ContentUnavailableView.search(text: searchText)
@@ -130,7 +132,7 @@ struct WorkoutsView: View {
                         Text(toastMessage)
                             .font(.subheadline.weight(.medium))
                     }
-                    .foregroundStyle(.white)
+                    .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
                     .padding(.horizontal, DesignTokens.Spacing.lg)
                     .padding(.vertical, DesignTokens.Spacing.md)
                     .background(.tint, in: Capsule())

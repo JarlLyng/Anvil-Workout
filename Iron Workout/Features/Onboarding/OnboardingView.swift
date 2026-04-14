@@ -10,6 +10,7 @@ import IAMJARLDesignTokens
 import PhosphorSwift
 
 struct OnboardingView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @State private var currentPage = 0
 
@@ -26,6 +27,7 @@ struct OnboardingView: View {
                         withAnimation { currentPage += 1 }
                     }
                     .buttonStyle(.borderedProminent)
+                    .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
                     .controlSize(.large)
                 }
                 .tag(0)
@@ -40,6 +42,7 @@ struct OnboardingView: View {
                         withAnimation { currentPage += 1 }
                     }
                     .buttonStyle(.borderedProminent)
+                    .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
                     .controlSize(.large)
                 }
                 .tag(1)
@@ -54,6 +57,7 @@ struct OnboardingView: View {
                         hasSeenOnboarding = true
                     }
                     .buttonStyle(.borderedProminent)
+                    .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
                     .controlSize(.large)
                 }
                 .tag(2)

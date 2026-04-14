@@ -7,9 +7,11 @@
 
 import SwiftUI
 import SwiftData
+import IAMJARLDesignTokens
 import PhosphorSwift
 
 struct TemplateDetailView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.modelContext) private var modelContext
     @Bindable var template: WorkoutTemplate
     @Query(sort: \Exercise.name) private var allExercises: [Exercise]
@@ -81,6 +83,7 @@ struct TemplateDetailView: View {
                     Label { Text("Start Workout") } icon: { Ph.play.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
                 }
                 .buttonStyle(.borderedProminent)
+                .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
                 .disabled(sortedExercises.isEmpty)
             }
         }

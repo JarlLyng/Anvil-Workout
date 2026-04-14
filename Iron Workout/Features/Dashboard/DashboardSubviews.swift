@@ -38,6 +38,7 @@ struct DashboardCard<Icon: View>: View {
 // MARK: - WeeklyPlanRow
 
 struct WeeklyPlanRow: View {
+    @Environment(\.colorScheme) private var colorScheme
     let weeklyPlan: [Int: String]
     var onEdit: () -> Void
 
@@ -74,11 +75,11 @@ struct WeeklyPlanRow: View {
                         VStack(spacing: DesignTokens.Spacing.xs) {
                             Text(Self.dayAbbreviations[index])
                                 .font(.caption.bold())
-                                .foregroundStyle(isToday ? Color.white : .secondary)
+                                .foregroundStyle(isToday ? DesignTokens.Common.OnPrimary.text(colorScheme) : .secondary)
 
                             Text(templateName ?? "\u{2014}")
                                 .font(.caption2)
-                                .foregroundStyle(isToday ? Color.white.opacity(0.9) : .primary)
+                                .foregroundStyle(isToday ? DesignTokens.Common.OnPrimary.text(colorScheme).opacity(0.9) : .primary)
                                 .lineLimit(2)
                                 .multilineTextAlignment(.center)
                         }

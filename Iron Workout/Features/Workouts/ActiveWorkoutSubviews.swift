@@ -70,6 +70,7 @@ struct WorkoutTimerBar: View {
 // MARK: - WorkoutPauseOverlay
 
 struct WorkoutPauseOverlay: View {
+    @Environment(\.colorScheme) private var colorScheme
     var onResume: () -> Void
 
     var body: some View {
@@ -90,6 +91,7 @@ struct WorkoutPauseOverlay: View {
                 onResume()
             }
             .buttonStyle(.borderedProminent)
+            .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
             .controlSize(.large)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -100,6 +102,7 @@ struct WorkoutPauseOverlay: View {
 // MARK: - WorkoutRestBar
 
 struct WorkoutRestBar: View {
+    @Environment(\.colorScheme) private var colorScheme
     let seconds: Int
     let totalSeconds: Int
     var onAddTime: () -> Void
@@ -139,6 +142,7 @@ struct WorkoutRestBar: View {
                     onSkip()
                 }
                 .buttonStyle(.borderedProminent)
+                .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
                 .controlSize(.regular)
             }
         }
@@ -262,6 +266,7 @@ struct WorkoutSetRow: View {
                     .controlSize(.regular)
                 Button("Done") { onDone() }
                     .buttonStyle(.borderedProminent)
+                    .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
                     .controlSize(.large)
             }
         }

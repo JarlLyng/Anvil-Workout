@@ -191,6 +191,7 @@ struct WorkoutCompletionView: View {
                     onDone()
                 }
                 .buttonStyle(.borderedProminent)
+                .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
                 .controlSize(.large)
             }
             .padding(.horizontal, DesignTokens.Spacing.xxxl)

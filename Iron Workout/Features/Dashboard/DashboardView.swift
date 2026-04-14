@@ -11,6 +11,7 @@ import IAMJARLDesignTokens
 import PhosphorSwift
 
 struct DashboardView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \WorkoutSession.startedAt, order: .reverse) private var sessions: [WorkoutSession]
     @Query(sort: \WorkoutTemplate.updatedAt, order: .reverse) private var templates: [WorkoutTemplate]
@@ -239,8 +240,7 @@ struct DashboardView: View {
                         .padding()
                     }
                     .buttonStyle(.borderedProminent)
-                    .tint(.primary)
-                    .foregroundStyle(Color(uiColor: .systemBackground))
+                    .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
                     .accessibilityLabel("Start \(rec.name)")
                 } else {
                     Text("Create your first workout program in the Workouts tab to see recommendations here.")
