@@ -119,7 +119,7 @@ struct DashboardView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Iron Workout")
+            .navigationBarTitleDisplayMode(.inline)
             .background(Color(uiColor: .systemGroupedBackground))
             .sheet(isPresented: $showPlanEditor) {
                 WeeklyPlanEditorSheet(plan: weeklyPlan) { newPlan in

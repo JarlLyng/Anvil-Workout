@@ -19,7 +19,7 @@ struct ContentView: View {
             Tab("Workouts", systemImage: "dumbbell.fill") {
                 WorkoutsView()
             }
-            Tab("History", systemImage: "clock.arrow.counterclockwise") {
+            Tab("History", systemImage: "clock.arrow.circlepath") {
                 HistoryView()
             }
             Tab("Exercises", systemImage: "list.bullet") {
