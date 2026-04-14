@@ -1,7 +1,7 @@
-# CLAUDE.md
+# Project context — see CLAUDE.md for the canonical version.
+# This file is a mirror. Edit CLAUDE.md and copy here when updating.
 
 Project context for AI assistants working on Iron Workout.
-This file is also mirrored to `.cursorrules`, `.windsurfrules`, and `.github/copilot-instructions.md`.
 
 ## What is this
 
