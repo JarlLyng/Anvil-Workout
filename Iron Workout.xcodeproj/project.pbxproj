@@ -76,6 +76,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Shared/Models/Exercise.swift,
+				Shared/Models/LiveActivityAttributes.swift,
 				Shared/Models/PerformedSet.swift,
 				Shared/Models/WorkoutSession.swift,
 				Shared/Models/WorkoutSessionExercise.swift,
@@ -226,8 +227,8 @@
 				2F60AB642F64DAEC00B0CB5C /* Sources */,
 				2F60AB652F64DAEC00B0CB5C /* Frameworks */,
 				2F60AB662F64DAEC00B0CB5C /* Resources */,
-				2F60ACE02F65A7C900B0CB5C /* Upload debug symbols to Sentry */,
 				2F0B86842F8DAB4700078716 /* Embed Foundation Extensions */,
+				2F60ACE02F65A7C900B0CB5C /* Upload debug symbols to Sentry */,
 			);
 			buildRules = (
 			);
@@ -387,14 +388,13 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${EXECUTABLE_NAME}",
 			);
 			name = "Upload debug symbols to Sentry";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Scripts/sentry-upload-dsyms.sh\"\n";
 		};
