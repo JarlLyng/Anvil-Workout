@@ -7,11 +7,13 @@
 
 import SwiftUI
 import SwiftData
+import StoreKit
 import IAMJARLDesignTokens
 import PhosphorSwift
 
 struct WorkoutCompletionView: View {
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.requestReview) private var requestReview
     @Query(sort: \WorkoutSession.startedAt, order: .reverse) private var allSessions: [WorkoutSession]
     @State private var showShareSheet = false
     var session: WorkoutSession
@@ -198,6 +200,13 @@ struct WorkoutCompletionView: View {
         .onAppear {
             if !personalRecords.isEmpty {
                 UINotificationFeedbackGenerator().notificationOccurred(.success)
+            }
+            // Ask for review after 5th completed workout
+            let completedCount = allSessions.filter { $0.completedSetCount > 0 }.count
+            if completedCount == 5 || completedCount == 15 || completedCount == 50 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    requestReview()
+                }
             }
         }
     }
