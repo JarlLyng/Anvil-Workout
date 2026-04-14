@@ -26,7 +26,7 @@ struct CreateEditTemplateView: View {
     }
 
     private func exerciseName(for exerciseID: UUID) -> String {
-        allExercises.first { $0.id == exerciseID }?.name ?? "Ukendt øvelse"
+        allExercises.first { $0.id == exerciseID }?.name ?? "Unknown exercise"
     }
 
     var body: some View {
@@ -34,18 +34,18 @@ struct CreateEditTemplateView: View {
             programSection
             exercisesSection
         }
-        .navigationTitle(template.name.isEmpty ? "Nyt program" : "Rediger program")
+        .navigationTitle(template.name.isEmpty ? "New Program" : "Edit Program")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Done") {
                     template.updatedAt = .now
-                    do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
+                    do { try modelContext.save() } catch { errorMessage = "Could not save: \(error.localizedDescription)" }
                     dismiss()
                 }
             }
             ToolbarItem(placement: .destructiveAction) {
-                Button("Slet program", role: .destructive) {
+                Button("Delete Program", role: .destructive) {
                     showDeleteConfirm = true
                 }
             }
@@ -58,31 +58,31 @@ struct CreateEditTemplateView: View {
         .sheet(item: $showEditExercise) { item in
             EditTemplateExerciseSheet(templateExercise: item)
         }
-        .alert("Fejl", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
+        .alert("Error", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
             Button("OK") { errorMessage = nil }
         } message: {
             Text(errorMessage ?? "")
         }
-        .confirmationDialog("Slet program?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
-            Button("Slet", role: .destructive) {
+        .confirmationDialog("Delete Program?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
+            Button("Delete", role: .destructive) {
                 modelContext.delete(template)
-                do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
+                do { try modelContext.save() } catch { errorMessage = "Could not save: \(error.localizedDescription)" }
                 dismiss()
             }
-            Button("Behold", role: .cancel) { }
+            Button("Keep", role: .cancel) { }
         } message: {
-            Text("Programmet og alle øvelser i det slettes. Du kan ikke fortryde.")
+            Text("The program and all its exercises will be deleted. This cannot be undone.")
         }
     }
 
     @ViewBuilder
     private var programSection: some View {
         Section("Program") {
-            TextField("Navn", text: $template.name)
+            TextField("Name", text: $template.name)
                 .font(.headline)
-            TextField("Note (valgfri)", text: $template.note, axis: .vertical)
+            TextField("Note (optional)", text: $template.note, axis: .vertical)
                 .lineLimit(2...4)
-            Toggle("Favorit", isOn: $template.isFavorite)
+            Toggle("Favorite", isOn: $template.isFavorite)
         }
     }
 
@@ -103,24 +103,24 @@ struct CreateEditTemplateView: View {
                         if let idx = sorted.firstIndex(of: item), idx < sorted.count - 1 {
                             let next = sorted[idx + 1]
                             if item.supersetID != nil && item.supersetID == next.supersetID {
-                                Button("Fjern supersæt med næste øvelse") {
+                                Button("Remove superset with next exercise") {
                                     item.supersetID = nil
                                     next.supersetID = nil
-                                    do { try modelContext.save() } catch { errorMessage = "Fejl: \(error)" }
+                                    do { try modelContext.save() } catch { errorMessage = "Error: \(error)" }
                                 }
                             } else {
-                                Button("Kobl i supersæt med næste øvelse") {
+                                Button("Link as superset with next exercise") {
                                     let id = item.supersetID ?? UUID()
                                     item.supersetID = id
                                     next.supersetID = id
-                                    do { try modelContext.save() } catch { errorMessage = "Fejl: \(error)" }
+                                    do { try modelContext.save() } catch { errorMessage = "Error: \(error)" }
                                 }
                             }
                         }
                         if item.supersetID != nil {
-                            Button("Fritstille fra supersæt") {
+                            Button("Detach from superset") {
                                 item.supersetID = nil
-                                do { try modelContext.save() } catch { errorMessage = "Fejl: \(error)" }
+                                do { try modelContext.save() } catch { errorMessage = "Error: \(error)" }
                             }
                         }
                     }
@@ -130,9 +130,9 @@ struct CreateEditTemplateView: View {
 
                 addExerciseButton
             } header: {
-                Text("Øvelser")
+                Text("Exercises")
             } footer: {
-                Text("Træk for at omrokere. Tryk på en øvelse for at redigere sæt, reps og rest.")
+                Text("Drag to reorder. Tap an exercise to edit sets, reps and rest.")
             }
     }
 
@@ -142,7 +142,7 @@ struct CreateEditTemplateView: View {
             showExercisePicker = true
         } label: {
             Label {
-                Text("Tilføj øvelse")
+                Text("Add Exercise")
             } icon: {
                 Ph.plusCircle.fill
                     .resizable()
@@ -164,7 +164,7 @@ struct CreateEditTemplateView: View {
         template.exercises.append(te)
         modelContext.insert(te)
         template.updatedAt = .now
-        do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
+        do { try modelContext.save() } catch { errorMessage = "Could not save: \(error.localizedDescription)" }
     }
 
     private func deleteExercises(at offsets: IndexSet) {
@@ -174,7 +174,7 @@ struct CreateEditTemplateView: View {
         }
         reorderSortOrder()
         template.updatedAt = .now
-        do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
+        do { try modelContext.save() } catch { errorMessage = "Could not save: \(error.localizedDescription)" }
     }
 
     private func moveExercises(from source: IndexSet, to destination: Int) {
@@ -184,7 +184,7 @@ struct CreateEditTemplateView: View {
             item.sortOrder = i
         }
         template.updatedAt = .now
-        do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
+        do { try modelContext.save() } catch { errorMessage = "Could not save: \(error.localizedDescription)" }
     }
 
     private func reorderSortOrder() {
@@ -195,7 +195,7 @@ struct CreateEditTemplateView: View {
     }
 }
 
-// MARK: - Underkomponenter (lettere type-check for compileren)
+// MARK: - Subcomponents
 
 private struct TemplateExerciseRowLabel: View {
     let item: WorkoutTemplateExercise
@@ -225,7 +225,7 @@ private struct TemplateExerciseRowLabel: View {
             Text(exerciseTitle)
                 .font(.subheadline.weight(.medium))
                 .foregroundStyle(.primary)
-            Text("\(item.targetSets) sæt × \(item.targetReps) reps")
+            Text("\(item.targetSets) sets x \(item.targetReps) reps")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             if let w = item.targetWeight, w > 0 {
@@ -234,7 +234,7 @@ private struct TemplateExerciseRowLabel: View {
                     .foregroundStyle(.secondary)
             }
             if let r = item.restSeconds, r > 0 {
-                Text("\(r) sek rest")
+                Text("\(r) s rest")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }

@@ -59,21 +59,21 @@ struct ExercisePickerView: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 20, height: 20)
                             .foregroundStyle(.tint)
-                            .accessibilityLabel("Tilføj \(exercise.name)")
+                            .accessibilityLabel("Add \(exercise.name)")
                     }
                 }
             }
-            .searchable(text: $searchText, prompt: "Søg øvelser")
-            .navigationTitle("Tilføj øvelse")
+            .searchable(text: $searchText, prompt: "Search exercises")
+            .navigationTitle("Add Exercise")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Annuller") { dismiss() }
+                    Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .primaryAction) {
                     HStack {
                         Menu {
-                            Button("Alle grupper") { selectedMuscleGroup = nil }
+                            Button("All groups") { selectedMuscleGroup = nil }
                             ForEach(MuscleGroup.allCases, id: \.self) { group in
                                 Button(group.rawValue) { selectedMuscleGroup = group }
                             }
@@ -82,7 +82,7 @@ struct ExercisePickerView: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 24, height: 24)
-                                .accessibilityLabel("Filtrer muskelgrupper")
+                                .accessibilityLabel("Filter muscle groups")
                         }
                         
                         Button {
@@ -92,7 +92,7 @@ struct ExercisePickerView: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 24, height: 24)
-                                .accessibilityLabel("Opret øvelse")
+                                .accessibilityLabel("Create exercise")
                         }
                     }
                 }

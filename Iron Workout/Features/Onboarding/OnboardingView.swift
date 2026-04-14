@@ -19,26 +19,38 @@ struct OnboardingView: View {
                 onboardingPage(
                     icon: Ph.barbell.fill,
                     iconColor: .primary,
-                    title: "Velkommen til Iron Workout",
-                    subtitle: "Din personlige tr\u{00E6}ningspartner. Log tr\u{00E6}ninger, f\u{00F8}lg din progression og sl\u{00E5} personlige rekorder."
-                )
+                    title: "Welcome to Iron Workout",
+                    subtitle: "Your personal training partner. Log workouts, track your progress and beat personal records."
+                ) {
+                    Button("Next") {
+                        withAnimation { currentPage += 1 }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                }
                 .tag(0)
 
                 onboardingPage(
                     icon: Ph.listBullets.fill,
                     iconColor: DesignTokens.ColorToken.State.success,
-                    title: "Opret programmer",
-                    subtitle: "Byg dine egne tr\u{00E6}ningsprogrammer med \u{00F8}velser, s\u{00E6}t og reps. Start en tr\u{00E6}ning med \u{00E9}t tryk."
-                )
+                    title: "Build Programs",
+                    subtitle: "Create your own workout programs with exercises, sets and reps. Start a workout with a single tap."
+                ) {
+                    Button("Next") {
+                        withAnimation { currentPage += 1 }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                }
                 .tag(1)
 
                 onboardingPage(
                     icon: Ph.heartbeat.fill,
                     iconColor: DesignTokens.ColorToken.State.error,
-                    title: "Health & Statistik",
-                    subtitle: "Forbind Apple Health for kalorier og puls. F\u{00F8}lg din volumen, 1RM og streak over tid."
+                    title: "Health & Statistics",
+                    subtitle: "Connect Apple Health for calories and heart rate. Track your volume, 1RM and streak over time."
                 ) {
-                    Button("Kom i gang") {
+                    Button("Get Started") {
                         hasSeenOnboarding = true
                     }
                     .buttonStyle(.borderedProminent)
@@ -47,6 +59,14 @@ struct OnboardingView: View {
                 .tag(2)
             }
             .tabViewStyle(.page(indexDisplayMode: .always))
+        }
+        .overlay(alignment: .topTrailing) {
+            if currentPage < 2 {
+                Button("Skip") {
+                    hasSeenOnboarding = true
+                }
+                .padding()
+            }
         }
     }
 

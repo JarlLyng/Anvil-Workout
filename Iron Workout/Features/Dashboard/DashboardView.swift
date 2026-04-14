@@ -20,7 +20,7 @@ struct DashboardView: View {
     @State private var templateToStart: WorkoutTemplate?
     @State private var activeSession: WorkoutSession?
 
-    private static let danishDayAbbreviations = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
+    private static let dayAbbreviations = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
     private var weeklyPlan: [Int: String] {
         (try? JSONDecoder().decode([String: String].self, from: Data(weeklyPlanJSON.utf8)))?.reduce(into: [Int: String]()) { result, pair in
@@ -38,10 +38,10 @@ struct DashboardView: View {
     private var morningGreeting: String {
         let hour = Calendar.current.component(.hour, from: .now)
         switch hour {
-        case 0..<5: return "God nat"
-        case 5..<10: return "Godmorgen"
-        case 10..<18: return "Goddag"
-        default: return "Godaften"
+        case 0..<5: return "Good night"
+        case 5..<10: return "Good morning"
+        case 10..<18: return "Good afternoon"
+        default: return "Good evening"
         }
     }
     
@@ -87,13 +87,12 @@ struct DashboardView: View {
     }
     
     private var lastWorkoutText: String {
-        guard let last = sessions.first(where: { $0.completedSetCount > 0 }) else { return "Ingen historie endnu" }
+        guard let last = sessions.first(where: { $0.completedSetCount > 0 }) else { return "No history yet" }
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .full
         formatter.dateTimeStyle = .named
-        formatter.locale = Locale(identifier: "da_DK")
         let relativeDate = formatter.localizedString(for: last.startedAt, relativeTo: .now)
-        return "Sidst: \(last.templateName) (\(relativeDate))"
+        return "Last: \(last.templateName) (\(relativeDate))"
     }
 
     private var recommendedTemplate: WorkoutTemplate? {
@@ -144,7 +143,7 @@ struct DashboardView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(morningGreeting)
                     .font(.largeTitle.bold())
-                Text("Klar til dagens træning?")
+                Text("Ready for today's workout?")
                     .font(.headline)
                     .foregroundStyle(.secondary)
             }
@@ -161,7 +160,7 @@ struct DashboardView: View {
         VStack(spacing: DesignTokens.Spacing.lg) {
             HStack(spacing: DesignTokens.Spacing.lg) {
                 dashboardCard(
-                    title: "Pas i denne uge",
+                    title: "This Week",
                     value: "\(thisWeekSessions)",
                     icon: Ph.calendarCheck.fill
                         .resizable()
@@ -171,7 +170,7 @@ struct DashboardView: View {
                 )
 
                 dashboardCard(
-                    title: "Forrige uge",
+                    title: "Last Week",
                     value: "\(lastWeekSessions)",
                     icon: Ph.clockCounterClockwise.regular
                         .resizable()
@@ -184,7 +183,7 @@ struct DashboardView: View {
             HStack(spacing: DesignTokens.Spacing.lg) {
                 dashboardCard(
                     title: "Streak",
-                    value: "\(currentStreak) dage",
+                    value: "\(currentStreak) days",
                     icon: Ph.flame.fill
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -193,7 +192,7 @@ struct DashboardView: View {
                 )
 
                 dashboardCard(
-                    title: "Totale pas",
+                    title: "Total",
                     value: "\(sessions.filter({ $0.completedSetCount > 0 }).count)",
                     icon: Ph.trophy.fill
                         .resizable()
@@ -231,7 +230,7 @@ struct DashboardView: View {
 
         return VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
             HStack {
-                Text("Ugeplan")
+                Text("Weekly Plan")
                     .font(.title2.bold())
                 Spacer()
                 Button {
@@ -242,7 +241,7 @@ struct DashboardView: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 20, height: 20)
                 }
-                .accessibilityLabel("Rediger ugeplan")
+                .accessibilityLabel("Edit weekly plan")
             }
 
             ScrollView(.horizontal, showsIndicators: false) {
@@ -253,7 +252,7 @@ struct DashboardView: View {
                         let isToday = index == todayIndex
 
                         VStack(spacing: DesignTokens.Spacing.xs) {
-                            Text(Self.danishDayAbbreviations[index])
+                            Text(Self.dayAbbreviations[index])
                                 .font(.caption.bold())
                                 .foregroundStyle(isToday ? Color.white : .secondary)
 
@@ -281,7 +280,7 @@ struct DashboardView: View {
 
     private var quickStartSection: some View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
-            Text("Anbefalet til dig")
+            Text("Recommended for You")
                 .font(.title2.bold())
             
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
@@ -314,7 +313,7 @@ struct DashboardView: View {
                     .foregroundStyle(Color(uiColor: .systemBackground))
                     .accessibilityLabel("Start \(rec.name)")
                 } else {
-                    Text("Opret dit første træningsprogram under fanen Træning for at se anbefalinger her.")
+                    Text("Create your first workout program in the Workouts tab to see recommendations here.")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }

@@ -20,28 +20,28 @@ struct CreateExerciseSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Detaljer") {
-                    TextField("Navn", text: $name)
-                    Picker("Muskelgruppe", selection: $selectedMuscleGroup) {
+                Section("Details") {
+                    TextField("Name", text: $name)
+                    Picker("Muscle Group", selection: $selectedMuscleGroup) {
                         ForEach(MuscleGroup.allCases, id: \.self) { group in
                             Text(group.rawValue).tag(group)
                         }
                     }
-                    TextField("Udstyr (valgfri)", text: $equipment)
+                    TextField("Equipment (optional)", text: $equipment)
                 }
             }
-            .navigationTitle("Ny øvelse")
+            .navigationTitle("New Exercise")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Annuller") { dismiss() }
+                    Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Gem") { saveExercise() }
+                    Button("Save") { saveExercise() }
                         .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
-            .alert("Fejl", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
+            .alert("Error", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
                 Button("OK") { errorMessage = nil }
             } message: {
                 Text(errorMessage ?? "")
@@ -61,7 +61,7 @@ struct CreateExerciseSheet: View {
             try modelContext.save()
             dismiss()
         } catch {
-            errorMessage = "Kunne ikke gemme øvelsen: \(error.localizedDescription)"
+            errorMessage = "Could not save exercise: \(error.localizedDescription)"
         }
     }
 }

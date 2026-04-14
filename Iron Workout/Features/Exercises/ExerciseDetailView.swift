@@ -60,8 +60,8 @@ struct ExerciseDetailView: View {
 
     private var dateFormatter: DateFormatter {
         let f = DateFormatter()
-        f.dateFormat = "d. MMM yyyy"
-        f.locale = Locale(identifier: "da_DK")
+        f.dateFormat = "d MMM yyyy"
+        f.locale = Locale(identifier: "en_US")
         return f
     }
 
@@ -90,15 +90,15 @@ struct ExerciseDetailView: View {
 
             // MARK: - Personal Records
             if !allCompletedSets.isEmpty {
-                Section("Personlige rekorder") {
+                Section("Personal Records") {
                     HStack(spacing: DesignTokens.Spacing.md) {
                         prCard(
-                            title: "Bedste vægt",
+                            title: "Best Weight",
                             value: bestWeight.map { "\($0.formatted(.number.precision(.fractionLength(1)))) kg" } ?? "–",
                             icon: Ph.trophy.fill
                         )
                         prCard(
-                            title: "Bedste volumen",
+                            title: "Best Volume",
                             value: bestVolumeSet.map { "\($0.reps) × \($0.weight.formatted(.number.precision(.fractionLength(1)))) kg" } ?? "–",
                             icon: Ph.chartBar.fill
                         )
@@ -113,9 +113,9 @@ struct ExerciseDetailView: View {
             }
 
             // MARK: - History
-            Section("Historik") {
+            Section("History") {
                 if relevantSessions.isEmpty {
-                    Text("Ingen træninger med denne øvelse endnu.")
+                    Text("No workouts with this exercise yet.")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 } else {
@@ -125,7 +125,7 @@ struct ExerciseDetailView: View {
                 }
             }
         }
-        .navigationTitle("Øvelse")
+        .navigationTitle("Exercise")
         .navigationBarTitleDisplayMode(.inline)
     }
 

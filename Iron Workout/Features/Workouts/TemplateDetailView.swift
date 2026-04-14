@@ -21,32 +21,32 @@ struct TemplateDetailView: View {
     }
 
     private func exerciseName(for exerciseID: UUID) -> String {
-        allExercises.first { $0.id == exerciseID }?.name ?? "Ukendt øvelse"
+        allExercises.first { $0.id == exerciseID }?.name ?? "Unknown exercise"
     }
 
     var body: some View {
         List {
             Section {
-                Text(template.name.isEmpty ? "Uden navn" : template.name)
+                Text(template.name.isEmpty ? "Untitled" : template.name)
                     .font(.title2.bold())
                 if !template.note.isEmpty {
                     Text(template.note)
                         .foregroundStyle(.secondary)
                 }
             }
-            Section("Øvelser") {
+            Section("Exercises") {
                 if sortedExercises.isEmpty {
                     ContentUnavailableView {
-                        Label("Ingen øvelser", systemImage: "list.bullet")
+                        Label("No Exercises", systemImage: "list.bullet")
                     } description: {
-                        Text("Tilføj øvelser ved at trykke på Rediger øverst.")
+                        Text("Add exercises by tapping Edit above.")
                     }
                 } else {
                     ForEach(sortedExercises, id: \.id) { item in
                         VStack(alignment: .leading, spacing: 4) {
                             Text(exerciseName(for: item.exerciseID))
                                 .font(.headline)
-                            Text("\(item.targetSets) sæt × \(item.targetReps) reps")
+                            Text("\(item.targetSets) sets x \(item.targetReps) reps")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                             if let w = item.targetWeight, w > 0 {
@@ -55,7 +55,7 @@ struct TemplateDetailView: View {
                                     .foregroundStyle(.secondary)
                             }
                             if let r = item.restSeconds, r > 0 {
-                                Text("\(r) sek rest")
+                                Text("\(r) s rest")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
@@ -71,20 +71,20 @@ struct TemplateDetailView: View {
                 NavigationLink {
                     CreateEditTemplateView(template: template)
                 } label: {
-                    Text("Rediger")
+                    Text("Edit")
                 }
             }
             ToolbarItem(placement: .bottomBar) {
                 Button {
                     startWorkout()
                 } label: {
-                    Label { Text("Start træning") } icon: { Ph.play.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
+                    Label { Text("Start Workout") } icon: { Ph.play.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(sortedExercises.isEmpty)
             }
         }
-        .alert("Fejl", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
+        .alert("Error", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
             Button("OK") { errorMessage = nil }
         } message: {
             Text(errorMessage ?? "")
@@ -103,7 +103,7 @@ struct TemplateDetailView: View {
             let session = try WorkoutSessionService.createSession(from: template, modelContext: modelContext)
             activeSession = session
         } catch {
-            errorMessage = "Kunne ikke starte træning: \(error.localizedDescription)"
+            errorMessage = "Could not start workout: \(error.localizedDescription)"
         }
     }
 }

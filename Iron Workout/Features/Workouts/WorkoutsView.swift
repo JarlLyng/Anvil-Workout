@@ -28,11 +28,11 @@ struct WorkoutsView: View {
             Group {
                 if templates.isEmpty {
                     ContentUnavailableView {
-                        Label("Ingen programmer endnu", systemImage: "dumbbell.fill")
+                        Label("No Programs Yet", systemImage: "dumbbell.fill")
                     } description: {
-                        Text("Opret dit første træningsprogram med øvelser, sæt og reps. Derefter kan du starte træningen med et enkelt tryk.")
+                        Text("Create your first workout program with exercises, sets and reps to get started.")
                     } actions: {
-                        Button("Opret program") {
+                        Button("Create Program") {
                             createTemplate()
                         }
                         .buttonStyle(.borderedProminent)
@@ -46,7 +46,7 @@ struct WorkoutsView: View {
                                 NavigationLink(value: template) {
                                     HStack {
                                         VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
-                                            Text(template.name.isEmpty ? "Uden navn" : template.name)
+                                            Text(template.name.isEmpty ? "Untitled" : template.name)
                                                 .font(.headline)
                                                 .foregroundStyle(.primary)
                                             if !template.note.isEmpty {
@@ -62,7 +62,7 @@ struct WorkoutsView: View {
                                                 .aspectRatio(contentMode: .fit)
                                                 .frame(width: 20, height: 20)
                                                 .foregroundStyle(DesignTokens.ColorToken.State.warning)
-                                                .accessibilityLabel("Favorit")
+                                                .accessibilityLabel("Favorite")
                                         } else {
                                             Ph.caretRight.regular
                                                 .resizable()
@@ -79,12 +79,12 @@ struct WorkoutsView: View {
                                     Button {
                                         duplicateTemplate(template)
                                     } label: {
-                                        Label { Text("Dupliker") } icon: { Ph.copySimple.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
+                                        Label { Text("Duplicate") } icon: { Ph.copySimple.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
                                     }
                                     Button(role: .destructive) {
                                         deleteTemplate(template)
                                     } label: {
-                                        Label { Text("Slet") } icon: { Ph.trash.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
+                                        Label { Text("Delete") } icon: { Ph.trash.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
                                     }
                                 }
                             }
@@ -93,8 +93,7 @@ struct WorkoutsView: View {
                     }
                 }
             }
-            .searchable(text: $searchText, prompt: "Søg programmer")
-            .navigationTitle("Træning")
+            .searchable(text: $searchText, prompt: "Search programs")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
@@ -104,7 +103,7 @@ struct WorkoutsView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 24, height: 24)
-                            .accessibilityLabel("Opret program")
+                            .accessibilityLabel("Create Program")
                     }
                 }
             }
@@ -116,7 +115,7 @@ struct WorkoutsView: View {
                     CreateEditTemplateView(template: template)
                 }
             }
-            .alert("Fejl", isPresented: .init(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
+            .alert("Error", isPresented: .init(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
                 Button("OK") { errorMessage = nil }
             } message: {
                 Text(errorMessage ?? "")
@@ -144,31 +143,31 @@ struct WorkoutsView: View {
     }
 
     private func createTemplate() {
-        let newTemplate = WorkoutTemplate(name: "Nyt program")
+        let newTemplate = WorkoutTemplate(name: "New Program")
         modelContext.insert(newTemplate)
         do {
             try modelContext.save()
             templateToCreate = newTemplate
         } catch {
             modelContext.delete(newTemplate)
-            errorMessage = "Kunne ikke oprette program. Prøv igen."
+            errorMessage = "Could not create program."
         }
     }
 
     private func deleteTemplate(_ template: WorkoutTemplate) {
-        let name = template.name.isEmpty ? "Uden navn" : template.name
+        let name = template.name.isEmpty ? "Untitled" : template.name
         modelContext.delete(template)
         do {
             try modelContext.save()
-            showToast("\(name) slettet")
+            showToast("\(name) deleted")
         } catch {
-            errorMessage = "Kunne ikke slette program."
+            errorMessage = "Could not delete program."
         }
     }
 
     private func duplicateTemplate(_ source: WorkoutTemplate) {
         let copy = WorkoutTemplate(
-            name: source.name + " (kopi)",
+            name: source.name + " (copy)",
             note: source.note,
             isFavorite: false
         )
@@ -191,9 +190,9 @@ struct WorkoutsView: View {
         copy.updatedAt = .now
         do {
             try modelContext.save()
-            showToast("Program duplikeret")
+            showToast("Program duplicated")
         } catch {
-            errorMessage = "Kunne ikke duplikere program."
+            errorMessage = "Could not duplicate program."
         }
     }
 

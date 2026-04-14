@@ -8,8 +8,8 @@
 import ActivityKit
 import Foundation
 
-/// Håndterer Live Activity under aktiv træning.
-/// Viser programnavn, nuværende øvelse, tid og sæt-progress på Lock Screen og Dynamic Island.
+/// Manages Live Activity during an active workout.
+/// Shows program name, current exercise, time, and set progress on Lock Screen and Dynamic Island.
 struct LiveActivityService {
 
     // MARK: - Start
@@ -42,7 +42,7 @@ struct LiveActivityService {
                 pushType: nil
             )
         } catch {
-            print("Live Activity start fejlede: \(error)")
+            print("Live Activity start failed: \(error)")
             return nil
         }
     }
@@ -81,7 +81,7 @@ struct LiveActivityService {
         guard let activity = Activity<IronWorkoutWidgetAttributes>.activities.first else { return }
 
         let finalState = IronWorkoutWidgetAttributes.ContentState(
-            currentExercise: "Færdig!",
+            currentExercise: "Done!",
             completedSets: completedSets,
             totalSets: totalSets,
             elapsedSeconds: elapsedSeconds,

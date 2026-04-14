@@ -36,8 +36,8 @@ struct SessionDetailView: View {
                         .foregroundStyle(.secondary)
                     HStack(spacing: 20) {
                         Label { Text(durationText) } icon: { Ph.timer.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 18, height: 18) }
-                        Label { Text("\(session.completedSetCount) sæt") } icon: { Ph.checkCircle.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 18, height: 18) }
-                        Label { Text("\(session.exerciseCount) øvelser") } icon: { Ph.listBullets.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 18, height: 18) }
+                        Label { Text("\(session.completedSetCount) sets") } icon: { Ph.checkCircle.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 18, height: 18) }
+                        Label { Text("\(session.exerciseCount) exercises") } icon: { Ph.listBullets.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 18, height: 18) }
                     }
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
@@ -61,22 +61,22 @@ struct SessionDetailView: View {
                     }
                     .padding(.vertical, 4)
                 } header: {
-                    Text("Øvelse \(ex.sortOrder + 1)")
+                    Text("Exercise \(ex.sortOrder + 1)")
                 }
             }
 
             if session.calories != nil || session.averageHeartRate != nil {
                 Section("Health") {
                     if let cal = session.calories, cal > 0 {
-                        Label { Text("\(Int(cal)) kcal forbrugt") } icon: { Ph.flame.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
+                        Label { Text("\(Int(cal)) kcal burned") } icon: { Ph.flame.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
                     }
                     if let hr = session.averageHeartRate, hr > 0 {
-                        Label { Text("Gns. puls \(Int(hr)) bpm") } icon: { Ph.heart.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
+                        Label { Text("Avg. heart rate \(Int(hr)) bpm") } icon: { Ph.heart.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
                     }
                 }
             }
         }
-        .navigationTitle("Træning")
+        .navigationTitle("Workout")
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -105,11 +105,11 @@ struct SessionDetailView: View {
                 }
             }
             .frame(width: 16, height: 16)
-            .accessibilityLabel(set.isCompleted ? "Fuldført" : "Ikke fuldført")
+            .accessibilityLabel(set.isCompleted ? "Completed" : "Not completed")
             if set.isCompleted {
                 if let reps = set.actualReps {
                     HStack(spacing: 4) {
-                        Text("Sæt \(set.setIndex + 1): \(reps) reps")
+                        Text("Set \(set.setIndex + 1): \(reps) reps")
                             .font(.subheadline)
                         if set.setType != .working {
                             Text("(\(set.setType.rawValue))")
@@ -123,12 +123,12 @@ struct SessionDetailView: View {
                             .foregroundStyle(.secondary)
                     }
                 } else {
-                    Text("Sæt \(set.setIndex + 1): Spring over")
+                    Text("Set \(set.setIndex + 1): Skipped")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
             } else {
-                Text("Sæt \(set.setIndex + 1): Ikke fuldført")
+                Text("Set \(set.setIndex + 1): Not completed")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }

@@ -36,7 +36,7 @@ struct Provider: AppIntentTimelineProvider {
 
     func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<WorkoutEntry> {
         let entry = await fetchEntry()
-        // Opdater hver 30. minut
+        // Update every 30 minutes
         let nextUpdate = Calendar.current.date(byAdding: .minute, value: 30, to: .now) ?? .now
         return Timeline(entries: [entry], policy: .after(nextUpdate))
     }
@@ -58,7 +58,7 @@ struct Provider: AppIntentTimelineProvider {
 
         let completed = sessions.filter { $0.completedSetCount > 0 }
 
-        // Denne uge
+        // This week
         let calendar = Calendar.current
         let weekStart = calendar.dateInterval(of: .weekOfYear, for: .now)?.start ?? .now
         let thisWeek = completed.filter { $0.startedAt >= weekStart }.count
@@ -81,7 +81,7 @@ struct Provider: AppIntentTimelineProvider {
             }
         }
 
-        // Seneste træning
+        // Latest workout
         let last = completed.first
 
         return WorkoutEntry(
@@ -121,7 +121,7 @@ struct IronWorkoutWidgetEntryView: View {
         }
     }
 
-    // MARK: Small Widget — Streak fokus
+    // MARK: Small Widget — Streak focus
     private var smallWidget: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 4) {
@@ -137,7 +137,7 @@ struct IronWorkoutWidgetEntryView: View {
                 .font(.system(size: 44, weight: .bold, design: .rounded))
                 .foregroundStyle(.primary)
 
-            Text(entry.streak == 1 ? "dag" : "dage")
+            Text(entry.streak == 1 ? "day" : "days")
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
@@ -147,7 +147,7 @@ struct IronWorkoutWidgetEntryView: View {
                 Image(systemName: "dumbbell.fill")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
-                Text("\(entry.thisWeek) denne uge")
+                Text("\(entry.thisWeek) this week")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
@@ -155,10 +155,10 @@ struct IronWorkoutWidgetEntryView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    // MARK: Medium Widget — Streak + detaljer
+    // MARK: Medium Widget — Streak + details
     private var mediumWidget: some View {
         HStack(spacing: 16) {
-            // Venstre: Streak
+            // Left: Streak
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 4) {
                     Image(systemName: "flame.fill")
@@ -169,24 +169,24 @@ struct IronWorkoutWidgetEntryView: View {
                 }
                 Text("\(entry.streak)")
                     .font(.system(size: 48, weight: .bold, design: .rounded))
-                Text(entry.streak == 1 ? "dag" : "dage i træk")
+                Text(entry.streak == 1 ? "day" : "days in a row")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            // Højre: Ugens stats
+            // Right: Weekly stats
             VStack(alignment: .leading, spacing: 10) {
                 statRow(
                     icon: "dumbbell.fill",
-                    label: "Denne uge",
-                    value: "\(entry.thisWeek) pas"
+                    label: "This Week",
+                    value: "\(entry.thisWeek) workouts"
                 )
 
                 if let name = entry.lastWorkoutName, let date = entry.lastWorkoutDate {
                     statRow(
                         icon: "clock.arrow.counterclockwise",
-                        label: "Seneste",
+                        label: "Latest",
                         value: name
                     )
                     Text(date, style: .relative)
@@ -196,8 +196,8 @@ struct IronWorkoutWidgetEntryView: View {
                 } else {
                     statRow(
                         icon: "clock.arrow.counterclockwise",
-                        label: "Seneste",
-                        value: "Ingen endnu"
+                        label: "Latest",
+                        value: "None yet"
                     )
                 }
             }
@@ -234,7 +234,7 @@ struct IronWorkoutWidget: Widget {
                 .containerBackground(.fill.tertiary, for: .widget)
         }
         .configurationDisplayName("Iron Workout")
-        .description("Se din streak og ugens træninger.")
+        .description("See your streak and weekly workouts.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }

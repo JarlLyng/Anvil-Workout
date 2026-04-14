@@ -50,10 +50,10 @@ struct WorkoutCompletionView: View {
             if currentMaxWeight > previousMaxWeight && currentMaxWeight > 0 {
                 let previousText = previousMaxWeight > 0
                     ? formatWeight(previousMaxWeight)
-                    : "Ingen"
+                    : "None"
                 records.append(PersonalRecord(
                     exerciseName: exercise.exerciseName,
-                    type: "Vægt",
+                    type: "Weight",
                     value: formatWeight(currentMaxWeight),
                     previousBest: previousText
                 ))
@@ -83,7 +83,7 @@ struct WorkoutCompletionView: View {
                 if current.reps > previousBestReps && current.reps > 0 {
                     let previousText = previousBestReps > 0
                         ? "\(previousBestReps) reps"
-                        : "Ingen"
+                        : "None"
                     records.append(PersonalRecord(
                         exerciseName: exercise.exerciseName,
                         type: "Reps",
@@ -99,12 +99,12 @@ struct WorkoutCompletionView: View {
 
     private var shareText: String {
         var text = "Iron Workout — \(session.templateName)\n\n"
-        text += "Tid: \(durationText)\n"
-        text += "Sæt: \(session.completedSetCount)\n"
-        text += "Øvelser: \(session.exerciseCount)"
+        text += "Time: \(durationText)\n"
+        text += "Sets: \(session.completedSetCount)\n"
+        text += "Exercises: \(session.exerciseCount)"
 
         if !personalRecords.isEmpty {
-            text += "\n\nNye PRs:"
+            text += "\n\nNew PRs:"
             for record in personalRecords {
                 text += "\n- \(record.exerciseName): \(record.value)"
             }
@@ -128,14 +128,14 @@ struct WorkoutCompletionView: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 70, height: 70)
                 .foregroundStyle(DesignTokens.ColorToken.State.success)
-            Text("Træning afsluttet")
+            Text("Workout Complete")
                 .font(.title.bold())
                 .foregroundStyle(DesignTokens.Common.Text.primary(colorScheme))
             VStack(spacing: DesignTokens.Spacing.sm) {
                 Label { Text(session.templateName) } icon: { Ph.listBullets.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
                 Label { Text(durationText) } icon: { Ph.timer.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
-                Label { Text("\(session.completedSetCount) sæt") } icon: { Ph.checkCircle.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
-                Label { Text("\(session.exerciseCount) øvelser") } icon: { Ph.barbell.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
+                Label { Text("\(session.completedSetCount) sets") } icon: { Ph.checkCircle.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
+                Label { Text("\(session.exerciseCount) exercises") } icon: { Ph.barbell.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
             }
             .font(.body)
             .foregroundStyle(DesignTokens.Common.Text.secondary(colorScheme))
@@ -147,7 +147,7 @@ struct WorkoutCompletionView: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 40, height: 40)
                         .foregroundStyle(DesignTokens.ColorToken.State.warning)
-                    Text("Nye personlige rekorder!")
+                    Text("New Personal Records!")
                         .font(.headline)
                         .foregroundStyle(DesignTokens.Common.Text.primary(colorScheme))
                     ForEach(personalRecords) { record in
@@ -155,10 +155,10 @@ struct WorkoutCompletionView: View {
                             Text(record.exerciseName)
                                 .font(.headline)
                                 .foregroundStyle(DesignTokens.Common.Text.primary(colorScheme))
-                            Text("Ny: \(record.value)")
+                            Text("New: \(record.value)")
                                 .font(.subheadline)
                                 .foregroundStyle(DesignTokens.ColorToken.State.success)
-                            Text("Tidligere: \(record.previousBest)")
+                            Text("Previous: \(record.previousBest)")
                                 .font(.subheadline)
                                 .foregroundStyle(DesignTokens.Common.Text.secondary(colorScheme))
                         }
@@ -174,7 +174,7 @@ struct WorkoutCompletionView: View {
             HStack(spacing: DesignTokens.Spacing.md) {
                 ShareLink(item: shareText) {
                     Label {
-                        Text("Del")
+                        Text("Share")
                     } icon: {
                         Ph.shareFat.regular
                             .resizable()
@@ -185,7 +185,7 @@ struct WorkoutCompletionView: View {
                 .buttonStyle(.bordered)
                 .controlSize(.large)
 
-                Button("Færdig") {
+                Button("Done") {
                     onDone()
                 }
                 .buttonStyle(.borderedProminent)

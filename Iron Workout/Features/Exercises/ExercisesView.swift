@@ -60,8 +60,7 @@ struct ExercisesView: View {
                     }
                 }
             }
-            .searchable(text: $searchText, prompt: "Søg øvelser")
-            .navigationTitle("Øvelser")
+            .searchable(text: $searchText, prompt: "Search exercises")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
@@ -71,12 +70,12 @@ struct ExercisesView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 24, height: 24)
-                            .accessibilityLabel("Opret øvelse")
+                            .accessibilityLabel("Create exercise")
                     }
                 }
                 ToolbarItem(placement: .topBarLeading) {
                     Menu {
-                        Button("Alle grupper") { selectedMuscleGroup = nil }
+                        Button("All groups") { selectedMuscleGroup = nil }
                         ForEach(MuscleGroup.allCases, id: \.self) { group in
                             Button(group.rawValue) { selectedMuscleGroup = group }
                         }
@@ -85,7 +84,7 @@ struct ExercisesView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 24, height: 24)
-                            .accessibilityLabel("Filtrer muskelgrupper")
+                            .accessibilityLabel("Filter muscle groups")
                     }
                 }
             }

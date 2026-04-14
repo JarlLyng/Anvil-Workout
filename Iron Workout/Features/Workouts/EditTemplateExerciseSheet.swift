@@ -17,13 +17,13 @@ struct EditTemplateExerciseSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Mål") {
-                    Stepper("Sæt: \(templateExercise.targetSets)", value: $templateExercise.targetSets, in: 1...20)
+                Section("Target") {
+                    Stepper("Sets: \(templateExercise.targetSets)", value: $templateExercise.targetSets, in: 1...20)
                     Stepper("Reps: \(templateExercise.targetReps)", value: $templateExercise.targetReps, in: 1...100)
                     HStack {
-                        Text("Vægt (kg)")
+                        Text("Weight (kg)")
                         Spacer()
-                        TextField("Valgfri", value: $templateExercise.targetWeight, format: .number.precision(.fractionLength(1)))
+                        TextField("Optional", value: $templateExercise.targetWeight, format: .number.precision(.fractionLength(1)))
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                             .focused($isInputActive)
@@ -31,9 +31,9 @@ struct EditTemplateExerciseSheet: View {
                 }
                 Section("Rest") {
                     HStack {
-                        Text("Rest (sek)")
+                        Text("Rest (sec)")
                         Spacer()
-                        TextField("Valgfri", value: $templateExercise.restSeconds, format: .number)
+                        TextField("Optional", value: $templateExercise.restSeconds, format: .number)
                             .keyboardType(.numberPad)
                             .multilineTextAlignment(.trailing)
                             .focused($isInputActive)
@@ -44,7 +44,7 @@ struct EditTemplateExerciseSheet: View {
                         .lineLimit(3...6)
                 }
             }
-            .navigationTitle("Rediger øvelse")
+            .navigationTitle("Edit Exercise")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
@@ -52,7 +52,7 @@ struct EditTemplateExerciseSheet: View {
                 }
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
-                    Button("Færdig") {
+                    Button("Done") {
                         isInputActive = false
                     }
                 }

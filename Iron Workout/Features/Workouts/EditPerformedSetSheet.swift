@@ -18,7 +18,7 @@ struct EditPerformedSetSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Faktisk") {
+                Section("Actual") {
                     HStack {
                         Text("Reps")
                         Spacer()
@@ -26,31 +26,31 @@ struct EditPerformedSetSheet: View {
                             .keyboardType(.numberPad)
                             .multilineTextAlignment(.trailing)
                             .focused($isInputActive)
-                            .accessibilityLabel("Antal reps")
+                            .accessibilityLabel("Number of reps")
                     }
                     HStack {
-                        Text("Vægt (kg)")
+                        Text("Weight (kg)")
                         Spacer()
-                        TextField("Valgfri", value: $performedSet.actualWeight, format: .number.precision(.fractionLength(1)))
+                        TextField("Optional", value: $performedSet.actualWeight, format: .number.precision(.fractionLength(1)))
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                             .focused($isInputActive)
-                            .accessibilityLabel("Vægt i kilogram")
+                            .accessibilityLabel("Weight in kilograms")
                     }
                 }
             }
-            .navigationTitle("Rediger sæt")
+            .navigationTitle("Edit Set")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Gem") {
+                    Button("Save") {
                         onSave()
                         dismiss()
                     }
                 }
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
-                    Button("Færdig") {
+                    Button("Done") {
                         isInputActive = false
                     }
                 }

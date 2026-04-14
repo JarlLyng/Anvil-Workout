@@ -38,7 +38,7 @@ struct IronWorkoutWidgetLiveActivity: Widget {
                     VStack(alignment: .trailing, spacing: 2) {
                         Text(formatTime(context.state.elapsedSeconds))
                             .font(.caption.monospacedDigit().weight(.semibold))
-                        Text("\(context.state.completedSets)/\(context.state.totalSets) sæt")
+                        Text("\(context.state.completedSets)/\(context.state.totalSets) sets")
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                     }
@@ -92,7 +92,7 @@ struct IronWorkoutWidgetLiveActivity: Widget {
                             .font(.caption2)
                             .foregroundStyle(.orange)
                     }
-                    Text("\(context.state.completedSets)/\(context.state.totalSets) sæt")
+                    Text("\(context.state.completedSets)/\(context.state.totalSets) sets")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -119,7 +119,7 @@ extension IronWorkoutWidgetAttributes {
 extension IronWorkoutWidgetAttributes.ContentState {
     fileprivate static var active: IronWorkoutWidgetAttributes.ContentState {
         IronWorkoutWidgetAttributes.ContentState(
-            currentExercise: "Bænkpres",
+            currentExercise: "Bench Press",
             completedSets: 6,
             totalSets: 15,
             elapsedSeconds: 1845,
@@ -129,7 +129,7 @@ extension IronWorkoutWidgetAttributes.ContentState {
 
     fileprivate static var paused: IronWorkoutWidgetAttributes.ContentState {
         IronWorkoutWidgetAttributes.ContentState(
-            currentExercise: "Bænkpres",
+            currentExercise: "Bench Press",
             completedSets: 6,
             totalSets: 15,
             elapsedSeconds: 1845,

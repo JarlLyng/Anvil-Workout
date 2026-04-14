@@ -70,7 +70,7 @@ struct StatsView: View {
             for ex in session.exercises {
                 let completedSets = ex.performedSets.filter(\.isCompleted).count
                 guard completedSets > 0 else { continue }
-                let group = exerciseLookup[ex.exerciseName] ?? "Andet"
+                let group = exerciseLookup[ex.exerciseName] ?? "Other"
                 counts[group, default: 0] += completedSets
             }
         }
@@ -114,12 +114,10 @@ struct StatsView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Statistik")
             .background(Color(uiColor: .systemGroupedBackground))
             .onAppear {
                 if selectedExerciseFor1RM == nil {
-                    // Prøv at auto-vælge bænkpres e.l., ellers tag den første
-                    selectedExerciseFor1RM = exercises.first(where: { $0.name.lowercased().contains("bænkpres") || $0.name.lowercased().contains("bench") }) ?? exercises.first
+                        selectedExerciseFor1RM = exercises.first(where: { $0.name.lowercased().contains("bench") }) ?? exercises.first
                 }
             }
         }
@@ -129,19 +127,19 @@ struct StatsView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 6) {
                 Ph.stack.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20)
-                Text("Træningsvolumen")
+                Text("Training Volume")
                     .font(.headline)
             }
             
             if volumeData.isEmpty {
-                Text("Ingen logget volumen endnu (husk at markere vægt og reps for dine arbejdssæt).")
+                Text("No volume logged yet (remember to enter weight and reps for your working sets).")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             } else {
                 Chart(volumeData) { item in
                     BarMark(
-                        x: .value("Dato", item.date, unit: .day),
-                        y: .value("Volumen (kg)", item.volume)
+                        x: .value("Date", item.date, unit: .day),
+                        y: .value("Volume (kg)", item.volume)
                     )
                     .foregroundStyle(DesignTokens.ColorToken.State.success.gradient)
                 }
@@ -163,19 +161,19 @@ struct StatsView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 6) {
                 Ph.calendarCheck.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20)
-                Text("Træningsfrekvens")
+                Text("Training Frequency")
                     .font(.headline)
             }
 
             if frequencyData.isEmpty {
-                Text("Ingen træninger registreret endnu.")
+                Text("No workouts recorded yet.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             } else {
                 Chart(frequencyData) { item in
                     BarMark(
-                        x: .value("Uge", item.weekStart, unit: .weekOfYear),
-                        y: .value("Antal", item.count)
+                        x: .value("Week", item.weekStart, unit: .weekOfYear),
+                        y: .value("Count", item.count)
                     )
                     .foregroundStyle(DesignTokens.ColorToken.State.warning.gradient)
                 }
@@ -198,12 +196,12 @@ struct StatsView: View {
             HStack {
                 HStack(spacing: 6) {
                     Ph.trendUp.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20).foregroundStyle(.primary)
-                    Text("1RM Estimat")
+                    Text("1RM Estimate")
                         .font(.headline)
                 }
                 Spacer()
-                Picker("Øvelse", selection: $selectedExerciseFor1RM) {
-                    Text("Vælg...").tag(Exercise?.none)
+                Picker("Exercise", selection: $selectedExerciseFor1RM) {
+                    Text("Select...").tag(Exercise?.none)
                     ForEach(exercises) { ex in
                         Text(ex.name).tag(Exercise?.some(ex))
                     }
@@ -213,17 +211,17 @@ struct StatsView: View {
             }
             
             if selectedExerciseFor1RM == nil {
-                Text("Vælg en øvelse for at se dens estimerede maksimale styrke over tid.")
+                Text("Select an exercise to see its estimated max strength over time.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             } else if oneRepMaxData.isEmpty {
-                Text("Ingen tunge arbejdssæt registreret for denne øvelse endnu.")
+                Text("No heavy working sets recorded for this exercise yet.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             } else {
                 Chart(oneRepMaxData) { item in
                     LineMark(
-                        x: .value("Dato", item.date, unit: .day),
+                        x: .value("Date", item.date, unit: .day),
                         y: .value("1RM (kg)", item.estimated1RM)
                     )
                     .interpolationMethod(.monotone)
@@ -248,19 +246,19 @@ struct StatsView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 6) {
                 Ph.barbell.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20)
-                Text("Muskelgruppe-fordeling")
+                Text("Muscle Group Distribution")
                     .font(.headline)
             }
 
             if muscleGroupData.isEmpty {
-                Text("Ingen sæt registreret endnu.")
+                Text("No sets recorded yet.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             } else {
                 Chart(muscleGroupData) { item in
                     BarMark(
-                        x: .value("Sæt", item.setCount),
-                        y: .value("Muskelgruppe", item.muscleGroup)
+                        x: .value("Sets", item.setCount),
+                        y: .value("Muscle Group", item.muscleGroup)
                     )
                     .foregroundStyle(DesignTokens.ColorToken.State.success.gradient)
                 }

@@ -16,8 +16,8 @@ struct WeeklyPlanEditorSheet: View {
     @State private var editablePlan: [Int: String]
     private let onSave: ([Int: String]) -> Void
 
-    private static let dayNames = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lordag", "Sondag"]
-    private static let dayNamesDisplay = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "L\u{00F8}rdag", "S\u{00F8}ndag"]
+    private static let dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    private static let dayNamesDisplay = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
     init(plan: [Int: String], onSave: @escaping ([Int: String]) -> Void) {
         _editablePlan = State(initialValue: plan)
@@ -40,21 +40,21 @@ struct WeeklyPlanEditorSheet: View {
                     )
 
                     Picker(Self.dayNamesDisplay[index], selection: binding) {
-                        Text("Ingen").tag("")
+                        Text("None").tag("")
                         ForEach(templates, id: \.name) { template in
                             Text(template.name).tag(template.name)
                         }
                     }
                 }
             }
-            .navigationTitle("Ugeplan")
+            .navigationTitle("Weekly Plan")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Annuller") { dismiss() }
+                    Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Gem") {
+                    Button("Save") {
                         onSave(editablePlan)
                         dismiss()
                     }

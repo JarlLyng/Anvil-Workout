@@ -102,38 +102,38 @@ struct ActiveWorkoutView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Afslut") { showEndConfirm = true }
+                    Button("End") { showEndConfirm = true }
                 }
                 ToolbarItem(placement: .primaryAction) {
                     if isPaused {
-                        Button("Fortsæt") { resumeWorkout() }
+                        Button("Resume") { resumeWorkout() }
                     } else {
                         Menu {
-                            Button("Pause træning") { pauseWorkout() }
+                            Button("Pause workout") { pauseWorkout() }
                             if currentBlock != nil {
-                                Button("Spring over nuværende", role: .destructive) { skipBlock() }
+                                Button("Skip current", role: .destructive) { skipBlock() }
                             }
                         } label: {
                             Ph.dotsThreeCircle.regular
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 24, height: 24)
-                                .accessibilityLabel("Flere muligheder")
+                                .accessibilityLabel("More options")
                         }
                     }
                 }
             }
-            .confirmationDialog("Afslut træning?", isPresented: $showEndConfirm, titleVisibility: .visible) {
-                Button("Gem og afslut", role: .destructive) {
+            .confirmationDialog("End Workout?", isPresented: $showEndConfirm, titleVisibility: .visible) {
+                Button("Save and End", role: .destructive) {
                     endWorkout()
                 }
-                Button("Fortsat", role: .cancel) { }
+                Button("Continue", role: .cancel) { }
             } message: {
-                Text("Træningen gemmes som den er. Du kan se den under Historik.")
+                Text("The workout will be saved as is. You can view it in History.")
             }
             .sheet(item: $showSetEditor) { set in
                 EditPerformedSetSheet(performedSet: set) {
-                    do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
+                    do { try modelContext.save() } catch { errorMessage = "Could not save: \(error.localizedDescription)" }
                     showSetEditor = nil
                 }
             }
@@ -144,7 +144,7 @@ struct ActiveWorkoutView: View {
             .onDisappear {
                 stopRestTimer()
             }
-            .alert("Fejl", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
+            .alert("Error", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
                 Button("OK") { errorMessage = nil }
             } message: {
                 Text(errorMessage ?? "")
@@ -180,7 +180,7 @@ struct ActiveWorkoutView: View {
 
     private func updateLiveActivity() {
         let totalSets = session.exercises.flatMap(\.performedSets).count
-        let currentExerciseName = currentBlock?.first?.exerciseName ?? "Færdig"
+        let currentExerciseName = currentBlock?.first?.exerciseName ?? "Done"
         let elapsed = elapsedSeconds(at: .now)
         LiveActivityService.updateLiveActivity(
             currentExercise: currentExerciseName,
@@ -211,7 +211,7 @@ struct ActiveWorkoutView: View {
                 Text(formatElapsed(elapsedSeconds(at: context.date)))
                     .font(.title2.monospacedDigit().weight(.medium))
                 if isPaused {
-                    Text("Pauset")
+                    Text("Paused")
                         .font(.caption)
                         .foregroundStyle(DesignTokens.ColorToken.State.warning)
                 }
@@ -229,14 +229,14 @@ struct ActiveWorkoutView: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 60, height: 60)
                 .foregroundStyle(DesignTokens.ColorToken.State.warning)
-            Text("Træning sat på pause")
+            Text("Workout Paused")
                 .font(.title2.bold())
-            Text("Timeren er stoppet. Tryk Fortsæt for at fortsætte.")
+            Text("Timer is stopped. Tap Resume to continue.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
-            Button("Fortsæt træning") {
+            Button("Resume Workout") {
                 resumeWorkout()
             }
             .buttonStyle(.borderedProminent)
@@ -260,7 +260,7 @@ struct ActiveWorkoutView: View {
                 VStack(spacing: 2) {
                     Text("\(seconds)")
                         .font(.title.monospacedDigit().bold())
-                    Text("Hvil")
+                    Text("Rest")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 }
@@ -270,14 +270,14 @@ struct ActiveWorkoutView: View {
             Spacer()
 
             VStack(spacing: 8) {
-                Button("+30 sek") {
+                Button("+30s") {
                     restTotalSeconds += 30
                     restSecondsRemaining = (restSecondsRemaining ?? 0) + 30
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.small)
 
-                Button("Næste") {
+                Button("Next") {
                     stopRestTimer()
                     advanceToNextBlockIfNeeded()
                 }
@@ -295,7 +295,7 @@ struct ActiveWorkoutView: View {
                 if block.count > 1 {
                     HStack {
                         Ph.link.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20).foregroundStyle(DesignTokens.ColorToken.State.warning)
-                        Text("Supersæt").font(.headline).foregroundStyle(DesignTokens.ColorToken.State.warning)
+                        Text("Superset").font(.headline).foregroundStyle(DesignTokens.ColorToken.State.warning)
                     }
                     .padding(.bottom, -12)
                 }
@@ -306,12 +306,12 @@ struct ActiveWorkoutView: View {
                             Text(exercise.exerciseName)
                                 .font(.title3.weight(.semibold))
                             Spacer()
-                            Button("Spring over") {
+                            Button("Skip") {
                                 skipExercise(exercise)
                             }
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
-                            .accessibilityLabel("Spring \(exercise.exerciseName) over")
+                            .accessibilityLabel("Skip \(exercise.exerciseName)")
                         }
 
                         // Note field
@@ -321,7 +321,7 @@ struct ActiveWorkoutView: View {
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 16, height: 16)
                                 .foregroundStyle(.secondary)
-                            TextField("Tilføj note...", text: Binding(
+                            TextField("Add note...", text: Binding(
                                 get: { exercise.note },
                                 set: { newValue in
                                     exercise.note = newValue
@@ -373,7 +373,7 @@ struct ActiveWorkoutView: View {
                     .transition(.scale.combined(with: .opacity))
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 4) {
-                        Text("Sæt \(set.setIndex + 1)")
+                        Text("Set \(set.setIndex + 1)")
                             .font(.subheadline.weight(.medium))
                         if set.setType != .working {
                             Text("(\(set.setType.rawValue))")
@@ -388,7 +388,7 @@ struct ActiveWorkoutView: View {
                     }
                 }
                 Spacer()
-                Button("Rediger") { showSetEditor = set }
+                Button("Edit") { showSetEditor = set }
                     .font(.caption)
             } else {
                 Ph.circle.regular
@@ -402,12 +402,12 @@ struct ActiveWorkoutView: View {
                         ForEach(SetType.allCases, id: \.self) { type in
                             Button(type.rawValue) {
                                 withAnimation { set.setType = type }
-                                do { try modelContext.save() } catch { errorMessage = "Fejl: \(error)" }
+                                do { try modelContext.save() } catch { errorMessage = "Error: \(error)" }
                             }
                         }
                     } label: {
                         HStack(spacing: 4) {
-                            Text("Sæt \(set.setIndex + 1)")
+                            Text("Set \(set.setIndex + 1)")
                                 .font(.subheadline.weight(.medium))
                                 .foregroundStyle(.primary)
                             if set.setType != .working {
@@ -432,7 +432,7 @@ struct ActiveWorkoutView: View {
                     Button("Skip") { markSetSkipped(set, exercise: exercise) }
                         .buttonStyle(.bordered)
                         .controlSize(.regular)
-                    Button("Færdig") { markSetDone(set, exercise: exercise) }
+                    Button("Done") { markSetDone(set, exercise: exercise) }
                         .buttonStyle(.borderedProminent)
                         .controlSize(.large)
                 }
@@ -453,7 +453,7 @@ struct ActiveWorkoutView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 20, height: 20)
-                    Text("Næste: \(names)")
+                    Text("Next: \(names)")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
@@ -474,11 +474,11 @@ struct ActiveWorkoutView: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 60, height: 60)
                 .foregroundStyle(DesignTokens.ColorToken.State.success)
-            Text("Alle øvelser gennemført")
+            Text("All Exercises Completed")
                 .font(.title2.bold())
-            Text("\(session.completedSetCount) sæt i alt")
+            Text("\(session.completedSetCount) total sets")
                 .foregroundStyle(.secondary)
-            Button("Afslut træning") { endWorkout() }
+            Button("End Workout") { endWorkout() }
                 .buttonStyle(.borderedProminent)
                 .padding(.top)
             Spacer()
@@ -494,7 +494,7 @@ struct ActiveWorkoutView: View {
         }
         set.completedAt = .now
         session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
-        do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
+        do { try modelContext.save() } catch { errorMessage = "Could not save: \(error.localizedDescription)" }
         
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         updateLiveActivity()
@@ -511,7 +511,7 @@ struct ActiveWorkoutView: View {
         set.actualReps = nil
         set.actualWeight = nil
         session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
-        do { try modelContext.save() } catch { errorMessage = "Kunne ikke gemme: \(error.localizedDescription)" }
+        do { try modelContext.save() } catch { errorMessage = "Could not save: \(error.localizedDescription)" }
 
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         updateLiveActivity()
@@ -540,7 +540,7 @@ struct ActiveWorkoutView: View {
             }
         }
         session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
-        do { try modelContext.save() } catch { errorMessage = "Fejl: \(error)" }
+        do { try modelContext.save() } catch { errorMessage = "Error: \(error)" }
         if currentBlockIndex < exerciseBlocks.count - 1 {
             currentBlockIndex += 1
         }
@@ -554,7 +554,7 @@ struct ActiveWorkoutView: View {
             set.actualWeight = nil
         }
         session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
-        do { try modelContext.save() } catch { errorMessage = "Fejl: \(error)" }
+        do { try modelContext.save() } catch { errorMessage = "Error: \(error)" }
         advanceToNextBlockIfNeeded()
     }
 
@@ -605,7 +605,7 @@ struct ActiveWorkoutView: View {
         stopRestTimer()
         UINotificationFeedbackGenerator().notificationOccurred(.success)
 
-        // Afslut Live Activity
+        // End Live Activity
         let totalSets = session.exercises.flatMap(\.performedSets).count
         let elapsed = elapsedSeconds(at: .now)
         LiveActivityService.endLiveActivity(
@@ -624,7 +624,7 @@ struct ActiveWorkoutView: View {
                 }
             }
             await MainActor.run {
-                do { try WorkoutSessionService.finalizeSession(session, modelContext: context) } catch { errorMessage = "Kunne ikke afslutte træning: \(error.localizedDescription)" }
+                do { try WorkoutSessionService.finalizeSession(session, modelContext: context) } catch { errorMessage = "Could not save: \(error.localizedDescription)" }
                 showCompletionSummary = true
             }
         }

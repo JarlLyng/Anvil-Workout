@@ -13,22 +13,22 @@ struct ContentView: View {
 
     var body: some View {
         TabView {
-            Tab("Hjem", systemImage: "house.fill") {
+            Tab("Home", systemImage: "house.fill") {
                 DashboardView()
             }
-            Tab("Træning", systemImage: "dumbbell.fill") {
+            Tab("Workouts", systemImage: "dumbbell.fill") {
                 WorkoutsView()
             }
-            Tab("Historik", systemImage: "clock.arrow.counterclockwise") {
+            Tab("History", systemImage: "clock.arrow.counterclockwise") {
                 HistoryView()
             }
-            Tab("Øvelser", systemImage: "list.bullet") {
+            Tab("Exercises", systemImage: "list.bullet") {
                 ExercisesView()
             }
-            Tab("Statistik", systemImage: "chart.bar.fill") {
+            Tab("Stats", systemImage: "chart.bar.fill") {
                 StatsView()
             }
-            Tab("Indstillinger", systemImage: "gearshape.fill") {
+            Tab("Settings", systemImage: "gearshape.fill") {
                 SettingsView()
             }
         }

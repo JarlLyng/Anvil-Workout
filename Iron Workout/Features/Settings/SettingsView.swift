@@ -31,14 +31,14 @@ struct SettingsView: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 20, height: 20)
                             .foregroundStyle(.secondary)
-                        Picker("Vægtenhed", selection: $weightUnit) {
+                        Picker("Weight Unit", selection: $weightUnit) {
                             Text("kg").tag("kg")
                             Text("lbs").tag("lbs")
                         }
                         .pickerStyle(.segmented)
                     }
                 } header: {
-                    Text("Enheder")
+                    Text("Units")
                 }
 
                 Section {
@@ -49,7 +49,7 @@ struct SettingsView: View {
                         }
                     } label: {
                         Label {
-                            Text("Eksportér træningsdata")
+                            Text("Export Workout Data")
                         } icon: {
                             Ph.export.regular
                                 .resizable()
@@ -60,7 +60,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Data")
                 } footer: {
-                    Text("Eksporterer alle træningssessioner som en CSV-fil.")
+                    Text("Exports all workout sessions as a CSV file.")
                 }
 
                 Section {
@@ -81,11 +81,11 @@ struct SettingsView: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 20, height: 20)
                             .foregroundStyle(.secondary)
-                        Text("Udviklet af Jarl Lyng")
+                        Text("Developed by IAMJARL")
                             .foregroundStyle(.secondary)
                     }
                 } header: {
-                    Text("Om")
+                    Text("About")
                 }
 
                 Section {
@@ -102,10 +102,10 @@ struct SettingsView: View {
                                 ProgressView()
                                     .scaleEffect(0.9)
                             } else {
-                                Button("Tillad adgang") {
+                                Button("Grant Access") {
                                     requestHealthAccess()
                                 }
-                                .accessibilityHint("Anmoder om tilladelse til at læse og skrive sundhedsdata")
+                                .accessibilityHint("Request permission to read and write health data")
                             }
                         }
                         if let msg = message {
@@ -131,16 +131,15 @@ struct SettingsView: View {
                             .padding(.vertical, 4)
                         }
                     } else {
-                        Label { Text("Health er ikke tilgængelig på denne enhed") } icon: { Ph.heartBreak.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
+                        Label { Text("Health is not available on this device") } icon: { Ph.heartBreak.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
                             .foregroundStyle(.secondary)
                     }
                 } header: {
                     Text("Health")
                 } footer: {
-                    Text("Iron Workout gemmer træninger i Health og kan vise kalorieforbrug og puls, når du bruger Apple Watch eller andre kilder under træning.")
+                    Text("Iron Workout saves workouts to Health and can show calories and heart rate when you use Apple Watch or other sources during a workout.")
                 }
             }
-            .navigationTitle("Indstillinger")
             .sheet(isPresented: $showExportShare) {
                 if let url = exportURL {
                     ActivityView(activityItems: [url])
@@ -153,7 +152,7 @@ struct SettingsView: View {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
 
-        var rows: [String] = ["Dato,Program,Varighed (min),Øvelse,Sæt,Reps,Vægt (kg),Type"]
+        var rows: [String] = ["Date,Program,Duration (min),Exercise,Set,Reps,Weight (kg),Type"]
 
         for session in sessions {
             let date = dateFormatter.string(from: session.startedAt)
@@ -196,13 +195,13 @@ struct SettingsView: View {
             do {
                 try await health.requestAuthorization()
                 await MainActor.run {
-                    message = "Tilladelse anmodet. Åbn Health-appen for at godkende læs og skriv af træningsdata."
+                    message = "Permission requested. Open the Health app to approve read and write access for workout data."
                     messageIsError = false
                     requestInProgress = false
                 }
             } catch {
                 await MainActor.run {
-                    message = "Kunne ikke anmode om tilladelse. Tjek at Health er tilgængelig."
+                    message = "Could not request permission. Check that Health is available."
                     messageIsError = true
                     requestInProgress = false
                 }
