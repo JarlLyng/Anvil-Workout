@@ -1,61 +1,71 @@
 # Iron Workout
 
-iOS-app til at planlægge og gennemføre styrketræning: opret skabeloner, kør træningen i hallen, og få det gemt i historik og Apple Health uden unødigt ballast.
+iOS app for planning and executing strength training: create programs, run workouts in the gym, and have everything saved to history and Apple Health with zero friction.
 
-**Plan din træning → træn → tryk færdig → sessionen gemmes.**
+**Plan your workout -> train -> tap done -> session saved.**
 
 ---
 
-## Overblik
+## Overview
 
-| Område | Teknologi |
-|--------|-----------|
+| Area | Technology |
+|------|-----------|
 | UI | SwiftUI |
-| Persistens | SwiftData |
+| Persistence | SwiftData |
 | Health | HealthKit |
+| Widgets | WidgetKit + ActivityKit (Live Activity) |
 | Monitoring | Sentry (sentry-cocoa) |
 | Design system | [IAMJARL Design Tokens](https://github.com/JarlLyng/iamjarl-design) |
-| Ikoner | [Phosphor Icons](https://github.com/phosphor-icons/swift) |
-| Sprog | Swift 5, dansk UI-tekst |
+| Icons | [Phosphor Icons](https://github.com/phosphor-icons/swift) |
+| Language | Swift 5, English UI |
 
-Ingen backend, login eller eksterne APIs ud over Health og Sentry.
+No backend, login, or external APIs beyond Health and Sentry.
 
 ---
 
-## Hurtig start
+## Quick start
 
 ```bash
 git clone <repo-url>
 open "Iron Workout.xcodeproj"
-# Vælg scheme "Iron Workout", vælg simulator → ⌘R
+# Select scheme "Iron Workout", pick a simulator -> Cmd+R
 ```
 
-Appen kører uden yderligere konfiguration. Øvelsesbiblioteket seedes automatisk ved første start.
+The app runs without additional configuration. The exercise library is seeded automatically on first launch.
 
-Se [docs/SETUP.md](docs/SETUP.md) for fuld opsætning inkl. Sentry og HealthKit.
+See [docs/SETUP.md](docs/SETUP.md) for full setup including Sentry, HealthKit, App Groups, and Widget Extension.
 
 ---
 
-## Dokumentation
+## Features
 
-| Dokument | Indhold |
+- **Dashboard** — Weekly metrics (workouts, streak, volume), weekly planner, quick-start recommendations
+- **Programs** — Create, edit, duplicate, favorite workout templates with exercises, sets, reps, weight, rest timers, and supersets
+- **Active Workout** — Timer, set-by-set tracking, rest timer with circular progress, pause/resume, skip exercises, per-exercise notes
+- **Workout Completion** — Summary with personal records detection, share workout, App Store review prompt
+- **History** — Searchable list of completed workouts with detailed session views
+- **Exercises** — Searchable exercise library with per-exercise history and PR tracking (best weight, volume, estimated 1RM)
+- **Stats** — Volume chart, weekly frequency, estimated 1RM progression, muscle group distribution
+- **Settings** — Weight unit preference (kg/lbs), HealthKit permissions, CSV data export
+- **Onboarding** — 3-page intro for new users
+- **Widget** — Home screen streak widget (small + medium sizes)
+- **Live Activity** — Lock Screen and Dynamic Island showing current exercise, time, and set progress during workouts
+
+---
+
+## Documentation
+
+| Document | Contents |
 |----------|---------|
-| [docs/SETUP.md](docs/SETUP.md) | Krav, installation, Sentry-konfiguration, HealthKit, secrets |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Projektstruktur, datamodel, relationer, brugerflow |
-| [docs/DESIGN.md](docs/DESIGN.md) | Design system, Phosphor-ikoner, farver, UI-retningslinjer |
-| [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) | Udvikling, kodestil, tilføjelse af features, tests |
-
----
-
-## Roadmap
-
-- **Færdig (MVP):** Skabeloner, træningsflow, historik, HealthKit, Sentry, pause/skip, design tokens, Phosphor-ikoner.
-- **Senere:** Apple Watch-companion, personlige rekorder, avanceret historik/statistik, export/import af skabeloner.
+| [docs/SETUP.md](docs/SETUP.md) | Requirements, installation, Sentry, HealthKit, App Groups, Widget Extension |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Project structure, data model, relationships, user flow |
+| [docs/DESIGN.md](docs/DESIGN.md) | Design system, Phosphor icons, colors, UI guidelines |
+| [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) | Development, code style, adding features, tests |
 
 ---
 
 ## App Store
 
-- **Navn:** Iron Workout
-- **Undertekst:** fx "Workout Planner" / "Plan and Track Workouts"
-- **Positionering:** Plan din træning. Følg flowet.
+- **Name:** Iron Workout
+- **Developer:** IAMJARL
+- **Subtitle:** Plan and Track Workouts

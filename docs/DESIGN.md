@@ -1,55 +1,63 @@
 # Design system
 
-Iron Workout bruger **IAMJARL Design Tokens** ([iamjarl-design](https://github.com/JarlLyng/iamjarl-design)) og **Phosphor Icons** ([phosphor-swift](https://github.com/phosphor-icons/swift)) til et konsistent visuelt udtryk.
+Iron Workout uses **IAMJARL Design Tokens** ([iamjarl-design](https://github.com/JarlLyng/iamjarl-design)) and **Phosphor Icons** ([phosphor-swift](https://github.com/phosphor-icons/swift)) for a consistent visual language.
 
 ---
 
-## Farver
+## Colors
 
-### Accent Color (primær)
+### Accent Color (primary)
 
-| Mode | Hex | Beskrivelse |
+| Mode | Hex | Description |
 |------|-----|-------------|
-| Light | `#CE63FF` | Lilla |
-| Dark | `#D0FF00` | Neon-grøn |
+| Light | `#CE63FF` | Purple |
+| Dark | `#D0FF00` | Neon green |
 
-Defineret i `Assets.xcassets/AccentColor.colorset` og bruges automatisk som tint-farve i hele appen.
+Defined in `Assets.xcassets/AccentColor.colorset` and used automatically as the tint color throughout the app.
 
 ### Design tokens
 
-Farver tilgås via `DesignTokens` fra `IAMJARLDesignTokens`:
+Colors are accessed via `DesignTokens` from `IAMJARLDesignTokens`:
 
 ```swift
 import IAMJARLDesignTokens
 
-// Tekst
+// Text
 DesignTokens.Common.Text.primary(colorScheme)
 DesignTokens.Common.Text.secondary(colorScheme)
 
-// Baggrunde
+// Backgrounds
 DesignTokens.Common.Background.app(colorScheme)
 
-// State-farver
-DesignTokens.ColorToken.State.success   // grøn (afsluttet, godkendt)
-DesignTokens.ColorToken.State.warning   // gul/orange (pause, rest)
-DesignTokens.ColorToken.State.error     // rød (fejl, slet, puls)
+// State colors
+DesignTokens.ColorToken.State.success   // green (completed, approved)
+DesignTokens.ColorToken.State.warning   // yellow/orange (pause, rest, favorites)
+DesignTokens.ColorToken.State.error     // red (error, delete, heart rate)
 ```
 
 ### Spacing
 
 ```swift
-DesignTokens.Spacing.sm    // lille
-DesignTokens.Spacing.md    // medium
-DesignTokens.Spacing.xl    // stor
-DesignTokens.Spacing.xxl   // ekstra stor
-DesignTokens.Spacing.xxxl  // ekstra ekstra stor
+DesignTokens.Spacing.xs     // extra small
+DesignTokens.Spacing.sm     // small
+DesignTokens.Spacing.md     // medium
+DesignTokens.Spacing.lg     // large
+DesignTokens.Spacing.xl     // extra large
+DesignTokens.Spacing.xxl    // 2x extra large
+DesignTokens.Spacing.xxxl   // 3x extra large
+```
+
+### Corner radius
+
+```swift
+DesignTokens.Radius.lg      // cards, backgrounds
 ```
 
 ---
 
-## Ikoner — Phosphor
+## Icons — Phosphor
 
-Alle ikoner i appen er Phosphor-ikoner via `PhosphorSwift`. **Ingen SF Symbols bruges.**
+All icons in the app are Phosphor icons via `PhosphorSwift`. **No SF Symbols are used** (except in system-provided views like `ContentUnavailableView` where SF Symbols are required by the API).
 
 ### Import
 
@@ -60,74 +68,94 @@ import PhosphorSwift
 ### API
 
 ```swift
-// Grundlæggende brug
-Ph.barbell.regular          // standard-vægt
-Ph.checkCircle.fill         // udfyldt variant
+// Basic usage
+Ph.barbell.regular          // standard weight
+Ph.checkCircle.fill         // filled variant
 
-// Med størrelse
+// With size (must use .resizable() + .aspectRatio + .frame)
 Ph.timer.regular
+    .resizable()
+    .aspectRatio(contentMode: .fit)
     .frame(width: 20, height: 20)
 
-// Med farve (design token)
+// With color (design token)
 Ph.checkCircle.fill
-    .color(DesignTokens.ColorToken.State.success)
+    .resizable()
+    .aspectRatio(contentMode: .fit)
     .frame(width: 20, height: 20)
+    .foregroundStyle(DesignTokens.ColorToken.State.success)
 ```
 
-### Regler
+### Rules
 
-| Regel | Værdi |
-|-------|-------|
-| Default vægt | `regular` |
-| Udfyldt variant | `fill` (kun til aktive/fremhævede states) |
-| Inline / toolbar størrelse | 20×20 |
-| Primary action størrelse | 24×24 |
-| Hero / empty state størrelse | 60–70 |
-| Blandede vægte | Undgå — brug konsekvent `regular` eller `fill` |
+| Rule | Value |
+|------|-------|
+| Default weight | `regular` |
+| Filled variant | `fill` (only for active/highlighted states) |
+| Inline / toolbar size | 20x20 |
+| Primary action size | 24x24 |
+| Hero / empty state size | 60-70 |
+| Mixed weights | Avoid — use consistently `regular` or `fill` |
 
 ### Labels
 
-Brug closure-baseret `Label` i stedet for `systemImage`:
+Use closure-based `Label` instead of `systemImage`:
 
 ```swift
-// Korrekt
-Label { Text("Start træning") } icon: { Ph.play.fill }
+// Correct
+Label { Text("Start workout") } icon: {
+    Ph.play.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20)
+}
 
-// Forkert — bruger SF Symbols
-Label("Start træning", systemImage: "play.fill")
+// Wrong — uses SF Symbols
+Label("Start workout", systemImage: "play.fill")
 ```
 
-### Ikon-oversigt
+### Icon reference
 
-| Brug | Ikon |
-|------|------|
-| Træning / barbell | `Ph.barbell.regular` |
-| Historik / ur | `Ph.clockCounterClockwise.regular` |
-| Øvelser / liste | `Ph.listBullets.regular` |
-| Indstillinger / gear | `Ph.gear.regular` |
+| Usage | Icon |
+|-------|------|
+| Workout / barbell | `Ph.barbell.regular` |
 | Timer | `Ph.timer.regular` |
-| Sæt færdigt | `Ph.checkCircle.fill` (.success) |
-| Sæt ufærdigt | `Ph.circle.regular` (.secondary) |
+| Set completed | `Ph.checkCircle.fill` (.success) |
+| Set pending | `Ph.circle.regular` (.secondary) |
 | Pause | `Ph.pauseCircle.fill` (.warning) |
 | Play / start | `Ph.play.fill` |
-| Tilføj | `Ph.plusCircle.fill` |
-| Dupliker | `Ph.copySimple.regular` |
-| Favorit | `Ph.star.fill` (.yellow) |
-| Filter | `Ph.funnelSimple.regular` |
-| Mere / menu | `Ph.dotsThreeCircle.regular` |
-| Næste øvelse | `Ph.arrowCircleDown.regular` |
-| Pil højre | `Ph.caretRight.regular` |
-| Kalorier / ild | `Ph.flame.regular` (.warning) |
-| Puls / hjerte | `Ph.heart.regular` / `Ph.heart.fill` (.error) |
-| Hjerte brudt | `Ph.heartBreak.regular` |
-| Advarsel | `Ph.warningCircle.regular` |
+| Add | `Ph.plusCircle.fill` |
+| Duplicate | `Ph.copySimple.regular` |
+| Favorite | `Ph.star.fill` (.warning) |
+| More / menu | `Ph.dotsThreeCircle.regular` |
+| Next exercise | `Ph.arrowCircleDown.regular` |
+| Chevron right | `Ph.caretRight.regular` |
+| Calories / fire | `Ph.flame.regular` (.warning) |
+| Heart rate | `Ph.heart.fill` (.error) |
+| Share | `Ph.shareFat.regular` |
+| Trophy / PR | `Ph.trophy.fill` (.warning) |
+| Superset link | `Ph.link.fill` (.warning) |
+| Notes | `Ph.notepad.regular` |
+| List | `Ph.listBullets.regular` |
+
+### Tab bar icons
+
+The tab bar uses SF Symbols (required by SwiftUI `Tab` API):
+
+| Tab | SF Symbol |
+|-----|-----------|
+| Home | `house.fill` |
+| Workouts | `dumbbell.fill` |
+| History | `clock.arrow.counterclockwise` |
+| Exercises | `list.bullet` |
+| Stats | `chart.bar.fill` |
+| Settings | `gearshape.fill` |
 
 ---
 
-## UI-retningslinjer
+## UI guidelines
 
-- **Tone:** Native iOS, rolig, rummelig. Store tap-targets. Undgå overfyldte tabeller.
-- **Sprog:** Dansk UI-tekst i hele appen.
-- **Empty states:** Brug `ContentUnavailableView` med Phosphor-ikon og beskrivende tekst.
-- **Fejlhåndtering:** `@State private var errorMessage: String?` + `.alert()` modifier — konsekvent mønster i alle views.
-- **Tilgængelighed:** Alle toolbar-ikoner og interaktive ikoner skal have `.accessibilityLabel()`.
+- **Tone:** Native iOS, calm, spacious. Large tap targets. Avoid dense tables.
+- **Language:** English UI text throughout the app.
+- **Empty states:** Use `ContentUnavailableView` with descriptive text and action button.
+- **Error handling:** `@State private var errorMessage: String?` + `.alert()` modifier — consistent pattern across all views.
+- **Accessibility:** All toolbar icons and interactive icons must have `.accessibilityLabel()`.
+- **Cards:** Use `.background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))` for card-style containers.
+- **Navigation:** No duplicate titles — tab name serves as the page title, so `.navigationTitle` is omitted on tab root views.

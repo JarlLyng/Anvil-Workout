@@ -1,82 +1,110 @@
-# Arkitektur
+# Architecture
 
-## Projektstruktur
+## Project structure
 
 ```
 Iron Workout/
-├── Iron_WorkoutApp.swift              # App-entry, SwiftData container, Sentry init
-├── ContentView.swift                  # Tab-bar (Træning, Historik, Øvelser, Indstillinger)
-├── Info.plist                         # Merger med auto-genereret plist, SENTRY_DSN
-├── Iron Workout.entitlements          # HealthKit capability
+├── Iron_WorkoutApp.swift              # App entry, SwiftData container, Sentry init, onboarding gate
+├── ContentView.swift                  # Tab bar (Home, Workouts, History, Exercises, Stats, Settings)
+├── Info.plist                         # Merges with auto-generated plist, SENTRY_DSN
+├── Iron Workout.entitlements          # HealthKit + App Group
+├── PrivacyInfo.xcprivacy              # Privacy manifest
 ├── Config/
-│   ├── Secrets.xcconfig               # Sentry DSN (gitignored)
-│   └── Secrets.xcconfig.example       # Template til nye udviklere
+│   ├── DeveloperSettings.xcconfig     # Base config (includes Secrets.xcconfig)
+│   └── Secrets.xcconfig               # Sentry credentials (gitignored)
 │
 ├── Features/
-│   ├── Workouts/                      # Skabeloner og aktiv træning
-│   │   ├── WorkoutsView.swift         # Liste over programmer
-│   │   ├── TemplateDetailView.swift   # Detaljevisning af skabelon
+│   ├── Dashboard/
+│   │   ├── DashboardView.swift        # Weekly metrics grid, planner, recommendations
+│   │   ├── DashboardSubviews.swift    # DashboardCard, WeeklyPlanRow
+│   │   └── WeeklyPlanEditorSheet.swift# Edit weekly plan (day -> template mapping)
+│   │
+│   ├── Workouts/
+│   │   ├── WorkoutsView.swift         # Program list with search and toast feedback
+│   │   ├── TemplateDetailView.swift   # Template detail, start workout
 │   │   ├── CreateEditTemplateView.swift
-│   │   ├── ExercisePickerView.swift   # Vælg øvelse fra bibliotek
+│   │   ├── ExercisePickerView.swift   # Pick exercise from library
 │   │   ├── EditTemplateExerciseSheet.swift
-│   │   ├── ActiveWorkoutView.swift    # Under-træning: timer, sæt, rest, pause
-│   │   ├── WorkoutCompletionView.swift # Opsummering efter træning
+│   │   ├── ActiveWorkoutView.swift    # Active workout: timer, sets, rest, pause, Live Activity
+│   │   ├── ActiveWorkoutSubviews.swift# WorkoutTimerBar, PauseOverlay, RestBar, SetRow
+│   │   ├── WorkoutCompletionView.swift# Summary with PR detection, share, review prompt
 │   │   └── EditPerformedSetSheet.swift
 │   │
 │   ├── History/
-│   │   ├── HistoryView.swift          # Liste over afsluttede træninger
-│   │   └── SessionDetailView.swift    # Detalje: øvelser, sæt-for-sæt, Health
+│   │   ├── HistoryView.swift          # Searchable list of completed workouts
+│   │   └── SessionDetailView.swift    # Detail: exercises, set-by-set, Health data
 │   │
 │   ├── Exercises/
-│   │   └── ExercisesView.swift        # Øvelsesbibliotek, søg, filter
+│   │   ├── ExercisesView.swift        # Exercise library with search
+│   │   ├── ExerciseDetailView.swift   # Per-exercise history, PRs, 1RM chart
+│   │   └── CreateExerciseSheet.swift  # Add custom exercise
+│   │
+│   ├── Stats/
+│   │   ├── StatsView.swift            # Stats coordinator with computed data
+│   │   └── StatsChartViews.swift      # Volume, frequency, 1RM, muscle group charts
 │   │
 │   ├── Health/
-│   │   └── HealthKitService.swift     # HealthKit: tilladelser, workout start/slut
+│   │   └── HealthKitService.swift     # HealthKit: auth, workout start/end, metrics query
+│   │
+│   ├── Onboarding/
+│   │   └── OnboardingView.swift       # 3-page onboarding with Next/Skip/Get Started
 │   │
 │   └── Settings/
-│       └── SettingsView.swift         # Indstillinger, Health-tilladelser
+│       └── SettingsView.swift         # Units, CSV export, Health, About
 │
 └── Shared/
-    ├── Models/                        # SwiftData-modeller
+    ├── Models/                        # SwiftData models
     │   ├── Exercise.swift
     │   ├── WorkoutTemplate.swift
     │   ├── WorkoutTemplateExercise.swift
     │   ├── WorkoutSession.swift
     │   ├── WorkoutSessionExercise.swift
-    │   └── PerformedSet.swift
+    │   ├── PerformedSet.swift
+    │   └── LiveActivityAttributes.swift  # Shared with widget (needs Target Membership on both)
     │
     ├── Services/
-    │   ├── ExerciseLibraryService.swift   # Seed af øvelsesbibliotek
-    │   ├── WorkoutSessionService.swift    # Opret/afslut session fra skabelon
-    │   └── SentryConfig.swift             # Læser DSN fra Info.plist
+    │   ├── ExerciseLibraryService.swift   # Seed exercise library on first launch
+    │   ├── WorkoutSessionService.swift    # Create/finalize session from template
+    │   ├── LiveActivityService.swift      # Start/update/end Live Activity
+    │   └── SentryConfig.swift             # Reads DSN from Info.plist
     │
     └── Components/
-        └── DesignSystem.swift             # Helpers til design tokens
+        └── DesignSystem.swift             # Design token helpers
+
+IronWorkoutWidget/
+├── IronWorkoutWidgetBundle.swift          # Widget bundle (streak widget + Live Activity)
+├── IronWorkoutWidget.swift                # Streak widget (small + medium) with SwiftData
+├── IronWorkoutWidgetLiveActivity.swift    # Live Activity UI (Lock Screen + Dynamic Island)
+├── IronWorkoutWidgetControl.swift         # Control center widget stub
+├── AppIntent.swift                        # Widget configuration intent
+├── Info.plist
+└── IronWorkoutWidgetExtension.entitlements # App Group for shared data
 ```
 
-## Arkitekturprincipper
+## Architecture principles
 
-- **Feature-baseret mappestruktur** — skærme grupperet efter feature, ikke efter type.
-- **Ingen ViewModel-lag** — logik ligger i services eller direkte i views, hvor det er simpelt nok. SwiftData's `@Query` og `@Bindable` erstatter meget af det en ViewModel normalt gør.
-- **Single source of truth** — alle domænemodeller i `Shared/Models`, brugt af både UI og services.
-- **Services til sideeffekter** — `WorkoutSessionService`, `ExerciseLibraryService` og `HealthKitService` håndterer forretningslogik uden at være bundet til UI.
+- **Feature-based folder structure** — screens grouped by feature, not by type.
+- **No ViewModel layer** — logic lives in services or directly in views where simple enough. SwiftData's `@Query` and `@Bindable` replace much of what a ViewModel normally does.
+- **Single source of truth** — all domain models in `Shared/Models/`, used by both UI and services.
+- **Services for side effects** — `WorkoutSessionService`, `ExerciseLibraryService`, `HealthKitService`, and `LiveActivityService` handle business logic without being bound to UI.
+- **View splitting for compilation** — heavy views are split into subview files (e.g. `ActiveWorkoutSubviews.swift`, `StatsChartViews.swift`, `DashboardSubviews.swift`) to avoid Swift type-checker bottlenecks.
 
 ---
 
-## Datamodel (SwiftData)
+## Data model (SwiftData)
 
-### Modeller
+### Models
 
-| Model | Formål |
-|-------|--------|
-| **Exercise** | Én øvelse i biblioteket (navn, muskelgruppe, udstyr, `isBuiltin`) |
-| **WorkoutTemplate** | Et program (navn, note, favorit, liste af øvelser) |
-| **WorkoutTemplateExercise** | Én øvelse i en skabelon inkl. mål (sæt, reps, vægt, rest, note) |
-| **WorkoutSession** | En gennemført træning (skabelonnavn, start/slut, varighed, kcal, puls) |
-| **WorkoutSessionExercise** | Én øvelse i en session (navn, rækkefølge, rest) |
-| **PerformedSet** | Ét sæt (mål/faktisk reps og vægt, completed/skipped, tidsstempel) |
+| Model | Purpose |
+|-------|---------|
+| **Exercise** | One exercise in the library (name, muscle group, equipment, `isBuiltin`) |
+| **WorkoutTemplate** | A program (name, note, favorite, list of exercises) |
+| **WorkoutTemplateExercise** | One exercise in a template incl. targets (sets, reps, weight, rest, note, supersetID) |
+| **WorkoutSession** | A completed workout (template name, start/end, duration, kcal, heart rate) |
+| **WorkoutSessionExercise** | One exercise in a session (name, sort order, rest, note, supersetID) |
+| **PerformedSet** | One set (target/actual reps and weight, completed/skipped, timestamp, set type) |
 
-### Relationer
+### Relationships
 
 ```
 WorkoutTemplate
@@ -86,49 +114,72 @@ WorkoutSession
   └── [WorkoutSessionExercise]     (cascade delete)
        └── [PerformedSet]          (cascade delete)
 
-Exercise (standalone — refereres via exerciseID, slettes ikke med skabelon)
+Exercise (standalone — referenced via exerciseID, not deleted with template)
 ```
+
+### Set types
+
+`PerformedSet.setType` uses a `SetType` enum with raw values stored in SwiftData via `setTypeRaw`. The raw values are in Danish for backwards compatibility with existing data:
+
+| Case | Raw value | Meaning |
+|------|-----------|---------|
+| `.working` | `"Arbejdssæt"` | Working set |
+| `.warmup` | `"Opvarmning"` | Warm-up set |
+| `.drop` | `"Dropsæt"` | Drop set |
+| `.failure` | `"Failure"` | Failure set |
+
+**Do not change these raw values** — they are persisted storage keys.
 
 ### Seeding
 
-Øvelsesbiblioteket seedes i `ExerciseLibraryService.seedIfNeeded(modelContext:)` ved app-start. Der seedes kun hvis der ikke allerede findes built-in øvelser (`isBuiltin == true`).
+The exercise library is seeded in `ExerciseLibraryService.seedIfNeeded(modelContext:)` at app start. It only seeds if no built-in exercises exist (`isBuiltin == true`).
+
+### App Group and shared data
+
+The app and widget extension share data via App Group `group.com.iamjarl.Iron-Workout`. The `ModelContainer` in `Iron_WorkoutApp.swift` is configured with `.groupContainer(.identifier("group.com.iamjarl.Iron-Workout"))` so both targets access the same SwiftData store.
 
 ---
 
-## Brugerflow
+## User flow
 
 ```
 ┌─────────────┐     ┌──────────────┐     ┌──────────────────┐
-│  Opret/vælg │────→│ Start træning│────→│  Aktiv træning    │
-│  skabelon   │     │  fra skabelon│     │  (timer, sæt,     │
-│             │     │              │     │   rest, pause)    │
+│ Create/pick  │────>│ Start workout│────>│  Active workout   │
+│ template     │     │ from template│     │  (timer, sets,    │
+│              │     │              │     │   rest, pause)    │
 └─────────────┘     └──────────────┘     └────────┬─────────┘
                                                    │
-                                          ┌────────▼─────────┐
-                                          │  Afslut træning   │
-                                          │  (gem + Health)   │
+                                          ┌────────v─────────┐
+                                          │  End workout      │
+                                          │  (save + Health)  │
                                           └────────┬─────────┘
                                                    │
-                                          ┌────────▼─────────┐
-                                          │  Historik         │
-                                          │  (sessions,       │
-                                          │   sæt, kcal, puls)│
+                                          ┌────────v─────────┐
+                                          │  Completion       │
+                                          │  (PRs, share,     │
+                                          │   review prompt)  │
+                                          └────────┬─────────┘
+                                                   │
+                                          ┌────────v─────────┐
+                                          │  History / Stats  │
                                           └──────────────────┘
 ```
 
-1. **Træning-fanen:** Opret/rediger/slet/dupliker/favoritér skabeloner. Tilføj øvelser, sæt sæt/reps/vægt/rest.
-2. **Aktiv træning:** Timer, HealthKit-workout, markér sæt færdig/skip, spring øvelse over, pause/genoptag, rest-timer.
-3. **Afslut:** Session gemmes (varighed, sæt, evt. kcal/puls fra Health), afslutningsskærm.
-4. **Historik:** Liste over sessions; detaljevisning med sæt-for-sæt og Health-data.
-5. **Øvelser:** Søg og filter i det indbyggede bibliotek.
-6. **Indstillinger:** Health-tilladelser.
+1. **Home tab:** Dashboard with weekly metrics, streak, weekly planner, quick-start.
+2. **Workouts tab:** Create/edit/delete/duplicate/favorite templates. Add exercises with sets/reps/weight/rest/supersets.
+3. **Active workout:** Timer, HealthKit workout, Live Activity on Lock Screen, mark sets done/skip, per-exercise notes, rest timer, pause/resume.
+4. **Completion:** Session saved (duration, sets, kcal/heart rate from Health). PR detection for weight and reps. Share workout summary. App Store review prompt at 5th, 15th, and 50th workout.
+5. **History tab:** Searchable list of sessions; detail view with set-by-set data and Health metrics.
+6. **Exercises tab:** Searchable library; per-exercise detail with history, PRs, and estimated 1RM.
+7. **Stats tab:** Volume over time, weekly frequency, estimated 1RM progression, muscle group distribution.
+8. **Settings tab:** Weight unit (kg/lbs), CSV export, Health permissions, about.
 
 ---
 
 ## Dependencies (SPM)
 
-| Pakke | Version | Formål |
-|-------|---------|--------|
-| [sentry-cocoa](https://github.com/getsentry/sentry-cocoa) | 9.7.0 | Crash reporting og performance |
-| [iamjarl-design](https://github.com/JarlLyng/iamjarl-design) | branch: main | Design tokens (farver, spacing, typografi) |
-| [phosphor-swift](https://github.com/phosphor-icons/swift) | 2.1.0 | Ikon-bibliotek |
+| Package | Version | Purpose |
+|---------|---------|--------|
+| [sentry-cocoa](https://github.com/getsentry/sentry-cocoa) | 9.7.0 | Crash reporting and performance |
+| [iamjarl-design](https://github.com/JarlLyng/iamjarl-design) | branch: main | Design tokens (colors, spacing, typography) |
+| [phosphor-swift](https://github.com/phosphor-icons/swift) | 2.1.0 | Icon library |

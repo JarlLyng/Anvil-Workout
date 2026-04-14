@@ -1,29 +1,31 @@
-# Udvikling
+# Development
 
-## Kodestil
+## Code style
 
-- Korte, læsbare filer — native SwiftUI.
-- Undgå unødvendige dependencies.
-- Dansk UI-tekst i views, engelske kodenavne (variabel- og funktionsnavne).
-- Brug design tokens fra `IAMJARLDesignTokens` til farver, spacing og baggrunde — ikke hardcodede værdier.
-- Brug udelukkende Phosphor-ikoner (`PhosphorSwift`) — ingen SF Symbols.
+- Short, readable files — native SwiftUI.
+- Avoid unnecessary dependencies.
+- English UI text in views, English code names.
+- Use design tokens from `IAMJARLDesignTokens` for colors, spacing, and backgrounds — no hardcoded values.
+- Use exclusively Phosphor icons (`PhosphorSwift`) — no SF Symbols (except where required by SwiftUI API, e.g. tab bar).
+- Split large views into subview files when the Swift type-checker struggles (compile times > 30s). See `ActiveWorkoutSubviews.swift`, `StatsChartViews.swift`, `DashboardSubviews.swift` for examples.
 
-## Tilføj en ny feature
+## Add a new feature
 
-1. Opret view(s) under den relevante `Features/`-mappe. Opret en ny mappe hvis featuren ikke passer ind i en eksisterende.
-2. Delte modeller tilføjes i `Shared/Models/`.
-3. Delt logik/services i `Shared/Services/`.
-4. Registrér nye SwiftData-modeller i `Iron_WorkoutApp.swift` schema.
+1. Create view(s) under the relevant `Features/` folder. Create a new folder if the feature doesn't fit into an existing one.
+2. Shared models go in `Shared/Models/`.
+3. Shared logic/services in `Shared/Services/`.
+4. Register new SwiftData models in `Iron_WorkoutApp.swift` schema.
+5. If the feature needs widget data, ensure the model file has Target Membership on both targets.
 
-## Fejlhåndtering i views
+## Error handling in views
 
-Brug dette konsistente mønster:
+Use this consistent pattern:
 
 ```swift
 @State private var errorMessage: String?
 
-// I body:
-.alert("Fejl", isPresented: Binding(
+// In body:
+.alert("Error", isPresented: Binding(
     get: { errorMessage != nil },
     set: { if !$0 { errorMessage = nil } }
 )) {
@@ -32,32 +34,71 @@ Brug dette konsistente mønster:
     Text(errorMessage ?? "")
 }
 
-// Ved modelContext.save():
+// On modelContext.save():
 do {
     try modelContext.save()
 } catch {
-    errorMessage = "Kunne ikke gemme: \(error.localizedDescription)"
+    errorMessage = "Could not save: \(error.localizedDescription)"
 }
 ```
 
+## Toast feedback
+
+For non-critical confirmations (duplicate, delete), use the toast pattern from `WorkoutsView.swift`:
+
+```swift
+@State private var toastMessage: String?
+
+// Overlay in body:
+.overlay(alignment: .bottom) {
+    if let toastMessage {
+        // Capsule with checkmark + message, auto-dismiss after 2s
+    }
+}
+
+// Trigger:
+private func showToast(_ message: String) {
+    toastMessage = message
+    Task {
+        try? await Task.sleep(for: .seconds(2))
+        toastMessage = nil
+    }
+}
+```
+
+## User preferences
+
+Use `@AppStorage` for lightweight user preferences:
+
+| Key | Type | Default | Purpose |
+|-----|------|---------|---------|
+| `hasSeenOnboarding` | Bool | false | Gate onboarding flow |
+| `weightUnit` | String | "kg" | Display unit for weights |
+| `weeklyPlan` | String | "{}" | JSON-encoded day-to-template mapping |
+
 ## Secrets
 
-Hemmeligheder (fx Sentry DSN) håndteres via `.xcconfig`-filer:
+Secrets (e.g. Sentry DSN) are managed via `.xcconfig` files:
 
-1. `Iron Workout/Config/DeveloperSettings.xcconfig` er committet og inkluderer valgfrit `Secrets.xcconfig` (gitignored).
-2. `Secrets.xcconfig.example` er skabelon — kopiér til `Secrets.xcconfig` lokalt.
-3. Build settings → Info.plist → koden læser DSN fra `Bundle.main`.
+1. `Iron Workout/Config/DeveloperSettings.xcconfig` is committed and optionally includes `Secrets.xcconfig` (gitignored).
+2. `Secrets.xcconfig.example` is the template — copy to `Secrets.xcconfig` locally.
+3. Build settings -> Info.plist -> code reads DSN from `Bundle.main`.
 
-Commit aldrig secrets til git.
+Never commit secrets to git.
 
 ## Tests
 
 - Unit tests: `Iron WorkoutTests/`
 - UI tests: `Iron WorkoutUITests/`
-- Kør med ⌘U i Xcode.
+- Run with Cmd+U in Xcode.
 
 ## Git
 
-- Branch fra `main`.
-- Skriv korte, beskrivende commit-beskeder på engelsk.
-- Push aldrig secrets eller `.xcuserdata`.
+- Branch from `main`.
+- Short, descriptive commit messages in English.
+- Never push secrets or `.xcuserdata`.
+- When bumping build numbers, update all targets (app + widget extension).
+
+## Build performance
+
+If builds hang or take very long (especially around 4/80 on the progress bar), the Swift type-checker is likely struggling with a large view body. Split the view into smaller subview files. Each subview should be in its own struct in a separate file (e.g. `FooSubviews.swift` alongside `FooView.swift`).
