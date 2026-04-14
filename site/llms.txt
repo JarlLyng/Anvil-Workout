@@ -1,0 +1,33 @@
+# Iron Workout
+
+> Iron Workout is a free iOS strength training app for planning workouts, tracking sets and reps in the gym, and reviewing progress over time. It works fully offline with no account required, no ads, and no data collection.
+
+Iron Workout is developed by IAMJARL. It is available on the Apple App Store for iPhone. The app focuses on a streamlined gym experience: users create workout programs with exercises, sets, reps, weight targets, and rest timers, then follow them in real time during training.
+
+## Key features
+
+- Workout program builder with exercises, sets, reps, weight targets, rest timers, and supersets
+- Real-time workout tracking with haptic rest countdown
+- Automatic personal record detection for weight and reps
+- Progress charts: volume over time, weekly frequency, estimated 1RM progression, muscle group distribution
+- Live Activity on Lock Screen and Dynamic Island during workouts
+- Smart dashboard with weekly metrics, workout streak, and training planner
+- Apple Health and HealthKit integration (calories burned, heart rate from Apple Watch)
+- Per-exercise history with PR tracking and estimated 1RM chart
+- CSV data export
+- Searchable exercise library and workout history
+- 100% offline — no account, no internet, no ads, no data sold
+
+## Technical details
+
+- Built with SwiftUI and SwiftData (on-device storage)
+- iOS 17.0+ required
+- WidgetKit home screen widget (streak and weekly stats)
+- ActivityKit Live Activity (Lock Screen and Dynamic Island)
+- HealthKit integration for workout sessions, calories, and heart rate
+- No backend, no cloud, no third-party analytics
+
+## Links
+
+- [Home](https://jarllyng.github.io/IronFlow/): Product page with features and download link
+- [Privacy Policy](https://jarllyng.github.io/IronFlow/privacy.html): Privacy policy and data practices
