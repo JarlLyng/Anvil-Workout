@@ -20,8 +20,6 @@ struct DashboardView: View {
     @State private var templateToStart: WorkoutTemplate?
     @State private var activeSession: WorkoutSession?
 
-    private static let dayAbbreviations = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-
     private var weeklyPlan: [Int: String] {
         (try? JSONDecoder().decode([String: String].self, from: Data(weeklyPlanJSON.utf8)))?.reduce(into: [Int: String]()) { result, pair in
             if let key = Int(pair.key) { result[key] = pair.value }
@@ -159,7 +157,7 @@ struct DashboardView: View {
     private var metricsSection: some View {
         VStack(spacing: DesignTokens.Spacing.lg) {
             HStack(spacing: DesignTokens.Spacing.lg) {
-                dashboardCard(
+                DashboardCard(
                     title: "This Week",
                     value: "\(thisWeekSessions)",
                     icon: Ph.calendarCheck.fill
@@ -169,7 +167,7 @@ struct DashboardView: View {
                         .foregroundStyle(DesignTokens.ColorToken.State.success)
                 )
 
-                dashboardCard(
+                DashboardCard(
                     title: "Last Week",
                     value: "\(lastWeekSessions)",
                     icon: Ph.clockCounterClockwise.regular
@@ -181,7 +179,7 @@ struct DashboardView: View {
             }
 
             HStack(spacing: DesignTokens.Spacing.lg) {
-                dashboardCard(
+                DashboardCard(
                     title: "Streak",
                     value: "\(currentStreak) days",
                     icon: Ph.flame.fill
@@ -191,7 +189,7 @@ struct DashboardView: View {
                         .foregroundStyle(DesignTokens.ColorToken.State.error)
                 )
 
-                dashboardCard(
+                DashboardCard(
                     title: "Total",
                     value: "\(sessions.filter({ $0.completedSetCount > 0 }).count)",
                     icon: Ph.trophy.fill
@@ -204,77 +202,9 @@ struct DashboardView: View {
         }
     }
     
-    private func dashboardCard<Icon: View>(title: String, value: String, icon: Icon) -> some View {
-        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
-            HStack {
-                icon
-                Spacer()
-            }
-            VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
-                Text(value)
-                    .font(.title2.bold())
-                Text(title)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .padding(DesignTokens.Spacing.lg)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
-    }
-    
     private var weeklyPlanSection: some View {
-        let calendar = Calendar.current
-        // ISO weekday: Mon=2..Sun=1 → map to 0-based index
-        let todayWeekday = calendar.component(.weekday, from: .now)
-        let todayIndex = (todayWeekday + 5) % 7  // Mon=0, Tue=1, ..., Sun=6
-
-        return VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
-            HStack {
-                Text("Weekly Plan")
-                    .font(.title2.bold())
-                Spacer()
-                Button {
-                    showPlanEditor = true
-                } label: {
-                    Ph.pencilSimple.regular
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 20, height: 20)
-                }
-                .accessibilityLabel("Edit weekly plan")
-            }
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: DesignTokens.Spacing.md) {
-                    ForEach(0..<7, id: \.self) { index in
-                        let plan = weeklyPlan
-                        let templateName = plan[index]
-                        let isToday = index == todayIndex
-
-                        VStack(spacing: DesignTokens.Spacing.xs) {
-                            Text(Self.dayAbbreviations[index])
-                                .font(.caption.bold())
-                                .foregroundStyle(isToday ? Color.white : .secondary)
-
-                            Text(templateName ?? "\u{2014}")
-                                .font(.caption2)
-                                .foregroundStyle(isToday ? Color.white.opacity(0.9) : .primary)
-                                .lineLimit(2)
-                                .multilineTextAlignment(.center)
-                        }
-                        .frame(width: 56, height: 64)
-                        .background(
-                            isToday
-                                ? AnyShapeStyle(Color.accentColor)
-                                : AnyShapeStyle(.regularMaterial),
-                            in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg)
-                        )
-                        .onTapGesture {
-                            showPlanEditor = true
-                        }
-                    }
-                }
-            }
+        WeeklyPlanRow(weeklyPlan: weeklyPlan) {
+            showPlanEditor = true
         }
     }
 
