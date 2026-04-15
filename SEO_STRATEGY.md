@@ -1,6 +1,6 @@
 # SEO, ASO & GEO Strategy — Iron Workout
 
-Site: https://jarllyng.github.io/IronFlow/ (TBA: ironworkout.iamjarl.com)  
+Site: https://ironworkout.iamjarl.com/ (TBA: ironworkout.iamjarl.com)  
 App Store: Endnu ikke udgivet  
 Google Search Console: Ikke connected endnu  
 Last updated: 2026-04-15

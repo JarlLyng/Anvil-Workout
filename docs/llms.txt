@@ -33,6 +33,6 @@ Iron Workout is a paid app with a one-time purchase price on the App Store. Ther
 
 ## Links
 
-- [Home](https://jarllyng.github.io/IronFlow/): Product page with features
-- [Support](https://jarllyng.github.io/IronFlow/support.html): Help and contact information
-- [Privacy Policy](https://jarllyng.github.io/IronFlow/privacy.html): Privacy policy and data practices
+- [Home](https://ironworkout.iamjarl.com/): Product page with features
+- [Support](https://ironworkout.iamjarl.com/support.html): Help and contact information
+- [Privacy Policy](https://ironworkout.iamjarl.com/privacy.html): Privacy policy and data practices

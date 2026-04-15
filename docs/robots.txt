@@ -30,7 +30,7 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-Sitemap: https://jarllyng.github.io/IronFlow/sitemap.xml
+Sitemap: https://ironworkout.iamjarl.com/sitemap.xml
 
 # AI context
-# https://jarllyng.github.io/IronFlow/llms.txt
+# https://ironworkout.iamjarl.com/llms.txt
