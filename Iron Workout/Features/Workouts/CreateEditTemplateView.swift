@@ -145,9 +145,7 @@ struct CreateEditTemplateView: View {
                 Text("Add Exercise")
             } icon: {
                 Ph.plusCircle.fill
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 20, height: 20)
+                    .icon()
             }
         }
     }
@@ -214,9 +212,7 @@ private struct TemplateExerciseRowLabel: View {
 
     private var supersetLinkIcon: some View {
         Ph.link.bold
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .frame(width: 16, height: 16)
+            .icon(size: 16)
             .foregroundStyle(DesignTokens.ColorToken.State.warning)
     }
 
@@ -243,9 +239,7 @@ private struct TemplateExerciseRowLabel: View {
 
     private var disclosureChevron: some View {
         Ph.caretRight.regular
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .frame(width: 20, height: 20)
+            .icon()
             .foregroundStyle(.secondary)
     }
 }

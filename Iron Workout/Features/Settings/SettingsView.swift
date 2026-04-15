@@ -27,9 +27,7 @@ struct SettingsView: View {
                 Section {
                     HStack {
                         Ph.scales.regular
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 20, height: 20)
+                            .icon()
                             .foregroundStyle(.secondary)
                         Picker("Weight Unit", selection: $weightUnit) {
                             Text("kg").tag("kg")
@@ -52,9 +50,7 @@ struct SettingsView: View {
                             Text("Export Workout Data")
                         } icon: {
                             Ph.export.regular
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 20, height: 20)
+                                .icon()
                         }
                     }
                 } header: {
@@ -66,9 +62,7 @@ struct SettingsView: View {
                 Section {
                     HStack {
                         Ph.info.regular
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 20, height: 20)
+                            .icon()
                             .foregroundStyle(.secondary)
                         Text("Iron Workout")
                         Spacer()
@@ -77,9 +71,7 @@ struct SettingsView: View {
                     }
                     HStack {
                         Ph.code.regular
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 20, height: 20)
+                            .icon()
                             .foregroundStyle(.secondary)
                         Text("Developed by IAMJARL")
                             .foregroundStyle(.secondary)
@@ -92,9 +84,7 @@ struct SettingsView: View {
                     if health.isAvailable {
                         HStack {
                             Ph.heart.fill
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 20, height: 20)
+                                .icon()
                                 .foregroundStyle(DesignTokens.ColorToken.State.error)
                             Text("Apple Health")
                             Spacer()
@@ -113,17 +103,14 @@ struct SettingsView: View {
                                 Group {
                                     if messageIsError {
                                         Ph.warningCircle.regular
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
+                                            .icon()
                                             .foregroundStyle(DesignTokens.ColorToken.State.error)
                                     } else {
                                         Ph.checkCircle.regular
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
+                                            .icon()
                                             .foregroundStyle(DesignTokens.ColorToken.State.success)
                                     }
                                 }
-                                .frame(width: 20, height: 20)
                                 Text(msg)
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
@@ -131,7 +118,7 @@ struct SettingsView: View {
                             .padding(.vertical, 4)
                         }
                     } else {
-                        Label { Text("Health is not available on this device") } icon: { Ph.heartBreak.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
+                        Label { Text("Health is not available on this device") } icon: { Ph.heartBreak.regular.icon() }
                             .foregroundStyle(.secondary)
                     }
                 } header: {

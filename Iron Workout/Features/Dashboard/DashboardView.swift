@@ -38,8 +38,8 @@ struct DashboardView: View {
         let hour = Calendar.current.component(.hour, from: .now)
         switch hour {
         case 0..<5: return "Good night"
-        case 5..<10: return "Good morning"
-        case 10..<18: return "Good afternoon"
+        case 5..<12: return "Good morning"
+        case 12..<18: return "Good afternoon"
         default: return "Good evening"
         }
     }
@@ -162,9 +162,7 @@ struct DashboardView: View {
                     title: "This Week",
                     value: "\(thisWeekSessions)",
                     icon: Ph.calendarCheck.fill
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 24, height: 24)
+                        .icon(size: 24)
                         .foregroundStyle(DesignTokens.ColorToken.State.success)
                 )
 
@@ -172,9 +170,7 @@ struct DashboardView: View {
                     title: "Last Week",
                     value: "\(lastWeekSessions)",
                     icon: Ph.clockCounterClockwise.regular
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 24, height: 24)
+                        .icon(size: 24)
                         .foregroundStyle(.secondary)
                 )
             }
@@ -184,9 +180,7 @@ struct DashboardView: View {
                     title: "Streak",
                     value: "\(currentStreak) days",
                     icon: Ph.flame.fill
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 24, height: 24)
+                        .icon(size: 24)
                         .foregroundStyle(DesignTokens.ColorToken.State.error)
                 )
 
@@ -194,9 +188,7 @@ struct DashboardView: View {
                     title: "Total",
                     value: "\(sessions.filter({ $0.completedSetCount > 0 }).count)",
                     icon: Ph.trophy.fill
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 24, height: 24)
+                        .icon(size: 24)
                         .foregroundStyle(DesignTokens.ColorToken.State.warning)
                 )
             }
@@ -234,7 +226,7 @@ struct DashboardView: View {
                             Spacer()
                             Text("Start Workout")
                                 .font(.headline)
-                            Ph.playCircle.fill.aspectRatio(contentMode: .fit).frame(width: 20, height: 20)
+                            Ph.playCircle.fill.icon()
                             Spacer()
                         }
                         .padding()

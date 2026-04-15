@@ -55,9 +55,7 @@ struct ExercisePickerView: View {
                         }
                         Spacer()
                         Ph.plusCircle.fill
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 20, height: 20)
+                            .icon()
                             .foregroundStyle(.tint)
                             .accessibilityLabel("Add \(exercise.name)")
                     }
@@ -79,9 +77,7 @@ struct ExercisePickerView: View {
                             }
                         } label: {
                             Ph.funnelSimple.regular
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 24, height: 24)
+                                .icon(size: 24)
                                 .accessibilityLabel("Filter muscle groups")
                         }
                         
@@ -89,9 +85,7 @@ struct ExercisePickerView: View {
                             showCreateSheet = true
                         } label: {
                             Ph.plusCircle.fill
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 24, height: 24)
+                                .icon(size: 24)
                                 .accessibilityLabel("Create exercise")
                         }
                     }

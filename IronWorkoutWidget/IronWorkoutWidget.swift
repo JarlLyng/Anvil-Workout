@@ -185,7 +185,7 @@ struct IronWorkoutWidgetEntryView: View {
 
                 if let name = entry.lastWorkoutName, let date = entry.lastWorkoutDate {
                     statRow(
-                        icon: "clock.arrow.counterclockwise",
+                        icon: "clock.arrow.circlepath",
                         label: "Latest",
                         value: name
                     )
@@ -195,7 +195,7 @@ struct IronWorkoutWidgetEntryView: View {
                         .padding(.leading, 24)
                 } else {
                     statRow(
-                        icon: "clock.arrow.counterclockwise",
+                        icon: "clock.arrow.circlepath",
                         label: "Latest",
                         value: "None yet"
                     )

@@ -36,7 +36,8 @@ struct StatsView: View {
                 data[day, default: 0] += sessionVolume
             }
         }
-        return data.map { VolumeDataPoint(date: $0.key, volume: $0.value) }.sorted { $0.date < $1.date }
+        let points: [VolumeDataPoint] = data.map { VolumeDataPoint(date: $0.key, volume: $0.value) }
+        return points.sorted { $0.date < $1.date }
     }
 
     private var frequencyData: [FrequencyDataPoint] {
@@ -58,8 +59,8 @@ struct StatsView: View {
             }
         }
 
-        return weekBuckets.map { FrequencyDataPoint(weekStart: $0.key, count: $0.value) }
-            .sorted { $0.weekStart < $1.weekStart }
+        let points: [FrequencyDataPoint] = weekBuckets.map { FrequencyDataPoint(weekStart: $0.key, count: $0.value) }
+        return points.sorted { $0.weekStart < $1.weekStart }
     }
 
     private var muscleGroupData: [MuscleGroupDataPoint] {
@@ -75,8 +76,8 @@ struct StatsView: View {
             }
         }
 
-        return counts.map { MuscleGroupDataPoint(muscleGroup: $0.key, setCount: $0.value) }
-            .sorted { $0.setCount > $1.setCount }
+        let points: [MuscleGroupDataPoint] = counts.map { MuscleGroupDataPoint(muscleGroup: $0.key, setCount: $0.value) }
+        return points.sorted { $0.setCount > $1.setCount }
     }
 
     private var oneRepMaxData: [OneRepMaxDataPoint] {
@@ -99,7 +100,8 @@ struct StatsView: View {
                 }
             }
         }
-        return data.map { OneRepMaxDataPoint(date: $0.key, estimated1RM: $0.value) }.sorted { $0.date < $1.date }
+        let points: [OneRepMaxDataPoint] = data.map { OneRepMaxDataPoint(date: $0.key, estimated1RM: $0.value) }
+        return points.sorted { $0.date < $1.date }
     }
 
     // MARK: - Body

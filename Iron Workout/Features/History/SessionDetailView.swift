@@ -35,9 +35,9 @@ struct SessionDetailView: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                     HStack(spacing: 20) {
-                        Label { Text(durationText) } icon: { Ph.timer.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 18, height: 18) }
-                        Label { Text("\(session.completedSetCount) sets") } icon: { Ph.checkCircle.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 18, height: 18) }
-                        Label { Text("\(session.exerciseCount) exercises") } icon: { Ph.listBullets.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 18, height: 18) }
+                        Label { Text(durationText) } icon: { Ph.timer.regular.icon(size: 18) }
+                        Label { Text("\(session.completedSetCount) sets") } icon: { Ph.checkCircle.regular.icon(size: 18) }
+                        Label { Text("\(session.exerciseCount) exercises") } icon: { Ph.listBullets.regular.icon(size: 18) }
                     }
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
@@ -68,10 +68,10 @@ struct SessionDetailView: View {
             if session.calories != nil || session.averageHeartRate != nil {
                 Section("Health") {
                     if let cal = session.calories, cal > 0 {
-                        Label { Text("\(Int(cal)) kcal burned") } icon: { Ph.flame.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
+                        Label { Text("\(Int(cal)) kcal burned") } icon: { Ph.flame.regular.icon() }
                     }
                     if let hr = session.averageHeartRate, hr > 0 {
-                        Label { Text("Avg. heart rate \(Int(hr)) bpm") } icon: { Ph.heart.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
+                        Label { Text("Avg. heart rate \(Int(hr)) bpm") } icon: { Ph.heart.regular.icon() }
                     }
                 }
             }
@@ -94,17 +94,14 @@ struct SessionDetailView: View {
             Group {
                 if set.isCompleted {
                     Ph.checkCircle.fill
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
+                        .icon(size: 16)
                         .foregroundStyle(DesignTokens.ColorToken.State.success)
                 } else {
                     Ph.circle.regular
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
+                        .icon(size: 16)
                         .foregroundStyle(.secondary)
                 }
             }
-            .frame(width: 16, height: 16)
             .accessibilityLabel(set.isCompleted ? "Completed" : "Not completed")
             if set.isCompleted {
                 if let reps = set.actualReps {

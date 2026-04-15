@@ -24,7 +24,7 @@ struct HistoryView: View {
             Group {
                 if sessions.isEmpty {
                     ContentUnavailableView {
-                        Label("No Workouts Yet", systemImage: "clock.arrow.counterclockwise")
+                        Label("No Workouts Yet", systemImage: "clock.arrow.circlepath")
                     } description: {
                         Text("When you complete a workout from the Workouts tab, it will appear here with duration, sets and optional heart rate and calories from Health.")
                     }
@@ -43,10 +43,10 @@ struct HistoryView: View {
                                         .foregroundStyle(.secondary)
                                 }
                                 HStack(spacing: DesignTokens.Spacing.lg) {
-                                    Label { Text("\(session.exerciseCount) exercises") } icon: { Ph.listBullets.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 16, height: 16) }
-                                    Label { Text("\(session.completedSetCount) sets") } icon: { Ph.checkCircle.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 16, height: 16) }
+                                    Label { Text("\(session.exerciseCount) exercises") } icon: { Ph.listBullets.regular.icon(size: 16) }
+                                    Label { Text("\(session.completedSetCount) sets") } icon: { Ph.checkCircle.regular.icon(size: 16) }
                                     if session.durationSeconds > 0 {
-                                        Label { Text(formatDuration(session.durationSeconds)) } icon: { Ph.timer.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 16, height: 16) }
+                                        Label { Text(formatDuration(session.durationSeconds)) } icon: { Ph.timer.regular.icon(size: 16) }
                                     }
                                 }
                                 .font(.caption)
@@ -54,12 +54,12 @@ struct HistoryView: View {
                                 if session.calories != nil || session.averageHeartRate != nil {
                                     HStack(spacing: DesignTokens.Spacing.md) {
                                         if let cal = session.calories, cal > 0 {
-                                            Label { Text("\(Int(cal)) kcal") } icon: { Ph.flame.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 14, height: 14) }
+                                            Label { Text("\(Int(cal)) kcal") } icon: { Ph.flame.regular.icon(size: 14) }
                                                 .font(.caption2)
                                                 .foregroundStyle(DesignTokens.ColorToken.State.warning)
                                         }
                                         if let hr = session.averageHeartRate, hr > 0 {
-                                            Label { Text("\(Int(hr)) bpm") } icon: { Ph.heart.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 14, height: 14) }
+                                            Label { Text("\(Int(hr)) bpm") } icon: { Ph.heart.regular.icon(size: 14) }
                                                 .font(.caption2)
                                                 .foregroundStyle(DesignTokens.ColorToken.State.error)
                                         }

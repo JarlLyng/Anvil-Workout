@@ -31,3 +31,6 @@ User-agent: Google-Extended
 Allow: /
 
 Sitemap: https://jarllyng.github.io/IronFlow/sitemap.xml
+
+# AI context
+# https://jarllyng.github.io/IronFlow/llms.txt

@@ -33,7 +33,17 @@ DesignTokens.Common.Background.app(colorScheme)
 DesignTokens.ColorToken.State.success   // green (completed, approved)
 DesignTokens.ColorToken.State.warning   // yellow/orange (pause, rest, favorites)
 DesignTokens.ColorToken.State.error     // red (error, delete, heart rate)
+
+// OnPrimary (text on primary-colored surfaces)
+DesignTokens.Common.OnPrimary.text(colorScheme)  // #FFFFFF in light, #000000 in dark
+
+// Primary color
+DesignTokens.Common.primary(colorScheme)          // accent color
 ```
+
+### OnPrimary rule
+
+Text on primary-colored surfaces (`.borderedProminent` buttons, accent-colored badges like the weekly plan today-indicator) **must** use `DesignTokens.Common.OnPrimary.text(colorScheme)`, not hardcoded `.white` or SwiftUI's default button text color. This ensures correct contrast in both light and dark mode.
 
 ### Spacing
 
@@ -67,23 +77,21 @@ import PhosphorSwift
 
 ### API
 
+Use the `.icon(size:)` helper extension (defined in `Shared/Components/DesignSystem.swift`) to size icons. Default size is 20pt.
+
 ```swift
-// Basic usage
-Ph.barbell.regular          // standard weight
-Ph.checkCircle.fill         // filled variant
+// Basic usage with helper (preferred)
+Ph.timer.regular.icon()                    // 20x20 (default)
+Ph.checkCircle.fill.icon(size: 16)         // 16x16
+Ph.pauseCircle.fill.icon(size: 60)         // 60x60 (hero)
 
-// With size (must use .resizable() + .aspectRatio + .frame)
-Ph.timer.regular
-    .resizable()
-    .aspectRatio(contentMode: .fit)
-    .frame(width: 20, height: 20)
-
-// With color (design token)
+// With color
 Ph.checkCircle.fill
-    .resizable()
-    .aspectRatio(contentMode: .fit)
-    .frame(width: 20, height: 20)
+    .icon()
     .foregroundStyle(DesignTokens.ColorToken.State.success)
+
+// The helper replaces this verbose chain:
+// Ph.timer.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20)
 ```
 
 ### Rules
@@ -103,9 +111,7 @@ Use closure-based `Label` instead of `systemImage`:
 
 ```swift
 // Correct
-Label { Text("Start workout") } icon: {
-    Ph.play.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20)
-}
+Label { Text("Start workout") } icon: { Ph.play.fill.icon() }
 
 // Wrong — uses SF Symbols
 Label("Start workout", systemImage: "play.fill")
@@ -143,7 +149,7 @@ The tab bar uses SF Symbols (required by SwiftUI `Tab` API):
 |-----|-----------|
 | Home | `house.fill` |
 | Workouts | `dumbbell.fill` |
-| History | `clock.arrow.counterclockwise` |
+| History | `clock.arrow.circlepath` |
 | Exercises | `list.bullet` |
 | Stats | `chart.bar.fill` |
 | Settings | `gearshape.fill` |

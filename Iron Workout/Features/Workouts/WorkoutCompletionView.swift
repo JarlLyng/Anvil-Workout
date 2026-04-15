@@ -40,10 +40,10 @@ struct WorkoutCompletionView: View {
             let currentMaxWeight = completedWorkingSets.compactMap(\.actualWeight).max() ?? 0
 
             // Find previous best weight for same exercise name
-            let previousExercises = previousSessions.flatMap(\.exercises).filter {
+            let previousExercises: [WorkoutSessionExercise] = previousSessions.flatMap(\.exercises).filter {
                 $0.exerciseName == exercise.exerciseName
             }
-            let previousSets = previousExercises.flatMap(\.performedSets).filter {
+            let previousSets: [PerformedSet] = previousExercises.flatMap(\.performedSets).filter {
                 $0.isCompleted && $0.setType == .working
             }
             let previousMaxWeight = previousSets.compactMap(\.actualWeight).max() ?? 0
@@ -62,11 +62,12 @@ struct WorkoutCompletionView: View {
             }
 
             // Reps PR at same or higher weight
-            let currentMaxRepsAtWeight: (reps: Int, weight: Double)? = completedWorkingSets
+            let repsWeightPairs: [(reps: Int, weight: Double)] = completedWorkingSets
                 .compactMap { set -> (reps: Int, weight: Double)? in
                     guard let reps = set.actualReps, let weight = set.actualWeight else { return nil }
                     return (reps, weight)
                 }
+            let currentMaxRepsAtWeight: (reps: Int, weight: Double)? = repsWeightPairs
                 .max { a, b in
                     if a.reps != b.reps { return a.reps < b.reps }
                     return a.weight < b.weight
@@ -126,18 +127,16 @@ struct WorkoutCompletionView: View {
         VStack(spacing: DesignTokens.Spacing.xxl) {
             Spacer()
             Ph.checkCircle.fill
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 70, height: 70)
+                .icon(size: 70)
                 .foregroundStyle(DesignTokens.ColorToken.State.success)
             Text("Workout Complete")
                 .font(.title.bold())
                 .foregroundStyle(DesignTokens.Common.Text.primary(colorScheme))
             VStack(spacing: DesignTokens.Spacing.sm) {
-                Label { Text(session.templateName) } icon: { Ph.listBullets.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
-                Label { Text(durationText) } icon: { Ph.timer.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
-                Label { Text("\(session.completedSetCount) sets") } icon: { Ph.checkCircle.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
-                Label { Text("\(session.exerciseCount) exercises") } icon: { Ph.barbell.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
+                Label { Text(session.templateName) } icon: { Ph.listBullets.regular.icon() }
+                Label { Text(durationText) } icon: { Ph.timer.regular.icon() }
+                Label { Text("\(session.completedSetCount) sets") } icon: { Ph.checkCircle.regular.icon() }
+                Label { Text("\(session.exerciseCount) exercises") } icon: { Ph.barbell.regular.icon() }
             }
             .font(.body)
             .foregroundStyle(DesignTokens.Common.Text.secondary(colorScheme))
@@ -145,9 +144,7 @@ struct WorkoutCompletionView: View {
             if !personalRecords.isEmpty {
                 VStack(spacing: DesignTokens.Spacing.md) {
                     Ph.trophy.fill
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 40, height: 40)
+                        .icon(size: 40)
                         .foregroundStyle(DesignTokens.ColorToken.State.warning)
                     Text("New Personal Records!")
                         .font(.headline)
@@ -179,9 +176,7 @@ struct WorkoutCompletionView: View {
                         Text("Share")
                     } icon: {
                         Ph.shareFat.regular
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 20, height: 20)
+                            .icon()
                     }
                 }
                 .buttonStyle(.bordered)

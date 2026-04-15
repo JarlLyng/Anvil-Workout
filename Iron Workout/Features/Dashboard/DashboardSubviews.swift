@@ -44,6 +44,8 @@ struct WeeklyPlanRow: View {
 
     static let dayAbbreviations = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
+    private static let columns = Array(repeating: GridItem(.flexible(), spacing: DesignTokens.Spacing.sm), count: 4)
+
     var body: some View {
         let calendar = Calendar.current
         // ISO weekday: Mon=2..Sun=1 -> map to 0-based index
@@ -59,40 +61,37 @@ struct WeeklyPlanRow: View {
                     onEdit()
                 } label: {
                     Ph.pencilSimple.regular
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 20, height: 20)
+                        .icon()
                 }
                 .accessibilityLabel("Edit weekly plan")
             }
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: DesignTokens.Spacing.md) {
-                    ForEach(0..<7, id: \.self) { index in
-                        let templateName = weeklyPlan[index]
-                        let isToday = index == todayIndex
+            LazyVGrid(columns: Self.columns, spacing: DesignTokens.Spacing.sm) {
+                ForEach(0..<7, id: \.self) { index in
+                    let templateName = weeklyPlan[index]
+                    let isToday = index == todayIndex
 
-                        VStack(spacing: DesignTokens.Spacing.xs) {
-                            Text(Self.dayAbbreviations[index])
-                                .font(.caption.bold())
-                                .foregroundStyle(isToday ? DesignTokens.Common.OnPrimary.text(colorScheme) : .secondary)
+                    VStack(spacing: DesignTokens.Spacing.xs) {
+                        Text(Self.dayAbbreviations[index])
+                            .font(.caption.bold())
+                            .foregroundStyle(isToday ? DesignTokens.Common.OnPrimary.text(colorScheme) : .secondary)
 
-                            Text(templateName ?? "\u{2014}")
-                                .font(.caption2)
-                                .foregroundStyle(isToday ? DesignTokens.Common.OnPrimary.text(colorScheme).opacity(0.9) : .primary)
-                                .lineLimit(2)
-                                .multilineTextAlignment(.center)
-                        }
-                        .frame(width: 56, height: 64)
-                        .background(
-                            isToday
-                                ? AnyShapeStyle(Color.accentColor)
-                                : AnyShapeStyle(.regularMaterial),
-                            in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg)
-                        )
-                        .onTapGesture {
-                            onEdit()
-                        }
+                        Text(templateName ?? "\u{2014}")
+                            .font(.caption2)
+                            .foregroundStyle(isToday ? DesignTokens.Common.OnPrimary.text(colorScheme).opacity(0.9) : .primary)
+                            .lineLimit(2)
+                            .truncationMode(.tail)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 60)
+                    .background {
+                        RoundedRectangle(cornerRadius: DesignTokens.Radius.lg)
+                            .fill(isToday ? Color.accentColor : Color.clear)
+                            .background(.regularMaterial.opacity(isToday ? 0 : 1), in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+                    }
+                    .onTapGesture {
+                        onEdit()
                     }
                 }
             }

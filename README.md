@@ -1,6 +1,6 @@
 # Iron Workout
 
-iOS app for planning and executing strength training: create programs, run workouts in the gym, and have everything saved to history and Apple Health with zero friction.
+Paid iOS app (one-time purchase, no subscription) for planning and executing strength training: create programs, run workouts in the gym, and have everything saved to history and Apple Health with zero friction.
 
 **Plan your workout -> train -> tap done -> session saved.**
 
@@ -19,7 +19,7 @@ iOS app for planning and executing strength training: create programs, run worko
 | Icons | [Phosphor Icons](https://github.com/phosphor-icons/swift) |
 | Language | Swift 5, English UI |
 
-No backend, login, or external APIs beyond Health and Sentry.
+No backend, login, or external APIs beyond Health and Sentry. Paid app (one-time purchase) — no subscription, no in-app purchases, no ads.
 
 ---
 
@@ -33,7 +33,7 @@ open "Iron Workout.xcodeproj"
 
 The app runs without additional configuration. The exercise library is seeded automatically on first launch.
 
-See [docs/SETUP.md](docs/SETUP.md) for full setup including Sentry, HealthKit, App Groups, and Widget Extension.
+See [docs/dev/SETUP.md](docs/dev/SETUP.md) for full setup including Sentry, HealthKit, App Groups, and Widget Extension.
 
 ---
 
@@ -57,10 +57,10 @@ See [docs/SETUP.md](docs/SETUP.md) for full setup including Sentry, HealthKit, A
 
 | Document | Contents |
 |----------|---------|
-| [docs/SETUP.md](docs/SETUP.md) | Requirements, installation, Sentry, HealthKit, App Groups, Widget Extension |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Project structure, data model, relationships, user flow |
-| [docs/DESIGN.md](docs/DESIGN.md) | Design system, Phosphor icons, colors, UI guidelines |
-| [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) | Development, code style, adding features, tests |
+| [docs/dev/SETUP.md](docs/dev/SETUP.md) | Requirements, installation, Sentry, HealthKit, App Groups, Widget Extension |
+| [docs/dev/ARCHITECTURE.md](docs/dev/ARCHITECTURE.md) | Project structure, data model, relationships, user flow |
+| [docs/dev/DESIGN.md](docs/dev/DESIGN.md) | Design system, Phosphor icons, colors, UI guidelines |
+| [docs/dev/CONTRIBUTING.md](docs/dev/CONTRIBUTING.md) | Development, code style, adding features, tests |
 
 ---
 

@@ -6,7 +6,7 @@
 - Avoid unnecessary dependencies.
 - English UI text in views, English code names.
 - Use design tokens from `IAMJARLDesignTokens` for colors, spacing, and backgrounds — no hardcoded values.
-- Use exclusively Phosphor icons (`PhosphorSwift`) — no SF Symbols (except where required by SwiftUI API, e.g. tab bar).
+- Use exclusively Phosphor icons (`PhosphorSwift`) — no SF Symbols (except where required by SwiftUI API, e.g. tab bar). Use the `.icon(size:)` extension (default 20pt) for sizing; never write manual `.resizable().aspectRatio(contentMode: .fit).frame(width:height:)` chains.
 - Split large views into subview files when the Swift type-checker struggles (compile times > 30s). See `ActiveWorkoutSubviews.swift`, `StatsChartViews.swift`, `DashboardSubviews.swift` for examples.
 
 ## Add a new feature

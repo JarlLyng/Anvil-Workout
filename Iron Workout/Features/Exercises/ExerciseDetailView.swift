@@ -36,26 +36,27 @@ struct ExerciseDetailView: View {
     }
 
     private var bestWeight: Double? {
-        allCompletedSets.compactMap { $0.set.actualWeight }.max()
+        let weights: [Double] = allCompletedSets.compactMap { $0.set.actualWeight }
+        return weights.max()
     }
 
     private var bestVolumeSet: (reps: Int, weight: Double)? {
-        allCompletedSets.compactMap { entry -> (reps: Int, weight: Double, volume: Double)? in
+        let volumeSets: [(reps: Int, weight: Double, volume: Double)] = allCompletedSets.compactMap { entry in
             guard let reps = entry.set.actualReps, let weight = entry.set.actualWeight, weight > 0 else { return nil }
             return (reps: reps, weight: weight, volume: Double(reps) * weight)
         }
-        .max(by: { $0.volume < $1.volume })
-        .map { (reps: $0.reps, weight: $0.weight) }
+        let best = volumeSets.max(by: { $0.volume < $1.volume })
+        return best.map { (reps: $0.reps, weight: $0.weight) }
     }
 
     private var bestEstimated1RM: Double? {
-        allCompletedSets.compactMap { entry -> Double? in
+        let estimates: [Double] = allCompletedSets.compactMap { entry in
             guard let reps = entry.set.actualReps, reps > 0, reps < 37,
                   let weight = entry.set.actualWeight, weight > 0 else { return nil }
             // Brzycki formula: weight × 36 / (37 - reps)
             return weight * 36.0 / (37.0 - Double(reps))
         }
-        .max()
+        return estimates.max()
     }
 
     private var dateFormatter: DateFormatter {
@@ -134,9 +135,7 @@ struct ExerciseDetailView: View {
     private func prCard(title: String, value: String, icon: Image) -> some View {
         VStack(spacing: 6) {
             icon
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 22, height: 22)
+                .icon(size: 22)
                 .foregroundStyle(DesignTokens.Common.primary(colorScheme))
             Text(value)
                 .font(.subheadline.bold())
@@ -176,9 +175,7 @@ struct ExerciseDetailView: View {
                 ForEach(completedSets, id: \.id) { set in
                     HStack(spacing: 4) {
                         Ph.checkCircle.fill
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 14, height: 14)
+                            .icon(size: 14)
                             .foregroundStyle(DesignTokens.ColorToken.State.success)
                         if let reps = set.actualReps {
                             Text("\(reps) reps")

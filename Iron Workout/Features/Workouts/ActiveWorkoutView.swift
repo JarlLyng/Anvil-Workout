@@ -115,9 +115,7 @@ struct ActiveWorkoutView: View {
                             }
                         } label: {
                             Ph.dotsThreeCircle.regular
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 24, height: 24)
+                                .icon(size: 24)
                                 .accessibilityLabel("More options")
                         }
                     }
@@ -224,7 +222,7 @@ struct ActiveWorkoutView: View {
             VStack(alignment: .leading, spacing: 24) {
                 if block.count > 1 {
                     HStack {
-                        Ph.link.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20).foregroundStyle(DesignTokens.ColorToken.State.warning)
+                        Ph.link.fill.icon().foregroundStyle(DesignTokens.ColorToken.State.warning)
                         Text("Superset").font(.headline).foregroundStyle(DesignTokens.ColorToken.State.warning)
                     }
                     .padding(.bottom, -12)
@@ -247,9 +245,7 @@ struct ActiveWorkoutView: View {
                         // Note field
                         HStack(spacing: 8) {
                             Ph.notepad.regular
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 16, height: 16)
+                                .icon(size: 16)
                                 .foregroundStyle(.secondary)
                             TextField("Add note...", text: Binding(
                                 get: { exercise.note },
@@ -299,9 +295,7 @@ struct ActiveWorkoutView: View {
                 let names = nextBlock.map(\.exerciseName).joined(separator: " + ")
                 HStack {
                     Ph.arrowCircleDown.regular
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 20, height: 20)
+                        .icon()
                     Text("Next: \(names)")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
@@ -319,9 +313,7 @@ struct ActiveWorkoutView: View {
         VStack(spacing: 24) {
             Spacer()
             Ph.checkCircle.fill
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 60, height: 60)
+                .icon(size: 60)
                 .foregroundStyle(DesignTokens.ColorToken.State.success)
             Text("All Exercises Completed")
                 .font(.title2.bold())

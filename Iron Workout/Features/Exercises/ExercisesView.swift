@@ -67,9 +67,7 @@ struct ExercisesView: View {
                         showCreateSheet = true
                     } label: {
                         Ph.plusCircle.fill
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 24, height: 24)
+                            .icon(size: 24)
                             .accessibilityLabel("Create exercise")
                     }
                 }
@@ -81,9 +79,7 @@ struct ExercisesView: View {
                         }
                     } label: {
                         Ph.funnelSimple.regular
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 24, height: 24)
+                            .icon(size: 24)
                             .accessibilityLabel("Filter muscle groups")
                     }
                 }

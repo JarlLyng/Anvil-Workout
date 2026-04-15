@@ -60,16 +60,12 @@ struct WorkoutsView: View {
                                         Spacer()
                                         if template.isFavorite {
                                             Ph.star.fill
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(width: 20, height: 20)
+                                                .icon()
                                                 .foregroundStyle(DesignTokens.ColorToken.State.warning)
                                                 .accessibilityLabel("Favorite")
                                         } else {
                                             Ph.caretRight.regular
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(width: 20, height: 20)
+                                                .icon()
                                                 .foregroundStyle(.secondary)
                                         }
                                     }
@@ -81,12 +77,12 @@ struct WorkoutsView: View {
                                     Button {
                                         duplicateTemplate(template)
                                     } label: {
-                                        Label { Text("Duplicate") } icon: { Ph.copySimple.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
+                                        Label { Text("Duplicate") } icon: { Ph.copySimple.regular.icon() }
                                     }
                                     Button(role: .destructive) {
                                         deleteTemplate(template)
                                     } label: {
-                                        Label { Text("Delete") } icon: { Ph.trash.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
+                                        Label { Text("Delete") } icon: { Ph.trash.regular.icon() }
                                     }
                                 }
                             }
@@ -102,9 +98,7 @@ struct WorkoutsView: View {
                         createTemplate()
                     } label: {
                         Ph.plusCircle.fill
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 24, height: 24)
+                            .icon(size: 24)
                             .accessibilityLabel("Create Program")
                     }
                 }
@@ -126,9 +120,7 @@ struct WorkoutsView: View {
                 if let toastMessage {
                     HStack(spacing: DesignTokens.Spacing.sm) {
                         Ph.checkCircle.fill
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 20, height: 20)
+                            .icon()
                         Text(toastMessage)
                             .font(.subheadline.weight(.medium))
                     }

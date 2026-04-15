@@ -41,15 +41,11 @@ struct WorkoutTimerBar: View {
                 Group {
                     if isPaused {
                         Ph.pauseCircle.fill
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 20, height: 20)
+                            .icon()
                             .foregroundStyle(DesignTokens.ColorToken.State.warning)
                     } else {
                         Ph.timer.regular
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 20, height: 20)
+                            .icon()
                     }
                 }
                 Text(formatElapsed(elapsedSeconds(at: context.date)))
@@ -76,9 +72,7 @@ struct WorkoutPauseOverlay: View {
     var body: some View {
         VStack(spacing: 24) {
             Ph.pauseCircle.fill
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 60, height: 60)
+                .icon(size: 60)
                 .foregroundStyle(DesignTokens.ColorToken.State.warning)
             Text("Workout Paused")
                 .font(.title2.bold())
@@ -194,9 +188,7 @@ struct WorkoutSetRow: View {
     private var completedContent: some View {
         Group {
             Ph.checkCircle.fill
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 20, height: 20)
+                .icon()
                 .foregroundStyle(DesignTokens.ColorToken.State.success)
                 .transition(.scale.combined(with: .opacity))
             VStack(alignment: .leading, spacing: 2) {
@@ -224,9 +216,7 @@ struct WorkoutSetRow: View {
     private func pendingContent(targetWeight: String) -> some View {
         Group {
             Ph.circle.regular
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 20, height: 20)
+                .icon()
                 .foregroundStyle(.secondary)
 
             VStack(alignment: .leading, spacing: 2) {
@@ -248,9 +238,7 @@ struct WorkoutSetRow: View {
                                 .foregroundStyle(colorForSetType(set.setType))
                         }
                         Ph.caretDown.regular
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 12, height: 12)
+                            .icon(size: 12)
                             .foregroundStyle(.secondary)
                     }
                 }

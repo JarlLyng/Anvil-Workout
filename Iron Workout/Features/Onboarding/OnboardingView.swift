@@ -85,9 +85,7 @@ struct OnboardingView: View {
             Spacer()
 
             icon
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 60, height: 60)
+                .icon(size: 60)
                 .foregroundStyle(iconColor)
 
             VStack(spacing: DesignTokens.Spacing.sm) {

@@ -44,7 +44,7 @@ struct VolumeChartView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 6) {
-                Ph.stack.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20)
+                Ph.stack.fill.icon()
                 Text("Training Volume")
                     .font(.headline)
             }
@@ -84,7 +84,7 @@ struct FrequencyChartView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 6) {
-                Ph.calendarCheck.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20)
+                Ph.calendarCheck.fill.icon()
                 Text("Training Frequency")
                     .font(.headline)
             }
@@ -127,7 +127,7 @@ struct OneRepMaxChartView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 HStack(spacing: 6) {
-                    Ph.trendUp.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20).foregroundStyle(.primary)
+                    Ph.trendUp.fill.icon().foregroundStyle(.primary)
                     Text("1RM Estimate")
                         .font(.headline)
                 }
@@ -184,7 +184,7 @@ struct MuscleGroupChartView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 6) {
-                Ph.barbell.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20)
+                Ph.barbell.fill.icon()
                 Text("Muscle Group Distribution")
                     .font(.headline)
             }

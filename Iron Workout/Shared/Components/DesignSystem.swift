@@ -2,15 +2,18 @@
 //  DesignSystem.swift
 //  Iron Workout
 //
-//  Bruger IAMJARL Design Tokens. Import IAMJARLDesignTokens hvor tokens bruges.
-//
 
 import SwiftUI
 import IAMJARLDesignTokens
 
-extension View {
-    /// Anvend IAMJARL spacing som padding.
-    func designPadding(_ edges: Edge.Set = .all, _ size: CGFloat = DesignTokens.Spacing.md) -> some View {
-        padding(edges, size)
+// MARK: - Phosphor Icon Helpers
+
+/// Reduces repeated `.resizable().aspectRatio(contentMode: .fit).frame(width:height:)` chains
+/// that cause type-checker slowdowns across ~50 call sites.
+extension Image {
+    func icon(size: CGFloat = 20) -> some View {
+        self.resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: size, height: size)
     }
 }

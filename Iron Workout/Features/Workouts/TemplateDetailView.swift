@@ -80,7 +80,7 @@ struct TemplateDetailView: View {
                 Button {
                     startWorkout()
                 } label: {
-                    Label { Text("Start Workout") } icon: { Ph.play.fill.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20) }
+                    Label { Text("Start Workout") } icon: { Ph.play.fill.icon() }
                 }
                 .buttonStyle(.borderedProminent)
                 .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
