@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import Sentry
 import IAMJARLDesignTokens
 import PhosphorSwift
 
@@ -250,7 +251,7 @@ struct DashboardView: View {
             let s = try WorkoutSessionService.createSession(from: template, modelContext: modelContext)
             activeSession = s
         } catch {
-            print("Error starting session: \(error)")
+            SentrySDK.capture(error: error)
         }
     }
 }

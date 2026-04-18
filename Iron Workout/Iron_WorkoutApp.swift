@@ -51,7 +51,7 @@ struct Iron_WorkoutApp: App {
         } catch {
             SentrySDK.capture(error: error)
             SentrySDK.flush(timeout: 2)
-            fatalError("Kunne ikke oprette ModelContainer: \(error)")
+            fatalError("Could not create ModelContainer: \(error)")
         }
     }()
 

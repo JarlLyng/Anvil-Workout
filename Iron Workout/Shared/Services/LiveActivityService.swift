@@ -7,6 +7,7 @@
 
 import ActivityKit
 import Foundation
+import Sentry
 
 /// Manages Live Activity during an active workout.
 /// Shows program name, current exercise, time, and set progress on Lock Screen and Dynamic Island.
@@ -42,7 +43,7 @@ struct LiveActivityService {
                 pushType: nil
             )
         } catch {
-            print("Live Activity start failed: \(error)")
+            SentrySDK.capture(error: error)
             return nil
         }
     }
