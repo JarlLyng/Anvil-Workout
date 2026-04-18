@@ -17,27 +17,29 @@ SEO positioning: **den lokale, abonnementsfrie styrketrænings-app** — differe
 
 ## 2. Hvad der allerede er på plads
 
-### Website (done — minimalt)
+### Website (done)
 
 - [x] Landing page (`docs/index.html`) med hero, features, FAQ, screenshots
 - [x] Privacy page (`docs/privacy.html`)
-- [x] MobileApplication JSON-LD på homepage (pris: 0, PreOrder)
+- [x] Support page (`docs/support.html`) med FAQ og kontaktinfo
+- [x] MobileApplication JSON-LD på homepage (PreOrder, pris tilføjes ved launch)
 - [x] FAQPage JSON-LD på homepage (5 spørgsmål)
+- [x] BreadcrumbList JSON-LD på alle sider
+- [x] WebPage JSON-LD på privacy.html og support.html
 - [x] OG tags, Twitter cards, canonical URL
 - [x] robots.txt med eksplicit tilladelse til AI-bots (ChatGPT, Claude, Perplexity, Applebot)
-- [x] sitemap.xml (2 URL'er)
+- [x] sitemap.xml (3 URL'er: homepage, privacy, support)
 - [x] llms.txt for AI-indeksering
 - [x] Responsive CSS med dark mode
+- [x] Custom domain (ironworkout.iamjarl.com) med CNAME
+- [x] aria-hidden på dekorative SVG-ikoner
 
 ### Mangler (not done)
 
-- [ ] Custom domain (ironworkout.iamjarl.com)
-- [ ] apple-itunes-app meta tag (kommenteret ud)
+- [ ] apple-itunes-app meta tag (kommenteret ud — tilføj app-id ved launch)
 - [ ] Google Search Console connection
 - [ ] Umami/analytics
-- [ ] BreadcrumbList JSON-LD
-- [ ] JSON-LD på privacy.html
-- [ ] Support-side
+- [ ] Favicon, apple-touch-icon, og-image assets
 - [ ] SEO landing pages
 - [ ] Cross-linking til andre IAMJARL-projekter
 
@@ -47,18 +49,18 @@ SEO positioning: **den lokale, abonnementsfrie styrketrænings-app** — differe
 
 ### Når appen er klar til release:
 
-1. **Custom domain** → Opret CNAME for ironworkout.iamjarl.com, opdater alle URL'er (canonical, OG, sitemap, robots.txt)
+1. ~~**Custom domain**~~ ✅ CNAME oprettet, alle URL'er opdateret til ironworkout.iamjarl.com
 2. **apple-itunes-app** → Fjern kommentar, indsæt app-id
 3. **App Store links** → Opdater alle `href="#"` placeholders
 4. **Google Search Console** → Connect og verificer
 5. **Analytics** → Tilføj Umami
-6. **MobileApplication pris** → Opdater price fra "0" til faktisk pris, og availability fra "PreOrder" til "InStock"
+6. **MobileApplication pris** → Tilføj faktisk pris og skift availability fra "PreOrder" til "InStock"
 
-### Tekniske SEO-fixes (kan gøres nu):
+### Tekniske SEO-fixes (done):
 
-1. **BreadcrumbList JSON-LD** → Tilføj til homepage og privacy
-2. **Privacy JSON-LD** → Tilføj mindst BreadcrumbList
-3. **Support-side** → Opret `support.html`
+1. ~~**BreadcrumbList JSON-LD**~~ ✅ Tilføjet til alle 3 sider
+2. ~~**Privacy JSON-LD**~~ ✅ BreadcrumbList + WebPage tilføjet
+3. ~~**Support-side**~~ ✅ `docs/support.html` oprettet
 
 ---
 
