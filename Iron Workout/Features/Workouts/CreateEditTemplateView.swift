@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import Sentry
 import PhosphorSwift
 import IAMJARLDesignTokens
 
@@ -40,7 +41,10 @@ struct CreateEditTemplateView: View {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Done") {
                     template.updatedAt = .now
-                    do { try modelContext.save() } catch { errorMessage = "Could not save: \(error.localizedDescription)" }
+                    do { try modelContext.save() } catch {
+                    SentrySDK.capture(error: error)
+                    errorMessage = "Could not save: \(error.localizedDescription)"
+                }
                     dismiss()
                 }
             }
@@ -66,7 +70,10 @@ struct CreateEditTemplateView: View {
         .confirmationDialog("Delete Program?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
             Button("Delete", role: .destructive) {
                 modelContext.delete(template)
-                do { try modelContext.save() } catch { errorMessage = "Could not save: \(error.localizedDescription)" }
+                do { try modelContext.save() } catch {
+                    SentrySDK.capture(error: error)
+                    errorMessage = "Could not save: \(error.localizedDescription)"
+                }
                 dismiss()
             }
             Button("Keep", role: .cancel) { }
@@ -106,21 +113,30 @@ struct CreateEditTemplateView: View {
                                 Button("Remove superset with next exercise") {
                                     item.supersetID = nil
                                     next.supersetID = nil
-                                    do { try modelContext.save() } catch { errorMessage = "Error: \(error)" }
+                                    do { try modelContext.save() } catch {
+                                    SentrySDK.capture(error: error)
+                                    errorMessage = "Could not save: \(error.localizedDescription)"
+                                }
                                 }
                             } else {
                                 Button("Link as superset with next exercise") {
                                     let id = item.supersetID ?? UUID()
                                     item.supersetID = id
                                     next.supersetID = id
-                                    do { try modelContext.save() } catch { errorMessage = "Error: \(error)" }
+                                    do { try modelContext.save() } catch {
+                                    SentrySDK.capture(error: error)
+                                    errorMessage = "Could not save: \(error.localizedDescription)"
+                                }
                                 }
                             }
                         }
                         if item.supersetID != nil {
                             Button("Detach from superset") {
                                 item.supersetID = nil
-                                do { try modelContext.save() } catch { errorMessage = "Error: \(error)" }
+                                do { try modelContext.save() } catch {
+                                    SentrySDK.capture(error: error)
+                                    errorMessage = "Could not save: \(error.localizedDescription)"
+                                }
                             }
                         }
                     }
@@ -162,7 +178,10 @@ struct CreateEditTemplateView: View {
         template.exercises.append(te)
         modelContext.insert(te)
         template.updatedAt = .now
-        do { try modelContext.save() } catch { errorMessage = "Could not save: \(error.localizedDescription)" }
+        do { try modelContext.save() } catch {
+                    SentrySDK.capture(error: error)
+                    errorMessage = "Could not save: \(error.localizedDescription)"
+                }
     }
 
     private func deleteExercises(at offsets: IndexSet) {
@@ -172,7 +191,10 @@ struct CreateEditTemplateView: View {
         }
         reorderSortOrder()
         template.updatedAt = .now
-        do { try modelContext.save() } catch { errorMessage = "Could not save: \(error.localizedDescription)" }
+        do { try modelContext.save() } catch {
+                    SentrySDK.capture(error: error)
+                    errorMessage = "Could not save: \(error.localizedDescription)"
+                }
     }
 
     private func moveExercises(from source: IndexSet, to destination: Int) {
@@ -182,7 +204,10 @@ struct CreateEditTemplateView: View {
             item.sortOrder = i
         }
         template.updatedAt = .now
-        do { try modelContext.save() } catch { errorMessage = "Could not save: \(error.localizedDescription)" }
+        do { try modelContext.save() } catch {
+                    SentrySDK.capture(error: error)
+                    errorMessage = "Could not save: \(error.localizedDescription)"
+                }
     }
 
     private func reorderSortOrder() {

@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import HealthKit
+import Sentry
 import IAMJARLDesignTokens
 import PhosphorSwift
 
@@ -171,6 +172,7 @@ struct SettingsView: View {
             try csvString.write(to: url, atomically: true, encoding: .utf8)
             return url
         } catch {
+            SentrySDK.capture(error: error)
             return nil
         }
     }

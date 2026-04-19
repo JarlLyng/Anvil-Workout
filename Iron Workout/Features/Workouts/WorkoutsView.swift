@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import Sentry
 import PhosphorSwift
 import IAMJARLDesignTokens
 
@@ -143,6 +144,7 @@ struct WorkoutsView: View {
             try modelContext.save()
             templateToCreate = newTemplate
         } catch {
+            SentrySDK.capture(error: error)
             modelContext.delete(newTemplate)
             errorMessage = "Could not create program."
         }
@@ -155,6 +157,7 @@ struct WorkoutsView: View {
             try modelContext.save()
             showToast("\(name) deleted")
         } catch {
+            SentrySDK.capture(error: error)
             errorMessage = "Could not delete program."
         }
     }
@@ -186,6 +189,7 @@ struct WorkoutsView: View {
             try modelContext.save()
             showToast("Program duplicated")
         } catch {
+            SentrySDK.capture(error: error)
             errorMessage = "Could not duplicate program."
         }
     }

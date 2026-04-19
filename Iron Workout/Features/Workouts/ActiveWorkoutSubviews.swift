@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import Sentry
 import IAMJARLDesignTokens
 import PhosphorSwift
 
@@ -224,7 +225,10 @@ struct WorkoutSetRow: View {
                     ForEach(SetType.allCases, id: \.self) { type in
                         Button(type.rawValue) {
                             withAnimation { set.setType = type }
-                            do { try modelContext.save() } catch { errorMessage = "Error: \(error)" }
+                            do { try modelContext.save() } catch {
+                                SentrySDK.capture(error: error)
+                                errorMessage = "Could not save: \(error.localizedDescription)"
+                            }
                         }
                     }
                 } label: {

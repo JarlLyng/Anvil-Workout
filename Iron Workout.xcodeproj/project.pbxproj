@@ -654,8 +654,8 @@
 				INFOPLIST_FILE = "Iron Workout/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Iron Workout";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "Iron Workout læser træningsdata fra Health (puls, kalorier) så du kan se dem i historik.";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Iron Workout gemmer dine træninger i Health så de vises i Health-appen og på Apple Watch.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Iron Workout reads workout data from Health (heart rate, calories) so you can see them in your workout history.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Iron Workout saves your workouts to Health so they appear in the Health app and on Apple Watch.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -693,8 +693,8 @@
 				INFOPLIST_FILE = "Iron Workout/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Iron Workout";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "Iron Workout læser træningsdata fra Health (puls, kalorier) så du kan se dem i historik.";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Iron Workout gemmer dine træninger i Health så de vises i Health-appen og på Apple Watch.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Iron Workout reads workout data from Health (heart rate, calories) so you can see them in your workout history.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Iron Workout saves your workouts to Health so they appear in the Health app and on Apple Watch.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

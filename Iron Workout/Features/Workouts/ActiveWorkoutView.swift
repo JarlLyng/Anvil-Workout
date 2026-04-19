@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 import UIKit
 import ActivityKit
+import Sentry
 import IAMJARLDesignTokens
 import PhosphorSwift
 
@@ -131,7 +132,10 @@ struct ActiveWorkoutView: View {
             }
             .sheet(item: $showSetEditor) { set in
                 EditPerformedSetSheet(performedSet: set) {
-                    do { try modelContext.save() } catch { errorMessage = "Could not save: \(error.localizedDescription)" }
+                    do { try modelContext.save() } catch {
+                        SentrySDK.capture(error: error)
+                        errorMessage = "Could not save: \(error.localizedDescription)"
+                    }
                     showSetEditor = nil
                 }
             }
@@ -158,8 +162,8 @@ struct ActiveWorkoutView: View {
         Task {
             let health = HealthKitService.shared
             guard health.isAvailable else { return }
-            try? await health.requestAuthorization()
-            try? await health.startWorkout(startDate: session.startedAt)
+            do { try await health.requestAuthorization() } catch { SentrySDK.capture(error: error) }
+            do { try await health.startWorkout(startDate: session.startedAt) } catch { SentrySDK.capture(error: error) }
         }
     }
 
@@ -174,6 +178,10 @@ struct ActiveWorkoutView: View {
             currentExercise: currentExerciseName,
             totalSets: totalSets
         )
+        let crumb = Breadcrumb(level: .info, category: "workout")
+        crumb.message = "Workout started"
+        crumb.data = ["template": session.templateName, "exercises": session.exercises.count, "totalSets": totalSets]
+        SentrySDK.addBreadcrumb(crumb)
     }
 
     private func updateLiveActivity() {
@@ -251,7 +259,7 @@ struct ActiveWorkoutView: View {
                                 get: { exercise.note },
                                 set: { newValue in
                                     exercise.note = newValue
-                                    try? modelContext.save()
+                                    do { try modelContext.save() } catch { SentrySDK.capture(error: error) }
                                 }
                             ), axis: .vertical)
                             .font(.caption)
@@ -336,8 +344,16 @@ struct ActiveWorkoutView: View {
         }
         set.completedAt = .now
         session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
-        do { try modelContext.save() } catch { errorMessage = "Could not save: \(error.localizedDescription)" }
-        
+        do { try modelContext.save() } catch {
+            SentrySDK.capture(error: error)
+            errorMessage = "Could not save: \(error.localizedDescription)"
+        }
+
+        let crumb = Breadcrumb(level: .info, category: "workout")
+        crumb.message = "Set completed"
+        crumb.data = ["exercise": exercise.exerciseName, "setIndex": set.setIndex, "completed": session.completedSetCount]
+        SentrySDK.addBreadcrumb(crumb)
+
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         updateLiveActivity()
 
@@ -353,7 +369,10 @@ struct ActiveWorkoutView: View {
         set.actualReps = nil
         set.actualWeight = nil
         session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
-        do { try modelContext.save() } catch { errorMessage = "Could not save: \(error.localizedDescription)" }
+        do { try modelContext.save() } catch {
+            SentrySDK.capture(error: error)
+            errorMessage = "Could not save: \(error.localizedDescription)"
+        }
 
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         updateLiveActivity()
@@ -382,7 +401,10 @@ struct ActiveWorkoutView: View {
             }
         }
         session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
-        do { try modelContext.save() } catch { errorMessage = "Error: \(error)" }
+        do { try modelContext.save() } catch {
+            SentrySDK.capture(error: error)
+            errorMessage = "Could not save: \(error.localizedDescription)"
+        }
         if currentBlockIndex < exerciseBlocks.count - 1 {
             currentBlockIndex += 1
         }
@@ -396,7 +418,10 @@ struct ActiveWorkoutView: View {
             set.actualWeight = nil
         }
         session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
-        do { try modelContext.save() } catch { errorMessage = "Error: \(error)" }
+        do { try modelContext.save() } catch {
+            SentrySDK.capture(error: error)
+            errorMessage = "Could not save: \(error.localizedDescription)"
+        }
         advanceToNextBlockIfNeeded()
     }
 
@@ -456,17 +481,32 @@ struct ActiveWorkoutView: View {
             elapsedSeconds: elapsed
         )
 
+        let crumb = Breadcrumb(level: .info, category: "workout")
+        crumb.message = "Workout ended"
+        crumb.data = ["template": session.templateName, "completedSets": session.completedSetCount, "totalSets": totalSets, "elapsedSeconds": elapsed]
+        SentrySDK.addBreadcrumb(crumb)
+
         let context = modelContext
         Task {
             let health = HealthKitService.shared
-            if health.isAvailable, let result = try? await health.endWorkout(endDate: Date()) {
-                await MainActor.run {
-                    session.calories = result.calories
-                    session.averageHeartRate = result.averageHeartRate
+            if health.isAvailable {
+                do {
+                    let result = try await health.endWorkout(endDate: Date())
+                    await MainActor.run {
+                        session.calories = result.calories
+                        session.averageHeartRate = result.averageHeartRate
+                    }
+                } catch {
+                    SentrySDK.capture(error: error)
                 }
             }
             await MainActor.run {
-                do { try WorkoutSessionService.finalizeSession(session, modelContext: context) } catch { errorMessage = "Could not save: \(error.localizedDescription)" }
+                do {
+                    try WorkoutSessionService.finalizeSession(session, modelContext: context)
+                } catch {
+                    SentrySDK.capture(error: error)
+                    errorMessage = "Could not save: \(error.localizedDescription)"
+                }
                 showCompletionSummary = true
             }
         }

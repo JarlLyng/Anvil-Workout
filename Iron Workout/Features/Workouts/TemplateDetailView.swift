@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import Sentry
 import IAMJARLDesignTokens
 import PhosphorSwift
 
@@ -106,6 +107,7 @@ struct TemplateDetailView: View {
             let session = try WorkoutSessionService.createSession(from: template, modelContext: modelContext)
             activeSession = session
         } catch {
+            SentrySDK.capture(error: error)
             errorMessage = "Could not start workout: \(error.localizedDescription)"
         }
     }

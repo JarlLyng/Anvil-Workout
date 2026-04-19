@@ -41,7 +41,13 @@ struct ExerciseLibraryService {
 
     static func seedIfNeeded(modelContext: ModelContext) {
         let descriptor = FetchDescriptor<Exercise>(predicate: #Predicate { $0.isBuiltin == true })
-        let existing = (try? modelContext.fetch(descriptor)) ?? []
+        let existing: [Exercise]
+        do {
+            existing = try modelContext.fetch(descriptor)
+        } catch {
+            SentrySDK.capture(error: error)
+            existing = []
+        }
         if !existing.isEmpty { return }
 
         for item in builtinExercises {

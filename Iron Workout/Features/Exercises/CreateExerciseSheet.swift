@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import Sentry
 
 struct CreateExerciseSheet: View {
     @Environment(\.modelContext) private var modelContext
@@ -61,6 +62,7 @@ struct CreateExerciseSheet: View {
             try modelContext.save()
             dismiss()
         } catch {
+            SentrySDK.capture(error: error)
             errorMessage = "Could not save exercise: \(error.localizedDescription)"
         }
     }
