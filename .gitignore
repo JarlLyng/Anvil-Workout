@@ -21,4 +21,5 @@ Iron Workout/Config/Secrets.xcconfig
 **/.DS_Store
 
 # Screenshots (App Store assets — large binaries, not source code)
-Screenshots/
+/Screenshots/
+/app store screens/
