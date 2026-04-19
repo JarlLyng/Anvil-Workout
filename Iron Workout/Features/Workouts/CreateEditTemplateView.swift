@@ -19,7 +19,6 @@ struct CreateEditTemplateView: View {
 
     @State private var showExercisePicker = false
     @State private var showEditExercise: WorkoutTemplateExercise?
-    @State private var showDeleteConfirm = false
     @State private var errorMessage: String?
 
     private var sortedExercises: [WorkoutTemplateExercise] {
@@ -42,15 +41,10 @@ struct CreateEditTemplateView: View {
                 Button("Done") {
                     template.updatedAt = .now
                     do { try modelContext.save() } catch {
-                    SentrySDK.capture(error: error)
-                    errorMessage = "Could not save: \(error.localizedDescription)"
-                }
+                        SentrySDK.capture(error: error)
+                        errorMessage = "Could not save: \(error.localizedDescription)"
+                    }
                     dismiss()
-                }
-            }
-            ToolbarItem(placement: .destructiveAction) {
-                Button("Delete Program", role: .destructive) {
-                    showDeleteConfirm = true
                 }
             }
         }
@@ -66,19 +60,6 @@ struct CreateEditTemplateView: View {
             Button("OK") { errorMessage = nil }
         } message: {
             Text(errorMessage ?? "")
-        }
-        .confirmationDialog("Delete Program?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
-            Button("Delete", role: .destructive) {
-                modelContext.delete(template)
-                do { try modelContext.save() } catch {
-                    SentrySDK.capture(error: error)
-                    errorMessage = "Could not save: \(error.localizedDescription)"
-                }
-                dismiss()
-            }
-            Button("Keep", role: .cancel) { }
-        } message: {
-            Text("The program and all its exercises will be deleted. This cannot be undone.")
         }
     }
 

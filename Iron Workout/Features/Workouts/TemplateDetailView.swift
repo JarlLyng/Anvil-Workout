@@ -15,9 +15,11 @@ struct TemplateDetailView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.modelContext) private var modelContext
     @Bindable var template: WorkoutTemplate
+    @Environment(\.dismiss) private var dismiss
     @Query(sort: \Exercise.name) private var allExercises: [Exercise]
     @State private var activeSession: WorkoutSession?
     @State private var errorMessage: String?
+    @State private var showDeleteConfirm = false
 
     private var sortedExercises: [WorkoutTemplateExercise] {
         template.exercises.sorted { $0.sortOrder < $1.sortOrder }
@@ -71,10 +73,21 @@ struct TemplateDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                NavigationLink {
-                    CreateEditTemplateView(template: template)
+                Menu {
+                    NavigationLink {
+                        CreateEditTemplateView(template: template)
+                    } label: {
+                        Label { Text("Edit") } icon: { Ph.pencilSimple.regular.icon() }
+                    }
+                    Button(role: .destructive) {
+                        showDeleteConfirm = true
+                    } label: {
+                        Label { Text("Delete Program") } icon: { Ph.trash.regular.icon() }
+                    }
                 } label: {
-                    Text("Edit")
+                    Ph.dotsThreeCircle.regular
+                        .icon(size: 24)
+                        .accessibilityLabel("More options")
                 }
             }
             ToolbarItem(placement: .bottomBar) {
@@ -87,6 +100,12 @@ struct TemplateDetailView: View {
                 .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
                 .disabled(sortedExercises.isEmpty)
             }
+        }
+        .confirmationDialog("Delete Program?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
+            Button("Delete", role: .destructive) { deleteTemplate() }
+            Button("Keep", role: .cancel) { }
+        } message: {
+            Text("The program and all its exercises will be deleted. This cannot be undone.")
         }
         .alert("Error", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
             Button("OK") { errorMessage = nil }
@@ -109,6 +128,17 @@ struct TemplateDetailView: View {
         } catch {
             SentrySDK.capture(error: error)
             errorMessage = "Could not start workout: \(error.localizedDescription)"
+        }
+    }
+
+    private func deleteTemplate() {
+        modelContext.delete(template)
+        do {
+            try modelContext.save()
+            dismiss()
+        } catch {
+            SentrySDK.capture(error: error)
+            errorMessage = "Could not delete program: \(error.localizedDescription)"
         }
     }
 }

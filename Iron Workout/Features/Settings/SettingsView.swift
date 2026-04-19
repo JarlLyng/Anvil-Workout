@@ -21,6 +21,7 @@ struct SettingsView: View {
     @State private var messageIsError = false
     @State private var showExportShare = false
     @State private var exportURL: URL?
+    @State private var healthAuthStatus: HKAuthorizationStatus = .notDetermined
 
     var body: some View {
         NavigationStack {
@@ -89,15 +90,7 @@ struct SettingsView: View {
                                 .foregroundStyle(DesignTokens.ColorToken.State.error)
                             Text("Apple Health")
                             Spacer()
-                            if requestInProgress {
-                                ProgressView()
-                                    .scaleEffect(0.9)
-                            } else {
-                                Button("Grant Access") {
-                                    requestHealthAccess()
-                                }
-                                .accessibilityHint("Request permission to read and write health data")
-                            }
+                            healthStatusControl
                         }
                         if let msg = message {
                             HStack(spacing: 8) {
@@ -125,7 +118,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Health")
                 } footer: {
-                    Text("Iron Workout saves workouts to Health and can show calories and heart rate when you use Apple Watch or other sources during a workout.")
+                    Text(healthFooterText)
                 }
             }
             .sheet(isPresented: $showExportShare) {
@@ -133,6 +126,62 @@ struct SettingsView: View {
                     ActivityView(activityItems: [url])
                 }
             }
+            .onAppear { refreshHealthAuthStatus() }
+        }
+    }
+
+    @ViewBuilder
+    private var healthStatusControl: some View {
+        if requestInProgress {
+            ProgressView()
+                .scaleEffect(0.9)
+        } else {
+            switch healthAuthStatus {
+            case .sharingAuthorized:
+                HStack(spacing: 6) {
+                    Ph.checkCircle.fill
+                        .icon(size: 16)
+                        .foregroundStyle(DesignTokens.ColorToken.State.success)
+                    Text("Connected")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                .accessibilityLabel("Apple Health access granted")
+            case .sharingDenied:
+                Button("Open Health") {
+                    openHealthSettings()
+                }
+                .accessibilityHint("Open Settings to change Health permissions")
+            case .notDetermined:
+                Button("Grant Access") {
+                    requestHealthAccess()
+                }
+                .accessibilityHint("Request permission to read and write health data")
+            @unknown default:
+                Button("Grant Access") {
+                    requestHealthAccess()
+                }
+            }
+        }
+    }
+
+    private var healthFooterText: String {
+        switch healthAuthStatus {
+        case .sharingDenied:
+            return "Access to Health is denied. Open Settings > Health > Data Access & Devices > Iron Workout to enable."
+        default:
+            return "Iron Workout saves workouts to Health and can show calories and heart rate when you use Apple Watch or other sources during a workout."
+        }
+    }
+
+    private func refreshHealthAuthStatus() {
+        guard health.isAvailable else { return }
+        healthAuthStatus = health.authorizationStatus(for: HKObjectType.workoutType())
+    }
+
+    private func openHealthSettings() {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
         }
     }
 
@@ -184,8 +233,17 @@ struct SettingsView: View {
             do {
                 try await health.requestAuthorization()
                 await MainActor.run {
-                    message = "Permission requested. Open the Health app to approve read and write access for workout data."
-                    messageIsError = false
+                    refreshHealthAuthStatus()
+                    if healthAuthStatus == .sharingAuthorized {
+                        message = "Apple Health connected."
+                        messageIsError = false
+                    } else if healthAuthStatus == .sharingDenied {
+                        message = "Access denied. Open Settings to enable Health permissions."
+                        messageIsError = true
+                    } else {
+                        message = "Permission requested. Complete approval in the Health app."
+                        messageIsError = false
+                    }
                     requestInProgress = false
                 }
             } catch {
