@@ -1,5 +1,7 @@
 # Iron Workout
 
+[![Co-created with AI](https://madebyhuman.iamjarl.com/badges/co-created-white.svg)](https://madebyhuman.iamjarl.com)
+
 Paid iOS app (one-time purchase, no subscription) for planning and executing strength training: create programs, run workouts in the gym, and have everything saved to history and Apple Health with zero friction.
 
 **Plan your workout -> train -> tap done -> session saved.**
