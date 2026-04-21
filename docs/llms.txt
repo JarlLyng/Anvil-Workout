@@ -2,7 +2,7 @@
 
 > Iron Workout is a paid iOS strength training app (one-time purchase, no subscription) for planning workouts, tracking sets and reps in the gym, and reviewing progress over time. It works fully offline with no account required, no ads, and no data collection.
 
-Iron Workout is developed by IAMJARL. The app is not yet released — it is coming soon to the Apple App Store for iPhone. The app focuses on a streamlined gym experience: users create workout programs with exercises, sets, reps, weight targets, and rest timers, then follow them in real time during training.
+Iron Workout is developed by IAMJARL and is available on the Apple App Store for iPhone: https://apps.apple.com/app/id6760627760. The app focuses on a streamlined gym experience: users create workout programs with exercises, sets, reps, weight targets, and rest timers, then follow them in real time during training.
 
 ## Business model
 
@@ -25,7 +25,7 @@ Iron Workout is a paid app with a one-time purchase price on the App Store. Ther
 ## Technical details
 
 - Built with SwiftUI and SwiftData (on-device storage)
-- iOS 17.0+ required
+- iOS 26.2+ required
 - WidgetKit home screen widget (streak and weekly stats)
 - ActivityKit Live Activity (Lock Screen and Dynamic Island)
 - HealthKit integration for workout sessions, calories, and heart rate
@@ -33,6 +33,7 @@ Iron Workout is a paid app with a one-time purchase price on the App Store. Ther
 
 ## Links
 
+- [App Store](https://apps.apple.com/app/id6760627760): Download Iron Workout for iPhone
 - [Home](https://ironworkout.iamjarl.com/): Product page with features
 - [Support](https://ironworkout.iamjarl.com/support.html): Help and contact information
 - [Privacy Policy](https://ironworkout.iamjarl.com/privacy.html): Privacy policy and data practices
