@@ -70,4 +70,6 @@ See [docs/dev/SETUP.md](docs/dev/SETUP.md) for full setup including Sentry, Heal
 
 - **Name:** Iron Workout
 - **Developer:** IAMJARL
-- **Subtitle:** Plan and Track Workouts
+- **Subtitle:** Track Lifts. No Subscription.
+- **Listing:** [apps.apple.com/app/id6760627760](https://apps.apple.com/app/id6760627760)
+- **Website:** [ironworkout.iamjarl.com](https://ironworkout.iamjarl.com)

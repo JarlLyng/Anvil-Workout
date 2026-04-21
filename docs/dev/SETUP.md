@@ -4,12 +4,12 @@
 
 - **Xcode 16+** with Swift 5
 - macOS with Xcode Command Line Tools
-- Deployment target: iOS 17.0+
+- Deployment target: iOS 26.2+
 
 ## Run the app
 
 1. Clone the repo and open `Iron Workout.xcodeproj` in Xcode.
-2. Select scheme **Iron Workout** and a simulator (e.g. iPhone 16) or a physical device.
+2. Select scheme **Iron Workout** and a simulator (e.g. iPhone 17) or a physical device.
 3. Run (Cmd+R).
 
 The app runs immediately. SPM packages resolve automatically on first open.
