@@ -62,6 +62,24 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Link(destination: URL(string: "https://apps.apple.com/app/id6760627760?action=write-review")!) {
+                        Label {
+                            Text("Rate Iron Workout")
+                                .foregroundStyle(.primary)
+                        } icon: {
+                            Ph.star.fill
+                                .icon()
+                                .foregroundStyle(DesignTokens.ColorToken.State.warning)
+                        }
+                    }
+                    .accessibilityHint("Opens the App Store to write a review")
+                } header: {
+                    Text("Feedback")
+                } footer: {
+                    Text("Reviews help other lifters find the app and keep it improving.")
+                }
+
+                Section {
                     HStack {
                         Ph.info.regular
                             .icon()
