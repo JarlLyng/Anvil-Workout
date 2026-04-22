@@ -4,6 +4,25 @@ Research and implementation spec for issue [#18](https://github.com/JarlLyng/Iro
 
 This document catalogs the exact set/rep structure for each program so implementation can seed `WorkoutTemplate` records directly. All data here is drawn from publicly documented program structures. Exercise schemes are not copyrightable, but program names, prose descriptions, and specific progression formulas should attribute the original author.
 
+## Implementation status (v1.1)
+
+**Shipped in v1.1** (uses absolute weights only):
+- ✅ Starting Strength
+- ✅ StrongLifts 5×5
+- ✅ Greyskull LP
+- ✅ GZCLP
+- ✅ Upper/Lower 4-day
+- ✅ Push/Pull/Legs 6-day
+
+**Deferred to future releases** (requires new model features):
+- ⏸ 5/3/1 BBB, nSuns 5/3/1 LP — need Training Max concept
+- ⏸ Madcow 5×5 — needs ramping sets
+- ⏸ Texas Method — needs explicit AMRAP distinction
+- ⏸ Candito 6-Week — needs multi-week periodization
+- ⏸ Sheiko — needs percentage-of-TM weights
+
+See "Open questions for implementation" at the bottom for the model changes each deferred program requires.
+
 ## Format convention
 
 Each program entry follows this structure:

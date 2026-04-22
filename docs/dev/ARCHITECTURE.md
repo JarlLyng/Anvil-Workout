@@ -28,7 +28,9 @@ Iron Workout/
 │   │   ├── ActiveWorkoutView.swift    # Active workout: timer, sets, rest, pause, Live Activity
 │   │   ├── ActiveWorkoutSubviews.swift# WorkoutTimerBar, PauseOverlay, RestBar, SetRow
 │   │   ├── WorkoutCompletionView.swift# Summary with PR detection, share, review prompt
-│   │   └── EditPerformedSetSheet.swift
+│   │   ├── EditPerformedSetSheet.swift
+│   │   ├── ProgramLibraryView.swift   # Browse pre-built programs grouped by level
+│   │   └── ProgramLibraryDetailView.swift # Preview + "Add to My Programs"
 │   │
 │   ├── History/
 │   │   ├── HistoryView.swift          # Searchable list of completed workouts
@@ -53,18 +55,22 @@ Iron Workout/
 │       └── SettingsView.swift         # Units, CSV export, Health, About
 │
 └── Shared/
-    ├── Models/                        # SwiftData models
+    ├── Models/                        # SwiftData models + static reference data
     │   ├── Exercise.swift
     │   ├── WorkoutTemplate.swift
     │   ├── WorkoutTemplateExercise.swift
     │   ├── WorkoutSession.swift
-    │   ├── WorkoutSessionExercise.swift
+    │   ├── WorkoutSessionExercise.swift  # exerciseID + exerciseName snapshot
     │   ├── PerformedSet.swift
+    │   ├── ProgramLibraryEntry.swift     # Static program library data types (not @Model)
     │   └── LiveActivityAttributes.swift  # Shared with widget (needs Target Membership on both)
     │
     ├── Services/
     │   ├── ExerciseLibraryService.swift   # Seed exercise library on first launch
+    │   ├── ProgramLibraryService.swift    # Pre-built programs + import to WorkoutTemplate
     │   ├── WorkoutSessionService.swift    # Create/finalize session from template
+    │   ├── PersonalRecordService.swift    # Detect PRs (pure, testable)
+    │   ├── StreakCalculator.swift         # Calculate workout streak (pure, testable)
     │   ├── LiveActivityService.swift      # Start/update/end Live Activity
     │   ├── DataMigrationService.swift     # Runtime data migrations (tracked via UserDefaults flags)
     │   └── SentryConfig.swift             # Reads DSN from Info.plist
@@ -87,7 +93,8 @@ IronWorkoutWidget/
 - **Feature-based folder structure** — screens grouped by feature, not by type.
 - **No ViewModel layer** — logic lives in services or directly in views where simple enough. SwiftData's `@Query` and `@Bindable` replace much of what a ViewModel normally does.
 - **Single source of truth** — all domain models in `Shared/Models/`, used by both UI and services.
-- **Services for side effects** — `WorkoutSessionService`, `ExerciseLibraryService`, `HealthKitService`, and `LiveActivityService` handle business logic without being bound to UI.
+- **Services for side effects** — `WorkoutSessionService`, `ExerciseLibraryService`, `ProgramLibraryService`, `HealthKitService`, and `LiveActivityService` handle business logic without being bound to UI.
+- **Pure services for pure logic** — `PersonalRecordService` and `StreakCalculator` are side-effect-free and covered by unit tests in `Iron WorkoutTests`.
 - **View splitting for compilation** — heavy views are split into subview files (e.g. `ActiveWorkoutSubviews.swift`, `StatsChartViews.swift`, `DashboardSubviews.swift`) to avoid Swift type-checker bottlenecks.
 
 ---

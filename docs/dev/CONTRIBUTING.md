@@ -88,9 +88,18 @@ Never commit secrets to git.
 
 ## Tests
 
-- Unit tests: `Iron WorkoutTests/`
-- UI tests: `Iron WorkoutUITests/`
-- Run with Cmd+U in Xcode.
+- Unit tests: `Iron WorkoutTests/` — uses the Swift Testing framework (`import Testing`, `@Suite`, `@Test`, `#expect`, `#require`).
+- UI tests: `Iron WorkoutUITests/`.
+- Run with Cmd+U in Xcode, or unit tests only via CLI:
+
+  ```bash
+  xcodebuild test -project "Iron Workout.xcodeproj" -scheme "Iron Workout" \
+    -destination 'platform=iOS Simulator,name=iPhone 17' \
+    -only-testing:"Iron WorkoutTests"
+  ```
+
+- When adding logic that's worth testing, extract it into a pure service (`PersonalRecordService`, `StreakCalculator` are good examples) instead of embedding it in a view. Services use explicit inputs and return values, making them trivial to test.
+- SwiftData-dependent services (e.g. `WorkoutSessionService`, `ProgramLibraryService`) can be tested against an in-memory `ModelContainer` — see `WorkoutSessionServiceTests` for the pattern.
 
 ## Git
 
