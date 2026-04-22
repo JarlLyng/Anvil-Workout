@@ -22,17 +22,45 @@ struct DashboardView: View {
     @State private var templateToStart: WorkoutTemplate?
     @State private var activeSession: WorkoutSession?
 
-    private var weeklyPlan: [Int: String] {
-        (try? JSONDecoder().decode([String: String].self, from: Data(weeklyPlanJSON.utf8)))?.reduce(into: [Int: String]()) { result, pair in
-            if let key = Int(pair.key) { result[key] = pair.value }
-        } ?? [:]
+    /// Maps weekday index (Mon=0 ... Sun=6) to a list of program names planned for that day.
+    /// Reads both the v1.1+ array format and the legacy v1.0.x single-string format for
+    /// backward compatibility — saves always use the new format.
+    private var weeklyPlan: [Int: [String]] {
+        let data = Data(weeklyPlanJSON.utf8)
+
+        // Preferred: new array format
+        if let decoded = try? JSONDecoder().decode([String: [String]].self, from: data) {
+            return decoded.reduce(into: [Int: [String]]()) { result, pair in
+                if let key = Int(pair.key), !pair.value.isEmpty { result[key] = pair.value }
+            }
+        }
+
+        // Legacy: single-string format from v1.0.x — wrap each value in an array
+        if let decoded = try? JSONDecoder().decode([String: String].self, from: data) {
+            return decoded.reduce(into: [Int: [String]]()) { result, pair in
+                if let key = Int(pair.key), !pair.value.isEmpty { result[key] = [pair.value] }
+            }
+        }
+
+        return [:]
     }
 
-    private func saveWeeklyPlan(_ plan: [Int: String]) {
-        let stringKeyed = plan.reduce(into: [String: String]()) { $0["\($1.key)"] = $1.value }
+    private func saveWeeklyPlan(_ plan: [Int: [String]]) {
+        let stringKeyed = plan.reduce(into: [String: [String]]()) { $0["\($1.key)"] = $1.value }
         if let data = try? JSONEncoder().encode(stringKeyed) {
             weeklyPlanJSON = String(data: data, encoding: .utf8) ?? "{}"
         }
+    }
+
+    /// Program names planned for today, preserving user-defined order.
+    private var todaysPlannedPrograms: [WorkoutTemplate] {
+        let calendar = Calendar.current
+        let todayWeekday = calendar.component(.weekday, from: .now)
+        let todayIndex = (todayWeekday + 5) % 7  // Mon=0, Tue=1, ..., Sun=6
+
+        guard let names = weeklyPlan[todayIndex], !names.isEmpty else { return [] }
+        let lookup = Dictionary(templates.map { ($0.name, $0) }, uniquingKeysWith: { first, _ in first })
+        return names.compactMap { lookup[$0] }
     }
 
     private var morningGreeting: String {
@@ -95,18 +123,16 @@ struct DashboardView: View {
         return "Last: \(last.templateName) (\(relativeDate))"
     }
 
-    private var recommendedTemplate: WorkoutTemplate? {
-        // Find the last completed session
+    /// Fallback recommendation when the user has no programs planned for today.
+    /// Rotates through templates based on the last completed session.
+    private var fallbackRecommendation: WorkoutTemplate? {
         guard let lastSession = sessions.first(where: { $0.completedSetCount > 0 }) else {
             return templates.first
         }
-        
-        // Find rotation index (simplified): we find the last used template index in the list, and recommend the next one.
         if let idx = templates.firstIndex(where: { $0.name == lastSession.templateName }) {
             let nextIdx = (idx + 1) % templates.count
             return templates[nextIdx]
         }
-        
         return templates.first
     }
 
@@ -204,46 +230,91 @@ struct DashboardView: View {
 
     private var quickStartSection: some View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
-            Text("Recommended for You")
+            let planned = todaysPlannedPrograms
+            Text(planned.isEmpty ? "Recommended for You" : "Today's Workouts")
                 .font(.title2.bold())
-            
-            VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
-                if let rec = recommendedTemplate {
-                    HStack {
-                        VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
-                            Text(rec.name)
-                                .font(.headline)
-                            Text(lastWorkoutText)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                        Spacer()
-                    }
-                    
-                    Button {
-                        startSession(from: rec)
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Text("Start Workout")
-                                .font(.headline)
-                            Ph.playCircle.fill.icon()
-                            Spacer()
-                        }
-                        .padding()
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
-                    .accessibilityLabel("Start \(rec.name)")
-                } else {
-                    Text("Create your first workout program in the Workouts tab to see recommendations here.")
-                        .font(.subheadline)
+
+            if !planned.isEmpty {
+                ForEach(planned, id: \.id) { template in
+                    plannedWorkoutCard(template)
+                }
+            } else if let rec = fallbackRecommendation {
+                recommendedCard(rec)
+            } else {
+                Text("Create your first workout program in the Workouts tab to see recommendations here.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .padding(DesignTokens.Spacing.lg)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+            }
+        }
+    }
+
+    private func plannedWorkoutCard(_ template: WorkoutTemplate) -> some View {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
+            HStack {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+                    Text(template.name)
+                        .font(.headline)
+                    Text("\(template.exercises.count) exercises")
+                        .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+                Spacer()
             }
-            .padding(DesignTokens.Spacing.lg)
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+
+            Button {
+                startSession(from: template)
+            } label: {
+                HStack {
+                    Spacer()
+                    Text("Start Workout")
+                        .font(.headline)
+                    Ph.playCircle.fill.icon()
+                    Spacer()
+                }
+                .padding()
+            }
+            .buttonStyle(.borderedProminent)
+            .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
+            .accessibilityLabel("Start \(template.name)")
         }
+        .padding(DesignTokens.Spacing.lg)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+    }
+
+    private func recommendedCard(_ template: WorkoutTemplate) -> some View {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
+            HStack {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+                    Text(template.name)
+                        .font(.headline)
+                    Text(lastWorkoutText)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+            }
+
+            Button {
+                startSession(from: template)
+            } label: {
+                HStack {
+                    Spacer()
+                    Text("Start Workout")
+                        .font(.headline)
+                    Ph.playCircle.fill.icon()
+                    Spacer()
+                }
+                .padding()
+            }
+            .buttonStyle(.borderedProminent)
+            .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
+            .accessibilityLabel("Start \(template.name)")
+        }
+        .padding(DesignTokens.Spacing.lg)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
     }
     
     private func startSession(from template: WorkoutTemplate) {

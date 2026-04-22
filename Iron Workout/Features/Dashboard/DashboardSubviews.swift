@@ -39,12 +39,20 @@ struct DashboardCard<Icon: View>: View {
 
 struct WeeklyPlanRow: View {
     @Environment(\.colorScheme) private var colorScheme
-    let weeklyPlan: [Int: String]
+    let weeklyPlan: [Int: [String]]
     var onEdit: () -> Void
 
     static let dayAbbreviations = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
     private static let columns = Array(repeating: GridItem(.flexible(), spacing: DesignTokens.Spacing.sm), count: 4)
+
+    /// Short label for a day's planned programs. Shows one name when there's one,
+    /// or "N workouts" when there are multiple, to keep the grid tile compact.
+    private func label(for programs: [String]?) -> String {
+        guard let programs, !programs.isEmpty else { return "\u{2014}" }
+        if programs.count == 1 { return programs[0] }
+        return "\(programs.count) workouts"
+    }
 
     var body: some View {
         let calendar = Calendar.current
@@ -68,7 +76,7 @@ struct WeeklyPlanRow: View {
 
             LazyVGrid(columns: Self.columns, spacing: DesignTokens.Spacing.sm) {
                 ForEach(0..<7, id: \.self) { index in
-                    let templateName = weeklyPlan[index]
+                    let programs = weeklyPlan[index]
                     let isToday = index == todayIndex
 
                     VStack(spacing: DesignTokens.Spacing.xs) {
@@ -76,7 +84,7 @@ struct WeeklyPlanRow: View {
                             .font(.caption.bold())
                             .foregroundStyle(isToday ? DesignTokens.Common.OnPrimary.text(colorScheme) : .secondary)
 
-                        Text(templateName ?? "\u{2014}")
+                        Text(label(for: programs))
                             .font(.caption2)
                             .foregroundStyle(isToday ? DesignTokens.Common.OnPrimary.text(colorScheme).opacity(0.9) : .primary)
                             .lineLimit(2)
