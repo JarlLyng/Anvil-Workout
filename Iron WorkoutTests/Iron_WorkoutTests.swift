@@ -2,16 +2,21 @@
 //  Iron_WorkoutTests.swift
 //  Iron WorkoutTests
 //
-//  Created by Jarl Lyng on 14/03/2026.
+//  Test suites for Iron Workout live in separate files per service:
+//  - StreakCalculatorTests
+//  - PersonalRecordServiceTests
+//  - WorkoutSessionServiceTests
+//
+//  This file is intentionally kept as a placeholder so the Xcode target stays wired
+//  up without pulling in Testing unnecessarily when no file lives here.
 //
 
 import Testing
-@testable import Iron_Workout
 
-struct Iron_WorkoutTests {
-
-    @Test func example() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+@Suite("Iron Workout")
+struct IronWorkoutTestsSmokeSuite {
+    @Test("test target loads")
+    func targetLoads() {
+        #expect(true)
     }
-
 }

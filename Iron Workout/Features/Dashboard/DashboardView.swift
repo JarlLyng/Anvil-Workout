@@ -87,31 +87,7 @@ struct DashboardView: View {
     }
 
     private var currentStreak: Int {
-        let calendar = Calendar.current
-        let completedSessions = sessions.filter { $0.completedSetCount > 0 }
-
-        var streak = 0
-        var checkDate = Date.now
-
-        // If no session today, start checking from yesterday
-        let todayStart = calendar.startOfDay(for: checkDate)
-        let hasTodaySession = completedSessions.contains { calendar.isDate($0.startedAt, inSameDayAs: todayStart) }
-        if !hasTodaySession {
-            checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate
-        }
-
-        while true {
-            let dayStart = calendar.startOfDay(for: checkDate)
-            let hasSession = completedSessions.contains { calendar.isDate($0.startedAt, inSameDayAs: dayStart) }
-            if hasSession {
-                streak += 1
-                checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate
-            } else {
-                break
-            }
-        }
-
-        return streak
+        StreakCalculator.currentStreak(from: sessions)
     }
     
     private var lastWorkoutText: String {

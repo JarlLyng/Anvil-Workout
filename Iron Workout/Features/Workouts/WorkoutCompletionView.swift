@@ -26,78 +26,8 @@ struct WorkoutCompletionView: View {
         return "\(m) min"
     }
 
-    private var personalRecords: [PersonalRecord] {
-        let previousSessions = allSessions.filter { $0.id != session.id }
-        var records: [PersonalRecord] = []
-
-        for exercise in session.exercises {
-            let completedWorkingSets = exercise.performedSets.filter {
-                $0.isCompleted && $0.setType == .working
-            }
-            guard !completedWorkingSets.isEmpty else { continue }
-
-            // Find current session's max weight for this exercise
-            let currentMaxWeight = completedWorkingSets.compactMap(\.actualWeight).max() ?? 0
-
-            // Find previous instances of the same source exercise (by stable ID when available).
-            let previousExercises: [WorkoutSessionExercise] = previousSessions.flatMap(\.exercises).filter {
-                $0.isSameExercise(as: exercise)
-            }
-            let previousSets: [PerformedSet] = previousExercises.flatMap(\.performedSets).filter {
-                $0.isCompleted && $0.setType == .working
-            }
-            let previousMaxWeight = previousSets.compactMap(\.actualWeight).max() ?? 0
-
-            // Weight PR
-            if currentMaxWeight > previousMaxWeight && currentMaxWeight > 0 {
-                let previousText = previousMaxWeight > 0
-                    ? formatWeight(previousMaxWeight)
-                    : "None"
-                records.append(PersonalRecord(
-                    exerciseName: exercise.exerciseName,
-                    type: "Weight",
-                    value: formatWeight(currentMaxWeight),
-                    previousBest: previousText
-                ))
-            }
-
-            // Reps PR at same or higher weight
-            let repsWeightPairs: [(reps: Int, weight: Double)] = completedWorkingSets
-                .compactMap { set -> (reps: Int, weight: Double)? in
-                    guard let reps = set.actualReps, let weight = set.actualWeight else { return nil }
-                    return (reps, weight)
-                }
-            let currentMaxRepsAtWeight: (reps: Int, weight: Double)? = repsWeightPairs
-                .max { a, b in
-                    if a.reps != b.reps { return a.reps < b.reps }
-                    return a.weight < b.weight
-                }
-
-            if let current = currentMaxRepsAtWeight {
-                let previousBestReps = previousSets
-                    .compactMap { set -> Int? in
-                        guard let reps = set.actualReps,
-                              let weight = set.actualWeight,
-                              weight >= current.weight else { return nil }
-                        return reps
-                    }
-                    .max() ?? 0
-
-                if current.reps > previousBestReps && current.reps > 0 {
-                    let previousText = previousBestReps > 0
-                        ? "\(previousBestReps) reps"
-                        : "None"
-                    records.append(PersonalRecord(
-                        exerciseName: exercise.exerciseName,
-                        type: "Reps",
-                        value: "\(current.reps) reps @ \(formatWeight(current.weight))",
-                        previousBest: previousText
-                    ))
-                }
-            }
-        }
-
-        return records
+    private var personalRecords: [DetectedPersonalRecord] {
+        PersonalRecordService.detectPersonalRecords(in: session, history: allSessions)
     }
 
     private var shareText: String {
@@ -114,13 +44,6 @@ struct WorkoutCompletionView: View {
         }
 
         return text
-    }
-
-    private func formatWeight(_ weight: Double) -> String {
-        if weight.truncatingRemainder(dividingBy: 1) == 0 {
-            return "\(Int(weight)) kg"
-        }
-        return String(format: "%.1f kg", weight)
     }
 
     var body: some View {
@@ -208,10 +131,3 @@ struct WorkoutCompletionView: View {
     }
 }
 
-private struct PersonalRecord: Identifiable {
-    let id = UUID()
-    let exerciseName: String
-    let type: String
-    let value: String
-    let previousBest: String
-}
