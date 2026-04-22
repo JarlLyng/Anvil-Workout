@@ -25,7 +25,7 @@ Iron Workout is a paid app with a one-time purchase price on the App Store. Ther
 ## Technical details
 
 - Built with SwiftUI and SwiftData (on-device storage)
-- iOS 26.2+ required
+- iOS 17.0+ required
 - WidgetKit home screen widget (streak and weekly stats)
 - ActivityKit Live Activity (Lock Screen and Dynamic Island)
 - HealthKit integration for workout sessions, calories, and heart rate

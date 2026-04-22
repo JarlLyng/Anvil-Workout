@@ -4,7 +4,7 @@
 
 - **Xcode 16+** with Swift 5
 - macOS with Xcode Command Line Tools
-- Deployment target: iOS 26.2+
+- Deployment target: iOS 17.0+
 
 ## Run the app
 

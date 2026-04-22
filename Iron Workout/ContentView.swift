@@ -13,24 +13,30 @@ struct ContentView: View {
 
     var body: some View {
         TabView {
-            Tab("Home", systemImage: "house.fill") {
-                DashboardView()
-            }
-            Tab("Workouts", systemImage: "dumbbell.fill") {
-                WorkoutsView()
-            }
-            Tab("History", systemImage: "clock.arrow.circlepath") {
-                HistoryView()
-            }
-            Tab("Exercises", systemImage: "list.bullet") {
-                ExercisesView()
-            }
-            Tab("Stats", systemImage: "chart.bar.fill") {
-                StatsView()
-            }
-            Tab("Settings", systemImage: "gearshape.fill") {
-                SettingsView()
-            }
+            DashboardView()
+                .tabItem {
+                    Label("Home", systemImage: "house.fill")
+                }
+            WorkoutsView()
+                .tabItem {
+                    Label("Workouts", systemImage: "dumbbell.fill")
+                }
+            HistoryView()
+                .tabItem {
+                    Label("History", systemImage: "clock.arrow.circlepath")
+                }
+            ExercisesView()
+                .tabItem {
+                    Label("Exercises", systemImage: "list.bullet")
+                }
+            StatsView()
+                .tabItem {
+                    Label("Stats", systemImage: "chart.bar.fill")
+                }
+            SettingsView()
+                .tabItem {
+                    Label("Settings", systemImage: "gearshape.fill")
+                }
         }
         .tint(DesignTokens.Common.primary(colorScheme))
     }
