@@ -19,6 +19,7 @@ struct WorkoutsView: View {
     @State private var errorMessage: String?
     @State private var toastMessage: String?
     @State private var searchText = ""
+    @State private var showProgramLibrary = false
 
     private var filteredTemplates: [WorkoutTemplate] {
         if searchText.isEmpty { return templates }
@@ -32,13 +33,26 @@ struct WorkoutsView: View {
                     ContentUnavailableView {
                         Label("No Programs Yet", systemImage: "dumbbell.fill")
                     } description: {
-                        Text("Create your first workout program with exercises, sets and reps to get started.")
+                        Text("Start with a proven program, or build your own.")
                     } actions: {
-                        Button("Create Program") {
-                            createTemplate()
+                        VStack(spacing: DesignTokens.Spacing.sm) {
+                            Button {
+                                showProgramLibrary = true
+                            } label: {
+                                Label {
+                                    Text("Browse Program Library")
+                                } icon: {
+                                    Ph.bookBookmark.regular.icon()
+                                }
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
+
+                            Button("Create from Scratch") {
+                                createTemplate()
+                            }
+                            .buttonStyle(.bordered)
                         }
-                        .buttonStyle(.borderedProminent)
-                        .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
                     }
                 } else if !searchText.isEmpty && filteredTemplates.isEmpty {
                     ContentUnavailableView.search(text: searchText)
@@ -95,12 +109,21 @@ struct WorkoutsView: View {
             .searchable(text: $searchText, prompt: "Search programs")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        createTemplate()
+                    Menu {
+                        Button {
+                            showProgramLibrary = true
+                        } label: {
+                            Label { Text("Browse Program Library") } icon: { Ph.bookBookmark.regular.icon() }
+                        }
+                        Button {
+                            createTemplate()
+                        } label: {
+                            Label { Text("Create from Scratch") } icon: { Ph.plusCircle.regular.icon() }
+                        }
                     } label: {
                         Ph.plusCircle.fill
                             .icon(size: 24)
-                            .accessibilityLabel("Create Program")
+                            .accessibilityLabel("Add Program")
                     }
                 }
             }
@@ -111,6 +134,9 @@ struct WorkoutsView: View {
                 NavigationStack {
                     CreateEditTemplateView(template: template)
                 }
+            }
+            .sheet(isPresented: $showProgramLibrary) {
+                ProgramLibraryView()
             }
             .alert("Error", isPresented: .init(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
                 Button("OK") { errorMessage = nil }
