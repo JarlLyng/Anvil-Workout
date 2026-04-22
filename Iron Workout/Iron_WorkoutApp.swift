@@ -71,5 +71,7 @@ struct Iron_WorkoutApp: App {
     private func seedExerciseLibraryIfNeeded() {
         let context = sharedModelContainer.mainContext
         ExerciseLibraryService.seedIfNeeded(modelContext: context)
+        // Run after library seeding so any matching-by-name migrations have the full library available.
+        DataMigrationService.runMigrationsIfNeeded(modelContext: context)
     }
 }

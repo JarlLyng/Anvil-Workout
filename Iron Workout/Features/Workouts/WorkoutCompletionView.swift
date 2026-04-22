@@ -39,9 +39,9 @@ struct WorkoutCompletionView: View {
             // Find current session's max weight for this exercise
             let currentMaxWeight = completedWorkingSets.compactMap(\.actualWeight).max() ?? 0
 
-            // Find previous best weight for same exercise name
+            // Find previous instances of the same source exercise (by stable ID when available).
             let previousExercises: [WorkoutSessionExercise] = previousSessions.flatMap(\.exercises).filter {
-                $0.exerciseName == exercise.exerciseName
+                $0.isSameExercise(as: exercise)
             }
             let previousSets: [PerformedSet] = previousExercises.flatMap(\.performedSets).filter {
                 $0.isCompleted && $0.setType == .working

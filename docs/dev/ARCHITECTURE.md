@@ -66,6 +66,7 @@ Iron Workout/
     │   ├── ExerciseLibraryService.swift   # Seed exercise library on first launch
     │   ├── WorkoutSessionService.swift    # Create/finalize session from template
     │   ├── LiveActivityService.swift      # Start/update/end Live Activity
+    │   ├── DataMigrationService.swift     # Runtime data migrations (tracked via UserDefaults flags)
     │   └── SentryConfig.swift             # Reads DSN from Info.plist
     │
     └── Components/
@@ -88,6 +89,40 @@ IronWorkoutWidget/
 - **Single source of truth** — all domain models in `Shared/Models/`, used by both UI and services.
 - **Services for side effects** — `WorkoutSessionService`, `ExerciseLibraryService`, `HealthKitService`, and `LiveActivityService` handle business logic without being bound to UI.
 - **View splitting for compilation** — heavy views are split into subview files (e.g. `ActiveWorkoutSubviews.swift`, `StatsChartViews.swift`, `DashboardSubviews.swift`) to avoid Swift type-checker bottlenecks.
+
+---
+
+## Data migrations
+
+### When to use which approach
+
+**`DataMigrationService` (lightweight, runtime)**
+
+Use for backfills and data transformations that don't change the schema shape. Each migration is a pure Swift function guarded by a UserDefaults flag, runs on app launch via `runMigrationsIfNeeded`.
+
+Good fits:
+- Populate a new optional field with derived/inferred values (e.g. backfill `exerciseID` by matching `exerciseName` to the library)
+- Normalize existing data (e.g. trim whitespace, fix casing)
+- Clean up orphaned records
+
+Example: `backfillExerciseIDsIfNeeded` (added in v1.1) populates `WorkoutSessionExercise.exerciseID` for sessions created in v1.0.x.
+
+**SwiftData `VersionedSchema` + `MigrationPlan` (heavyweight)**
+
+Use when the schema shape changes. Required for:
+- Renaming a property
+- Changing a property type (e.g. `String` → `UUID`)
+- Splitting one model into two
+- Removing a property (after a deprecation window)
+
+This approach requires declaring each schema version as a `VersionedSchema` enum, a `SchemaMigrationPlan` with `MigrationStage` entries (lightweight or custom), and wiring the plan into `ModelContainer` at init time. More boilerplate, but SwiftData handles the transaction safely.
+
+### Rules of thumb
+
+- **Prefer lightweight migrations** when possible — they're easier to reason about and debug, and don't risk container init failure.
+- **Always keep a snapshot field** when migrating identity-style references (e.g. `exerciseName` was kept alongside `exerciseID` so history still reads correctly if the source entity is renamed or deleted).
+- **Make migrations idempotent** — safe to run twice if the UserDefaults flag somehow gets cleared.
+- **Capture errors to Sentry** but do not crash the app — surface the migration on next launch if it fails.
 
 ---
 

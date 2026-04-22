@@ -34,6 +34,7 @@ enum WorkoutSessionService {
         for (exIndex, te) in sorted.enumerated() {
             let name = nameByID[te.exerciseID] ?? "Unknown exercise"
             let sessionEx = WorkoutSessionExercise(
+                exerciseID: te.exerciseID,
                 exerciseName: name,
                 sortOrder: exIndex,
                 note: te.note,

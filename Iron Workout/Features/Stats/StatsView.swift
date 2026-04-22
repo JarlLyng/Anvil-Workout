@@ -65,13 +65,20 @@ struct StatsView: View {
 
     private var muscleGroupData: [MuscleGroupDataPoint] {
         var counts: [String: Int] = [:]
-        let exerciseLookup = Dictionary(uniqueKeysWithValues: exercises.map { ($0.name, $0.muscleGroup.rawValue) })
+        let groupByID = Dictionary(uniqueKeysWithValues: exercises.map { ($0.id, $0.muscleGroup.rawValue) })
+        let groupByName = Dictionary(exercises.map { ($0.name, $0.muscleGroup.rawValue) }, uniquingKeysWith: { first, _ in first })
 
         for session in sessions {
             for ex in session.exercises {
                 let completedSets = ex.performedSets.filter(\.isCompleted).count
                 guard completedSets > 0 else { continue }
-                let group = exerciseLookup[ex.exerciseName] ?? "Other"
+                // Prefer stable exerciseID; fall back to name for legacy sessions.
+                let group: String
+                if let exerciseID = ex.exerciseID, let g = groupByID[exerciseID] {
+                    group = g
+                } else {
+                    group = groupByName[ex.exerciseName] ?? "Other"
+                }
                 counts[group, default: 0] += completedSets
             }
         }
@@ -86,7 +93,7 @@ struct StatsView: View {
 
         for session in sessions {
             let day = Calendar.current.startOfDay(for: session.startedAt)
-            for ex in session.exercises where ex.exerciseName == exercise.name {
+            for ex in session.exercises where ex.matches(exercise) {
                 var max1RM = 0.0
                 for set in ex.performedSets where set.isCompleted && set.setType == .working {
                     if let reps = set.actualReps, let weight = set.actualWeight, reps > 0 {

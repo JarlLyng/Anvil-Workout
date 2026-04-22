@@ -20,7 +20,7 @@ struct ExerciseDetailView: View {
 
     private var relevantSessions: [WorkoutSession] {
         sessions.filter { session in
-            session.exercises.contains { $0.exerciseName == exercise.name }
+            session.exercises.contains(where: { $0.matches(exercise) })
         }
     }
 
@@ -28,7 +28,7 @@ struct ExerciseDetailView: View {
     private var allCompletedSets: [(set: PerformedSet, session: WorkoutSession)] {
         relevantSessions.flatMap { session in
             session.exercises
-                .filter { $0.exerciseName == exercise.name }
+                .filter { $0.matches(exercise) }
                 .flatMap { $0.performedSets }
                 .filter { $0.isCompleted && $0.setType == .working }
                 .map { (set: $0, session: session) }
@@ -154,7 +154,7 @@ struct ExerciseDetailView: View {
 
     private func sessionRow(_ session: WorkoutSession) -> some View {
         let exerciseEntries = session.exercises
-            .filter { $0.exerciseName == exercise.name }
+            .filter { $0.matches(exercise) }
             .sorted { $0.sortOrder < $1.sortOrder }
 
         return VStack(alignment: .leading, spacing: 6) {
