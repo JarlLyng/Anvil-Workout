@@ -1,7 +1,7 @@
 # CLAUDE.md
 
 Project context for AI assistants working on Iron Workout.
-This file is also mirrored to `.cursorrules`, `.windsurfrules`, and `.github/copilot-instructions.md`.
+This file is also mirrored to `AGENTS.md`, `.cursorrules`, `.windsurfrules`, and `.github/copilot-instructions.md`.
 
 ## What is this
 
