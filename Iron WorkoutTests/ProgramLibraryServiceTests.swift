@@ -152,6 +152,29 @@ struct ProgramLibraryServiceTests {
         }
     }
 
+    @Test("imported templates carry sourceProgramID for attribution lookup")
+    @MainActor
+    func importedTemplatesHaveSourceProgramID() throws {
+        let context = try makeInMemoryContextWithLibrary()
+        let program = ProgramLibraryService.programs.first { $0.id == "starting-strength" }!
+
+        let templates = try ProgramLibraryService.importProgram(program, modelContext: context)
+
+        for template in templates {
+            #expect(template.sourceProgramID == "starting-strength")
+        }
+    }
+
+    @Test("program(withID:) resolves for imported templates")
+    func programLookupByID() {
+        let resolved = ProgramLibraryService.program(withID: "starting-strength")
+        #expect(resolved != nil)
+        #expect(resolved?.author == "Mark Rippetoe")
+
+        let missing = ProgramLibraryService.program(withID: "not-a-real-program")
+        #expect(missing == nil)
+    }
+
     @Test("importing the same program twice creates independent copies")
     @MainActor
     func importTwiceIndependent() throws {

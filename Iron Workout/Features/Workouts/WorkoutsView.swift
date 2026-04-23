@@ -59,47 +59,9 @@ struct WorkoutsView: View {
                 } else {
                     ScrollView {
                         VStack(spacing: DesignTokens.Spacing.lg) {
+                            programLibraryRow
                             ForEach(filteredTemplates) { template in
-                                NavigationLink(value: template) {
-                                    HStack {
-                                        VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
-                                            Text(template.name.isEmpty ? "Untitled" : template.name)
-                                                .font(.headline)
-                                                .foregroundStyle(.primary)
-                                            if !template.note.isEmpty {
-                                                Text(template.note)
-                                                    .font(.subheadline)
-                                                    .foregroundStyle(.secondary)
-                                            }
-                                        }
-                                        Spacer()
-                                        if template.isFavorite {
-                                            Ph.star.fill
-                                                .icon()
-                                                .foregroundStyle(DesignTokens.ColorToken.State.warning)
-                                                .accessibilityLabel("Favorite")
-                                        } else {
-                                            Ph.caretRight.regular
-                                                .icon()
-                                                .foregroundStyle(.secondary)
-                                        }
-                                    }
-                                    .padding(DesignTokens.Spacing.lg)
-                                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
-                                }
-                                .buttonStyle(.plain)
-                                .contextMenu {
-                                    Button {
-                                        duplicateTemplate(template)
-                                    } label: {
-                                        Label { Text("Duplicate") } icon: { Ph.copySimple.regular.icon() }
-                                    }
-                                    Button(role: .destructive) {
-                                        deleteTemplate(template)
-                                    } label: {
-                                        Label { Text("Delete") } icon: { Ph.trash.regular.icon() }
-                                    }
-                                }
+                                templateRow(template)
                             }
                         }
                         .padding()
@@ -136,7 +98,10 @@ struct WorkoutsView: View {
                 }
             }
             .sheet(isPresented: $showProgramLibrary) {
-                ProgramLibraryView()
+                ProgramLibraryView { programName in
+                    showProgramLibrary = false
+                    showToast("\(programName) added")
+                }
             }
             .alert("Error", isPresented: .init(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
                 Button("OK") { errorMessage = nil }
@@ -160,6 +125,91 @@ struct WorkoutsView: View {
                 }
             }
             .animation(.easeInOut, value: toastMessage)
+        }
+    }
+
+    // MARK: - Row subviews
+
+    private var programLibraryRow: some View {
+        Button {
+            showProgramLibrary = true
+        } label: {
+            HStack(spacing: DesignTokens.Spacing.md) {
+                Ph.bookBookmark.regular
+                    .icon(size: 22)
+                    .foregroundStyle(DesignTokens.Common.primary(colorScheme))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Program Library")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.primary)
+                    Text("Import a proven routine to get started")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                Ph.caretRight.regular
+                    .icon()
+                    .foregroundStyle(.secondary)
+            }
+            .padding(DesignTokens.Spacing.lg)
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Open Program Library")
+    }
+
+    @ViewBuilder
+    private func templateRow(_ template: WorkoutTemplate) -> some View {
+        NavigationLink(value: template) {
+            HStack {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                    Text(template.name.isEmpty ? "Untitled" : template.name)
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                    if let programID = template.sourceProgramID,
+                       let program = ProgramLibraryService.program(withID: programID) {
+                        HStack(spacing: 4) {
+                            Ph.bookBookmark.regular
+                                .icon(size: 12)
+                                .foregroundStyle(.secondary)
+                            Text("Inspired by \(program.author)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    } else if !template.note.isEmpty {
+                        Text(template.note)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(2)
+                    }
+                }
+                Spacer()
+                if template.isFavorite {
+                    Ph.star.fill
+                        .icon()
+                        .foregroundStyle(DesignTokens.ColorToken.State.warning)
+                        .accessibilityLabel("Favorite")
+                } else {
+                    Ph.caretRight.regular
+                        .icon()
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding(DesignTokens.Spacing.lg)
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+        }
+        .buttonStyle(.plain)
+        .contextMenu {
+            Button {
+                duplicateTemplate(template)
+            } label: {
+                Label { Text("Duplicate") } icon: { Ph.copySimple.regular.icon() }
+            }
+            Button(role: .destructive) {
+                deleteTemplate(template)
+            } label: {
+                Label { Text("Delete") } icon: { Ph.trash.regular.icon() }
+            }
         }
     }
 

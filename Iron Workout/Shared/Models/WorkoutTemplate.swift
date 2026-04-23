@@ -16,6 +16,10 @@ final class WorkoutTemplate: Identifiable {
     var isFavorite: Bool
     var createdAt: Date
     var updatedAt: Date
+    /// Stable slug of the program from `ProgramLibraryService` if this template was imported
+    /// from the pre-built library. `nil` for user-created templates. Used to look up the
+    /// original author for display (e.g. "Inspired by Rippetoe") and to group related templates.
+    var sourceProgramID: String?
 
     @Relationship(deleteRule: .cascade, inverse: \WorkoutTemplateExercise.template)
     var exercises: [WorkoutTemplateExercise] = []
@@ -26,7 +30,8 @@ final class WorkoutTemplate: Identifiable {
         note: String = "",
         isFavorite: Bool = false,
         createdAt: Date = .now,
-        updatedAt: Date = .now
+        updatedAt: Date = .now,
+        sourceProgramID: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -34,5 +39,6 @@ final class WorkoutTemplate: Identifiable {
         self.isFavorite = isFavorite
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+        self.sourceProgramID = sourceProgramID
     }
 }

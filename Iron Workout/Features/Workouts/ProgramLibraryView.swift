@@ -15,6 +15,11 @@ struct ProgramLibraryView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
 
+    /// Called when the user successfully imports a program. Receives the program's
+    /// display name so the presenting view can show a confirmation toast. Parent is
+    /// expected to dismiss this sheet.
+    let onImportComplete: (String) -> Void
+
     var body: some View {
         NavigationStack {
             List {
@@ -42,7 +47,7 @@ struct ProgramLibraryView: View {
             .navigationTitle("Program Library")
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: ProgramLibraryEntry.self) { program in
-                ProgramLibraryDetailView(program: program)
+                ProgramLibraryDetailView(program: program, onImportComplete: onImportComplete)
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -97,7 +102,7 @@ private struct ProgramCard: View {
 }
 
 #Preview {
-    ProgramLibraryView()
+    ProgramLibraryView(onImportComplete: { _ in })
         .modelContainer(for: [
             Exercise.self,
             WorkoutTemplate.self,

@@ -19,9 +19,10 @@ struct ProgramLibraryDetailView: View {
     @Environment(\.dismiss) private var dismiss
 
     let program: ProgramLibraryEntry
+    let onImportComplete: (String) -> Void
 
     @State private var errorMessage: String?
-    @State private var importResult: ImportResult?
+    @State private var isImporting = false
 
     var body: some View {
         List {
@@ -92,8 +93,13 @@ struct ProgramLibraryDetailView: View {
             } label: {
                 HStack {
                     Spacer()
-                    Ph.plusCircle.fill.icon()
-                    Text("Add to My Programs")
+                    if isImporting {
+                        ProgressView()
+                            .tint(DesignTokens.Common.OnPrimary.text(colorScheme))
+                    } else {
+                        Ph.plusCircle.fill.icon()
+                    }
+                    Text(isImporting ? "Adding…" : "Add to My Programs")
                         .font(.headline)
                     Spacer()
                 }
@@ -104,21 +110,12 @@ struct ProgramLibraryDetailView: View {
             .padding(.horizontal)
             .padding(.bottom, 8)
             .background(.ultraThinMaterial)
+            .disabled(isImporting)
         }
         .alert("Error", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
             Button("OK") { errorMessage = nil }
         } message: {
             Text(errorMessage ?? "")
-        }
-        .alert("Added", isPresented: Binding(get: { importResult != nil }, set: { if !$0 { importResult = nil } })) {
-            Button("Done") {
-                importResult = nil
-                dismiss()
-            }
-        } message: {
-            if let result = importResult {
-                Text(result.message)
-            }
         }
     }
 
@@ -161,31 +158,25 @@ struct ProgramLibraryDetailView: View {
     // MARK: - Actions
 
     private func importProgram() {
+        isImporting = true
         do {
-            let created = try ProgramLibraryService.importProgram(program, modelContext: modelContext)
-            importResult = ImportResult(count: created.count, programName: program.name)
+            _ = try ProgramLibraryService.importProgram(program, modelContext: modelContext)
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+            onImportComplete(program.name)
         } catch {
             SentrySDK.capture(error: error)
             errorMessage = "Could not import program: \(error.localizedDescription)"
-        }
-    }
-
-    private struct ImportResult: Equatable {
-        let count: Int
-        let programName: String
-
-        var message: String {
-            if count == 1 {
-                return "\(programName) added to your programs. Open it to adjust weights for your level."
-            }
-            return "\(count) programs added for \(programName). Find them in your list and assign to your weekly plan."
+            isImporting = false
         }
     }
 }
 
 #Preview {
     NavigationStack {
-        ProgramLibraryDetailView(program: ProgramLibraryService.programs.first!)
+        ProgramLibraryDetailView(
+            program: ProgramLibraryService.programs.first!,
+            onImportComplete: { _ in }
+        )
     }
     .modelContainer(for: [
         Exercise.self,

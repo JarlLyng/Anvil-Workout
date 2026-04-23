@@ -34,6 +34,12 @@ enum ProgramLibraryService {
         programs.filter { $0.level == level }
     }
 
+    /// Looks up a program by its stable slug. Returns `nil` if the program has been
+    /// removed in a newer app version — callers should degrade gracefully.
+    static func program(withID id: String) -> ProgramLibraryEntry? {
+        programs.first { $0.id == id }
+    }
+
     // MARK: - Import
 
     /// Imports a program as one or more editable `WorkoutTemplate` records.
@@ -63,7 +69,11 @@ enum ProgramLibraryService {
                 ? entry.name
                 : "\(entry.name) — \(workout.name)"
 
-            let template = WorkoutTemplate(name: templateName, note: entry.summary)
+            let template = WorkoutTemplate(
+                name: templateName,
+                note: entry.summary,
+                sourceProgramID: entry.id
+            )
             modelContext.insert(template)
 
             for (sortOrder, programExercise) in workout.exercises.enumerated() {
