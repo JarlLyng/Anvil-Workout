@@ -227,20 +227,20 @@ struct ActiveWorkoutView: View {
 
     private func blockContent(block: [WorkoutSessionExercise]) -> some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxl) {
                 if block.count > 1 {
                     HStack {
                         Ph.link.fill.icon().foregroundStyle(DesignTokens.ColorToken.State.warning)
                         Text("Superset").font(.headline).foregroundStyle(DesignTokens.ColorToken.State.warning)
                     }
-                    .padding(.bottom, -12)
+                    .padding(.bottom, -DesignTokens.Spacing.md)
                 }
-                
+
                 ForEach(block, id: \.id) { exercise in
-                    VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
                         HStack {
                             Text(exercise.exerciseName)
-                                .font(.title3.weight(.semibold))
+                                .font(.title2.weight(.semibold))
                             Spacer()
                             Button("Skip") {
                                 skipExercise(exercise)
@@ -251,7 +251,7 @@ struct ActiveWorkoutView: View {
                         }
 
                         // Note field
-                        HStack(spacing: 8) {
+                        HStack(spacing: DesignTokens.Spacing.sm) {
                             Ph.notepad.regular
                                 .icon(size: 16)
                                 .foregroundStyle(.secondary)
@@ -268,12 +268,13 @@ struct ActiveWorkoutView: View {
                         }
 
                         let sets = exercise.performedSets.sorted { $0.setIndex < $1.setIndex }
+                        let firstPendingID = sets.first(where: { !$0.isCompleted })?.id
                         ForEach(sets, id: \.id) { set in
-                            setRow(set: set, exercise: exercise)
+                            setRow(set: set, exercise: exercise, isNextUp: set.id == firstPendingID)
                         }
                     }
                     if exercise.id != block.last?.id {
-                        Divider().padding(.vertical, 8)
+                        Divider().padding(.vertical, DesignTokens.Spacing.sm)
                     }
                 }
             }
@@ -286,10 +287,11 @@ struct ActiveWorkoutView: View {
         }
     }
 
-    private func setRow(set: PerformedSet, exercise: WorkoutSessionExercise) -> some View {
+    private func setRow(set: PerformedSet, exercise: WorkoutSessionExercise, isNextUp: Bool) -> some View {
         WorkoutSetRow(
             set: set,
             exercise: exercise,
+            isNextUp: isNextUp,
             onDone: { markSetDone(set, exercise: exercise) },
             onSkip: { markSetSkipped(set, exercise: exercise) },
             onEdit: { showSetEditor = set }
@@ -309,7 +311,7 @@ struct ActiveWorkoutView: View {
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                 }
-                .padding(.vertical, 8)
+                .padding(.vertical, DesignTokens.Spacing.sm)
                 .padding(.horizontal)
             }
         }
@@ -318,7 +320,7 @@ struct ActiveWorkoutView: View {
     }
 
     private var completedAllView: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: DesignTokens.Spacing.xxl) {
             Spacer()
             Ph.checkCircle.fill
                 .icon(size: 60)

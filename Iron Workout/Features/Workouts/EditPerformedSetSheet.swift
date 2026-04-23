@@ -9,11 +9,13 @@ import SwiftUI
 import SwiftData
 
 struct EditPerformedSetSheet: View {
+    private enum Field { case reps, weight }
+
     @Environment(\.dismiss) private var dismiss
     @Bindable var performedSet: PerformedSet
     var onSave: () -> Void
-    
-    @FocusState private var isInputActive: Bool
+
+    @FocusState private var focusedField: Field?
 
     var body: some View {
         NavigationStack {
@@ -25,7 +27,7 @@ struct EditPerformedSetSheet: View {
                         TextField("Reps", value: $performedSet.actualReps, format: .number)
                             .keyboardType(.numberPad)
                             .multilineTextAlignment(.trailing)
-                            .focused($isInputActive)
+                            .focused($focusedField, equals: .reps)
                             .accessibilityLabel("Number of reps")
                     }
                     HStack {
@@ -34,7 +36,7 @@ struct EditPerformedSetSheet: View {
                         TextField("Optional", value: $performedSet.actualWeight, format: .number.precision(.fractionLength(1)))
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
-                            .focused($isInputActive)
+                            .focused($focusedField, equals: .weight)
                             .accessibilityLabel("Weight in kilograms")
                     }
                 }
@@ -51,9 +53,12 @@ struct EditPerformedSetSheet: View {
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
                     Button("Done") {
-                        isInputActive = false
+                        focusedField = nil
                     }
                 }
+            }
+            .onAppear {
+                focusedField = .reps
             }
         }
     }

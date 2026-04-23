@@ -71,7 +71,7 @@ struct WorkoutPauseOverlay: View {
     var onResume: () -> Void
 
     var body: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: DesignTokens.Spacing.xxl) {
             Ph.pauseCircle.fill
                 .icon(size: 60)
                 .foregroundStyle(DesignTokens.ColorToken.State.warning)
@@ -105,7 +105,7 @@ struct WorkoutRestBar: View {
 
     var body: some View {
         let progress = CGFloat(seconds) / CGFloat(max(totalSeconds, 1))
-        HStack(spacing: 16) {
+        HStack(spacing: DesignTokens.Spacing.lg) {
             ZStack {
                 Circle()
                     .stroke(DesignTokens.ColorToken.State.warning.opacity(0.3), lineWidth: 6)
@@ -116,29 +116,29 @@ struct WorkoutRestBar: View {
                     .animation(.linear(duration: 1), value: progress)
                 VStack(spacing: 2) {
                     Text("\(seconds)")
-                        .font(.title.monospacedDigit().bold())
+                        .font(.largeTitle.monospacedDigit().bold())
                     Text("Rest")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 }
             }
-            .frame(width: 64, height: 64)
+            .frame(width: 80, height: 80)
 
             Spacer()
 
-            VStack(spacing: 8) {
+            HStack(spacing: DesignTokens.Spacing.sm) {
                 Button("+30s") {
                     onAddTime()
                 }
                 .buttonStyle(.bordered)
-                .controlSize(.small)
+                .controlSize(.large)
 
-                Button("Next") {
+                Button("Skip Rest") {
                     onSkip()
                 }
                 .buttonStyle(.borderedProminent)
                 .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
-                .controlSize(.regular)
+                .controlSize(.large)
             }
         }
         .padding()
@@ -153,6 +153,7 @@ struct WorkoutSetRow: View {
     @Environment(\.colorScheme) private var colorScheme
     let set: PerformedSet
     let exercise: WorkoutSessionExercise
+    var isNextUp: Bool = false
     var onDone: () -> Void
     var onSkip: () -> Void
     var onEdit: () -> Void
@@ -179,6 +180,11 @@ struct WorkoutSetRow: View {
         .padding(.vertical, DesignTokens.Spacing.md)
         .padding(.horizontal, DesignTokens.Spacing.lg)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+        .overlay(
+            RoundedRectangle(cornerRadius: DesignTokens.Radius.lg)
+                .strokeBorder(DesignTokens.Common.primary(colorScheme), lineWidth: isNextUp && !set.isCompleted ? 2 : 0)
+        )
+        .opacity(set.isCompleted ? 0.7 : 1)
         .alert("Error", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
             Button("OK") { errorMessage = nil }
         } message: {
@@ -255,7 +261,7 @@ struct WorkoutSetRow: View {
             HStack(spacing: DesignTokens.Spacing.sm) {
                 Button("Skip") { onSkip() }
                     .buttonStyle(.bordered)
-                    .controlSize(.regular)
+                    .controlSize(.large)
                 Button("Done") { onDone() }
                     .buttonStyle(.borderedProminent)
                     .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
