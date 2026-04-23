@@ -20,15 +20,14 @@ struct HistoryView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            Group {
-                if sessions.isEmpty {
-                    ContentUnavailableView {
-                        Label("No Workouts Yet", systemImage: "clock.arrow.circlepath")
-                    } description: {
-                        Text("When you complete a workout from the Workouts tab, it will appear here with duration, sets and optional heart rate and calories from Health.")
-                    }
-                } else if filteredSessions.isEmpty {
+        Group {
+            if sessions.isEmpty {
+                ContentUnavailableView {
+                    Label("No Workouts Yet", systemImage: "clock.arrow.circlepath")
+                } description: {
+                    Text("When you complete a workout from the Workouts tab, it will appear here with duration, sets and optional heart rate and calories from Health.")
+                }
+            } else if filteredSessions.isEmpty {
                     ContentUnavailableView.search(text: searchText)
                 } else {
                     List(filteredSessions) { session in
@@ -70,11 +69,12 @@ struct HistoryView: View {
                         }
                     }
                 }
-            }
-            .searchable(text: $searchText, prompt: "Search history")
-            .navigationDestination(for: WorkoutSession.self) { session in
-                SessionDetailView(session: session)
-            }
+        }
+        .navigationTitle("History")
+        .navigationBarTitleDisplayMode(.inline)
+        .searchable(text: $searchText, prompt: "Search history")
+        .navigationDestination(for: WorkoutSession.self) { session in
+            SessionDetailView(session: session)
         }
     }
 
@@ -100,6 +100,8 @@ struct HistoryView: View {
 }
 
 #Preview {
-    HistoryView()
-        .modelContainer(for: [WorkoutSession.self], inMemory: true)
+    NavigationStack {
+        HistoryView()
+    }
+    .modelContainer(for: [WorkoutSession.self], inMemory: true)
 }

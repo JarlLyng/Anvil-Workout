@@ -21,10 +21,6 @@ struct ContentView: View {
                 .tabItem {
                     Label("Workouts", systemImage: "dumbbell.fill")
                 }
-            HistoryView()
-                .tabItem {
-                    Label("History", systemImage: "clock.arrow.circlepath")
-                }
             ExercisesView()
                 .tabItem {
                     Label("Exercises", systemImage: "list.bullet")

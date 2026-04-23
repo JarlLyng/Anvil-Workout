@@ -156,6 +156,7 @@ struct DashboardView: View {
                     metricsSection
                     weeklyPlanSection
                     quickStartSection
+                    recentWorkoutsSection
                 }
                 .padding()
             }
@@ -173,6 +174,15 @@ struct DashboardView: View {
                 } onEndWorkout: {
                     activeSession = nil
                 }
+            }
+            .navigationDestination(for: DashboardDestination.self) { destination in
+                switch destination {
+                case .history:
+                    HistoryView()
+                }
+            }
+            .navigationDestination(for: WorkoutSession.self) { session in
+                SessionDetailView(session: session)
             }
         }
     }
@@ -297,6 +307,74 @@ struct DashboardView: View {
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
     }
 
+    private var recentWorkoutsSection: some View {
+        let recent = Array(sessions.lazy.filter { $0.completedSetCount > 0 }.prefix(3))
+
+        return VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
+            HStack {
+                Text("Recent Workouts")
+                    .font(.title2.bold())
+                Spacer()
+                if !recent.isEmpty {
+                    NavigationLink(value: DashboardDestination.history) {
+                        HStack(spacing: 2) {
+                            Text("View All")
+                            Ph.caretRight.regular.icon(size: 14)
+                        }
+                        .font(.subheadline)
+                    }
+                }
+            }
+
+            if recent.isEmpty {
+                Text("Your completed workouts will show up here.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .padding(DesignTokens.Spacing.lg)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+            } else {
+                VStack(spacing: DesignTokens.Spacing.sm) {
+                    ForEach(recent) { session in
+                        NavigationLink(value: session) {
+                            recentWorkoutRow(session)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+        }
+    }
+
+    private func recentWorkoutRow(_ session: WorkoutSession) -> some View {
+        HStack(spacing: DesignTokens.Spacing.md) {
+            Ph.checkCircle.fill
+                .icon(size: 22)
+                .foregroundStyle(DesignTokens.ColorToken.State.success)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(session.templateName)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.primary)
+                Text("\(session.completedSetCount) sets · \(relativeDateLabel(session.startedAt))")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            Ph.caretRight.regular
+                .icon(size: 14)
+                .foregroundStyle(.secondary)
+        }
+        .padding(DesignTokens.Spacing.lg)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+    }
+
+    private func relativeDateLabel(_ date: Date) -> String {
+        let cal = Calendar.current
+        if cal.isDateInToday(date) { return "Today" }
+        if cal.isDateInYesterday(date) { return "Yesterday" }
+        return date.formatted(date: .abbreviated, time: .omitted)
+    }
+
     private func recommendedCard(_ template: WorkoutTemplate) -> some View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
             HStack {
@@ -338,6 +416,10 @@ struct DashboardView: View {
             SentrySDK.capture(error: error)
         }
     }
+}
+
+private enum DashboardDestination: Hashable {
+    case history
 }
 
 private extension String {
