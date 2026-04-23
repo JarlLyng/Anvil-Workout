@@ -39,7 +39,7 @@ struct DashboardCard<Icon: View>: View {
 
 struct WeeklyPlanRow: View {
     @Environment(\.colorScheme) private var colorScheme
-    let weeklyPlan: [Int: [String]]
+    let weeklyPlan: [Int: [WorkoutTemplate]]
     var onEdit: () -> Void
 
     static let dayAbbreviations = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -48,9 +48,9 @@ struct WeeklyPlanRow: View {
 
     /// Short label for a day's planned programs. Shows one name when there's one,
     /// or "N workouts" when there are multiple, to keep the grid tile compact.
-    private func label(for programs: [String]?) -> String {
+    private func label(for programs: [WorkoutTemplate]?) -> String {
         guard let programs, !programs.isEmpty else { return "\u{2014}" }
-        if programs.count == 1 { return programs[0] }
+        if programs.count == 1 { return programs[0].name }
         return "\(programs.count) workouts"
     }
 

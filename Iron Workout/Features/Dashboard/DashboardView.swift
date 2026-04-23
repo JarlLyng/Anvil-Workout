@@ -22,20 +22,18 @@ struct DashboardView: View {
     @State private var templateToStart: WorkoutTemplate?
     @State private var activeSession: WorkoutSession?
 
-    /// Maps weekday index (Mon=0 ... Sun=6) to a list of program names planned for that day.
-    /// Reads both the v1.1+ array format and the legacy v1.0.x single-string format for
-    /// backward compatibility — saves always use the new format.
-    private var weeklyPlan: [Int: [String]] {
+    /// Raw plan entries keyed by weekday index (Mon=0 ... Sun=6). Each string is either
+    /// a template UUID (current format) or a legacy template name (v1.1.x and earlier).
+    /// Reads the v1.1+ array format and the legacy v1.0.x single-string format.
+    private var weeklyPlanRaw: [Int: [String]] {
         let data = Data(weeklyPlanJSON.utf8)
 
-        // Preferred: new array format
         if let decoded = try? JSONDecoder().decode([String: [String]].self, from: data) {
             return decoded.reduce(into: [Int: [String]]()) { result, pair in
                 if let key = Int(pair.key), !pair.value.isEmpty { result[key] = pair.value }
             }
         }
 
-        // Legacy: single-string format from v1.0.x — wrap each value in an array
         if let decoded = try? JSONDecoder().decode([String: String].self, from: data) {
             return decoded.reduce(into: [Int: [String]]()) { result, pair in
                 if let key = Int(pair.key), !pair.value.isEmpty { result[key] = [pair.value] }
@@ -45,6 +43,30 @@ struct DashboardView: View {
         return [:]
     }
 
+    /// Plan resolved to actual templates. A plan entry matches by UUID first, then falls
+    /// back to case-insensitive trimmed name — this tolerates templates that were renamed
+    /// or imported with slight variations after being added to the plan.
+    private var weeklyPlanResolved: [Int: [WorkoutTemplate]] {
+        let raw = weeklyPlanRaw
+        guard !raw.isEmpty else { return [:] }
+
+        let byID = Dictionary(uniqueKeysWithValues: templates.map { ($0.id.uuidString, $0) })
+        let byNameNormalized = Dictionary(
+            templates.map { ($0.name.normalizedForPlanLookup, $0) },
+            uniquingKeysWith: { first, _ in first }
+        )
+
+        func resolve(_ s: String) -> WorkoutTemplate? {
+            if let t = byID[s] { return t }
+            return byNameNormalized[s.normalizedForPlanLookup]
+        }
+
+        return raw.reduce(into: [Int: [WorkoutTemplate]]()) { result, pair in
+            let resolved = pair.value.compactMap(resolve)
+            if !resolved.isEmpty { result[pair.key] = resolved }
+        }
+    }
+
     private func saveWeeklyPlan(_ plan: [Int: [String]]) {
         let stringKeyed = plan.reduce(into: [String: [String]]()) { $0["\($1.key)"] = $1.value }
         if let data = try? JSONEncoder().encode(stringKeyed) {
@@ -52,15 +74,29 @@ struct DashboardView: View {
         }
     }
 
-    /// Program names planned for today, preserving user-defined order.
+    /// Rewrites the stored plan using current template IDs. Called after reads that
+    /// required legacy name-based fallback, so subsequent reads are O(1) and survive renames.
+    private func migrateWeeklyPlanToIDsIfNeeded() {
+        let raw = weeklyPlanRaw
+        guard !raw.isEmpty else { return }
+
+        let resolved = weeklyPlanResolved
+        let migrated = resolved.reduce(into: [Int: [String]]()) { result, pair in
+            result[pair.key] = pair.value.map { $0.id.uuidString }
+        }
+
+        // Only save if the migrated form differs from what's stored (avoids write churn).
+        if migrated != raw {
+            saveWeeklyPlan(migrated)
+        }
+    }
+
+    /// Templates planned for today, preserving user-defined order.
     private var todaysPlannedPrograms: [WorkoutTemplate] {
         let calendar = Calendar.current
         let todayWeekday = calendar.component(.weekday, from: .now)
         let todayIndex = (todayWeekday + 5) % 7  // Mon=0, Tue=1, ..., Sun=6
-
-        guard let names = weeklyPlan[todayIndex], !names.isEmpty else { return [] }
-        let lookup = Dictionary(templates.map { ($0.name, $0) }, uniquingKeysWith: { first, _ in first })
-        return names.compactMap { lookup[$0] }
+        return weeklyPlanResolved[todayIndex] ?? []
     }
 
     private var morningGreeting: String {
@@ -125,8 +161,9 @@ struct DashboardView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .background(Color(uiColor: .systemGroupedBackground))
+            .onAppear { migrateWeeklyPlanToIDsIfNeeded() }
             .sheet(isPresented: $showPlanEditor) {
-                WeeklyPlanEditorSheet(plan: weeklyPlan) { newPlan in
+                WeeklyPlanEditorSheet(plan: weeklyPlanRaw) { newPlan in
                     saveWeeklyPlan(newPlan)
                 }
             }
@@ -199,7 +236,7 @@ struct DashboardView: View {
     }
     
     private var weeklyPlanSection: some View {
-        WeeklyPlanRow(weeklyPlan: weeklyPlan) {
+        WeeklyPlanRow(weeklyPlan: weeklyPlanResolved) {
             showPlanEditor = true
         }
     }
@@ -300,6 +337,14 @@ struct DashboardView: View {
         } catch {
             SentrySDK.capture(error: error)
         }
+    }
+}
+
+private extension String {
+    /// Lower-cased, whitespace-trimmed form used to match legacy name-based weekly-plan
+    /// entries against current template names. Tolerates case and trailing whitespace drift.
+    var normalizedForPlanLookup: String {
+        trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
     }
 }
 

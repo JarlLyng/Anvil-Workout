@@ -14,8 +14,9 @@ struct WeeklyPlanEditorSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Query(sort: \WorkoutTemplate.name) private var templates: [WorkoutTemplate]
 
-    /// Weekday index (Mon=0 ... Sun=6) → ordered list of program names. Users can
-    /// plan multiple workouts per day (e.g. a main session plus a short core block).
+    /// Weekday index (Mon=0 ... Sun=6) → ordered list of template UUID strings. The
+    /// initial plan passed in may contain legacy names instead of UUIDs; those are
+    /// resolved to IDs lazily when rendering and when saving.
     @State private var editablePlan: [Int: [String]]
     @State private var pickerDayIndex: Int?
     private let onSave: ([Int: [String]]) -> Void
@@ -25,6 +26,15 @@ struct WeeklyPlanEditorSheet: View {
     init(plan: [Int: [String]], onSave: @escaping ([Int: [String]]) -> Void) {
         _editablePlan = State(initialValue: plan)
         self.onSave = onSave
+    }
+
+    /// Looks up a template for a plan entry (either a UUID or a legacy name).
+    private func template(for planEntry: String) -> WorkoutTemplate? {
+        if let t = templates.first(where: { $0.id.uuidString == planEntry }) { return t }
+        let normalized = planEntry.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        return templates.first {
+            $0.name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == normalized
+        }
     }
 
     var body: some View {
@@ -46,7 +56,7 @@ struct WeeklyPlanEditorSheet: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        onSave(editablePlan)
+                        onSave(normalizedPlanForSave)
                         dismiss()
                     }
                     .bold()
@@ -63,15 +73,16 @@ struct WeeklyPlanEditorSheet: View {
 
     @ViewBuilder
     private func dayContent(for dayIndex: Int) -> some View {
-        let programs = editablePlan[dayIndex] ?? []
+        let entries = editablePlan[dayIndex] ?? []
 
-        if programs.isEmpty {
+        if entries.isEmpty {
             Text("Rest day")
                 .foregroundStyle(.secondary)
         } else {
-            ForEach(Array(programs.enumerated()), id: \.offset) { offset, programName in
+            ForEach(Array(entries.enumerated()), id: \.offset) { offset, entry in
+                let displayName = template(for: entry)?.name ?? entry
                 HStack {
-                    Text(programName)
+                    Text(displayName)
                     Spacer()
                     Button(role: .destructive) {
                         removeProgram(at: offset, from: dayIndex)
@@ -81,7 +92,7 @@ struct WeeklyPlanEditorSheet: View {
                             .foregroundStyle(DesignTokens.ColorToken.State.error)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Remove \(programName) from \(Self.dayNames[dayIndex])")
+                    .accessibilityLabel("Remove \(displayName) from \(Self.dayNames[dayIndex])")
                 }
             }
             .onMove { source, destination in
@@ -107,7 +118,7 @@ struct WeeklyPlanEditorSheet: View {
         NavigationStack {
             List(templates, id: \.id) { template in
                 Button {
-                    addProgram(template.name, to: dayIndex)
+                    addProgram(template.id.uuidString, to: dayIndex)
                     pickerDayIndex = nil
                 } label: {
                     HStack {
@@ -119,7 +130,7 @@ struct WeeklyPlanEditorSheet: View {
                                 .foregroundStyle(.secondary)
                         }
                         Spacer()
-                        if editablePlan[dayIndex]?.contains(template.name) == true {
+                        if isPlanned(template, in: dayIndex) {
                             Ph.checkCircle.fill
                                 .icon(size: 18)
                                 .foregroundStyle(DesignTokens.ColorToken.State.success)
@@ -141,10 +152,24 @@ struct WeeklyPlanEditorSheet: View {
 
     // MARK: - Mutations
 
-    private func addProgram(_ name: String, to dayIndex: Int) {
+    private func addProgram(_ templateID: String, to dayIndex: Int) {
         var current = editablePlan[dayIndex] ?? []
-        current.append(name)
+        current.append(templateID)
         editablePlan[dayIndex] = current
+    }
+
+    private func isPlanned(_ template: WorkoutTemplate, in dayIndex: Int) -> Bool {
+        guard let entries = editablePlan[dayIndex] else { return false }
+        return entries.contains { self.template(for: $0)?.id == template.id }
+    }
+
+    /// Resolves every entry to its current template ID before handing the plan back to
+    /// the parent. Drops entries that no longer match any template.
+    private var normalizedPlanForSave: [Int: [String]] {
+        editablePlan.reduce(into: [Int: [String]]()) { result, pair in
+            let ids = pair.value.compactMap { template(for: $0)?.id.uuidString }
+            if !ids.isEmpty { result[pair.key] = ids }
+        }
     }
 
     private func removeProgram(at offset: Int, from dayIndex: Int) {
