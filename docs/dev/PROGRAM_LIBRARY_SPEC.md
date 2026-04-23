@@ -454,10 +454,9 @@ New service `ProgramLibraryService` mirrors `ExerciseLibraryService`:
 
 Each built-in template shows in its detail view:
 - Author name
-- "Learn more" link to official resource
 - Small "Inspired by [Author]" badge
 
-Avoid quoting prose from books. User can tap through to official source for full methodology.
+Avoid quoting prose from books. `officialURL` is retained in the data model for internal reference but is no longer rendered in the UI or on the marketing site (see issue #28).
 
 ---
 

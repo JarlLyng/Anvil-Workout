@@ -71,16 +71,8 @@ struct ProgramLibraryDetailView: View {
             Section {
                 HStack(spacing: DesignTokens.Spacing.sm) {
                     Ph.bookBookmark.regular.icon(size: 18).foregroundStyle(.secondary)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Inspired by \(program.author)")
-                            .font(.subheadline.weight(.medium))
-                        if let url = program.officialURL, let officialURL = URL(string: url) {
-                            Link(destination: officialURL) {
-                                Text("Learn more")
-                                    .font(.caption)
-                            }
-                        }
-                    }
+                    Text("Inspired by \(program.author)")
+                        .font(.subheadline.weight(.medium))
                 }
                 .padding(.vertical, 4)
             }
