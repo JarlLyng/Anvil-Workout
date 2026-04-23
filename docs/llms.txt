@@ -35,5 +35,6 @@ Iron Workout is a paid app with a one-time purchase price on the App Store. Ther
 
 - [App Store](https://apps.apple.com/app/id6760627760): Download Iron Workout for iPhone
 - [Home](https://ironworkout.iamjarl.com/): Product page with features
+- [Workout Programs](https://ironworkout.iamjarl.com/programs.html): Catalogue of the six built-in strength programs (Starting Strength, StrongLifts 5×5, Greyskull LP, GZCLP, Upper/Lower, Push/Pull/Legs) with author, frequency, structure, and progression details
 - [Support](https://ironworkout.iamjarl.com/support.html): Help and contact information
 - [Privacy Policy](https://ironworkout.iamjarl.com/privacy.html): Privacy policy and data practices
