@@ -73,3 +73,23 @@ See [docs/dev/SETUP.md](docs/dev/SETUP.md) for full setup including Sentry, Heal
 - **Subtitle:** Plan. Lift. Track. Progress.
 - **Listing:** [apps.apple.com/app/id6760627760](https://apps.apple.com/app/id6760627760)
 - **Website:** [ironworkout.iamjarl.com](https://ironworkout.iamjarl.com)
+
+---
+
+## Marketing website
+
+Static site served from `docs/` via GitHub Pages on the custom domain `ironworkout.iamjarl.com`. Each page is hand-authored HTML with full structured data (BreadcrumbList, WebPage, plus page-specific schemas) for SEO.
+
+| Page | Target |
+|------|--------|
+| [`docs/index.html`](docs/index.html) | Overview + features + screenshots + FAQ + CTA |
+| [`docs/programs.html`](docs/programs.html) | The six built-in programs with SEO-rich descriptions |
+| [`docs/offline-workout-app.html`](docs/offline-workout-app.html) | "offline workout app" landing page |
+| [`docs/apple-health-strength-training.html`](docs/apple-health-strength-training.html) | "Apple Health strength training" landing page |
+| [`docs/no-subscription-workout-app.html`](docs/no-subscription-workout-app.html) | "no subscription workout app" philosophy + comparison |
+| [`docs/support.html`](docs/support.html) | FAQ + contact |
+| [`docs/privacy.html`](docs/privacy.html) | Privacy policy |
+
+Also in `docs/`: `sitemap.xml`, `robots.txt`, `llms.txt`, `style.css`, `CNAME`, `screenshots/` (for the index hero + gallery), and favicon/OG image assets. Deployment is handled by [`.github/workflows/pages.yml`](.github/workflows/pages.yml) which triggers on every push to `main` that touches `docs/`.
+
+SEO strategy is maintained separately in [`SEO_STRATEGY.md`](SEO_STRATEGY.md) by a dedicated AI agent — do not edit that file from implementation work.
