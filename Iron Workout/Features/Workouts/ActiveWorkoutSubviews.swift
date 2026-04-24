@@ -179,12 +179,23 @@ struct WorkoutSetRow: View {
         }
         .padding(.vertical, DesignTokens.Spacing.md)
         .padding(.horizontal, DesignTokens.Spacing.lg)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+        .background {
+            // Completed sets get a subtle success tint layered on top of the material so
+            // they read as "done, move on" at a glance without looking disabled.
+            // Pending sets keep the plain material so they stay visually prominent.
+            ZStack {
+                RoundedRectangle(cornerRadius: DesignTokens.Radius.lg)
+                    .fill(.regularMaterial)
+                if set.isCompleted {
+                    RoundedRectangle(cornerRadius: DesignTokens.Radius.lg)
+                        .fill(DesignTokens.ColorToken.State.success.opacity(0.12))
+                }
+            }
+        }
         .overlay(
             RoundedRectangle(cornerRadius: DesignTokens.Radius.lg)
                 .strokeBorder(DesignTokens.Common.primary(colorScheme), lineWidth: isNextUp && !set.isCompleted ? 2 : 0)
         )
-        .opacity(set.isCompleted ? 0.7 : 1)
         .alert("Error", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
             Button("OK") { errorMessage = nil }
         } message: {
