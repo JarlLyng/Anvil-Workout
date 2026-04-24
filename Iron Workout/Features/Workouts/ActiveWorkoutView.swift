@@ -104,6 +104,9 @@ struct ActiveWorkoutView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("End") { showEndConfirm = true }
+                        .foregroundStyle(DesignTokens.ColorToken.State.error)
+                        .accessibilityLabel("End workout")
+                        .accessibilityHint("Saves the current workout and returns to the dashboard")
                 }
                 ToolbarItem(placement: .primaryAction) {
                     if isPaused {
