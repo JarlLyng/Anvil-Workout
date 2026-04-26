@@ -49,10 +49,28 @@ final class HealthKitService {
         store.authorizationStatus(for: type)
     }
 
+    /// True only when the user has explicitly granted write access for workouts.
+    /// HealthKit reports `.sharingDenied` for both denied and not-yet-determined read access,
+    /// so we gate on the write status, which is unambiguous.
+    var isWorkoutWritingAuthorized: Bool {
+        guard isAvailable else { return false }
+        return store.authorizationStatus(for: HKObjectType.workoutType()) == .sharingAuthorized
+    }
+
+    private func logAuthSkip(_ context: String) {
+        let crumb = Breadcrumb(level: .info, category: "healthkit")
+        crumb.message = "Skipped \(context): authorization not granted"
+        SentrySDK.addBreadcrumb(crumb)
+    }
+
     /// Start HealthKit workout (called when the user starts a workout).
     @MainActor
     func startWorkout(startDate: Date) async throws {
         guard isAvailable else { return }
+        guard isWorkoutWritingAuthorized else {
+            logAuthSkip("startWorkout")
+            return
+        }
         currentBuilder?.discardWorkout()
         let config = HKWorkoutConfiguration()
         config.activityType = .traditionalStrengthTraining
@@ -75,6 +93,11 @@ final class HealthKitService {
             return (nil, nil)
         }
         defer { currentBuilder = nil }
+        guard isWorkoutWritingAuthorized else {
+            logAuthSkip("endWorkout")
+            builder.discardWorkout()
+            return (nil, nil)
+        }
         do {
             try await builder.endCollection(at: endDate)
         } catch {
@@ -96,6 +119,12 @@ final class HealthKitService {
 
     /// Fetch calories burned and average heart rate for a time interval from Health.
     private func queryWorkoutMetrics(from start: Date, to end: Date) async -> (calories: Double?, averageHeartRate: Double?) {
+        // HealthKit doesn't expose read-authorization status (privacy), so we use workout
+        // write-auth as a proxy — a user who blocked workouts almost certainly blocked reads.
+        guard isWorkoutWritingAuthorized else {
+            logAuthSkip("queryWorkoutMetrics")
+            return (nil, nil)
+        }
         let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
 
         let calories: Double? = await withCheckedContinuation { cont in
