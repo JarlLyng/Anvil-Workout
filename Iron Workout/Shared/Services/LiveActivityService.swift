@@ -42,6 +42,13 @@ struct LiveActivityService {
                 content: .init(state: state, staleDate: nil),
                 pushType: nil
             )
+        } catch let error as ActivityAuthorizationError {
+            // Expected on devices/configurations where Live Activities aren't available
+            // (unsupportedTarget, denied, etc.). Not actionable — skip Sentry capture.
+            let crumb = Breadcrumb(level: .info, category: "live_activity")
+            crumb.message = "Activity.request skipped: \(error)"
+            SentrySDK.addBreadcrumb(crumb)
+            return nil
         } catch {
             SentrySDK.capture(error: error)
             return nil
