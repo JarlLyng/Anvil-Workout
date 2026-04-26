@@ -29,6 +29,20 @@ struct Iron_WorkoutApp: App {
                 options.attachScreenshot = true
                 options.attachViewHierarchy = true
                 options.enableLogs = true
+                options.beforeSend = { event in
+                    // Drop noise from auto-captured system NSErrors that aren't actionable:
+                    // e.g. Guided Access blocking `UIApplication.open` (Sentry IOS-4).
+                    let noisyDomains: Set<String> = [
+                        "_UIViewServiceHostSessionErrorDomain",
+                        "FBSOpenApplicationServiceErrorDomain",
+                        "FBSOpenApplicationErrorDomain",
+                    ]
+                    if let exceptionType = event.exceptions?.first?.type,
+                       noisyDomains.contains(exceptionType) {
+                        return nil
+                    }
+                    return event
+                }
             }
         }
     }
