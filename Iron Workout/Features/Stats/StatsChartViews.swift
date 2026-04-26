@@ -13,25 +13,25 @@ import PhosphorSwift
 // MARK: - Data Point Models
 
 struct VolumeDataPoint: Identifiable {
-    let id = UUID()
+    var id: Date { date }
     let date: Date
     let volume: Double
 }
 
 struct FrequencyDataPoint: Identifiable {
-    let id = UUID()
+    var id: Date { weekStart }
     let weekStart: Date
     let count: Int
 }
 
 struct OneRepMaxDataPoint: Identifiable {
-    let id = UUID()
+    var id: Date { date }
     let date: Date
     let estimated1RM: Double
 }
 
 struct MuscleGroupDataPoint: Identifiable {
-    let id = UUID()
+    var id: String { muscleGroup }
     let muscleGroup: String
     let setCount: Int
 }

@@ -21,62 +21,39 @@ struct ExerciseDetailView: View {
     @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
     private var weightUnit: WeightUnit { WeightUnit(rawValue: weightUnitRaw) ?? .kg }
 
-    private var relevantSessions: [WorkoutSession] {
-        sessions.filter { session in
-            session.exercises.contains(where: { $0.matches(exercise) })
-        }
+    /// Aggregate stats for this exercise. Computed once per appear / session-count change
+    /// rather than on every body invocation — walking the full session graph on each
+    /// redraw was a major memory pressure source on iPad.
+    private struct ExerciseStats {
+        var bestWeight: Double?
+        var bestVolume: (reps: Int, weight: Double)?
+        var bestEstimated1RM: Double?
+        var hasSets: Bool = false
     }
 
-    /// All completed working sets for this exercise across all sessions.
-    private var allCompletedSets: [(set: PerformedSet, session: WorkoutSession)] {
-        relevantSessions.flatMap { session in
-            session.exercises
-                .filter { $0.matches(exercise) }
-                .flatMap { $0.performedSets }
-                .filter { $0.isCompleted && $0.setType == .working }
-                .map { (set: $0, session: session) }
-        }
-    }
+    @State private var stats: ExerciseStats = ExerciseStats()
+    @State private var relevantSessions: [WorkoutSession] = []
+    @State private var historyExpanded: Bool = false
 
-    private var bestWeight: Double? {
-        let weights: [Double] = allCompletedSets.compactMap { $0.set.actualWeight }
-        return weights.max()
-    }
+    /// History list initially renders only the most recent N sessions. Older entries
+    /// load on demand to avoid materializing hundreds of rows up front.
+    private static let historyInitialCount = 50
 
-    private var bestVolumeSet: (reps: Int, weight: Double)? {
-        let volumeSets: [(reps: Int, weight: Double, volume: Double)] = allCompletedSets.compactMap { entry in
-            guard let reps = entry.set.actualReps, let weight = entry.set.actualWeight, weight > 0 else { return nil }
-            return (reps: reps, weight: weight, volume: Double(reps) * weight)
-        }
-        let best = volumeSets.max(by: { $0.volume < $1.volume })
-        return best.map { (reps: $0.reps, weight: $0.weight) }
-    }
-
-    private var bestEstimated1RM: Double? {
-        let estimates: [Double] = allCompletedSets.compactMap { entry in
-            guard let reps = entry.set.actualReps, reps > 0, reps < 37,
-                  let weight = entry.set.actualWeight, weight > 0 else { return nil }
-            // Brzycki formula: weight × 36 / (37 - reps)
-            return weight * 36.0 / (37.0 - Double(reps))
-        }
-        return estimates.max()
-    }
-
-    private var dateFormatter: DateFormatter {
+    private static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
         f.dateFormat = "d MMM yyyy"
         f.locale = Locale(identifier: "en_US")
         return f
-    }
+    }()
 
     var body: some View {
         List {
             // MARK: - Header
             Section {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
                     Text(exercise.name)
                         .font(.title2.bold())
-                    HStack(spacing: 8) {
+                    HStack(spacing: DesignTokens.Spacing.sm) {
                         Text(exercise.muscleGroup.rawValue)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
@@ -93,22 +70,22 @@ struct ExerciseDetailView: View {
             }
 
             // MARK: - Personal Records
-            if !allCompletedSets.isEmpty {
+            if stats.hasSets {
                 Section("Personal Records") {
                     HStack(spacing: DesignTokens.Spacing.md) {
                         prCard(
                             title: "Best Weight",
-                            value: bestWeight.map { WeightFormatter.format(kg: $0, in: weightUnit) } ?? "–",
+                            value: stats.bestWeight.map { WeightFormatter.format(kg: $0, in: weightUnit) } ?? "–",
                             icon: Ph.trophy.fill
                         )
                         prCard(
                             title: "Best Volume",
-                            value: bestVolumeSet.map { "\($0.reps) × \(WeightFormatter.format(kg: $0.weight, in: weightUnit))" } ?? "–",
+                            value: stats.bestVolume.map { "\($0.reps) × \(WeightFormatter.format(kg: $0.weight, in: weightUnit))" } ?? "–",
                             icon: Ph.chartBar.fill
                         )
                         prCard(
                             title: "Est. 1RM",
-                            value: bestEstimated1RM.map { WeightFormatter.format(kg: $0, in: weightUnit) } ?? "–",
+                            value: stats.bestEstimated1RM.map { WeightFormatter.format(kg: $0, in: weightUnit) } ?? "–",
                             icon: Ph.lightning.fill
                         )
                     }
@@ -123,14 +100,64 @@ struct ExerciseDetailView: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 } else {
-                    ForEach(relevantSessions, id: \.id) { session in
+                    let visible = historyExpanded ? relevantSessions : Array(relevantSessions.prefix(Self.historyInitialCount))
+                    ForEach(visible, id: \.id) { session in
                         sessionRow(session)
+                    }
+                    if !historyExpanded, relevantSessions.count > Self.historyInitialCount {
+                        Button {
+                            historyExpanded = true
+                        } label: {
+                            Text("Show all (+\(relevantSessions.count - Self.historyInitialCount) older)")
+                                .font(.subheadline)
+                        }
                     }
                 }
             }
         }
         .navigationTitle("Exercise")
         .navigationBarTitleDisplayMode(.inline)
+        .task { recompute() }
+        .onChange(of: sessions.count) { _, _ in recompute() }
+    }
+
+    // MARK: - Memoization
+
+    private func recompute() {
+        var newStats = ExerciseStats()
+        var matchingSessions: [WorkoutSession] = []
+
+        for session in sessions {
+            var sessionMatched = false
+            for ex in session.exercises where ex.matches(exercise) {
+                sessionMatched = true
+                for set in ex.performedSets where set.isCompleted && set.setType == .working {
+                    newStats.hasSets = true
+                    if let w = set.actualWeight, w > 0 {
+                        if newStats.bestWeight.map({ w > $0 }) ?? true {
+                            newStats.bestWeight = w
+                        }
+                        if let r = set.actualReps {
+                            let volume = Double(r) * w
+                            let currentBest = newStats.bestVolume.map { Double($0.reps) * $0.weight } ?? 0
+                            if volume > currentBest {
+                                newStats.bestVolume = (reps: r, weight: w)
+                            }
+                            if r > 0, r < 37 {
+                                let e1rm = w * 36.0 / (37.0 - Double(r))
+                                if newStats.bestEstimated1RM.map({ e1rm > $0 }) ?? true {
+                                    newStats.bestEstimated1RM = e1rm
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if sessionMatched { matchingSessions.append(session) }
+        }
+
+        stats = newStats
+        relevantSessions = matchingSessions
     }
 
     // MARK: - Subviews
@@ -162,7 +189,7 @@ struct ExerciseDetailView: View {
 
         return VStack(alignment: .leading, spacing: 6) {
             HStack {
-                Text(dateFormatter.string(from: session.startedAt))
+                Text(Self.dateFormatter.string(from: session.startedAt))
                     .font(.subheadline.bold())
                 Spacer()
                 Text(session.templateName)
