@@ -37,9 +37,17 @@ struct Iron_WorkoutApp: App {
                         "FBSOpenApplicationServiceErrorDomain",
                         "FBSOpenApplicationErrorDomain",
                     ]
-                    if let exceptionType = event.exceptions?.first?.type,
-                       noisyDomains.contains(exceptionType) {
-                        return nil
+                    if let exception = event.exceptions?.first,
+                       let type = exception.type {
+                        if noisyDomains.contains(type) {
+                            return nil
+                        }
+                        // Sentry IOS-3: NSFileReadUnknownError fires on view-dismiss without
+                        // an in-app stack trace. Suppressed pending repro on a real device.
+                        // Re-enable by removing this branch when investigating GH #40.
+                        if type == "NSCocoaErrorDomain", exception.value == "Code: 256" {
+                            return nil
+                        }
                     }
                     return event
                 }
