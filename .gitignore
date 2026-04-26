@@ -23,3 +23,6 @@ Iron Workout/Config/Secrets.xcconfig
 # Screenshots (App Store assets — large binaries, not source code)
 /Screenshots/
 /app store screens/
+
+# Claude Code harness state
+.claude/
