@@ -9,10 +9,24 @@ import Foundation
 import SwiftData
 
 enum SetType: String, Codable, CaseIterable {
+    // IMPORTANT: raw values are SwiftData storage keys persisted in user databases.
+    // The Danish strings are historical (the schema shipped with them) — DO NOT change
+    // them or existing data breaks. User-facing labels live on `displayName` below.
     case working = "Arbejdssæt"
     case warmup = "Opvarmning"
     case drop = "Dropsæt"
     case failure = "Failure"
+
+    /// English label shown in the UI and used in CSV export. Decoupled from `rawValue`
+    /// so the storage key (Danish, for legacy reasons) can stay stable.
+    var displayName: String {
+        switch self {
+        case .working: return "Working"
+        case .warmup: return "Warm-up"
+        case .drop: return "Drop set"
+        case .failure: return "Failure"
+        }
+    }
 }
 
 @Model

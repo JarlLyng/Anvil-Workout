@@ -216,7 +216,7 @@ struct WorkoutSetRow: View {
                     Text("Set \(set.setIndex + 1)")
                         .font(.subheadline.weight(.medium))
                     if set.setType != .working {
-                        Text("(\(set.setType.rawValue))")
+                        Text("(\(set.setType.displayName))")
                             .font(.caption.weight(.semibold))
                             .foregroundStyle(colorForSetType(set.setType))
                     }
@@ -242,7 +242,7 @@ struct WorkoutSetRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Menu {
                     ForEach(SetType.allCases, id: \.self) { type in
-                        Button(type.rawValue) {
+                        Button(type.displayName) {
                             withAnimation { set.setType = type }
                             do { try modelContext.save() } catch {
                                 SentrySDK.capture(error: error)
@@ -256,7 +256,7 @@ struct WorkoutSetRow: View {
                             .font(.subheadline.weight(.medium))
                             .foregroundStyle(.primary)
                         if set.setType != .working {
-                            Text("(\(set.setType.rawValue))")
+                            Text("(\(set.setType.displayName))")
                                 .font(.caption.weight(.semibold))
                                 .foregroundStyle(colorForSetType(set.setType))
                         }

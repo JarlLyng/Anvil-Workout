@@ -111,7 +111,7 @@ struct SessionDetailView: View {
                         Text("Set \(set.setIndex + 1): \(reps) reps")
                             .font(.subheadline)
                         if set.setType != .working {
-                            Text("(\(set.setType.rawValue))")
+                            Text("(\(set.setType.displayName))")
                                 .font(.caption.weight(.semibold))
                                 .foregroundStyle(colorForSetType(set.setType))
                         }

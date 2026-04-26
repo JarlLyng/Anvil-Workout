@@ -227,7 +227,7 @@ struct SettingsView: View {
                     let reps = set.actualReps ?? set.targetReps
                     let weightKg = set.actualWeight ?? set.targetWeight ?? 0
                     let weight = WeightFormatter.display(weightKg, in: unit)
-                    let type = set.setType.rawValue
+                    let type = set.setType.displayName
 
                     rows.append("\(date),\(program),\(duration),\(name),\(setNumber),\(reps),\(String(format: "%.1f", weight)),\(type)")
                 }
