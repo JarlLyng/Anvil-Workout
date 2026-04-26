@@ -11,8 +11,11 @@ import SwiftData
 struct EditTemplateExerciseSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Bindable var templateExercise: WorkoutTemplateExercise
-    
+
+    @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
     @FocusState private var isInputActive: Bool
+
+    private var weightUnit: WeightUnit { WeightUnit(rawValue: weightUnitRaw) ?? .kg }
 
     var body: some View {
         NavigationStack {
@@ -21,9 +24,13 @@ struct EditTemplateExerciseSheet: View {
                     Stepper("Sets: \(templateExercise.targetSets)", value: $templateExercise.targetSets, in: 1...20)
                     Stepper("Reps: \(templateExercise.targetReps)", value: $templateExercise.targetReps, in: 1...100)
                     HStack {
-                        Text("Weight (kg)")
+                        Text("Weight (\(weightUnit.label))")
                         Spacer()
-                        TextField("Optional", value: $templateExercise.targetWeight, format: .number.precision(.fractionLength(1)))
+                        TextField(
+                            "Optional",
+                            value: WeightFormatter.displayBinding(kg: $templateExercise.targetWeight, unit: weightUnit),
+                            format: .number.precision(.fractionLength(1))
+                        )
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                             .focused($isInputActive)

@@ -16,7 +16,10 @@ struct EditPerformedSetSheet: View {
     @Bindable var performedSet: PerformedSet
     var onSave: () -> Void
 
+    @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
     @FocusState private var focusedField: Field?
+
+    private var weightUnit: WeightUnit { WeightUnit(rawValue: weightUnitRaw) ?? .kg }
 
     var body: some View {
         NavigationStack {
@@ -32,13 +35,17 @@ struct EditPerformedSetSheet: View {
                             .accessibilityLabel("Number of reps")
                     }
                     HStack {
-                        Text("Weight (kg)")
+                        Text("Weight (\(weightUnit.label))")
                         Spacer()
-                        TextField("Optional", value: $performedSet.actualWeight, format: .number.precision(.fractionLength(1)))
+                        TextField(
+                            "Optional",
+                            value: WeightFormatter.displayBinding(kg: $performedSet.actualWeight, unit: weightUnit),
+                            format: .number.precision(.fractionLength(1))
+                        )
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                             .focused($focusedField, equals: .weight)
-                            .accessibilityLabel("Weight in kilograms")
+                            .accessibilityLabel("Weight in \(weightUnit == .lbs ? "pounds" : "kilograms")")
                     }
                 }
             }

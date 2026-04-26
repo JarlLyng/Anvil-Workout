@@ -158,9 +158,11 @@ enum PersonalRecordService {
     // MARK: - Formatting
 
     private static func formatWeight(_ weight: Double) -> String {
-        if weight.truncatingRemainder(dividingBy: 1) == 0 {
-            return "\(Int(weight)) kg"
+        let unit = WeightFormatter.current
+        let display = WeightFormatter.display(weight, in: unit)
+        if display.truncatingRemainder(dividingBy: 1) == 0 {
+            return "\(Int(display)) \(unit.label)"
         }
-        return String(format: "%.1f kg", weight)
+        return String(format: "%.1f \(unit.label)", display)
     }
 }

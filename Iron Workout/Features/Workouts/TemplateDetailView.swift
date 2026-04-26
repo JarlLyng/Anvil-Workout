@@ -17,6 +17,8 @@ struct TemplateDetailView: View {
     @Bindable var template: WorkoutTemplate
     @Environment(\.dismiss) private var dismiss
     @Query(sort: \Exercise.name) private var allExercises: [Exercise]
+    @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
+    private var weightUnit: WeightUnit { WeightUnit(rawValue: weightUnitRaw) ?? .kg }
     @State private var activeSession: WorkoutSession?
     @State private var errorMessage: String?
     @State private var showDeleteConfirm = false
@@ -55,7 +57,7 @@ struct TemplateDetailView: View {
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                             if let w = item.targetWeight, w > 0 {
-                                Text("\(w, specifier: "%.1f") kg")
+                                Text(WeightFormatter.format(kg: w, in: weightUnit))
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }

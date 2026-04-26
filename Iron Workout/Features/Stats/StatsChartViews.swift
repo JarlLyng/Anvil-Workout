@@ -40,6 +40,8 @@ struct MuscleGroupDataPoint: Identifiable {
 
 struct VolumeChartView: View {
     let data: [VolumeDataPoint]
+    @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
+    private var weightUnit: WeightUnit { WeightUnit(rawValue: weightUnitRaw) ?? .kg }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -57,7 +59,7 @@ struct VolumeChartView: View {
                 Chart(data) { item in
                     BarMark(
                         x: .value("Date", item.date, unit: .day),
-                        y: .value("Volume (kg)", item.volume)
+                        y: .value("Volume (\(weightUnit.label))", WeightFormatter.display(item.volume, in: weightUnit))
                     )
                     .foregroundStyle(DesignTokens.ColorToken.State.success.gradient)
                 }
@@ -122,6 +124,8 @@ struct OneRepMaxChartView: View {
     let data: [OneRepMaxDataPoint]
     let exercises: [Exercise]
     @Binding var selectedExercise: Exercise?
+    @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
+    private var weightUnit: WeightUnit { WeightUnit(rawValue: weightUnitRaw) ?? .kg }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -154,7 +158,7 @@ struct OneRepMaxChartView: View {
                 Chart(data) { item in
                     LineMark(
                         x: .value("Date", item.date, unit: .day),
-                        y: .value("1RM (kg)", item.estimated1RM)
+                        y: .value("1RM (\(weightUnit.label))", WeightFormatter.display(item.estimated1RM, in: weightUnit))
                     )
                     .interpolationMethod(.monotone)
                     .symbol(Circle())

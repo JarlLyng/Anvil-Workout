@@ -15,7 +15,7 @@ import PhosphorSwift
 struct SettingsView: View {
     private let health = HealthKitService.shared
     @Query(sort: \WorkoutSession.startedAt, order: .reverse) private var sessions: [WorkoutSession]
-    @AppStorage("weightUnit") private var weightUnit: String = "kg"
+    @AppStorage(WeightFormatter.appStorageKey) private var weightUnit: String = WeightUnit.kg.rawValue
     @State private var requestInProgress = false
     @State private var message: String?
     @State private var messageIsError = false
@@ -32,8 +32,8 @@ struct SettingsView: View {
                             .icon()
                             .foregroundStyle(.secondary)
                         Picker("Weight Unit", selection: $weightUnit) {
-                            Text("kg").tag("kg")
-                            Text("lbs").tag("lbs")
+                            Text("kg").tag(WeightUnit.kg.rawValue)
+                            Text("lb").tag(WeightUnit.lbs.rawValue)
                         }
                         .pickerStyle(.segmented)
                     }
@@ -207,7 +207,8 @@ struct SettingsView: View {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
 
-        var rows: [String] = ["Date,Program,Duration (min),Exercise,Set,Reps,Weight (kg),Type"]
+        let unit = WeightUnit(rawValue: weightUnit) ?? .kg
+        var rows: [String] = ["Date,Program,Duration (min),Exercise,Set,Reps,Weight (\(unit.label)),Type"]
 
         for session in sessions {
             let date = dateFormatter.string(from: session.startedAt)
@@ -224,7 +225,8 @@ struct SettingsView: View {
                 for set in completedSets {
                     let setNumber = set.setIndex + 1
                     let reps = set.actualReps ?? set.targetReps
-                    let weight = set.actualWeight ?? set.targetWeight ?? 0
+                    let weightKg = set.actualWeight ?? set.targetWeight ?? 0
+                    let weight = WeightFormatter.display(weightKg, in: unit)
                     let type = set.setType.rawValue
 
                     rows.append("\(date),\(program),\(duration),\(name),\(setNumber),\(reps),\(String(format: "%.1f", weight)),\(type)")

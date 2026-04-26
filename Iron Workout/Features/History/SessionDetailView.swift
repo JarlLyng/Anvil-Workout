@@ -13,6 +13,8 @@ import PhosphorSwift
 struct SessionDetailView: View {
     @Environment(\.colorScheme) private var colorScheme
     var session: WorkoutSession
+    @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
+    private var weightUnit: WeightUnit { WeightUnit(rawValue: weightUnitRaw) ?? .kg }
 
     private var durationText: String {
         let m = session.durationSeconds / 60
@@ -115,7 +117,7 @@ struct SessionDetailView: View {
                         }
                     }
                     if let w = set.actualWeight, w > 0 {
-                        Text("· \(w.formatted(.number.precision(.fractionLength(1)))) kg")
+                        Text("· \(WeightFormatter.format(kg: w, in: weightUnit))")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }

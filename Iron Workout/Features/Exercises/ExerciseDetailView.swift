@@ -18,6 +18,9 @@ struct ExerciseDetailView: View {
     @Query(sort: \WorkoutSession.startedAt, order: .reverse)
     private var sessions: [WorkoutSession]
 
+    @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
+    private var weightUnit: WeightUnit { WeightUnit(rawValue: weightUnitRaw) ?? .kg }
+
     private var relevantSessions: [WorkoutSession] {
         sessions.filter { session in
             session.exercises.contains(where: { $0.matches(exercise) })
@@ -95,17 +98,17 @@ struct ExerciseDetailView: View {
                     HStack(spacing: DesignTokens.Spacing.md) {
                         prCard(
                             title: "Best Weight",
-                            value: bestWeight.map { "\($0.formatted(.number.precision(.fractionLength(1)))) kg" } ?? "–",
+                            value: bestWeight.map { WeightFormatter.format(kg: $0, in: weightUnit) } ?? "–",
                             icon: Ph.trophy.fill
                         )
                         prCard(
                             title: "Best Volume",
-                            value: bestVolumeSet.map { "\($0.reps) × \($0.weight.formatted(.number.precision(.fractionLength(1)))) kg" } ?? "–",
+                            value: bestVolumeSet.map { "\($0.reps) × \(WeightFormatter.format(kg: $0.weight, in: weightUnit))" } ?? "–",
                             icon: Ph.chartBar.fill
                         )
                         prCard(
                             title: "Est. 1RM",
-                            value: bestEstimated1RM.map { "\($0.formatted(.number.precision(.fractionLength(1)))) kg" } ?? "–",
+                            value: bestEstimated1RM.map { WeightFormatter.format(kg: $0, in: weightUnit) } ?? "–",
                             icon: Ph.lightning.fill
                         )
                     }
@@ -181,7 +184,7 @@ struct ExerciseDetailView: View {
                             Text("\(reps) reps")
                                 .font(.caption)
                             if let w = set.actualWeight, w > 0 {
-                                Text("× \(w.formatted(.number.precision(.fractionLength(1)))) kg")
+                                Text("× \(WeightFormatter.format(kg: w, in: weightUnit))")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }

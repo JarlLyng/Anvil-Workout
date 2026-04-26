@@ -158,6 +158,8 @@ struct WorkoutSetRow: View {
     var onSkip: () -> Void
     var onEdit: () -> Void
     @State private var errorMessage: String?
+    @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
+    private var weightUnit: WeightUnit { WeightUnit(rawValue: weightUnitRaw) ?? .kg }
 
     private func colorForSetType(_ type: SetType) -> Color {
         switch type {
@@ -169,7 +171,7 @@ struct WorkoutSetRow: View {
     }
 
     var body: some View {
-        let targetWeight = set.targetWeight.map { " @ \($0.formatted(.number.precision(.fractionLength(0)))) kg" } ?? ""
+        let targetWeight = set.targetWeight.map { " @ \(WeightFormatter.format(kg: $0, fractionDigits: 0, in: weightUnit))" } ?? ""
         HStack {
             if set.isCompleted {
                 completedContent
@@ -220,7 +222,7 @@ struct WorkoutSetRow: View {
                     }
                 }
                 if let reps = set.actualReps {
-                    Text("\(reps) reps\(set.actualWeight.map { " \u{00B7} \($0.formatted(.number.precision(.fractionLength(1)))) kg" } ?? "")")
+                    Text("\(reps) reps\(set.actualWeight.map { " \u{00B7} \(WeightFormatter.format(kg: $0, in: weightUnit))" } ?? "")")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

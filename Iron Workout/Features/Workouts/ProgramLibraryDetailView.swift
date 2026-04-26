@@ -23,6 +23,8 @@ struct ProgramLibraryDetailView: View {
 
     @State private var errorMessage: String?
     @State private var isImporting = false
+    @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
+    private var weightUnit: WeightUnit { WeightUnit(rawValue: weightUnitRaw) ?? .kg }
 
     var body: some View {
         List {
@@ -134,7 +136,7 @@ struct ProgramLibraryDetailView: View {
                     .foregroundStyle(.secondary)
             }
             if let weight = exercise.suggestedWeight {
-                Text("Suggested start: \(weight.formatted(.number.precision(.fractionLength(1)))) kg")
+                Text("Suggested start: \(WeightFormatter.format(kg: weight, in: weightUnit))")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

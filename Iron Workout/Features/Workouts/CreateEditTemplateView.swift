@@ -204,6 +204,8 @@ struct CreateEditTemplateView: View {
 private struct TemplateExerciseRowLabel: View {
     let item: WorkoutTemplateExercise
     let exerciseTitle: String
+    @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
+    private var weightUnit: WeightUnit { WeightUnit(rawValue: weightUnitRaw) ?? .kg }
 
     var body: some View {
         HStack {
@@ -231,7 +233,7 @@ private struct TemplateExerciseRowLabel: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
             if let w = item.targetWeight, w > 0 {
-                Text("\(w, specifier: "%.1f") kg")
+                Text(WeightFormatter.format(kg: w, in: weightUnit))
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
