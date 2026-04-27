@@ -92,16 +92,26 @@ struct TemplateDetailView: View {
                         .accessibilityLabel("More options")
                 }
             }
-            ToolbarItem(placement: .bottomBar) {
-                Button {
-                    startWorkout()
-                } label: {
-                    Label { Text("Start Workout") } icon: { Ph.play.fill.icon() }
+        }
+        .safeAreaInset(edge: .bottom) {
+            Button {
+                startWorkout()
+            } label: {
+                HStack {
+                    Spacer()
+                    Ph.play.fill.icon()
+                    Text("Start Workout")
+                        .font(.headline)
+                    Spacer()
                 }
-                .buttonStyle(.borderedProminent)
-                .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
-                .disabled(sortedExercises.isEmpty)
+                .padding()
             }
+            .buttonStyle(.borderedProminent)
+            .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
+            .disabled(sortedExercises.isEmpty)
+            .padding(.horizontal)
+            .padding(.bottom, DesignTokens.Spacing.sm)
+            .background(.ultraThinMaterial)
         }
         .confirmationDialog("Delete Program?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
             Button("Delete", role: .destructive) { deleteTemplate() }

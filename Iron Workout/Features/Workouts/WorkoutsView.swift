@@ -220,9 +220,9 @@ struct WorkoutsView: View {
             try modelContext.save()
             templateToCreate = newTemplate
         } catch {
-            SentrySDK.capture(error: error)
+            PersistenceLogger.capture(error, operation: "create-template")
             modelContext.delete(newTemplate)
-            errorMessage = "Could not create program."
+            errorMessage = PersistenceLogger.userMessage(prefix: "Could not create program", error: error)
         }
     }
 

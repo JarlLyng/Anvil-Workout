@@ -160,9 +160,13 @@ struct CreateEditTemplateView: View {
         modelContext.insert(te)
         template.updatedAt = .now
         do { try modelContext.save() } catch {
-                    SentrySDK.capture(error: error)
-                    errorMessage = "Could not save: \(error.localizedDescription)"
-                }
+            PersistenceLogger.capture(error, operation: "add-exercise-to-template", extra: [
+                "templateID": template.id.uuidString,
+                "exerciseID": exercise.id.uuidString,
+                "exerciseName": exercise.name
+            ])
+            errorMessage = PersistenceLogger.userMessage(prefix: "Could not save", error: error)
+        }
     }
 
     private func deleteExercises(at offsets: IndexSet) {

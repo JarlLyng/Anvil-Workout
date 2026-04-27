@@ -158,8 +158,12 @@ struct ProgramLibraryDetailView: View {
             UINotificationFeedbackGenerator().notificationOccurred(.success)
             onImportComplete(program.name)
         } catch {
-            SentrySDK.capture(error: error)
-            errorMessage = "Could not import program: \(error.localizedDescription)"
+            PersistenceLogger.capture(error, operation: "import-program", extra: [
+                "programID": program.id,
+                "programName": program.name,
+                "workoutCount": program.workouts.count
+            ])
+            errorMessage = PersistenceLogger.userMessage(prefix: "Could not import program", error: error)
             isImporting = false
         }
     }
