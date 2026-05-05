@@ -13,11 +13,21 @@ import SwiftData
 
 struct Provider: AppIntentTimelineProvider {
     private let modelContainer: ModelContainer? = {
+        // IMPORTANT: this schema MUST be a superset of every entity ever stored in the
+        // App Group container, even if the widget only queries WorkoutSession. Two
+        // consumers of the same persistent store with mismatched schemas can cause
+        // SwiftData to migrate the store toward the most recent opener, silently
+        // dropping entities the other side declared. That manifests as user-created
+        // WorkoutTemplates disappearing after the widget refreshes (every 30 min),
+        // which is exactly the symptom users reported on v1.1.0. Keep this schema
+        // identical to Iron_WorkoutApp.swift's sharedModelContainer schema.
         let schema = Schema([
+            Exercise.self,
+            WorkoutTemplate.self,
+            WorkoutTemplateExercise.self,
             WorkoutSession.self,
             WorkoutSessionExercise.self,
             PerformedSet.self,
-            Exercise.self,
         ])
         let config = ModelConfiguration(
             isStoredInMemoryOnly: false,
