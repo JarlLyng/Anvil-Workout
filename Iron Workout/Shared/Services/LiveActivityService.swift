@@ -1,6 +1,6 @@
 //
 //  LiveActivityService.swift
-//  Iron Workout
+//  Anvil Workout
 //
 //  Created by Jarl Lyng on 14/04/2026.
 //

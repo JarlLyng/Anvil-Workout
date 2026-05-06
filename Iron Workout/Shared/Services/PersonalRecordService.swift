@@ -1,6 +1,6 @@
 //
 //  PersonalRecordService.swift
-//  Iron Workout
+//  Anvil Workout
 //
 //  Pure, testable logic for detecting personal records. Extracted from WorkoutCompletionView
 //  so the algorithm can be exercised with controlled inputs in unit tests, independent of UI.

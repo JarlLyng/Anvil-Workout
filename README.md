@@ -1,4 +1,4 @@
-# Iron Workout
+# Anvil Workout
 
 [![Co-created with AI](https://madebyhuman.iamjarl.com/badges/co-created-white.svg)](https://madebyhuman.iamjarl.com)
 
@@ -29,8 +29,8 @@ No backend, login, or external APIs beyond Health and Sentry. Paid app (one-time
 
 ```bash
 git clone <repo-url>
-open "Iron Workout.xcodeproj"
-# Select scheme "Iron Workout", pick a simulator -> Cmd+R
+open "Anvil Workout.xcodeproj"
+# Select scheme "Anvil Workout", pick a simulator -> Cmd+R
 ```
 
 The app runs without additional configuration. The exercise library is seeded automatically on first launch.
@@ -68,17 +68,17 @@ See [docs/dev/SETUP.md](docs/dev/SETUP.md) for full setup including Sentry, Heal
 
 ## App Store
 
-- **Name:** Iron Workout
+- **Name:** Anvil Workout
 - **Developer:** IAMJARL
 - **Subtitle:** Plan. Lift. Track. Progress.
 - **Listing:** [apps.apple.com/app/id6760627760](https://apps.apple.com/app/id6760627760)
-- **Website:** [ironworkout.iamjarl.com](https://ironworkout.iamjarl.com)
+- **Website:** [anvilworkout.iamjarl.com](https://anvilworkout.iamjarl.com)
 
 ---
 
 ## Marketing website
 
-Static site served from `docs/` via GitHub Pages on the custom domain `ironworkout.iamjarl.com`. Each page is hand-authored HTML with full structured data (BreadcrumbList, WebPage, plus page-specific schemas) for SEO.
+Static site served from `docs/` via GitHub Pages on the custom domain `anvilworkout.iamjarl.com`. Each page is hand-authored HTML with full structured data (BreadcrumbList, WebPage, plus page-specific schemas) for SEO.
 
 | Page | Target |
 |------|--------|

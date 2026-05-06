@@ -1,6 +1,6 @@
 //
 //  LiveActivityAttributes.swift
-//  Iron Workout
+//  Anvil Workout
 //
 //  Shared between main app and widget extension.
 //  Remember to add this file to BOTH targets in Xcode (Target Membership).

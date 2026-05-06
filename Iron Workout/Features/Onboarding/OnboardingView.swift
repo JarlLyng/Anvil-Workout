@@ -1,6 +1,6 @@
 //
 //  OnboardingView.swift
-//  Iron Workout
+//  Anvil Workout
 //
 //  Created by Jarl Lyng on 14/04/2026.
 //
@@ -20,7 +20,7 @@ struct OnboardingView: View {
                 onboardingPage(
                     icon: Ph.barbell.fill,
                     iconColor: .primary,
-                    title: "Welcome to Iron Workout",
+                    title: "Welcome to Anvil Workout",
                     subtitle: "Your personal training partner. Log workouts, track your progress and beat personal records."
                 ) {
                     Button("Next") {

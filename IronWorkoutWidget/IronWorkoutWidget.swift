@@ -243,7 +243,7 @@ struct IronWorkoutWidget: Widget {
             IronWorkoutWidgetEntryView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
         }
-        .configurationDisplayName("Iron Workout")
+        .configurationDisplayName("Anvil Workout")
         .description("See your streak and weekly workouts.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }

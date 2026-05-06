@@ -1,6 +1,6 @@
 //
 //  WorkoutCompletionView.swift
-//  Iron Workout
+//  Anvil Workout
 //
 //  Created by Jarl Lyng on 14/03/2026.
 //
@@ -31,7 +31,7 @@ struct WorkoutCompletionView: View {
     }
 
     private var shareText: String {
-        var text = "Iron Workout — \(session.templateName)\n\n"
+        var text = "Anvil Workout — \(session.templateName)\n\n"
         text += "Time: \(durationText)\n"
         text += "Sets: \(session.completedSetCount)\n"
         text += "Exercises: \(session.exerciseCount)"

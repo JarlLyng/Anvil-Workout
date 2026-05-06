@@ -1,6 +1,6 @@
 //
 //  WeightFormatter.swift
-//  Iron Workout
+//  Anvil Workout
 //
 
 import Foundation

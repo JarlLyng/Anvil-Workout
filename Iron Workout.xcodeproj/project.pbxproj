@@ -654,10 +654,10 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Iron Workout/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Iron Workout";
+				INFOPLIST_KEY_CFBundleDisplayName = "Anvil Workout";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "Iron Workout reads workout data from Health (heart rate, calories) so you can see them in your workout history.";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Iron Workout saves your workouts to Health so they appear in the Health app and on Apple Watch.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Anvil Workout reads workout data from Health (heart rate, calories) so you can see them in your workout history.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Anvil Workout saves your workouts to Health so they appear in the Health app and on Apple Watch.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -693,10 +693,10 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Iron Workout/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Iron Workout";
+				INFOPLIST_KEY_CFBundleDisplayName = "Anvil Workout";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "Iron Workout reads workout data from Health (heart rate, calories) so you can see them in your workout history.";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Iron Workout saves your workouts to Health so they appear in the Health app and on Apple Watch.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Anvil Workout reads workout data from Health (heart rate, calories) so you can see them in your workout history.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Anvil Workout saves your workouts to Health so they appear in the Health app and on Apple Watch.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

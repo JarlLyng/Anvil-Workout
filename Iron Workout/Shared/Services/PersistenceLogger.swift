@@ -1,6 +1,6 @@
 //
 //  PersistenceLogger.swift
-//  Iron Workout
+//  Anvil Workout
 //
 //  Structured logging for SwiftData save/fetch failures. SwiftData wraps NSError
 //  with codes that look identical in the default Sentry capture (e.g. "The file

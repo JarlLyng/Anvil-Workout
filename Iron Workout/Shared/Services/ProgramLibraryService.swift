@@ -1,6 +1,6 @@
 //
 //  ProgramLibraryService.swift
-//  Iron Workout
+//  Anvil Workout
 //
 //  Serves the static pre-built program library and imports a program as one or
 //  more editable WorkoutTemplate records.

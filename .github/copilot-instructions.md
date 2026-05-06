@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Project context for AI assistants working on Iron Workout.
+Project context for AI assistants working on Anvil Workout.
 This file is also mirrored to `AGENTS.md`, `.cursorrules`, `.windsurfrules`, and `.github/copilot-instructions.md`.
 
 ## What is this
@@ -43,8 +43,8 @@ iOS strength training app. **Paid app** (one-time purchase on the App Store — 
 ## Build and run
 
 ```bash
-open "Iron Workout.xcodeproj"
-# Scheme: Iron Workout, any simulator -> Cmd+R
+open "Anvil Workout.xcodeproj"
+# Scheme: Anvil Workout, any simulator -> Cmd+R
 ```
 
 No extra config needed. Sentry is optional (runs without DSN). HealthKit needs a physical device.

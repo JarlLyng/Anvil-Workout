@@ -1,6 +1,6 @@
 //
 //  ProgramLibraryDetailView.swift
-//  Iron Workout
+//  Anvil Workout
 //
 //  Detail view for a pre-built program. Shows attribution, progression rules,
 //  and a preview of every workout. The "Add to My Programs" button creates

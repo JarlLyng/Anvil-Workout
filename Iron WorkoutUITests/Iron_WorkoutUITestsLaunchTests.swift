@@ -1,6 +1,6 @@
 //
 //  Iron_WorkoutUITestsLaunchTests.swift
-//  Iron WorkoutUITests
+//  Anvil WorkoutUITests
 //
 //  Created by Jarl Lyng on 14/03/2026.
 //

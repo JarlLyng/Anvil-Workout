@@ -1,12 +1,12 @@
-# Iron Workout
+# Anvil Workout
 
-> Iron Workout is a paid iOS strength training app (one-time purchase, no subscription) for planning workouts, tracking sets and reps in the gym, and reviewing progress over time. It works fully offline with no account required, no ads, and no in-app analytics. Workout data stays on your device.
+> Anvil Workout is a paid iOS strength training app (one-time purchase, no subscription) for planning workouts, tracking sets and reps in the gym, and reviewing progress over time. It works fully offline with no account required, no ads, and no in-app analytics. Workout data stays on your device.
 
-Iron Workout is developed by IAMJARL and is available on the Apple App Store for iPhone: https://apps.apple.com/app/id6760627760. The app focuses on a streamlined gym experience: users create workout programs with exercises, sets, reps, weight targets, and rest timers, then follow them in real time during training.
+Anvil Workout is developed by IAMJARL and is available on the Apple App Store for iPhone: https://apps.apple.com/app/id6760627760. The app focuses on a streamlined gym experience: users create workout programs with exercises, sets, reps, weight targets, and rest timers, then follow them in real time during training.
 
 ## Business model
 
-Iron Workout is a paid app with a one-time purchase price on the App Store. There are no subscriptions, no in-app purchases, and no ads. All features are included. Future updates are free.
+Anvil Workout is a paid app with a one-time purchase price on the App Store. There are no subscriptions, no in-app purchases, and no ads. All features are included. Future updates are free.
 
 ## Key features
 
@@ -33,11 +33,11 @@ Iron Workout is a paid app with a one-time purchase price on the App Store. Ther
 
 ## Links
 
-- [App Store](https://apps.apple.com/app/id6760627760): Download Iron Workout for iPhone
-- [Home](https://ironworkout.iamjarl.com/): Product page with features
-- [Workout Programs](https://ironworkout.iamjarl.com/programs.html): Catalogue of the six built-in strength programs (Starting Strength, StrongLifts 5×5, Greyskull LP, GZCLP, Upper/Lower, Push/Pull/Legs) with author, frequency, structure, and progression details
-- [Offline Workout App](https://ironworkout.iamjarl.com/offline-workout-app.html): Explains how the app runs fully on-device with no cloud, no account, and no outbound workout data — includes a comparison table vs cloud-based apps
-- [Apple Health for Strength Training](https://ironworkout.iamjarl.com/apple-health-strength-training.html): Details on the HealthKit integration — what gets written (workout sessions), what gets read (calories, heart rate), how Apple Watch fits in, and the permission model
-- [No-Subscription Workout App](https://ironworkout.iamjarl.com/no-subscription-workout-app.html): Explains the one-time purchase business model versus subscription workout trackers, with honest tradeoff comparison
-- [Support](https://ironworkout.iamjarl.com/support.html): Help and contact information
-- [Privacy Policy](https://ironworkout.iamjarl.com/privacy.html): Privacy policy and data practices
+- [App Store](https://apps.apple.com/app/id6760627760): Download Anvil Workout for iPhone
+- [Home](https://anvilworkout.iamjarl.com/): Product page with features
+- [Workout Programs](https://anvilworkout.iamjarl.com/programs.html): Catalogue of the six built-in strength programs (Starting Strength, StrongLifts 5×5, Greyskull LP, GZCLP, Upper/Lower, Push/Pull/Legs) with author, frequency, structure, and progression details
+- [Offline Workout App](https://anvilworkout.iamjarl.com/offline-workout-app.html): Explains how the app runs fully on-device with no cloud, no account, and no outbound workout data — includes a comparison table vs cloud-based apps
+- [Apple Health for Strength Training](https://anvilworkout.iamjarl.com/apple-health-strength-training.html): Details on the HealthKit integration — what gets written (workout sessions), what gets read (calories, heart rate), how Apple Watch fits in, and the permission model
+- [No-Subscription Workout App](https://anvilworkout.iamjarl.com/no-subscription-workout-app.html): Explains the one-time purchase business model versus subscription workout trackers, with honest tradeoff comparison
+- [Support](https://anvilworkout.iamjarl.com/support.html): Help and contact information
+- [Privacy Policy](https://anvilworkout.iamjarl.com/privacy.html): Privacy policy and data practices

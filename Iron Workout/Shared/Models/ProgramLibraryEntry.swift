@@ -1,6 +1,6 @@
 //
 //  ProgramLibraryEntry.swift
-//  Iron Workout
+//  Anvil Workout
 //
 //  Static reference data for the pre-built program library. These are plain structs
 //  (not SwiftData @Model) because they're immutable bundled content — users import

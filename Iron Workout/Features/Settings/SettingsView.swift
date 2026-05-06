@@ -1,6 +1,6 @@
 //
 //  SettingsView.swift
-//  Iron Workout
+//  Anvil Workout
 //
 //  Created by Jarl Lyng on 14/03/2026.
 //
@@ -64,7 +64,7 @@ struct SettingsView: View {
                 Section {
                     Link(destination: URL(string: "https://apps.apple.com/app/id6760627760?action=write-review")!) {
                         Label {
-                            Text("Rate Iron Workout")
+                            Text("Rate Anvil Workout")
                                 .foregroundStyle(.primary)
                         } icon: {
                             Ph.star.fill
@@ -84,7 +84,7 @@ struct SettingsView: View {
                         Ph.info.regular
                             .icon()
                             .foregroundStyle(.secondary)
-                        Text("Iron Workout")
+                        Text("Anvil Workout")
                         Spacer()
                         Text("\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"))")
                             .foregroundStyle(.secondary)
@@ -186,9 +186,9 @@ struct SettingsView: View {
     private var healthFooterText: String {
         switch healthAuthStatus {
         case .sharingDenied:
-            return "Access to Health is denied. Open Settings > Health > Data Access & Devices > Iron Workout to enable."
+            return "Access to Health is denied. Open Settings > Health > Data Access & Devices > Anvil Workout to enable."
         default:
-            return "Iron Workout saves workouts to Health and can show calories and heart rate when you use Apple Watch or other sources during a workout."
+            return "Anvil Workout saves workouts to Health and can show calories and heart rate when you use Apple Watch or other sources during a workout."
         }
     }
 

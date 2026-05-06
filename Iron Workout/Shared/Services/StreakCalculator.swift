@@ -1,6 +1,6 @@
 //
 //  StreakCalculator.swift
-//  Iron Workout
+//  Anvil Workout
 //
 //  Pure, testable logic for calculating workout streaks. Extracted from DashboardView
 //  so behavior can be unit-tested with controlled inputs.

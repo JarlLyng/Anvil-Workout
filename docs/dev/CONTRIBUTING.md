@@ -80,7 +80,7 @@ Use `@AppStorage` for lightweight user preferences:
 
 Secrets (e.g. Sentry DSN) are managed via `.xcconfig` files:
 
-1. `Iron Workout/Config/DeveloperSettings.xcconfig` is committed and optionally includes `Secrets.xcconfig` (gitignored).
+1. `Anvil Workout/Config/DeveloperSettings.xcconfig` is committed and optionally includes `Secrets.xcconfig` (gitignored).
 2. `Secrets.xcconfig.example` is the template — copy to `Secrets.xcconfig` locally.
 3. Build settings -> Info.plist -> code reads DSN from `Bundle.main`.
 
@@ -88,14 +88,14 @@ Never commit secrets to git.
 
 ## Tests
 
-- Unit tests: `Iron WorkoutTests/` — uses the Swift Testing framework (`import Testing`, `@Suite`, `@Test`, `#expect`, `#require`).
-- UI tests: `Iron WorkoutUITests/`.
+- Unit tests: `Anvil WorkoutTests/` — uses the Swift Testing framework (`import Testing`, `@Suite`, `@Test`, `#expect`, `#require`).
+- UI tests: `Anvil WorkoutUITests/`.
 - Run with Cmd+U in Xcode, or unit tests only via CLI:
 
   ```bash
-  xcodebuild test -project "Iron Workout.xcodeproj" -scheme "Iron Workout" \
+  xcodebuild test -project "Anvil Workout.xcodeproj" -scheme "Anvil Workout" \
     -destination 'platform=iOS Simulator,name=iPhone 17' \
-    -only-testing:"Iron WorkoutTests"
+    -only-testing:"Anvil WorkoutTests"
   ```
 
 - When adding logic that's worth testing, extract it into a pure service (`PersonalRecordService`, `StreakCalculator` are good examples) instead of embedding it in a view. Services use explicit inputs and return values, making them trivial to test.

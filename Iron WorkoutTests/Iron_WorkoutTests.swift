@@ -1,8 +1,8 @@
 //
 //  Iron_WorkoutTests.swift
-//  Iron WorkoutTests
+//  Anvil WorkoutTests
 //
-//  Test suites for Iron Workout live in separate files per service:
+//  Test suites for Anvil Workout live in separate files per service:
 //  - StreakCalculatorTests
 //  - PersonalRecordServiceTests
 //  - WorkoutSessionServiceTests
@@ -13,7 +13,7 @@
 
 import Testing
 
-@Suite("Iron Workout")
+@Suite("Anvil Workout")
 struct IronWorkoutTestsSmokeSuite {
     @Test("test target loads")
     func targetLoads() {

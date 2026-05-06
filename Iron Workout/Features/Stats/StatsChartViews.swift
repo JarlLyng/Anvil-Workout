@@ -1,6 +1,6 @@
 //
 //  StatsChartViews.swift
-//  Iron Workout
+//  Anvil Workout
 //
 //  Extracted from StatsView.swift to reduce type-checking time.
 //

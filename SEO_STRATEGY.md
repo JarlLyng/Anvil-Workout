@@ -1,6 +1,6 @@
-# SEO, ASO & GEO Strategy — Iron Workout
+# SEO, ASO & GEO Strategy — Anvil Workout
 
-Site: https://ironworkout.iamjarl.com/ (TBA: ironworkout.iamjarl.com)  
+Site: https://anvilworkout.iamjarl.com/ (TBA: anvilworkout.iamjarl.com)  
 App Store: Endnu ikke udgivet  
 Google Search Console: Ikke connected endnu  
 Last updated: 2026-04-15
@@ -9,7 +9,7 @@ Last updated: 2026-04-15
 
 ## 1. Product positioning
 
-Iron Workout er en iOS styrketrænings-app med program builder, workout execution med Live Activity, PR-tracking og Apple Health-integration. One-time purchase, ingen abonnement, ingen konti, 100% offline. SwiftUI + SwiftData.
+Anvil Workout er en iOS styrketrænings-app med program builder, workout execution med Live Activity, PR-tracking og Apple Health-integration. One-time purchase, ingen abonnement, ingen konti, 100% offline. SwiftUI + SwiftData.
 
 SEO positioning: **den lokale, abonnementsfrie styrketrænings-app** — differentierer fra Strong, Hevy, Fitbod via nul-abonnement, nul-konto og fuld data-ejerskab.
 
@@ -31,7 +31,7 @@ SEO positioning: **den lokale, abonnementsfrie styrketrænings-app** — differe
 - [x] sitemap.xml (3 URL'er: homepage, privacy, support)
 - [x] llms.txt for AI-indeksering
 - [x] Responsive CSS med dark mode
-- [x] Custom domain (ironworkout.iamjarl.com) med CNAME
+- [x] Custom domain (anvilworkout.iamjarl.com) med CNAME
 - [x] aria-hidden på dekorative SVG-ikoner
 
 ### Mangler (not done)
@@ -49,7 +49,7 @@ SEO positioning: **den lokale, abonnementsfrie styrketrænings-app** — differe
 
 ### Når appen er klar til release:
 
-1. ~~**Custom domain**~~ ✅ CNAME oprettet, alle URL'er opdateret til ironworkout.iamjarl.com
+1. ~~**Custom domain**~~ ✅ CNAME oprettet, alle URL'er opdateret til anvilworkout.iamjarl.com
 2. **apple-itunes-app** → Fjern kommentar, indsæt app-id
 3. **App Store links** → Opdater alle `href="#"` placeholders
 4. **Google Search Console** → Connect og verificer
@@ -68,7 +68,7 @@ SEO positioning: **den lokale, abonnementsfrie styrketrænings-app** — differe
 
 ### Forberedt metadata
 
-**App name:** Iron Workout  
+**App name:** Anvil Workout  
 **Subtitle:** `Plan and Track Workouts` (fra README) eller `Track Lifts, No Subscription` (fra strategi)  
 **Keywords (98 tegn):**
 ```
@@ -179,7 +179,7 @@ NB: Link IKKE til Beef — den er ikke udgivet endnu.
 
 ### Tilføj konkrete datapunkter:
 
-- "Iron Workout supports 1–120 sets per exercise with configurable weight, reps, and rest timers"
+- "Anvil Workout supports 1–120 sets per exercise with configurable weight, reps, and rest timers"
 - "One-time purchase — no subscription, no in-app purchases, no ads"
 - "Live Activity shows current exercise, time, and set progress on Lock Screen and Dynamic Island"
 - "All data stored locally with SwiftData — no cloud, no account"

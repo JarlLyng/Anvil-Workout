@@ -1,6 +1,6 @@
 # Design system
 
-Iron Workout uses **IAMJARL Design Tokens** ([iamjarl-design](https://github.com/JarlLyng/iamjarl-design)) and **Phosphor Icons** ([phosphor-swift](https://github.com/phosphor-icons/swift)) for a consistent visual language.
+Anvil Workout uses **IAMJARL Design Tokens** ([iamjarl-design](https://github.com/JarlLyng/iamjarl-design)) and **Phosphor Icons** ([phosphor-swift](https://github.com/phosphor-icons/swift)) for a consistent visual language.
 
 ---
 

@@ -1,6 +1,6 @@
 //
 //  DesignSystem.swift
-//  Iron Workout
+//  Anvil Workout
 //
 
 import SwiftUI

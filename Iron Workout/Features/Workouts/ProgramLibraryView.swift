@@ -1,6 +1,6 @@
 //
 //  ProgramLibraryView.swift
-//  Iron Workout
+//  Anvil Workout
 //
 //  Browse the pre-built program library. Users tap a program to see details and
 //  import it as editable WorkoutTemplate records.

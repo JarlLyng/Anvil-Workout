@@ -30,7 +30,7 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-Sitemap: https://ironworkout.iamjarl.com/sitemap.xml
+Sitemap: https://anvilworkout.iamjarl.com/sitemap.xml
 
 # AI context
-# https://ironworkout.iamjarl.com/llms.txt
+# https://anvilworkout.iamjarl.com/llms.txt
