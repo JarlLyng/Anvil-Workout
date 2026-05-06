@@ -42,12 +42,12 @@ struct Iron_WorkoutApp: App {
                         if noisyDomains.contains(type) {
                             return nil
                         }
-                        // Sentry IOS-3: NSFileReadUnknownError fires on view-dismiss without
-                        // an in-app stack trace. Suppressed pending repro on a real device.
-                        // Re-enable by removing this branch when investigating GH #40.
-                        if type == "NSCocoaErrorDomain", exception.value == "Code: 256" {
-                            return nil
-                        }
+                        // Sentry IOS-3 (NSCocoaErrorDomain 256) was previously suppressed
+                        // pending repro. Now re-enabled — v1.1.0 fixes the suspected root
+                        // cause (widget extension declared a partial SwiftData schema for
+                        // the shared App Group store, which could corrupt store state on
+                        // every widget refresh). We need this signal back to verify whether
+                        // 1.1.0 actually resolved it.
                     }
                     return event
                 }
