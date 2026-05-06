@@ -1,6 +1,6 @@
 # Program Library Specification
 
-Research and implementation spec for issue [#18](https://github.com/JarlLyng/Iron-Workout/issues/18) — pre-built workout programs.
+Research and implementation spec for issue [#18](https://github.com/JarlLyng/Anvil-Workout/issues/18) — pre-built workout programs.
 
 This document catalogs the exact set/rep structure for each program so implementation can seed `WorkoutTemplate` records directly. All data here is drawn from publicly documented program structures. Exercise schemes are not copyrightable, but program names, prose descriptions, and specific progression formulas should attribute the original author.
 

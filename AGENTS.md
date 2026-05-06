@@ -35,7 +35,7 @@ iOS strength training app. **Paid app** (one-time purchase on the App Store — 
 
 ## Workflow
 
-- **Task tracking** — use [GitHub Issues](https://github.com/JarlLyng/Iron-Workout/issues) for bugs, features, and todos. Do not create task-tracking markdown files.
+- **Task tracking** — use [GitHub Issues](https://github.com/JarlLyng/Anvil-Workout/issues) for bugs, features, and todos. Do not create task-tracking markdown files.
 - **SEO/GEO strategy** — `SEO_STRATEGY.md` is maintained by a separate AI. Keep project docs accurate so it has correct context.
 - **Marketing website** — static site in `docs/` (served via GitHub Pages). Developer docs are in `docs/dev/`.
 - **Business model rule** — the app is a **paid one-time purchase**. Never describe it as "free" in any copy, metadata, or structured data. "Subscription-free" and "distraction-free" are fine.
