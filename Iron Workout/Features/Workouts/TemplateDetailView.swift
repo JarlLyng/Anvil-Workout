@@ -22,6 +22,7 @@ struct TemplateDetailView: View {
     @State private var activeSession: WorkoutSession?
     @State private var errorMessage: String?
     @State private var showDeleteConfirm = false
+    @State private var shareURL: ShareItem?
 
     private var sortedExercises: [WorkoutTemplateExercise] {
         template.exercises.sorted { $0.sortOrder < $1.sortOrder }
@@ -81,6 +82,12 @@ struct TemplateDetailView: View {
                     } label: {
                         Label { Text("Edit") } icon: { Ph.pencilSimple.regular.icon() }
                     }
+                    Button {
+                        shareProgram()
+                    } label: {
+                        Label { Text("Share Program") } icon: { Ph.shareFat.regular.icon() }
+                    }
+                    .disabled(sortedExercises.isEmpty)
                     Button(role: .destructive) {
                         showDeleteConfirm = true
                     } label: {
@@ -131,6 +138,9 @@ struct TemplateDetailView: View {
                 onEndWorkout: { activeSession = nil }
             )
         }
+        .sheet(item: $shareURL) { item in
+            ShareSheet(activityItems: [item.url])
+        }
     }
 
     private func startWorkout() {
@@ -153,4 +163,36 @@ struct TemplateDetailView: View {
             errorMessage = "Could not delete program: \(error.localizedDescription)"
         }
     }
+
+    private func shareProgram() {
+        // Populate the exercise-name cache so ProgramShareService can resolve names
+        // without needing its own ModelContext.
+        ExerciseNameCache.refresh(from: allExercises)
+        do {
+            let url = try ProgramShareService.shareURL(for: template)
+            shareURL = ShareItem(url: url)
+        } catch {
+            SentrySDK.capture(error: error)
+            errorMessage = "Could not create share link: \(error.localizedDescription)"
+        }
+    }
+}
+
+/// Identifiable wrapper so we can use `.sheet(item:)` for the iOS share sheet.
+private struct ShareItem: Identifiable {
+    let url: URL
+    var id: String { url.absoluteString }
+}
+
+/// Bridges UIActivityViewController into SwiftUI. SwiftUI's `ShareLink` would be
+/// simpler but requires the URL up front in the view body — we compute it lazily
+/// on tap to avoid encoding the program on every redraw.
+private struct ShareSheet: UIViewControllerRepresentable {
+    let activityItems: [Any]
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }

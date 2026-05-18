@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Open in Anvil Workout</title>
+    <meta name="description" content="Someone shared a strength training program with you. Open the link on your iPhone to import it into Anvil Workout.">
+    <meta name="robots" content="noindex">
+
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+    <meta name="apple-itunes-app" content="app-id=6760627760">
+    <meta name="theme-color" content="#0a0a0a">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Open in Anvil Workout">
+    <meta property="og:description" content="A shared strength training program waiting for you.">
+    <meta property="og:image" content="https://anvilworkout.iamjarl.com/og-image.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+
+    <script defer src="https://umami-iamjarl.vercel.app/script.js" data-website-id="56413ff8-71df-422f-93cd-1d072c8f6195"></script>
+
+    <style>
+        .import-card {
+            max-width: 32rem;
+            margin: 4rem auto;
+            padding: 2rem;
+            text-align: center;
+        }
+        .import-card h1 { margin-bottom: 0.5rem; }
+        .import-card .program-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.5rem;
+            color: var(--accent, #c9f53d);
+            word-break: break-word;
+        }
+        .import-card .meta {
+            font-size: 0.95rem;
+            color: var(--muted, #888);
+            margin-bottom: 2rem;
+        }
+        .import-card .cta { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 2rem; }
+        .import-card .hint {
+            font-size: 0.875rem;
+            color: var(--muted, #888);
+            margin-top: 1.5rem;
+            line-height: 1.5;
+        }
+        .exercise-list {
+            list-style: none;
+            padding: 0;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+        .exercise-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            font-size: 0.95rem;
+        }
+        .exercise-list li:last-child { border-bottom: none; }
+        .exercise-list .sets { color: var(--muted, #888); font-variant-numeric: tabular-nums; }
+    </style>
+</head>
+<body>
+    <main class="import-card">
+        <h1>Anvil Workout</h1>
+        <p>Someone shared a strength training program with you.</p>
+
+        <div id="program-preview">
+            <p class="program-name" id="program-name">Loading…</p>
+            <p class="meta" id="program-meta"></p>
+            <ul class="exercise-list" id="exercise-list"></ul>
+        </div>
+
+        <div class="cta">
+            <a href="https://apps.apple.com/app/id6760627760" class="btn btn-primary btn-lg" aria-label="Download Anvil Workout on the App Store">
+                Get Anvil Workout
+            </a>
+        </div>
+
+        <p class="hint">
+            Open this link on your iPhone with Anvil Workout installed and the program will load automatically.
+            Don't have the app yet? Install it, then reopen this link from your text or email.
+        </p>
+    </main>
+
+    <script>
+        (function () {
+            // Decode the program payload from the URL path. Format mirrors the iOS app:
+            // /p/<base64url-encoded-json>
+            function base64UrlDecode(str) {
+                str = str.replace(/-/g, '+').replace(/_/g, '/');
+                while (str.length % 4) str += '=';
+                return atob(str);
+            }
+
+            try {
+                var parts = window.location.pathname.split('/').filter(Boolean);
+                // parts[0] === 'p', parts[1] === encoded payload
+                if (parts[0] !== 'p' || !parts[1]) throw new Error('Not a share link');
+
+                var jsonStr = base64UrlDecode(parts[1]);
+                var payload = JSON.parse(jsonStr);
+
+                document.getElementById('program-name').textContent = payload.name || 'Unnamed program';
+                var totalSets = (payload.exercises || []).reduce(function (acc, e) { return acc + (e.s || 0); }, 0);
+                document.getElementById('program-meta').textContent =
+                    (payload.exercises || []).length + ' exercises · ' + totalSets + ' sets';
+
+                var list = document.getElementById('exercise-list');
+                (payload.exercises || []).forEach(function (e) {
+                    var li = document.createElement('li');
+                    var name = document.createElement('span');
+                    name.textContent = e.name || 'Exercise';
+                    var sets = document.createElement('span');
+                    sets.className = 'sets';
+                    sets.textContent = (e.s || 0) + ' × ' + (e.r || 0);
+                    li.appendChild(name);
+                    li.appendChild(sets);
+                    list.appendChild(li);
+                });
+            } catch (err) {
+                document.getElementById('program-preview').innerHTML =
+                    '<p class="meta">Couldn\'t decode the program from this link.</p>';
+            }
+        })();
+    </script>
+</body>
+</html>

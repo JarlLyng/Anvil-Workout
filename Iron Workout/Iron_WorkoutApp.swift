@@ -79,15 +79,10 @@ struct Iron_WorkoutApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if hasSeenOnboarding {
-                ContentView()
-                    .onAppear { seedExerciseLibraryIfNeeded() }
-            } else {
-                OnboardingView()
-                    .onAppear { seedExerciseLibraryIfNeeded() }
-            }
+            RootView()
+                .modelContainer(sharedModelContainer)
+                .onAppear { seedExerciseLibraryIfNeeded() }
         }
-        .modelContainer(sharedModelContainer)
     }
 
     private func seedExerciseLibraryIfNeeded() {
@@ -96,4 +91,78 @@ struct Iron_WorkoutApp: App {
         // Run after library seeding so any matching-by-name migrations have the full library available.
         DataMigrationService.runMigrationsIfNeeded(modelContext: context)
     }
+}
+
+/// Hoists the universal-link handler to the top-level scene so a shared-program link
+/// works from any state — onboarding, main app, foreground or cold launch. The
+/// `ImportProgramSheet` is presented above whatever view is currently visible.
+private struct RootView: View {
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+    @State private var pendingImport: SharedProgramPayload?
+    @State private var importError: String?
+    @State private var importToast: String?
+
+    var body: some View {
+        Group {
+            if hasSeenOnboarding {
+                ContentView()
+            } else {
+                OnboardingView()
+            }
+        }
+        .onOpenURL { url in
+            handleIncomingURL(url)
+        }
+        .sheet(item: $pendingImport) { payload in
+            ImportProgramSheet(payload: payload) { name in
+                importToast = "\(name) added"
+            }
+        }
+        .alert(
+            "Could not open link",
+            isPresented: Binding(get: { importError != nil }, set: { if !$0 { importError = nil } })
+        ) {
+            Button("OK") { importError = nil }
+        } message: {
+            Text(importError ?? "")
+        }
+        .overlay(alignment: .bottom) {
+            if let importToast {
+                Text(importToast)
+                    .font(.subheadline.weight(.medium))
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(.regularMaterial, in: Capsule())
+                    .padding(.bottom, 80)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .task {
+                        try? await Task.sleep(for: .seconds(2))
+                        self.importToast = nil
+                    }
+            }
+        }
+        .animation(.easeInOut, value: importToast)
+    }
+
+    private func handleIncomingURL(_ url: URL) {
+        guard ProgramShareService.isShareURL(url) else {
+            // Not our link — ignore. iOS may pass us URLs from other handlers we
+            // don't own.
+            return
+        }
+        do {
+            let payload = try ProgramShareService.decodePayload(from: url)
+            pendingImport = payload
+        } catch {
+            SentrySDK.capture(error: error)
+            importError = (error as? LocalizedError)?.errorDescription
+                ?? "The shared program link couldn't be read."
+        }
+    }
+}
+
+extension SharedProgramPayload: Identifiable {
+    /// Stable per-instance identity for `.sheet(item:)`. We don't need a real ID
+    /// since the payload is presented once and dismissed.
+    var id: String { name + String(exercises.count) }
 }
