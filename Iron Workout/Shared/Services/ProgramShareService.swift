@@ -183,9 +183,11 @@ enum ProgramShareService {
             } else {
                 // Recipient doesn't have this exercise — create it as a non-builtin row
                 // so the program is at least functional. The user can edit it later.
+                // `fullBody` is the closest match for an unknown imported exercise — the
+                // user can re-categorize from the exercise detail screen.
                 let placeholder = Exercise(
                     name: item.name,
-                    muscleGroup: .other,
+                    muscleGroup: .fullBody,
                     equipmentType: "",
                     isBuiltin: false
                 )
