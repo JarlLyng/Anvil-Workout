@@ -171,12 +171,15 @@ struct SettingsView: View {
                 }
                 .accessibilityHint("Open Settings to change Health permissions")
             case .notDetermined:
-                Button("Grant Access") {
+                // Button wording: Apple guideline 5.1.1(iv) requires neutral words
+                // ("Continue", "Next") rather than "Grant Access" or similar that
+                // pre-empt the user's decision on the system permission prompt.
+                Button("Continue") {
                     requestHealthAccess()
                 }
-                .accessibilityHint("Request permission to read and write health data")
+                .accessibilityHint("Continue to Apple Health setup")
             @unknown default:
-                Button("Grant Access") {
+                Button("Continue") {
                     requestHealthAccess()
                 }
             }

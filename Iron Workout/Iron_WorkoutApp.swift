@@ -30,9 +30,11 @@ struct Iron_WorkoutApp: App {
                 options.attachViewHierarchy = true
                 options.enableLogs = true
                 options.beforeSend = { event in
-                    // Drop noise from auto-captured system NSErrors that aren't actionable:
-                    // e.g. Guided Access blocking `UIApplication.open` (Sentry IOS-4).
+                    // Drop noise from auto-captured system NSErrors that aren't actionable.
+                    // Each entry below has a corresponding Sentry issue (IOS-N) we've
+                    // confirmed is not a bug but a system signal we can't act on.
                     let noisyDomains: Set<String> = [
+                        // IOS-4: Guided Access blocking UIApplication.open
                         "_UIViewServiceHostSessionErrorDomain",
                         "FBSOpenApplicationServiceErrorDomain",
                         "FBSOpenApplicationErrorDomain",
@@ -42,12 +44,20 @@ struct Iron_WorkoutApp: App {
                         if noisyDomains.contains(type) {
                             return nil
                         }
-                        // Sentry IOS-3 (NSCocoaErrorDomain 256) was previously suppressed
-                        // pending repro. Now re-enabled — v1.1.0 fixes the suspected root
-                        // cause (widget extension declared a partial SwiftData schema for
-                        // the shared App Group store, which could corrupt store state on
-                        // every widget refresh). We need this signal back to verify whether
-                        // 1.1.0 actually resolved it.
+                        // IOS-1: HealthKit code 11 = HKErrorAuthorizationDenied. Expected
+                        // user behaviour (declined permission), not a bug. We still want
+                        // other HealthKit errors (e.g. authorization changes mid-workout),
+                        // so we filter only code 11.
+                        if type == "com.apple.healthkit", exception.value == "Code: 11" {
+                            return nil
+                        }
+                        // IOS-2: ActivityKit.ActivityAuthorization unsupportedTarget.
+                        // Means Live Activity isn't supported on the device or in the
+                        // current iOS region — nothing to fix in the app.
+                        if type == "com.apple.ActivityKit.ActivityAuthorization",
+                           exception.value?.contains("unsupportedTarget") == true {
+                            return nil
+                        }
                     }
                     return event
                 }
