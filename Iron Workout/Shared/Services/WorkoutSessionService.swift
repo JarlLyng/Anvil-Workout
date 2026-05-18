@@ -70,11 +70,47 @@ enum WorkoutSessionService {
     }
 
     /// Finalizes session with duration and completed set count; called when workout ends.
-    static func finalizeSession(_ session: WorkoutSession, modelContext: ModelContext) throws {
-        session.endedAt = .now
-        let duration = session.endedAt!.timeIntervalSince(session.startedAt)
+    /// Pass an explicit `endedAt` when finalizing a stale session retroactively — otherwise
+    /// the duration includes all the dead time after the user forgot to tap End.
+    static func finalizeSession(_ session: WorkoutSession, endedAt: Date = .now, modelContext: ModelContext) throws {
+        session.endedAt = endedAt
+        let duration = endedAt.timeIntervalSince(session.startedAt)
         session.durationSeconds = Int(max(0, duration.rounded()))
         session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
+        do {
+            try modelContext.save()
+        } catch {
+            SentrySDK.capture(error: error)
+            throw error
+        }
+    }
+
+    /// Returns a session that was started but never finalized — i.e. the user forgot to tap
+    /// End Workout. Threshold is conservative (6h) so we don't prompt for a workout the user
+    /// is actively paused on. Returns the most recent matching session; in practice there
+    /// should only ever be one.
+    static func findStaleSession(modelContext: ModelContext, olderThan threshold: TimeInterval = 6 * 60 * 60) -> WorkoutSession? {
+        let cutoff = Date().addingTimeInterval(-threshold)
+        let descriptor = FetchDescriptor<WorkoutSession>(
+            predicate: #Predicate { $0.endedAt == nil && $0.startedAt < cutoff },
+            sortBy: [SortDescriptor(\.startedAt, order: .reverse)]
+        )
+        return (try? modelContext.fetch(descriptor))?.first
+    }
+
+    /// Best-effort guess at when the workout actually ended: the latest `completedAt` across
+    /// completed sets in the session, or `startedAt` if nothing was logged.
+    static func bestGuessEndDate(for session: WorkoutSession) -> Date {
+        let completedTimes = session.exercises
+            .flatMap(\.performedSets)
+            .compactMap(\.completedAt)
+        return completedTimes.max() ?? session.startedAt
+    }
+
+    /// Delete a session entirely — used when the user chooses to discard a stale session
+    /// instead of saving it.
+    static func discardSession(_ session: WorkoutSession, modelContext: ModelContext) throws {
+        modelContext.delete(session)
         do {
             try modelContext.save()
         } catch {

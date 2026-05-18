@@ -117,6 +117,34 @@ final class HealthKitService {
         currentBuilder = nil
     }
 
+    /// Save a completed workout retroactively. Used when a session was started but the user
+    /// never tapped End — on next launch we detect the stale session and finalize it from
+    /// the timestamps we already have. Doesn't use `currentBuilder` since the in-memory
+    /// builder is gone after the app was terminated.
+    @MainActor
+    func saveCompletedWorkout(startDate: Date, endDate: Date) async throws -> (calories: Double?, averageHeartRate: Double?) {
+        guard isAvailable else { return (nil, nil) }
+        guard isWorkoutWritingAuthorized else {
+            logAuthSkip("saveCompletedWorkout")
+            return (nil, nil)
+        }
+        let config = HKWorkoutConfiguration()
+        config.activityType = .traditionalStrengthTraining
+        config.locationType = .indoor
+        let builder = HKWorkoutBuilder(healthStore: store, configuration: config, device: nil)
+        do {
+            try await builder.beginCollection(at: startDate)
+            try await builder.endCollection(at: endDate)
+        } catch {
+            SentrySDK.capture(error: error)
+            throw error
+        }
+        guard let workout = try await builder.finishWorkout() else {
+            return (nil, nil)
+        }
+        return await queryWorkoutMetrics(from: workout.startDate, to: workout.endDate)
+    }
+
     /// Fetch calories burned and average heart rate for a time interval from Health.
     private func queryWorkoutMetrics(from start: Date, to end: Date) async -> (calories: Double?, averageHeartRate: Double?) {
         // HealthKit doesn't expose read-authorization status (privacy), so we use workout
