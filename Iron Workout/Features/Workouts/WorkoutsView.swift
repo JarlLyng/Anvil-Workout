@@ -160,24 +160,37 @@ struct WorkoutsView: View {
 
     @ViewBuilder
     private func templateRow(_ template: WorkoutTemplate) -> some View {
+        let displayName = template.name.isEmpty ? "Untitled" : template.name
+        let subtitle: String? = {
+            if let programID = template.sourceProgramID,
+               let program = ProgramLibraryService.program(withID: programID) {
+                return "Inspired by \(program.author)"
+            }
+            return template.note.isEmpty ? nil : template.note
+        }()
+        let a11yLabel = [
+            template.isFavorite ? "Favorite" : nil,
+            displayName,
+            subtitle
+        ].compactMap { $0 }.joined(separator: ", ")
+
         NavigationLink(value: template) {
             HStack {
                 VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
-                    Text(template.name.isEmpty ? "Untitled" : template.name)
+                    Text(displayName)
                         .font(.headline)
                         .foregroundStyle(.primary)
-                    if let programID = template.sourceProgramID,
-                       let program = ProgramLibraryService.program(withID: programID) {
+                    if let subtitle, template.sourceProgramID != nil {
                         HStack(spacing: 4) {
                             Ph.bookBookmark.regular
                                 .icon(size: 12)
                                 .foregroundStyle(.secondary)
-                            Text("Inspired by \(program.author)")
+                            Text(subtitle)
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
-                    } else if !template.note.isEmpty {
-                        Text(template.note)
+                    } else if let subtitle {
+                        Text(subtitle)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                             .lineLimit(2)
@@ -188,7 +201,6 @@ struct WorkoutsView: View {
                     Ph.star.fill
                         .icon()
                         .foregroundStyle(DesignTokens.ColorToken.State.warning)
-                        .accessibilityLabel("Favorite")
                 } else {
                     Ph.caretRight.regular
                         .icon()
@@ -197,6 +209,8 @@ struct WorkoutsView: View {
             }
             .padding(DesignTokens.Spacing.lg)
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(a11yLabel)
         }
         .buttonStyle(.plain)
         .contextMenu {

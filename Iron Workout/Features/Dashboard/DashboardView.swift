@@ -201,6 +201,7 @@ struct DashboardView: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 50, height: 50)
                 .foregroundStyle(Color.primary.opacity(0.8))
+                .accessibilityHidden(true)
         }
         .padding(.top, DesignTokens.Spacing.lg)
     }
@@ -366,6 +367,8 @@ struct DashboardView: View {
         }
         .padding(DesignTokens.Spacing.lg)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(session.templateName), \(session.completedSetCount) sets, \(relativeDateLabel(session.startedAt))")
     }
 
     private func relativeDateLabel(_ date: Date) -> String {

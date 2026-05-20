@@ -28,47 +28,15 @@ struct HistoryView: View {
                     Text("When you complete a workout from the Workouts tab, it will appear here with duration, sets and optional heart rate and calories from Health.")
                 }
             } else if filteredSessions.isEmpty {
-                    ContentUnavailableView.search(text: searchText)
-                } else {
-                    List(filteredSessions) { session in
-                        NavigationLink(value: session) {
-                            VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
-                                HStack {
-                                    Text(session.templateName)
-                                        .font(.headline)
-                                    Spacer()
-                                    Text(relativeDate(session.startedAt))
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                                HStack(spacing: DesignTokens.Spacing.lg) {
-                                    Label { Text("\(session.exerciseCount) exercises") } icon: { Ph.listBullets.regular.icon(size: 16) }
-                                    Label { Text("\(session.completedSetCount) sets") } icon: { Ph.checkCircle.regular.icon(size: 16) }
-                                    if session.durationSeconds > 0 {
-                                        Label { Text(formatDuration(session.durationSeconds)) } icon: { Ph.timer.regular.icon(size: 16) }
-                                    }
-                                }
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                if session.calories != nil || session.averageHeartRate != nil {
-                                    HStack(spacing: DesignTokens.Spacing.md) {
-                                        if let cal = session.calories, cal > 0 {
-                                            Label { Text("\(Int(cal)) kcal") } icon: { Ph.flame.regular.icon(size: 14) }
-                                                .font(.caption2)
-                                                .foregroundStyle(DesignTokens.ColorToken.State.warning)
-                                        }
-                                        if let hr = session.averageHeartRate, hr > 0 {
-                                            Label { Text("\(Int(hr)) bpm") } icon: { Ph.heart.regular.icon(size: 14) }
-                                                .font(.caption2)
-                                                .foregroundStyle(DesignTokens.ColorToken.State.error)
-                                        }
-                                    }
-                                }
-                            }
-                            .padding(.vertical, DesignTokens.Spacing.xs)
-                        }
+                ContentUnavailableView.search(text: searchText)
+            } else {
+                List(filteredSessions) { session in
+                    NavigationLink(value: session) {
+                        sessionRow(session)
                     }
+                    .accessibilityLabel(sessionA11yLabel(session))
                 }
+            }
         }
         .navigationTitle("History")
         .navigationBarTitleDisplayMode(.inline)
@@ -76,6 +44,54 @@ struct HistoryView: View {
         .navigationDestination(for: WorkoutSession.self) { session in
             SessionDetailView(session: session)
         }
+    }
+
+    @ViewBuilder
+    private func sessionRow(_ session: WorkoutSession) -> some View {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+            HStack {
+                Text(session.templateName)
+                    .font(.headline)
+                Spacer()
+                Text(relativeDate(session.startedAt))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            HStack(spacing: DesignTokens.Spacing.lg) {
+                Label { Text("\(session.exerciseCount) exercises") } icon: { Ph.listBullets.regular.icon(size: 16) }
+                Label { Text("\(session.completedSetCount) sets") } icon: { Ph.checkCircle.regular.icon(size: 16) }
+                if session.durationSeconds > 0 {
+                    Label { Text(formatDuration(session.durationSeconds)) } icon: { Ph.timer.regular.icon(size: 16) }
+                }
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            if session.calories != nil || session.averageHeartRate != nil {
+                HStack(spacing: DesignTokens.Spacing.md) {
+                    if let cal = session.calories, cal > 0 {
+                        Label { Text("\(Int(cal)) kcal") } icon: { Ph.flame.regular.icon(size: 14) }
+                            .font(.caption2)
+                            .foregroundStyle(DesignTokens.ColorToken.State.warning)
+                    }
+                    if let hr = session.averageHeartRate, hr > 0 {
+                        Label { Text("\(Int(hr)) bpm") } icon: { Ph.heart.regular.icon(size: 14) }
+                            .font(.caption2)
+                            .foregroundStyle(DesignTokens.ColorToken.State.error)
+                    }
+                }
+            }
+        }
+        .padding(.vertical, DesignTokens.Spacing.xs)
+    }
+
+    private func sessionA11yLabel(_ session: WorkoutSession) -> String {
+        var parts: [String] = [session.templateName, relativeDate(session.startedAt)]
+        parts.append("\(session.exerciseCount) exercises")
+        parts.append("\(session.completedSetCount) sets")
+        if session.durationSeconds > 0 { parts.append(formatDuration(session.durationSeconds)) }
+        if let cal = session.calories, cal > 0 { parts.append("\(Int(cal)) kilocalories") }
+        if let hr = session.averageHeartRate, hr > 0 { parts.append("\(Int(hr)) beats per minute") }
+        return parts.joined(separator: ", ")
     }
 
     private func formatDuration(_ seconds: Int) -> String {

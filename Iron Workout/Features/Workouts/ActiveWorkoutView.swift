@@ -20,60 +20,11 @@ struct ActiveWorkoutView: View {
     var onComplete: () -> Void
     var onEndWorkout: () -> Void
 
-    @State private var currentBlockIndex: Int = 0
+    @State private var state: ActiveWorkoutState?
     @State private var healthKitStarted = false
-    @State private var restSecondsRemaining: Int?
-    @State private var restTimer: Timer?
     @State private var showEndConfirm = false
     @State private var showSetEditor: PerformedSet?
     @State private var showCompletionSummary = false
-    @State private var isPaused = false
-    @State private var pausedAt: Date?
-    @State private var totalPausedSeconds: Int = 0
-    @State private var errorMessage: String?
-    @State private var restTotalSeconds: Int = 0
-
-    private var sortedExercises: [WorkoutSessionExercise] {
-        session.exercises.sorted { $0.sortOrder < $1.sortOrder }
-    }
-    
-    private var exerciseBlocks: [[WorkoutSessionExercise]] {
-        var blocks: [[WorkoutSessionExercise]] = []
-        var currentBlock: [WorkoutSessionExercise] = []
-        for ex in sortedExercises {
-            if currentBlock.isEmpty {
-                currentBlock.append(ex)
-            } else {
-                if let sid = ex.supersetID, sid == currentBlock.last?.supersetID {
-                    currentBlock.append(ex)
-                } else {
-                    blocks.append(currentBlock)
-                    currentBlock = [ex]
-                }
-            }
-        }
-        if !currentBlock.isEmpty {
-            blocks.append(currentBlock)
-        }
-        return blocks
-    }
-
-    private var currentBlock: [WorkoutSessionExercise]? {
-        let blocks = exerciseBlocks
-        guard currentBlockIndex >= 0, currentBlockIndex < blocks.count else { return nil }
-        return blocks[currentBlockIndex]
-    }
-
-    private func elapsedSeconds(at date: Date) -> Int {
-        let total = Int(date.timeIntervalSince(session.startedAt).rounded())
-        let extraPause: Int
-        if isPaused, let start = pausedAt {
-            extraPause = Int(date.timeIntervalSince(start).rounded())
-        } else {
-            extraPause = 0
-        }
-        return max(0, total - totalPausedSeconds - extraPause)
-    }
 
     var body: some View {
         Group {
@@ -81,53 +32,60 @@ struct ActiveWorkoutView: View {
                 WorkoutCompletionView(session: session) {
                     onEndWorkout()
                 }
+            } else if let state {
+                workoutBody(state: state)
             } else {
-                NavigationStack {
-                    ZStack {
-                        VStack(spacing: 0) {
-                            timerBar
-                            if let rest = restSecondsRemaining {
-                                restBar(seconds: rest)
-                            }
-                            if let block = currentBlock {
-                                blockContent(block: block)
-                            } else {
-                                completedAllView
-                            }
-                        }
-                        if isPaused {
-                            pauseOverlay
+                ProgressView()
+                    .onAppear {
+                        state = ActiveWorkoutState(session: session, modelContext: modelContext)
+                        state?.onSetCompleted = { [weak state] in
+                            guard let state else { return }
+                            updateLiveActivity(state: state)
                         }
                     }
-            .navigationTitle(session.templateName)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("End") { showEndConfirm = true }
-                        .foregroundStyle(DesignTokens.ColorToken.State.error)
-                        .accessibilityLabel("End workout")
-                        .accessibilityHint("Saves the current workout and returns to the dashboard")
-                }
-                ToolbarItem(placement: .primaryAction) {
-                    if isPaused {
-                        Button("Resume") { resumeWorkout() }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func workoutBody(state: ActiveWorkoutState) -> some View {
+        NavigationStack {
+            ZStack {
+                VStack(spacing: 0) {
+                    WorkoutTimerBar(
+                        isPaused: state.isPaused,
+                        startedAt: session.startedAt,
+                        totalPausedSeconds: state.totalPausedSeconds,
+                        pausedAt: state.pausedAt
+                    )
+                    if let rest = state.restSecondsRemaining {
+                        WorkoutRestBar(
+                            seconds: rest,
+                            totalSeconds: state.restTotalSeconds,
+                            onAddTime: { state.addRestTime(30) },
+                            onSkip: { state.skipRest() }
+                        )
+                    }
+                    if let block = state.currentBlock {
+                        blockContent(state: state, block: block)
                     } else {
-                        Menu {
-                            Button("Pause workout") { pauseWorkout() }
-                            if currentBlock != nil {
-                                Button("Skip current", role: .destructive) { skipBlock() }
-                            }
-                        } label: {
-                            Ph.dotsThreeCircle.regular
-                                .icon(size: 24)
-                                .accessibilityLabel("More options")
-                        }
+                        completedAllView(state: state)
                     }
+                }
+                if state.isPaused {
+                    WorkoutPauseOverlay(onResume: {
+                        state.resume()
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                        updateLiveActivity(state: state)
+                    })
                 }
             }
+            .navigationTitle(session.templateName)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { toolbarContent(state: state) }
             .confirmationDialog("End Workout?", isPresented: $showEndConfirm, titleVisibility: .visible) {
                 Button("Save and End", role: .destructive) {
-                    endWorkout()
+                    endWorkout(state: state)
                 }
                 Button("Continue", role: .cancel) { }
             } message: {
@@ -135,29 +93,68 @@ struct ActiveWorkoutView: View {
             }
             .sheet(item: $showSetEditor) { set in
                 EditPerformedSetSheet(performedSet: set) {
-                    do { try modelContext.save() } catch {
-                        SentrySDK.capture(error: error)
-                        errorMessage = "Could not save: \(error.localizedDescription)"
-                    }
+                    state.saveContext()
                     showSetEditor = nil
                 }
             }
             .onAppear {
                 startHealthKitIfAvailable()
-                startLiveActivity()
+                startLiveActivity(state: state)
             }
             .onDisappear {
-                stopRestTimer()
+                state.stopRestTimer()
             }
-            .alert("Error", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
-                Button("OK") { errorMessage = nil }
+            .onChange(of: state.restSecondsRemaining) { oldValue, newValue in
+                if oldValue != nil && newValue == nil {
+                    UINotificationFeedbackGenerator().notificationOccurred(.success)
+                }
+            }
+            .alert("Error", isPresented: Binding(
+                get: { state.errorMessage != nil },
+                set: { if !$0 { state.errorMessage = nil } }
+            )) {
+                Button("OK") { state.errorMessage = nil }
             } message: {
-                Text(errorMessage ?? "")
-            }
-        }
+                Text(state.errorMessage ?? "")
             }
         }
     }
+
+    @ToolbarContentBuilder
+    private func toolbarContent(state: ActiveWorkoutState) -> some ToolbarContent {
+        ToolbarItem(placement: .cancellationAction) {
+            Button("End") { showEndConfirm = true }
+                .foregroundStyle(DesignTokens.ColorToken.State.error)
+                .accessibilityLabel("End workout")
+                .accessibilityHint("Saves the current workout and returns to the dashboard")
+        }
+        ToolbarItem(placement: .primaryAction) {
+            if state.isPaused {
+                Button("Resume") {
+                    state.resume()
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    updateLiveActivity(state: state)
+                }
+            } else {
+                Menu {
+                    Button("Pause workout") {
+                        state.pause()
+                        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+                        updateLiveActivity(state: state)
+                    }
+                    if state.currentBlock != nil {
+                        Button("Skip current", role: .destructive) { state.skipBlock() }
+                    }
+                } label: {
+                    Ph.dotsThreeCircle.regular
+                        .icon(size: 24)
+                        .accessibilityLabel("More options")
+                }
+            }
+        }
+    }
+
+    // MARK: - HealthKit
 
     private func startHealthKitIfAvailable() {
         guard !healthKitStarted else { return }
@@ -172,9 +169,9 @@ struct ActiveWorkoutView: View {
 
     // MARK: - Live Activity
 
-    private func startLiveActivity() {
+    private func startLiveActivity(state: ActiveWorkoutState) {
         let totalSets = session.exercises.flatMap(\.performedSets).count
-        let currentExerciseName = currentBlock?.first?.exerciseName ?? session.templateName
+        let currentExerciseName = state.currentBlock?.first?.exerciseName ?? session.templateName
         LiveActivityService.startLiveActivity(
             templateName: session.templateName,
             startedAt: session.startedAt,
@@ -187,48 +184,22 @@ struct ActiveWorkoutView: View {
         SentrySDK.addBreadcrumb(crumb)
     }
 
-    private func updateLiveActivity() {
+    private func updateLiveActivity(state: ActiveWorkoutState) {
         let totalSets = session.exercises.flatMap(\.performedSets).count
-        let currentExerciseName = currentBlock?.first?.exerciseName ?? "Done"
-        let elapsed = elapsedSeconds(at: .now)
+        let currentExerciseName = state.currentBlock?.first?.exerciseName ?? "Done"
+        let elapsed = state.elapsedSeconds(at: .now)
         LiveActivityService.updateLiveActivity(
             currentExercise: currentExerciseName,
             completedSets: session.completedSetCount,
             totalSets: totalSets,
             elapsedSeconds: elapsed,
-            isPaused: isPaused
+            isPaused: state.isPaused
         )
     }
 
-    private var timerBar: some View {
-        WorkoutTimerBar(
-            isPaused: isPaused,
-            startedAt: session.startedAt,
-            totalPausedSeconds: totalPausedSeconds,
-            pausedAt: pausedAt
-        )
-    }
+    // MARK: - Block content
 
-    private var pauseOverlay: some View {
-        WorkoutPauseOverlay(onResume: { resumeWorkout() })
-    }
-
-    private func restBar(seconds: Int) -> some View {
-        WorkoutRestBar(
-            seconds: seconds,
-            totalSeconds: restTotalSeconds,
-            onAddTime: {
-                restTotalSeconds += 30
-                restSecondsRemaining = (restSecondsRemaining ?? 0) + 30
-            },
-            onSkip: {
-                stopRestTimer()
-                advanceToNextBlockIfNeeded()
-            }
-        )
-    }
-
-    private func blockContent(block: [WorkoutSessionExercise]) -> some View {
+    private func blockContent(state: ActiveWorkoutState, block: [WorkoutSessionExercise]) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxl) {
                 if block.count > 1 {
@@ -246,7 +217,7 @@ struct ActiveWorkoutView: View {
                                 .font(.title2.weight(.semibold))
                             Spacer()
                             Button("Skip") {
-                                skipExercise(exercise)
+                                state.skipExercise(exercise)
                             }
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
@@ -262,7 +233,7 @@ struct ActiveWorkoutView: View {
                                 get: { exercise.note },
                                 set: { newValue in
                                     exercise.note = newValue
-                                    do { try modelContext.save() } catch { SentrySDK.capture(error: error) }
+                                    state.saveContext()
                                 }
                             ), axis: .vertical)
                             .font(.caption)
@@ -273,7 +244,24 @@ struct ActiveWorkoutView: View {
                         let sets = exercise.performedSets.sorted { $0.setIndex < $1.setIndex }
                         let firstPendingID = sets.first(where: { !$0.isCompleted })?.id
                         ForEach(sets, id: \.id) { set in
-                            setRow(set: set, exercise: exercise, isNextUp: set.id == firstPendingID)
+                            WorkoutSetRow(
+                                set: set,
+                                exercise: exercise,
+                                isNextUp: set.id == firstPendingID,
+                                onDone: {
+                                    withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                        state.markSetDone(set, exercise: exercise)
+                                    }
+                                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                },
+                                onSkip: {
+                                    withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                        state.markSetSkipped(set, exercise: exercise)
+                                    }
+                                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                },
+                                onEdit: { showSetEditor = set }
+                            )
                         }
                     }
                     if exercise.id != block.last?.id {
@@ -284,27 +272,16 @@ struct ActiveWorkoutView: View {
             .padding()
         }
         .safeAreaInset(edge: .bottom) {
-            if currentBlockIndex < exerciseBlocks.count - 1 {
-                nextBlockPreview
+            if !state.isAtLastBlock {
+                nextBlockPreview(state: state)
             }
         }
     }
 
-    private func setRow(set: PerformedSet, exercise: WorkoutSessionExercise, isNextUp: Bool) -> some View {
-        WorkoutSetRow(
-            set: set,
-            exercise: exercise,
-            isNextUp: isNextUp,
-            onDone: { markSetDone(set, exercise: exercise) },
-            onSkip: { markSetSkipped(set, exercise: exercise) },
-            onEdit: { showSetEditor = set }
-        )
-    }
-
-    private var nextBlockPreview: some View {
+    private func nextBlockPreview(state: ActiveWorkoutState) -> some View {
         Group {
-            if currentBlockIndex + 1 < exerciseBlocks.count {
-                let nextBlock = exerciseBlocks[currentBlockIndex + 1]
+            if state.currentBlockIndex + 1 < state.exerciseBlocks.count {
+                let nextBlock = state.exerciseBlocks[state.currentBlockIndex + 1]
                 let names = nextBlock.map(\.exerciseName).joined(separator: " + ")
                 HStack {
                     Ph.arrowCircleDown.regular
@@ -322,7 +299,7 @@ struct ActiveWorkoutView: View {
         .background(.bar)
     }
 
-    private var completedAllView: some View {
+    private func completedAllView(state: ActiveWorkoutState) -> some View {
         VStack(spacing: DesignTokens.Spacing.xxl) {
             Spacer()
             Ph.checkCircle.fill
@@ -332,7 +309,7 @@ struct ActiveWorkoutView: View {
                 .font(.title2.bold())
             Text("\(session.completedSetCount) total sets")
                 .foregroundStyle(.secondary)
-            Button("End Workout") { endWorkout() }
+            Button("End Workout") { endWorkout(state: state) }
                 .buttonStyle(.borderedProminent)
                 .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
                 .padding(.top)
@@ -340,146 +317,14 @@ struct ActiveWorkoutView: View {
         }
     }
 
-    private func markSetDone(_ set: PerformedSet, exercise: WorkoutSessionExercise) {
-        if set.actualReps == nil { set.actualReps = set.targetReps }
-        if set.actualWeight == nil { set.actualWeight = set.targetWeight }
-        
-        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-            set.isCompleted = true
-        }
-        set.completedAt = .now
-        session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
-        do { try modelContext.save() } catch {
-            SentrySDK.capture(error: error)
-            errorMessage = "Could not save: \(error.localizedDescription)"
-        }
+    // MARK: - End workout
 
-        let crumb = Breadcrumb(level: .info, category: "workout")
-        crumb.message = "Set completed"
-        crumb.data = ["exercise": exercise.exerciseName, "setIndex": set.setIndex, "completed": session.completedSetCount]
-        SentrySDK.addBreadcrumb(crumb)
-
-        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        updateLiveActivity()
-
-        startRestIfNeeded(exercise: exercise)
-        if restSecondsRemaining == nil { advanceToNextBlockIfNeeded() }
-    }
-
-    private func markSetSkipped(_ set: PerformedSet, exercise: WorkoutSessionExercise) {
-        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-            set.isCompleted = true
-        }
-        set.completedAt = .now
-        set.actualReps = nil
-        set.actualWeight = nil
-        session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
-        do { try modelContext.save() } catch {
-            SentrySDK.capture(error: error)
-            errorMessage = "Could not save: \(error.localizedDescription)"
-        }
-
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        updateLiveActivity()
-
-        startRestIfNeeded(exercise: exercise)
-        if restSecondsRemaining == nil { advanceToNextBlockIfNeeded() }
-    }
-
-    private func advanceToNextBlockIfNeeded() {
-        guard let block = currentBlock else { return }
-        let allDone = block.allSatisfy { $0.performedSets.allSatisfy(\.isCompleted) }
-        if allDone, currentBlockIndex < exerciseBlocks.count - 1 {
-            currentBlockIndex += 1
-        }
-    }
-
-    private func skipBlock() {
-        guard let block = currentBlock else { return }
-        stopRestTimer()
-        for ex in block {
-            for set in ex.performedSets where !set.isCompleted {
-                set.isCompleted = true
-                set.completedAt = .now
-                set.actualReps = nil
-                set.actualWeight = nil
-            }
-        }
-        session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
-        do { try modelContext.save() } catch {
-            SentrySDK.capture(error: error)
-            errorMessage = "Could not save: \(error.localizedDescription)"
-        }
-        if currentBlockIndex < exerciseBlocks.count - 1 {
-            currentBlockIndex += 1
-        }
-    }
-
-    private func skipExercise(_ exercise: WorkoutSessionExercise) {
-        for set in exercise.performedSets where !set.isCompleted {
-            set.isCompleted = true
-            set.completedAt = .now
-            set.actualReps = nil
-            set.actualWeight = nil
-        }
-        session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
-        do { try modelContext.save() } catch {
-            SentrySDK.capture(error: error)
-            errorMessage = "Could not save: \(error.localizedDescription)"
-        }
-        advanceToNextBlockIfNeeded()
-    }
-
-    private func pauseWorkout() {
-        stopRestTimer()
-        isPaused = true
-        pausedAt = Date()
-        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-        updateLiveActivity()
-    }
-
-    private func resumeWorkout() {
-        if let start = pausedAt {
-            totalPausedSeconds += Int(Date().timeIntervalSince(start).rounded())
-        }
-        pausedAt = nil
-        isPaused = false
-        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        updateLiveActivity()
-    }
-
-    private func startRestIfNeeded(exercise: WorkoutSessionExercise) {
-        guard let rest = exercise.restSeconds, rest > 0 else { return }
-        restTotalSeconds = rest
-        restSecondsRemaining = rest
-        restTimer?.invalidate()
-        restTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            guard var r = restSecondsRemaining else { return }
-            r -= 1
-            restSecondsRemaining = r <= 0 ? nil : r
-            if restSecondsRemaining == nil {
-                restTimer?.invalidate()
-                restTimer = nil
-                UINotificationFeedbackGenerator().notificationOccurred(.success)
-                advanceToNextBlockIfNeeded()
-            }
-        }
-        RunLoop.main.add(restTimer!, forMode: .common)
-    }
-
-    private func stopRestTimer() {
-        restTimer?.invalidate()
-        restTimer = nil
-        restSecondsRemaining = nil
-    }
-
-    private func endWorkout() {
-        stopRestTimer()
+    private func endWorkout(state: ActiveWorkoutState) {
+        state.stopRestTimer()
         UINotificationFeedbackGenerator().notificationOccurred(.success)
 
-        // End Live Activity
         let totalSets = session.exercises.flatMap(\.performedSets).count
-        let elapsed = elapsedSeconds(at: .now)
+        let elapsed = state.elapsedSeconds(at: .now)
         LiveActivityService.endLiveActivity(
             completedSets: session.completedSetCount,
             totalSets: totalSets,
@@ -510,7 +355,7 @@ struct ActiveWorkoutView: View {
                     try WorkoutSessionService.finalizeSession(session, modelContext: context)
                 } catch {
                     SentrySDK.capture(error: error)
-                    errorMessage = "Could not save: \(error.localizedDescription)"
+                    state.errorMessage = "Could not save: \(error.localizedDescription)"
                 }
                 showCompletionSummary = true
             }

@@ -55,6 +55,10 @@ struct ExercisesView: View {
                                         }
                                     }
                                 }
+                                .accessibilityElement(children: .ignore)
+                                .accessibilityLabel(exercise.equipmentType.isEmpty
+                                    ? "\(exercise.name), \(exercise.muscleGroup.rawValue)"
+                                    : "\(exercise.name), \(exercise.muscleGroup.rawValue), \(exercise.equipmentType)")
                             }
                         }
                     }

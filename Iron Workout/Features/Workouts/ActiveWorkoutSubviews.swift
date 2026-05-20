@@ -36,8 +36,17 @@ struct WorkoutTimerBar: View {
         return String(format: "%d:%02d", m, s)
     }
 
+    private func spokenElapsed(_ totalSeconds: Int) -> String {
+        let m = totalSeconds / 60
+        let s = totalSeconds % 60
+        if m > 0 && s > 0 { return "\(m) minutes \(s) seconds" }
+        if m > 0 { return "\(m) minutes" }
+        return "\(s) seconds"
+    }
+
     var body: some View {
         TimelineView(.periodic(from: .now, by: 1)) { context in
+            let elapsed = elapsedSeconds(at: context.date)
             HStack {
                 Group {
                     if isPaused {
@@ -49,7 +58,7 @@ struct WorkoutTimerBar: View {
                             .icon()
                     }
                 }
-                Text(formatElapsed(elapsedSeconds(at: context.date)))
+                Text(formatElapsed(elapsed))
                     .font(.title2.monospacedDigit().weight(.medium))
                 if isPaused {
                     Text("Paused")
@@ -60,6 +69,9 @@ struct WorkoutTimerBar: View {
             }
             .padding()
             .background(.bar)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(isPaused ? "Workout paused" : "Workout time")
+            .accessibilityValue(spokenElapsed(elapsed))
         }
     }
 }
@@ -123,6 +135,9 @@ struct WorkoutRestBar: View {
                 }
             }
             .frame(width: 80, height: 80)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Rest timer")
+            .accessibilityValue("\(seconds) seconds remaining")
 
             Spacer()
 
@@ -132,6 +147,7 @@ struct WorkoutRestBar: View {
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.large)
+                .accessibilityLabel("Add 30 seconds to rest")
 
                 Button("Skip Rest") {
                     onSkip()
@@ -139,6 +155,7 @@ struct WorkoutRestBar: View {
                 .buttonStyle(.borderedProminent)
                 .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
                 .controlSize(.large)
+                .accessibilityHint("Ends rest and moves on")
             }
         }
         .padding()
@@ -168,6 +185,11 @@ struct WorkoutSetRow: View {
         case .drop: return DesignTokens.Common.primary(colorScheme)
         case .failure: return DesignTokens.ColorToken.State.error
         }
+    }
+
+    private var setContextLabel: String {
+        let typeSuffix = set.setType == .working ? "" : " \(set.setType.displayName)"
+        return "Set \(set.setIndex + 1)\(typeSuffix), \(exercise.exerciseName)"
     }
 
     var body: some View {
@@ -275,10 +297,12 @@ struct WorkoutSetRow: View {
                 Button("Skip") { onSkip() }
                     .buttonStyle(.bordered)
                     .controlSize(.large)
+                    .accessibilityLabel("Skip \(setContextLabel)")
                 Button("Done") { onDone() }
                     .buttonStyle(.borderedProminent)
                     .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
                     .controlSize(.large)
+                    .accessibilityLabel("Mark \(setContextLabel) done")
             }
         }
     }

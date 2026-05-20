@@ -32,6 +32,9 @@ struct DashboardCard<Icon: View>: View {
         }
         .padding(DesignTokens.Spacing.lg)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(title)
+        .accessibilityValue(value)
     }
 }
 
@@ -43,6 +46,7 @@ struct WeeklyPlanRow: View {
     var onEdit: () -> Void
 
     static let dayAbbreviations = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    static let dayFullNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
     private static let columns = Array(repeating: GridItem(.flexible(), spacing: DesignTokens.Spacing.sm), count: 4)
 
@@ -101,6 +105,11 @@ struct WeeklyPlanRow: View {
                     .onTapGesture {
                         onEdit()
                     }
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("\(Self.dayFullNames[index])\(isToday ? ", today" : "")")
+                    .accessibilityValue(programs?.isEmpty == false ? label(for: programs) : "No workout planned")
+                    .accessibilityHint("Edit weekly plan")
+                    .accessibilityAddTraits(.isButton)
                 }
             }
         }
