@@ -216,6 +216,72 @@ final class ActiveWorkoutState {
         advanceToNextBlockIfNeeded()
     }
 
+    // MARK: - Watch snapshot
+
+    /// Lean snapshot for the Apple Watch companion. Returns nil if there is no
+    /// active exercise (the watch will fall back to its idle screen).
+    func makeWatchSnapshot() -> ActiveWorkoutSnapshot {
+        let allSets = session.exercises.flatMap(\.performedSets)
+        let totalSetCount = allSets.count
+
+        // Locate the next pending set, preferring the current block so the watch
+        // tracks the user's focus rather than jumping to a far-future exercise.
+        let focusExercise = currentBlock?.first ?? sortedExercises.first
+        let setsInExercise = focusExercise?.performedSets.sorted { $0.setIndex < $1.setIndex } ?? []
+        let pendingSet = setsInExercise.first(where: { !$0.isCompleted })
+
+        return ActiveWorkoutSnapshot(
+            sessionID: session.id,
+            templateName: session.templateName,
+            startedAt: session.startedAt,
+            totalPausedSeconds: totalPausedSeconds,
+            pausedAt: pausedAt,
+            currentExerciseName: focusExercise?.exerciseName,
+            currentSetNumber: (pendingSet?.setIndex ?? 0) + 1,
+            totalSetsInExercise: setsInExercise.count,
+            targetReps: pendingSet?.targetReps,
+            targetWeightKg: pendingSet?.targetWeight,
+            currentSetID: pendingSet?.id,
+            restSecondsRemaining: restSecondsRemaining,
+            restTotalSeconds: restSecondsRemaining == nil ? nil : restTotalSeconds,
+            completedSetCount: session.completedSetCount,
+            totalSetCount: totalSetCount
+        )
+    }
+
+    /// Routes an action received from the watch into the matching state mutation.
+    /// Looks the set up by ID inside the current session so a stale watch snapshot
+    /// can never mutate the wrong set.
+    func apply(_ action: WatchAction) {
+        switch action {
+        case .markSetDone(let setID):
+            if let pair = findSet(setID) {
+                markSetDone(pair.set, exercise: pair.exercise)
+            }
+        case .markSetSkipped(let setID):
+            if let pair = findSet(setID) {
+                markSetSkipped(pair.set, exercise: pair.exercise)
+            }
+        case .pause:
+            pause()
+        case .resume:
+            resume()
+        case .addRestTime(let seconds):
+            addRestTime(seconds)
+        case .skipRest:
+            skipRest()
+        }
+    }
+
+    private func findSet(_ id: UUID) -> (set: PerformedSet, exercise: WorkoutSessionExercise)? {
+        for exercise in session.exercises {
+            if let set = exercise.performedSets.first(where: { $0.id == id }) {
+                return (set, exercise)
+            }
+        }
+        return nil
+    }
+
     // MARK: - Persistence
 
     func saveContext() {

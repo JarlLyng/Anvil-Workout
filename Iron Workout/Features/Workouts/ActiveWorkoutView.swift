@@ -37,11 +37,16 @@ struct ActiveWorkoutView: View {
             } else {
                 ProgressView()
                     .onAppear {
-                        state = ActiveWorkoutState(session: session, modelContext: modelContext)
-                        state?.onSetCompleted = { [weak state] in
-                            guard let state else { return }
-                            updateLiveActivity(state: state)
+                        let newState = ActiveWorkoutState(session: session, modelContext: modelContext)
+                        newState.onSetCompleted = { [weak newState] in
+                            guard let newState else { return }
+                            updateLiveActivity(state: newState)
+                            WatchConnectivityService.shared.sendSnapshot(newState.makeWatchSnapshot())
                         }
+                        WatchConnectivityService.shared.actionHandler = { [weak newState] action in
+                            newState?.apply(action)
+                        }
+                        state = newState
                     }
             }
         }
@@ -100,14 +105,24 @@ struct ActiveWorkoutView: View {
             .onAppear {
                 startHealthKitIfAvailable()
                 startLiveActivity(state: state)
+                WatchConnectivityService.shared.sendSnapshot(state.makeWatchSnapshot())
             }
             .onDisappear {
                 state.stopRestTimer()
+                WatchConnectivityService.shared.actionHandler = nil
+                WatchConnectivityService.shared.sendWorkoutEnded()
             }
             .onChange(of: state.restSecondsRemaining) { oldValue, newValue in
                 if oldValue != nil && newValue == nil {
                     UINotificationFeedbackGenerator().notificationOccurred(.success)
                 }
+                WatchConnectivityService.shared.sendSnapshot(state.makeWatchSnapshot())
+            }
+            .onChange(of: state.currentBlockIndex) { _, _ in
+                WatchConnectivityService.shared.sendSnapshot(state.makeWatchSnapshot())
+            }
+            .onChange(of: state.isPaused) { _, _ in
+                WatchConnectivityService.shared.sendSnapshot(state.makeWatchSnapshot())
             }
             .alert("Error", isPresented: Binding(
                 get: { state.errorMessage != nil },
