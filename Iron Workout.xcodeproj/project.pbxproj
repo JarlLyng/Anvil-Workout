@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		2F0719282FC39B9600C75A76 /* Anvil Watch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 2F0719082FC39B9300C75A76 /* Anvil Watch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		2F071C4C2FC500AB00C75A76 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F0B866B2F8DAB4300078716 /* WidgetKit.framework */; };
+		2F071C4D2FC500AB00C75A76 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F0B866D2F8DAB4400078716 /* SwiftUI.framework */; };
+		2F071C582FC500AD00C75A76 /* Anvil Watch WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2F071C4B2FC500AB00C75A76 /* Anvil Watch WidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		2F0B866C2F8DAB4400078716 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F0B866B2F8DAB4300078716 /* WidgetKit.framework */; };
 		2F0B866E2F8DAB4400078716 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F0B866D2F8DAB4400078716 /* SwiftUI.framework */; };
 		2F0B867F2F8DAB4700078716 /* IronWorkoutWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2F0B86692F8DAB4300078716 /* IronWorkoutWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -37,6 +40,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2F0719072FC39B9300C75A76;
 			remoteInfo = "Anvil Watch Watch App";
+		};
+		2F071C562FC500AD00C75A76 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2F60AB602F64DAEC00B0CB5C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2F071C4A2FC500AB00C75A76;
+			remoteInfo = "Anvil Watch WidgetExtension";
 		};
 		2F0B867D2F8DAB4700078716 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -73,6 +83,17 @@
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2F071C592FC500AD00C75A76 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				2F071C582FC500AD00C75A76 /* Anvil Watch WidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2F0B86842F8DAB4700078716 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -90,6 +111,7 @@
 		2F0719082FC39B9300C75A76 /* Anvil Watch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Anvil Watch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F0719142FC39B9600C75A76 /* Anvil Watch Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Anvil Watch Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F07191E2FC39B9600C75A76 /* Anvil Watch Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Anvil Watch Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2F071C4B2FC500AB00C75A76 /* Anvil Watch WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Anvil Watch WidgetExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F0B86692F8DAB4300078716 /* IronWorkoutWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = IronWorkoutWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F0B866B2F8DAB4300078716 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		2F0B866D2F8DAB4400078716 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -101,6 +123,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2F071C5D2FC500AD00C75A76 /* Exceptions for "Anvil Watch Widget" folder in "Anvil Watch WidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 2F071C4A2FC500AB00C75A76 /* Anvil Watch WidgetExtension */;
+		};
 		2F0B86832F8DAB4700078716 /* Exceptions for "IronWorkoutWidget" folder in "IronWorkoutWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -146,6 +175,14 @@
 		2F0719212FC39B9600C75A76 /* Anvil Watch Watch AppUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "Anvil Watch Watch AppUITests";
+			sourceTree = "<group>";
+		};
+		2F071C4E2FC500AB00C75A76 /* Anvil Watch Widget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2F071C5D2FC500AD00C75A76 /* Exceptions for "Anvil Watch Widget" folder in "Anvil Watch WidgetExtension" target */,
+			);
+			path = "Anvil Watch Widget";
 			sourceTree = "<group>";
 		};
 		2F0B866F2F8DAB4400078716 /* IronWorkoutWidget */ = {
@@ -214,6 +251,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2F071C482FC500AB00C75A76 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2F071C4D2FC500AB00C75A76 /* SwiftUI.framework in Frameworks */,
+				2F071C4C2FC500AB00C75A76 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2F0B86662F8DAB4300078716 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -274,6 +320,7 @@
 				2F0719092FC39B9300C75A76 /* Anvil Watch Watch App */,
 				2F0719172FC39B9600C75A76 /* Anvil Watch Watch AppTests */,
 				2F0719212FC39B9600C75A76 /* Anvil Watch Watch AppUITests */,
+				2F071C4E2FC500AB00C75A76 /* Anvil Watch Widget */,
 				2F0B866A2F8DAB4300078716 /* Frameworks */,
 				2F60AB692F64DAEC00B0CB5C /* Products */,
 			);
@@ -289,6 +336,7 @@
 				2F0719082FC39B9300C75A76 /* Anvil Watch Watch App.app */,
 				2F0719142FC39B9600C75A76 /* Anvil Watch Watch AppTests.xctest */,
 				2F07191E2FC39B9600C75A76 /* Anvil Watch Watch AppUITests.xctest */,
+				2F071C4B2FC500AB00C75A76 /* Anvil Watch WidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -303,10 +351,12 @@
 				2F0719042FC39B9300C75A76 /* Sources */,
 				2F0719052FC39B9300C75A76 /* Frameworks */,
 				2F0719062FC39B9300C75A76 /* Resources */,
+				2F071C592FC500AD00C75A76 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				2F071C572FC500AD00C75A76 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				2F0719092FC39B9300C75A76 /* Anvil Watch Watch App */,
@@ -363,6 +413,28 @@
 			productName = "Anvil Watch Watch AppUITests";
 			productReference = 2F07191E2FC39B9600C75A76 /* Anvil Watch Watch AppUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		2F071C4A2FC500AB00C75A76 /* Anvil Watch WidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2F071C5C2FC500AD00C75A76 /* Build configuration list for PBXNativeTarget "Anvil Watch WidgetExtension" */;
+			buildPhases = (
+				2F071C472FC500AB00C75A76 /* Sources */,
+				2F071C482FC500AB00C75A76 /* Frameworks */,
+				2F071C492FC500AB00C75A76 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				2F071C4E2FC500AB00C75A76 /* Anvil Watch Widget */,
+			);
+			name = "Anvil Watch WidgetExtension";
+			packageProductDependencies = (
+			);
+			productName = "Anvil Watch WidgetExtension";
+			productReference = 2F071C4B2FC500AB00C75A76 /* Anvil Watch WidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 		2F0B86682F8DAB4300078716 /* IronWorkoutWidgetExtension */ = {
 			isa = PBXNativeTarget;
@@ -483,6 +555,9 @@
 						CreatedOnToolsVersion = 26.5;
 						TestTargetID = 2F0719072FC39B9300C75A76;
 					};
+					2F071C4A2FC500AB00C75A76 = {
+						CreatedOnToolsVersion = 26.5;
+					};
 					2F0B86682F8DAB4300078716 = {
 						CreatedOnToolsVersion = 26.4;
 					};
@@ -525,6 +600,7 @@
 				2F0719072FC39B9300C75A76 /* Anvil Watch Watch App */,
 				2F0719132FC39B9600C75A76 /* Anvil Watch Watch AppTests */,
 				2F07191D2FC39B9600C75A76 /* Anvil Watch Watch AppUITests */,
+				2F071C4A2FC500AB00C75A76 /* Anvil Watch WidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -545,6 +621,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2F07191C2FC39B9600C75A76 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2F071C492FC500AB00C75A76 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -625,6 +708,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2F071C472FC500AB00C75A76 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2F0B86652F8DAB4300078716 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -671,6 +761,11 @@
 			target = 2F0719072FC39B9300C75A76 /* Anvil Watch Watch App */;
 			targetProxy = 2F0719262FC39B9600C75A76 /* PBXContainerItemProxy */;
 		};
+		2F071C572FC500AD00C75A76 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2F071C4A2FC500AB00C75A76 /* Anvil Watch WidgetExtension */;
+			targetProxy = 2F071C562FC500AD00C75A76 /* PBXContainerItemProxy */;
+		};
 		2F0B867E2F8DAB4700078716 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2F0B86682F8DAB4300078716 /* IronWorkoutWidgetExtension */;
@@ -696,7 +791,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Anvil Watch Watch App/Anvil Watch Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -731,7 +826,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Anvil Watch Watch App/Anvil Watch Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -764,7 +859,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -788,7 +883,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -811,7 +906,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -834,7 +929,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -853,6 +948,76 @@
 			};
 			name = Release;
 		};
+		2F071C5A2FC500AD00C75A76 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Anvil Watch Widget/Anvil Watch Widget.entitlements";
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 18;
+				DEVELOPMENT_TEAM = KDWZ3WNLDK;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Anvil Watch Widget/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Anvil Watch Widget";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iamjarl.Iron-Workout.watchkitapp.Anvil-Watch-Widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Debug;
+		};
+		2F071C5B2FC500AD00C75A76 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Anvil Watch Widget/Anvil Watch Widget.entitlements";
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 18;
+				DEVELOPMENT_TEAM = KDWZ3WNLDK;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Anvil Watch Widget/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Anvil Watch Widget";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iamjarl.Iron-Workout.watchkitapp.Anvil-Watch-Widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Release;
+		};
 		2F0B86812F8DAB4700078716 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -860,7 +1025,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = IronWorkoutWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -893,7 +1058,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = IronWorkoutWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1050,7 +1215,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Iron Workout/Iron Workout.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1089,7 +1254,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Iron Workout/Iron Workout.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1125,7 +1290,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -1147,7 +1312,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -1168,7 +1333,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.4.0;
@@ -1188,7 +1353,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.4.0;
@@ -1230,6 +1395,15 @@
 			buildConfigurations = (
 				2F0719312FC39B9600C75A76 /* Debug */,
 				2F0719322FC39B9600C75A76 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2F071C5C2FC500AD00C75A76 /* Build configuration list for PBXNativeTarget "Anvil Watch WidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2F071C5A2FC500AD00C75A76 /* Debug */,
+				2F071C5B2FC500AD00C75A76 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

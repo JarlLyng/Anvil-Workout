@@ -372,6 +372,7 @@ struct ActiveWorkoutView: View {
                     SentrySDK.capture(error: error)
                     state.errorMessage = "Could not save: \(error.localizedDescription)"
                 }
+                WatchStatsBroadcaster.broadcast(from: context)
                 showCompletionSummary = true
             }
         }

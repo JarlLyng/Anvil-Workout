@@ -67,6 +67,25 @@ final class WatchConnectivityService {
         #endif
     }
 
+    /// Push a stats snapshot (streak, last workout) to the watch so its widget
+    /// has fresh data even when no workout is running.
+    func sendStats(_ stats: WatchStatsSnapshot) {
+        #if canImport(WatchConnectivity)
+        guard WCSession.isSupported() else { return }
+        let session = WCSession.default
+        guard session.activationState == .activated else { return }
+        do {
+            let data = try JSONEncoder().encode(stats)
+            // Coalesce with any in-flight snapshot via a dedicated key.
+            var context = session.applicationContext
+            context["stats"] = data
+            try session.updateApplicationContext(context)
+        } catch {
+            SentrySDK.capture(error: error)
+        }
+        #endif
+    }
+
     /// Tell the watch the workout has ended — clears its UI back to the idle screen.
     func sendWorkoutEnded() {
         #if canImport(WatchConnectivity)

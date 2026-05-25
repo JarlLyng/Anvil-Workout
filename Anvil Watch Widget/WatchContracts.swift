@@ -9,11 +9,10 @@
 //  Both ends MUST agree on this schema. Keep the keys stable across
 //  versions or guard them with optional fields and version bumps.
 //
-//  MIRROR: this file is duplicated at
-//    "Anvil Watch Watch App/WatchContracts.swift"
-//  because Xcode's synchronized file groups don't easily share a single
-//  file between two top-level targets. Any change here MUST be applied to
-//  the watch copy too, or encoding/decoding will silently break.
+//  MIRROR: source of truth lives at
+//    "Iron Workout/Shared/Watch/WatchContracts.swift"
+//  Any change here MUST be applied to the iPhone and watch app copies
+//  too, or encoding/decoding will silently break.
 //
 
 import Foundation

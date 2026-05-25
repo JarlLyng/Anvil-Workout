@@ -13,6 +13,18 @@
 
 import Foundation
 import WatchConnectivity
+import WidgetKit
+
+/// App Group + UserDefaults key the watch widget reads stats from.
+/// Mirrored in the widget target — keep both in sync.
+enum WatchStatsStorage {
+    static let appGroup = "group.com.iamjarl.Iron-Workout"
+    static let userDefaultsKey = "watchStatsSnapshot"
+
+    static var defaults: UserDefaults? {
+        UserDefaults(suiteName: appGroup)
+    }
+}
 
 @Observable
 @MainActor
@@ -63,11 +75,15 @@ final class WatchConnectivityClient: NSObject {
     fileprivate func receive(_ payload: [String: Any]) {
         if let endedFlag = payload["workoutEnded"] as? Bool, endedFlag {
             snapshot = nil
-            return
         }
         if let data = payload["snapshot"] as? Data,
            let decoded = try? JSONDecoder().decode(ActiveWorkoutSnapshot.self, from: data) {
             snapshot = decoded
+        }
+        if let data = payload["stats"] as? Data {
+            WatchStatsStorage.defaults?.set(data, forKey: WatchStatsStorage.userDefaultsKey)
+            // Tell the widget to redraw. Cheap when nothing changed.
+            WidgetCenter.shared.reloadAllTimelines()
         }
     }
 

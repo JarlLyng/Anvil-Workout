@@ -58,6 +58,17 @@ struct ActiveWorkoutSnapshot: Codable, Equatable, Sendable {
     let totalSetCount: Int
 }
 
+/// Small stats payload the phone pushes to the watch on app launch and after
+/// each completed workout. Backs the watch widget / Smart Stack tile without
+/// requiring the watch to query SwiftData on its own.
+struct WatchStatsSnapshot: Codable, Equatable, Sendable {
+    let currentStreak: Int
+    let totalWorkouts: Int
+    let lastWorkoutName: String?
+    let lastWorkoutDate: Date?
+    let updatedAt: Date
+}
+
 /// Actions the watch can request the phone to perform. The phone routes these
 /// into ActiveWorkoutState.
 enum WatchAction: Codable, Equatable, Sendable {

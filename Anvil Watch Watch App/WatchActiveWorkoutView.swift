@@ -37,6 +37,14 @@ struct WatchActiveWorkoutView: View {
             .padding(.horizontal, 6)
         }
         .navigationTitle(snapshot.templateName)
+        .onChange(of: snapshot.restSecondsRemaining) { oldValue, newValue in
+            // Wrist tap when the rest timer hits zero — matches the phone's
+            // notification haptic so the user gets the cue on whichever
+            // device they happen to be looking at.
+            if oldValue != nil && newValue == nil {
+                WKInterfaceDevice.current().play(.notification)
+            }
+        }
     }
 
     // MARK: - Active set

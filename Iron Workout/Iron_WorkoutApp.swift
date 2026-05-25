@@ -91,7 +91,10 @@ struct Iron_WorkoutApp: App {
         WindowGroup {
             RootView()
                 .modelContainer(sharedModelContainer)
-                .onAppear { seedExerciseLibraryIfNeeded() }
+                .onAppear {
+                    seedExerciseLibraryIfNeeded()
+                    WatchStatsBroadcaster.broadcast(from: sharedModelContainer.mainContext)
+                }
         }
     }
 
