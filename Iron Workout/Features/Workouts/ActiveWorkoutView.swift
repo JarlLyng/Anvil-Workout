@@ -25,6 +25,7 @@ struct ActiveWorkoutView: View {
     @State private var showEndConfirm = false
     @State private var showSetEditor: PerformedSet?
     @State private var showCompletionSummary = false
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     var body: some View {
         Group {
@@ -72,7 +73,11 @@ struct ActiveWorkoutView: View {
                         )
                     }
                     if let block = state.currentBlock {
-                        blockContent(state: state, block: block)
+                        if horizontalSizeClass == .regular {
+                            iPadBlockLayout(state: state, block: block)
+                        } else {
+                            blockContent(state: state, block: block)
+                        }
                     } else {
                         completedAllView(state: state)
                     }
@@ -312,6 +317,79 @@ struct ActiveWorkoutView: View {
         }
         .frame(maxWidth: .infinity)
         .background(.bar)
+    }
+
+    // MARK: - iPad layout
+
+    /// Wider layout used on iPad: current block on the left (the workhorse
+    /// surface where the user logs sets), a slim sidebar on the right showing
+    /// upcoming blocks. This is the layout that pays for a propped-up iPad
+    /// at the gym — you see the next exercise without scrolling.
+    private func iPadBlockLayout(state: ActiveWorkoutState, block: [WorkoutSessionExercise]) -> some View {
+        HStack(alignment: .top, spacing: 0) {
+            blockContent(state: state, block: block)
+                .frame(maxWidth: .infinity)
+
+            Divider()
+
+            upcomingSidebar(state: state)
+                .frame(width: 260)
+                .background(.regularMaterial)
+        }
+    }
+
+    private func upcomingSidebar(state: ActiveWorkoutState) -> some View {
+        let blocks = state.exerciseBlocks
+        let upcoming = (state.currentBlockIndex + 1)..<blocks.count
+
+        return ScrollView {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
+                Text("Coming up")
+                    .font(.headline)
+                    .foregroundStyle(.secondary)
+                    .padding(.top, DesignTokens.Spacing.md)
+
+                if upcoming.isEmpty {
+                    Text("This is the last block.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else {
+                    ForEach(Array(upcoming), id: \.self) { index in
+                        upcomingBlockRow(blocks[index], position: index - state.currentBlockIndex)
+                    }
+                }
+            }
+            .padding(DesignTokens.Spacing.lg)
+        }
+    }
+
+    private func upcomingBlockRow(_ block: [WorkoutSessionExercise], position: Int) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 6) {
+                Text("\(position)")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 18, height: 18)
+                    .background(.quaternary, in: Circle())
+                if block.count > 1 {
+                    Ph.link.fill
+                        .icon(size: 12)
+                        .foregroundStyle(DesignTokens.ColorToken.State.warning)
+                }
+                Text(block.map(\.exerciseName).joined(separator: " + "))
+                    .font(.subheadline.weight(.medium))
+                    .lineLimit(2)
+            }
+            let setSummary = block
+                .map { "\($0.performedSets.count) × \($0.performedSets.first?.targetReps ?? 0)" }
+                .joined(separator: " · ")
+            Text(setSummary)
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
+        }
+        .padding(DesignTokens.Spacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.regularMaterial.opacity(0.4), in: RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
     }
 
     private func completedAllView(state: ActiveWorkoutState) -> some View {

@@ -10,36 +10,57 @@ import SwiftData
 import Sentry
 import IAMJARLDesignTokens
 
+/// Top-level destinations shared between the iPhone tab bar and the iPad
+/// sidebar. Adding a new tab? Add it here once and it appears in both layouts.
+enum RootDestination: String, CaseIterable, Identifiable, Hashable {
+    case home
+    case workouts
+    case exercises
+    case stats
+    case settings
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .home: "Home"
+        case .workouts: "Workouts"
+        case .exercises: "Exercises"
+        case .stats: "Stats"
+        case .settings: "Settings"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .home: "house.fill"
+        case .workouts: "dumbbell.fill"
+        case .exercises: "list.bullet"
+        case .stats: "chart.bar.fill"
+        case .settings: "gearshape.fill"
+        }
+    }
+}
+
 struct ContentView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     /// A workout that was started but never finalized. Detected on launch — see #48.
     @State private var staleSession: WorkoutSession?
     @State private var staleSessionError: String?
 
+    /// iPad sidebar selection. Ignored on iPhone (TabView manages its own selection).
+    @State private var selectedDestination: RootDestination? = .home
+
     var body: some View {
-        TabView {
-            DashboardView()
-                .tabItem {
-                    Label("Home", systemImage: "house.fill")
-                }
-            WorkoutsView()
-                .tabItem {
-                    Label("Workouts", systemImage: "dumbbell.fill")
-                }
-            ExercisesView()
-                .tabItem {
-                    Label("Exercises", systemImage: "list.bullet")
-                }
-            StatsView()
-                .tabItem {
-                    Label("Stats", systemImage: "chart.bar.fill")
-                }
-            SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gearshape.fill")
-                }
+        Group {
+            if horizontalSizeClass == .regular {
+                iPadLayout
+            } else {
+                iPhoneLayout
+            }
         }
         .tint(DesignTokens.Common.primary(colorScheme))
         .task { checkForStaleSession() }
@@ -61,6 +82,50 @@ struct ContentView: View {
             Button("OK") { staleSessionError = nil }
         } message: {
             Text(staleSessionError ?? "")
+        }
+    }
+
+    // MARK: - Layouts
+
+    private var iPhoneLayout: some View {
+        TabView {
+            ForEach(RootDestination.allCases) { destination in
+                destinationView(destination)
+                    .tabItem {
+                        Label(destination.title, systemImage: destination.systemImage)
+                    }
+            }
+        }
+    }
+
+    private var iPadLayout: some View {
+        NavigationSplitView {
+            List(RootDestination.allCases, selection: $selectedDestination) { destination in
+                NavigationLink(value: destination) {
+                    Label(destination.title, systemImage: destination.systemImage)
+                }
+            }
+            .navigationTitle("Anvil")
+            .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 280)
+        } detail: {
+            if let destination = selectedDestination {
+                destinationView(destination)
+            } else {
+                ContentUnavailableView("Select a tab",
+                                       systemImage: "sidebar.left",
+                                       description: Text("Pick a section from the sidebar."))
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func destinationView(_ destination: RootDestination) -> some View {
+        switch destination {
+        case .home: DashboardView()
+        case .workouts: WorkoutsView()
+        case .exercises: ExercisesView()
+        case .stats: StatsView()
+        case .settings: SettingsView()
         }
     }
 
