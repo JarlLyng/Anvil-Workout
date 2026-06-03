@@ -1,9 +1,44 @@
 # SEO, ASO & GEO Strategy — Anvil Workout
 
-Site: https://anvilworkout.iamjarl.com/ (TBA: anvilworkout.iamjarl.com)  
-App Store: Endnu ikke udgivet  
-Google Search Console: Ikke connected endnu  
-Last updated: 2026-04-15
+Site: https://anvilworkout.iamjarl.com/  
+App Store: **Live — v1.3.0** (1.4.0 i review pr. seneste opdatering)  
+Google Search Console: ✅ Connected (begge properties: anvilworkout + legacy ironworkout)  
+Last updated: 2026-06-04
+
+---
+
+## 0. First ranking period — GSC data (7. maj – 4. juni 2026)
+
+Site er **indekseret og ranker** — første milestone hit. 28-dages snapshot:
+
+| Metrik | Anvil-site | Iron-site (legacy) |
+|---|---:|---:|
+| Clicks | 3 | 1 |
+| Impressions | 43 | 15 |
+| CTR | 6.98% | 6.67% |
+| Avg position | 5.0 | 5.9 |
+| Pages indexed | 7 | — |
+
+**Per page (Anvil-site):**
+
+| Side | Clicks | Impr | Pos |
+|---|---:|---:|---:|
+| `/` (root) | 3 | 34 | 3.9 |
+| `programs.html` | 0 | 4 | **2.0** ← bedste pos. |
+| `no-subscription-workout-app.html` | 0 | 8 | 8.5 |
+| `support.html` | 0 | 8 | 7.2 |
+| `privacy.html` | 0 | 8 | 7.1 |
+| `offline-workout-app.html` | 0 | 7 | 7.3 |
+| `apple-health-strength-training.html` | 0 | 7 | 8.4 |
+
+**Sammenligning vs. forrige 28 dage:** P1 var 0 alt — det her er den første ranking-periode for det rebrandede site.
+
+### Insights og handlinger
+
+1. **Queries er under privacy-threshold** — Google viser dem først når volumen er højere. Næste data-trækning om ~30 dage bør afsløre konkrete keywords.
+2. **`programs.html` rangerer pos 2** men får kun 4 impressions — søgevolumen for det specifikke tema er lav. Overvej bredere keywords i title/meta.
+3. **SEO landing pages rangerer 7-8** og får impressions men 0 clicks — meta description + title CTR-optimering er næste indsatsområde.
+4. **Iron-site har stadig residual trafik** (1 click, 15 impr) — tjek at 301-redirects fra ironworkout.iamjarl.com → anvilworkout.iamjarl.com er på plads så link equity ikke mistes.
 
 ---
 
@@ -36,12 +71,14 @@ SEO positioning: **den lokale, abonnementsfrie styrketrænings-app** — differe
 
 ### Mangler (not done)
 
-- [ ] apple-itunes-app meta tag (kommenteret ud — tilføj app-id ved launch)
-- [ ] Google Search Console connection
+- [ ] apple-itunes-app meta tag (kommenteret ud — tilføj app-id nu hvor appen er live)
+- [x] ~~Google Search Console connection~~ ✅ Connected
 - [ ] Umami/analytics
 - [ ] Favicon, apple-touch-icon, og-image assets
-- [ ] SEO landing pages
+- [x] ~~SEO landing pages~~ ✅ 4 sider indekseret (programs, no-subscription, offline, apple-health)
 - [ ] Cross-linking til andre IAMJARL-projekter
+- [ ] **NY:** Verificér 301-redirects fra ironworkout.iamjarl.com → anvilworkout.iamjarl.com
+- [ ] **NY:** Meta description / title CTR-optimering på landing pages (rangerer pos 7-8 med 0% CTR)
 
 ---
 
@@ -50,11 +87,12 @@ SEO positioning: **den lokale, abonnementsfrie styrketrænings-app** — differe
 ### Når appen er klar til release:
 
 1. ~~**Custom domain**~~ ✅ CNAME oprettet, alle URL'er opdateret til anvilworkout.iamjarl.com
-2. **apple-itunes-app** → Fjern kommentar, indsæt app-id
+2. **apple-itunes-app** → Fjern kommentar, indsæt app-id (appen er nu live — gør det nu)
 3. **App Store links** → Opdater alle `href="#"` placeholders
-4. **Google Search Console** → Connect og verificer
+4. ~~**Google Search Console**~~ ✅ Connected, første ranking-data trækkes ind (se sektion 0)
 5. **Analytics** → Tilføj Umami
 6. **MobileApplication pris** → Tilføj faktisk pris og skift availability fra "PreOrder" til "InStock"
+7. **301 redirects** → Verificér ironworkout.iamjarl.com → anvilworkout.iamjarl.com peger korrekt
 
 ### Tekniske SEO-fixes (done):
 
