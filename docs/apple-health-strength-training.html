@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Apple Health for Strength Training | Anvil Workout</title>
-    <meta name="description" content="How Anvil Workout integrates with Apple Health: writes your strength training workouts to Health, reads calories and heart rate from your Apple Watch, and keeps your private workout data on your iPhone.">
+    <title>Apple Health Strength Training App with Watch Companion | Anvil Workout</title>
+    <meta name="description" content="Anvil Workout Apple Health strength training integration: writes workouts, reads active calories and heart rate from Apple Watch, and logs sets on the watch companion app.">
     <meta name="robots" content="index, follow">
     <meta name="author" content="IAMJARL">
     <link rel="canonical" href="https://anvilworkout.iamjarl.com/apple-health-strength-training.html">
@@ -19,8 +19,8 @@
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://anvilworkout.iamjarl.com/apple-health-strength-training.html">
-    <meta property="og:title" content="Apple Health for Strength Training | Anvil Workout">
-    <meta property="og:description" content="How Anvil Workout integrates with Apple Health: writes strength workouts, reads calories and heart rate from Apple Watch.">
+    <meta property="og:title" content="Apple Health Strength Training App with Watch Companion | Anvil Workout">
+    <meta property="og:description" content="How Anvil Workout integrates with Apple Health: logs sets on Watch app, writes strength workouts, reads calories and heart rate.">
     <meta property="og:image" content="https://anvilworkout.iamjarl.com/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -28,8 +28,8 @@
     <meta property="og:locale" content="en_US">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Apple Health for Strength Training | Anvil Workout">
-    <meta name="twitter:description" content="How Anvil Workout integrates with Apple Health: writes strength workouts, reads calories and heart rate from Apple Watch.">
+    <meta name="twitter:title" content="Apple Health Strength Training App with Watch Companion | Anvil Workout">
+    <meta name="twitter:description" content="How Anvil Workout integrates with Apple Health: logs sets on Watch app, writes strength workouts, reads calories and heart rate.">
     <meta name="twitter:image" content="https://anvilworkout.iamjarl.com/og-image.png">
 
     <script type="application/ld+json">
@@ -47,8 +47,8 @@
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
-      "name": "Apple Health for Strength Training",
-      "description": "How Anvil Workout integrates with Apple Health: writes workouts, reads calories and heart rate, respects Apple's privacy model.",
+      "name": "Apple Health Strength Training with Watch Companion",
+      "description": "Anvil Workout Apple Health strength training integration with Watch companion app: writes workouts, reads active calories and heart rate.",
       "url": "https://anvilworkout.iamjarl.com/apple-health-strength-training.html",
       "inLanguage": "en",
       "isPartOf": {
@@ -56,7 +56,7 @@
         "name": "Anvil Workout",
         "url": "https://anvilworkout.iamjarl.com/"
       },
-      "dateModified": "2026-04-23"
+      "dateModified": "2026-06-18"
     }
     </script>
 
@@ -99,7 +99,7 @@
     <div class="container content-page">
         <a href="index.html" class="back-link">&larr; Back to Anvil Workout</a>
         <h1>Apple Health for Serious Lifters</h1>
-        <p class="lead">Most Apple Health integrations in fitness apps are an afterthought: save something called "Functional Strength Training", call it a day. Anvil Workout does it properly — writes real workout sessions, reads calories burned and heart rate from your Apple Watch, and respects Apple's strict privacy model at every step.</p>
+        <p class="lead">Most Apple Health integrations in fitness apps are an afterthought: save a generic session, call it a day. Anvil Workout does it properly — writes real Traditional Strength Training sessions, logs sets via a native Apple Watch companion app, tracks active calories/heart rate, and keeps your private data on-device.</p>
 
         <h2>What gets written to Apple Health</h2>
         <p>When you finish a workout, Anvil Workout writes a <strong>Traditional Strength Training</strong> workout session to Apple Health. The session includes:</p>
@@ -119,13 +119,13 @@
         <p>Both numbers are pulled from Apple Health <em>after</em> the workout ends, and only for the exact time window of your session. They appear in your Anvil Workout history view next to the workout you completed.</p>
 
         <h2>How Apple Watch fits in</h2>
-        <p>Anvil Workout does not have a watchOS companion app (yet). But because your Apple Watch is already logging heart rate and calories to Apple Health automatically, those numbers flow into Anvil Workout via the Health integration without any watchOS code at all.</p>
+        <p>Anvil Workout includes a native watchOS companion app that integrates with the active workout on your iPhone. You can check off reps, complete sets, and skip exercises directly from your wrist, so you don't have to keep picking up your phone. When a rest timer starts, a circular progress view and live countdown appear on your Watch, complete with a haptic wrist-tap alert when the timer hits zero.</p>
         <p>Practical setup:</p>
         <ol>
-            <li>Wear your Apple Watch during your workout (no special app needed — your Watch is already tracking heart rate continuously).</li>
-            <li>Optionally start an Apple Workout session on the Watch for more accurate calorie estimates. Any workout type works; Strength Training is closest.</li>
-            <li>Run your workout in Anvil Workout as normal.</li>
-            <li>When you end the session, Anvil Workout queries Health for heart rate and calories in that time window.</li>
+            <li>Launch a workout on your iPhone. The Apple Watch companion app automatically synchronizes and displays your active set.</li>
+            <li>Perform your exercises and log sets from either device—changes sync instantly over local connectivity.</li>
+            <li>While you lift, your Apple Watch continues to track active energy (calories) and heart rate in the background.</li>
+            <li>When you complete your workout, Anvil Workout queries HealthKit for the heart rate and active calories recorded during your session and links them to your history.</li>
         </ol>
         <p>If you don't wear a Watch, Anvil Workout still saves the workout — heart rate and calories just won't appear on that session.</p>
 
@@ -150,14 +150,14 @@
         <h2>What Anvil Workout doesn't do (yet)</h2>
         <p>We're honest about the gaps:</p>
         <ul>
-            <li><strong>No standalone Apple Watch app.</strong> You can't log sets from your wrist — yet. The Watch's role today is passive (heart rate, calories). A dedicated watchOS app is on the roadmap.</li>
+            <li><strong>No standalone Apple Watch tracking (without phone).</strong> The Watch app operates as a companion view for the workout running on your iPhone; it does not record standalone sessions without your phone nearby.</li>
             <li><strong>No HealthKit history read.</strong> We don't read past workouts from Health and pull them into Anvil Workout's history. Our history view only shows sessions you logged with us directly.</li>
             <li><strong>No body weight or body measurements.</strong> Anvil Workout focuses on lifting performance. If you track weight in the Health app, it stays there.</li>
         </ul>
 
         <div class="page-cta">
             <h2>Proper Apple Health integration, no account required</h2>
-            <p>One-time purchase. Works fully offline. Writes real strength workouts to Apple Health.</p>
+            <p>One-time purchase. Works fully offline. Logs sets on Apple Watch and writes workouts to Apple Health.</p>
             <a href="https://apps.apple.com/app/id6760627760" class="btn btn-primary btn-lg" aria-label="Download on the App Store">
                 <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
                 Download Anvil Workout
@@ -177,6 +177,11 @@
                 <a href="programs.html">Programs</a>
                 <a href="support.html">Support</a>
                 <a href="privacy.html">Privacy Policy</a>
+                <span class="footer-sep">&middot;</span>
+                <a href="https://iamjarl.com" target="_blank" rel="noopener">iamjarl.com</a>
+                <a href="https://wodrounds.iamjarl.com" target="_blank" rel="noopener">WODrounds</a>
+                <a href="https://weannicotine.iamjarl.com" target="_blank" rel="noopener">Wean Nicotine</a>
+                <a href="https://madebyhuman.iamjarl.com" target="_blank" rel="noopener">Made by Human</a>
             </div>
         </div>
     </footer>

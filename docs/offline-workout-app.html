@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Primary Meta -->
-    <title>Offline Workout App for iPhone | Anvil Workout</title>
-    <meta name="description" content="Anvil Workout is a strength training app that works fully offline. No account, no cloud sync, no data sent to any server. Your workouts stay on your iPhone.">
+    <title>Offline Strength Training App & Gym Tracker | Anvil Workout</title>
+    <meta name="description" content="Anvil Workout is a local-first strength training app that runs fully offline on iPhone, iPad, and Apple Watch. No accounts, no subscriptions, no cloud.">
     <meta name="robots" content="index, follow">
     <meta name="author" content="IAMJARL">
     <link rel="canonical" href="https://anvilworkout.iamjarl.com/offline-workout-app.html">
@@ -20,8 +20,8 @@
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://anvilworkout.iamjarl.com/offline-workout-app.html">
-    <meta property="og:title" content="Offline Workout App for iPhone | Anvil Workout">
-    <meta property="og:description" content="A strength training app that works fully offline. No account, no cloud, no data sent to any server.">
+    <meta property="og:title" content="Offline Strength Training App & Gym Tracker | Anvil Workout">
+    <meta property="og:description" content="A local-first strength training app that runs fully offline. No account, no subscription, works on iPhone, iPad, and Apple Watch.">
     <meta property="og:image" content="https://anvilworkout.iamjarl.com/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -29,8 +29,8 @@
     <meta property="og:locale" content="en_US">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Offline Workout App for iPhone | Anvil Workout">
-    <meta name="twitter:description" content="A strength training app that works fully offline. No account, no cloud, no data sent to any server.">
+    <meta name="twitter:title" content="Offline Strength Training App & Gym Tracker | Anvil Workout">
+    <meta name="twitter:description" content="A local-first strength training app that runs fully offline. No account, no subscription, works on iPhone, iPad, and Apple Watch.">
     <meta name="twitter:image" content="https://anvilworkout.iamjarl.com/og-image.png">
 
     <!-- BreadcrumbList -->
@@ -50,8 +50,8 @@
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
-      "name": "Offline Workout App for iPhone",
-      "description": "Anvil Workout is a strength training app that works fully offline. No account, no cloud sync, no data sent to any server.",
+      "name": "Offline Strength Training App & Gym Tracker",
+      "description": "Anvil Workout is a local-first strength training app that runs fully offline on iPhone, iPad, and Apple Watch companion app. No accounts, no subscriptions.",
       "url": "https://anvilworkout.iamjarl.com/offline-workout-app.html",
       "inLanguage": "en",
       "isPartOf": {
@@ -59,7 +59,7 @@
         "name": "Anvil Workout",
         "url": "https://anvilworkout.iamjarl.com/"
       },
-      "dateModified": "2026-04-23"
+      "dateModified": "2026-06-18"
     }
     </script>
 
@@ -119,14 +119,14 @@
     <div class="container content-page">
         <a href="index.html" class="back-link">&larr; Back to Anvil Workout</a>
         <h1>A Workout App That Works Offline</h1>
-        <p class="lead">Anvil Workout runs entirely on your iPhone. No account to create, no cloud to sync to, no internet connection required. Your programs, your workout history, and your personal records all stay on the device — and your Wi-Fi in the gym basement no longer matters.</p>
+        <p class="lead">Anvil Workout runs entirely on your device. No account to create, no server dependencies, no internet connection required. Your programs, workout history, and personal records stay on your iPhone, iPad, and Apple Watch companion—making spotty gym basement Wi-Fi irrelevant.</p>
 
         <h2>What "offline" actually means</h2>
         <p>A lot of fitness apps call themselves "offline-capable" but still need an internet connection to sign in, validate subscriptions, or back up data. Anvil Workout takes a stricter stance:</p>
         <ul>
             <li><strong>No account, ever.</strong> You install the app and start using it. No email, no password, no "create account" screen.</li>
             <li><strong>No cloud service.</strong> There is no Anvil Workout server. Nothing to go down, nothing to get breached, nothing to paywall later.</li>
-            <li><strong>No outbound workout data.</strong> Your programs, sets, reps, and personal records never leave the device. The only things that leave are (optional) anonymous crash reports via Sentry — never workout data.</li>
+            <li><strong>No outbound workout data.</strong> Your programs, sets, reps, and personal records never leave your devices. Sync between your iPhone and Apple Watch companion app happens entirely over local connectivity (WatchConnectivity) without touching external servers. The only things that leave the iPhone are optional, anonymous crash reports via Sentry.</li>
             <li><strong>HealthKit integration is local.</strong> If you let the app write workouts to Apple Health, that happens on-device through Apple's HealthKit APIs. Apple decides where HealthKit data goes — not us.</li>
         </ul>
 
@@ -169,13 +169,13 @@
             </div>
             <div class="comparison-row">
                 <div class="comparison-cell">Data location</div>
-                <div class="comparison-cell good">Your iPhone only</div>
+                <div class="comparison-cell good">Your devices (iPhone, iPad, Watch)</div>
                 <div class="comparison-cell">Company servers</div>
             </div>
             <div class="comparison-row">
                 <div class="comparison-cell">Cross-device sync</div>
-                <div class="comparison-cell bad">No (iCloud backup for restore only)</div>
-                <div class="comparison-cell good">Yes</div>
+                <div class="comparison-cell neutral">Local Watch app sync / iCloud backup for restore</div>
+                <div class="comparison-cell good">Yes (via server)</div>
             </div>
             <div class="comparison-row">
                 <div class="comparison-cell">Social features (feed, friends)</div>
@@ -194,21 +194,21 @@
         <h2>What you still get</h2>
         <p>Offline doesn't mean minimalist. Anvil Workout ships with:</p>
         <ul>
-            <li><a href="programs.html">Six pre-built strength programs</a> you can import in one tap</li>
-            <li>70+ built-in exercises plus the ability to add your own</li>
-            <li>Workout program builder with sets, reps, rest timers, and supersets</li>
+            <li><a href="programs.html">Six pre-built strength programs</a> ready to import in one tap</li>
+            <li>70+ built-in exercises plus custom exercise creation</li>
+            <li>Workout builder supporting sets, reps, rest timers, and supersets</li>
+            <li>Fully offline **Apple Watch companion app** to log sets from your wrist</li>
+            <li>**iPad support** with two-column screen for gym-stand tracking</li>
             <li>Real-time set tracking with haptic rest countdown</li>
             <li>Live Activity on the Lock Screen and Dynamic Island during workouts</li>
-            <li>Automatic personal record detection for weight and reps</li>
-            <li>Volume, frequency, and estimated 1RM progression charts</li>
-            <li>Apple Health and Apple Watch integration</li>
-            <li>CSV export of your full workout history</li>
-            <li>A home screen widget showing your current streak</li>
+            <li>Automatic personal record detection and estimated 1RM charts</li>
+            <li>Local Apple Health sync (heart rate & active energy integration)</li>
+            <li>CSV export of your entire history for total data portability</li>
         </ul>
 
         <div class="page-cta">
             <h2>Train on your terms</h2>
-            <p>One-time purchase. Works fully offline. No subscription, no account, no ads, no in-app analytics.</p>
+            <p>One-time purchase. Works fully offline. No subscription, no account, no ads. Logs sets on Apple Watch and iPad.</p>
             <a href="https://apps.apple.com/app/id6760627760" class="btn btn-primary btn-lg" aria-label="Download on the App Store">
                 <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
                 Download Anvil Workout
@@ -228,6 +228,11 @@
                 <a href="programs.html">Programs</a>
                 <a href="support.html">Support</a>
                 <a href="privacy.html">Privacy Policy</a>
+                <span class="footer-sep">&middot;</span>
+                <a href="https://iamjarl.com" target="_blank" rel="noopener">iamjarl.com</a>
+                <a href="https://wodrounds.iamjarl.com" target="_blank" rel="noopener">WODrounds</a>
+                <a href="https://weannicotine.iamjarl.com" target="_blank" rel="noopener">Wean Nicotine</a>
+                <a href="https://madebyhuman.iamjarl.com" target="_blank" rel="noopener">Made by Human</a>
             </div>
         </div>
     </footer>
