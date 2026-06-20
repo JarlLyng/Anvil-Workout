@@ -1,0 +1,147 @@
+//
+//  WorkoutCSVImporterTests.swift
+//  Anvil WorkoutTests
+//
+
+import Testing
+import Foundation
+@testable import Iron_Workout
+
+@Suite("WorkoutCSVImporter")
+struct WorkoutCSVImporterTests {
+
+    // MARK: - Strong
+
+    // Strong's CSV: comma-separated, quoted, one row per set.
+    private let strongCSV = """
+    "Date","Workout Name","Duration","Exercise Name","Set Order","Weight","Reps","Distance","Seconds","Notes","Workout Notes","RPE"
+    "2024-01-15 18:30:00","Push Day","1h 2m","Bench Press","1","60","10","0","0","","",""
+    "2024-01-15 18:30:00","Push Day","1h 2m","Bench Press","2","60","8","0","0","","",""
+    "2024-01-15 18:30:00","Push Day","1h 2m","Overhead Press","1","40","8","0","0","","",""
+    "2024-01-17 17:00:00","Pull Day","55m","Deadlift","1","100","5","0","0","","",""
+    """
+
+    @Test("Strong export groups rows into sessions, exercises, and sets")
+    func parseStrong() throws {
+        let parsed = try WorkoutCSVImporter.parse(strongCSV, strongFallbackUnit: .kg)
+        #expect(parsed.format == .strong)
+        #expect(parsed.sessionCount == 2)
+        #expect(parsed.setCount == 4)
+
+        let push = parsed.sessions[0]
+        #expect(push.name == "Push Day")
+        #expect(push.exercises.count == 2)
+        #expect(push.exercises[0].name == "Bench Press")
+        #expect(push.exercises[0].sets.count == 2)
+        #expect(push.exercises[0].sets[0].reps == 10)
+        #expect(push.exercises[0].sets[0].weightKg == 60)
+        #expect(push.exercises[0].sets[0].type == .working)
+    }
+
+    @Test("Strong weights in lbs convert to kg via fallback unit")
+    func strongLbsFallback() throws {
+        let parsed = try WorkoutCSVImporter.parse(strongCSV, strongFallbackUnit: .lbs)
+        let weight = try #require(parsed.sessions[0].exercises[0].sets[0].weightKg)
+        // 60 lb -> 27.2155 kg
+        #expect(abs(weight - 60 * 0.45359237) < 0.0001)
+    }
+
+    @Test("Strong weight-unit column overrides the fallback unit")
+    func strongUnitColumn() throws {
+        let csv = """
+        Date,Workout Name,Exercise Name,Set Order,Weight,Weight Unit,Reps
+        2024-01-15 18:30:00,Day,Squat,1,100,lbs,5
+        """
+        let parsed = try WorkoutCSVImporter.parse(csv, strongFallbackUnit: .kg)
+        let weight = try #require(parsed.sessions[0].exercises[0].sets[0].weightKg)
+        #expect(abs(weight - 100 * 0.45359237) < 0.0001)
+    }
+
+    // MARK: - Hevy
+
+    // Hevy's CSV: includes set_type, weight already in kg, and superset grouping.
+    private let hevyCSV = """
+    "title","start_time","end_time","description","exercise_title","superset_id","exercise_notes","set_index","set_type","weight_kg","reps","distance_km","duration_seconds","rpe"
+    "Upper A","2024-02-01 07:00:00","2024-02-01 08:00:00","","Bench Press","","","0","warmup","40","12","","",""
+    "Upper A","2024-02-01 07:00:00","2024-02-01 08:00:00","","Bench Press","","","1","normal","80","8","","",""
+    "Upper A","2024-02-01 07:00:00","2024-02-01 08:00:00","","Pull Up","1","","0","normal","0","10","","",""
+    "Upper A","2024-02-01 07:00:00","2024-02-01 08:00:00","","Barbell Row","1","","0","normal","60","10","","",""
+    """
+
+    @Test("Hevy export parses set types, kg weights, and end time")
+    func parseHevy() throws {
+        let parsed = try WorkoutCSVImporter.parse(hevyCSV)
+        #expect(parsed.format == .hevy)
+        #expect(parsed.sessionCount == 1)
+        #expect(parsed.setCount == 4)
+
+        let session = parsed.sessions[0]
+        #expect(session.name == "Upper A")
+        #expect(session.endedAt != nil)
+        #expect(session.exercises.count == 3)
+
+        let bench = session.exercises[0]
+        #expect(bench.sets[0].type == .warmup)
+        #expect(bench.sets[1].type == .working)
+        #expect(bench.sets[1].weightKg == 80)
+    }
+
+    @Test("Hevy superset_id is carried through as a grouping key")
+    func hevySupersets() throws {
+        let parsed = try WorkoutCSVImporter.parse(hevyCSV)
+        let session = parsed.sessions[0]
+        #expect(session.exercises[0].supersetKey == nil)        // Bench Press, no superset
+        #expect(session.exercises[1].supersetKey == "1")        // Pull Up
+        #expect(session.exercises[2].supersetKey == "1")        // Barbell Row, same superset
+    }
+
+    // MARK: - Errors & robustness
+
+    @Test("Empty input throws .empty")
+    func emptyInput() {
+        #expect(throws: WorkoutCSVImportError.empty) {
+            try WorkoutCSVImporter.parse("   \n  ")
+        }
+    }
+
+    @Test("Unknown header throws .unrecognizedFormat")
+    func unknownFormat() {
+        #expect(throws: WorkoutCSVImportError.unrecognizedFormat) {
+            try WorkoutCSVImporter.parse("foo,bar,baz\n1,2,3")
+        }
+    }
+
+    @Test("Fields with embedded commas inside quotes are preserved")
+    func quotedCommas() throws {
+        let csv = """
+        Date,Workout Name,Exercise Name,Set Order,Weight,Reps
+        2024-01-15,"Legs, heavy","Squat (low bar)",1,100,5
+        """
+        let parsed = try WorkoutCSVImporter.parse(csv)
+        #expect(parsed.sessions[0].name == "Legs, heavy")
+        #expect(parsed.sessions[0].exercises[0].name == "Squat (low bar)")
+    }
+
+    @Test("Decimal reps and comma decimals are tolerated")
+    func lenientNumbers() throws {
+        let csv = """
+        Date,Workout Name,Exercise Name,Set Order,Weight,Reps
+        2024-01-15,Day,Curl,1,"12,5","10.0"
+        """
+        let parsed = try WorkoutCSVImporter.parse(csv)
+        let set = parsed.sessions[0].exercises[0].sets[0]
+        #expect(set.reps == 10)
+        #expect(set.weightKg == 12.5)
+    }
+
+    @Test("Semicolon-delimited Strong export is detected")
+    func semicolonDelimiter() throws {
+        let csv = """
+        Date;Workout Name;Exercise Name;Set Order;Weight;Reps
+        2024-01-15;Day;Squat;1;100;5
+        """
+        let parsed = try WorkoutCSVImporter.parse(csv)
+        #expect(parsed.format == .strong)
+        #expect(parsed.sessions[0].exercises[0].sets[0].reps == 5)
+    }
+}

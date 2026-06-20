@@ -11,9 +11,11 @@ import HealthKit
 import Sentry
 import IAMJARLDesignTokens
 import PhosphorSwift
+import UniformTypeIdentifiers
 
 struct SettingsView: View {
     private let health = HealthKitService.shared
+    @Environment(\.modelContext) private var modelContext
     @Query(sort: \WorkoutSession.startedAt, order: .reverse) private var sessions: [WorkoutSession]
     @AppStorage(WeightFormatter.appStorageKey) private var weightUnit: String = WeightUnit.kg.rawValue
     @State private var requestInProgress = false
@@ -22,6 +24,10 @@ struct SettingsView: View {
     @State private var showExportShare = false
     @State private var exportURL: URL?
     @State private var healthAuthStatus: HKAuthorizationStatus = .notDetermined
+    @State private var showImporter = false
+    @State private var pendingImport: ParsedImport?
+    @State private var importErrorMessage: String?
+    @State private var importResultMessage: String?
 
     var body: some View {
         NavigationStack {
@@ -55,10 +61,21 @@ struct SettingsView: View {
                                 .icon()
                         }
                     }
+
+                    Button {
+                        showImporter = true
+                    } label: {
+                        Label {
+                            Text("Import Workout Data")
+                        } icon: {
+                            Ph.downloadSimple.regular
+                                .icon()
+                        }
+                    }
                 } header: {
                     Text("Data")
                 } footer: {
-                    Text("Exports all workout sessions as a CSV file.")
+                    Text("Export all workout sessions as a CSV file, or import your history from Strong or Hevy.")
                 }
 
                 Section {
@@ -143,6 +160,38 @@ struct SettingsView: View {
                 if let url = exportURL {
                     ActivityView(activityItems: [url])
                 }
+            }
+            .fileImporter(
+                isPresented: $showImporter,
+                allowedContentTypes: [.commaSeparatedText, .plainText, .text],
+                allowsMultipleSelection: false
+            ) { result in
+                handleImportSelection(result)
+            }
+            .alert("Import Workouts", isPresented: Binding(
+                get: { pendingImport != nil },
+                set: { if !$0 { pendingImport = nil } }
+            ), presenting: pendingImport) { parsed in
+                Button("Import") { commitImport(parsed) }
+                Button("Cancel", role: .cancel) { pendingImport = nil }
+            } message: { parsed in
+                Text(importPreview(parsed))
+            }
+            .alert("Import Failed", isPresented: Binding(
+                get: { importErrorMessage != nil },
+                set: { if !$0 { importErrorMessage = nil } }
+            )) {
+                Button("OK") { importErrorMessage = nil }
+            } message: {
+                Text(importErrorMessage ?? "")
+            }
+            .alert("Import Complete", isPresented: Binding(
+                get: { importResultMessage != nil },
+                set: { if !$0 { importResultMessage = nil } }
+            )) {
+                Button("OK") { importResultMessage = nil }
+            } message: {
+                Text(importResultMessage ?? "")
             }
             .onAppear { refreshHealthAuthStatus() }
         }
@@ -246,6 +295,51 @@ struct SettingsView: View {
         } catch {
             SentrySDK.capture(error: error)
             return nil
+        }
+    }
+
+    // MARK: - Import
+
+    private func handleImportSelection(_ result: Result<[URL], Error>) {
+        switch result {
+        case .failure(let error):
+            importErrorMessage = error.localizedDescription
+        case .success(let urls):
+            guard let url = urls.first else { return }
+            let needsAccess = url.startAccessingSecurityScopedResource()
+            defer { if needsAccess { url.stopAccessingSecurityScopedResource() } }
+            do {
+                let text = try String(contentsOf: url, encoding: .utf8)
+                let unit = WeightUnit(rawValue: weightUnit) ?? .kg
+                pendingImport = try WorkoutCSVImporter.parse(text, strongFallbackUnit: unit)
+            } catch {
+                SentrySDK.capture(error: error)
+                importErrorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            }
+        }
+    }
+
+    private func importPreview(_ parsed: ParsedImport) -> String {
+        var lines = [
+            "Detected \(parsed.format.rawValue) export.",
+            "\(parsed.sessionCount) workouts, \(parsed.setCount) sets across \(parsed.exerciseCount) exercises.",
+        ]
+        lines.append("Imported workouts are added to your history. New exercise names become custom exercises.")
+        return lines.joined(separator: "\n\n")
+    }
+
+    private func commitImport(_ parsed: ParsedImport) {
+        pendingImport = nil
+        do {
+            let summary = try WorkoutCSVImportService.save(parsed, modelContext: modelContext)
+            var text = "Imported \(summary.importedSessions) workouts (\(summary.importedSets) sets) from \(summary.format.rawValue)."
+            if summary.createdExercises > 0 {
+                text += "\n\nAdded \(summary.createdExercises) new custom \(summary.createdExercises == 1 ? "exercise" : "exercises")."
+            }
+            importResultMessage = text
+        } catch {
+            SentrySDK.capture(error: error)
+            importErrorMessage = error.localizedDescription
         }
     }
 
