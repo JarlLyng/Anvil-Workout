@@ -25,6 +25,8 @@ struct ActiveWorkoutView: View {
     @State private var showEndConfirm = false
     @State private var showSetEditor: PerformedSet?
     @State private var showCompletionSummary = false
+    @State private var showPlateCalculator = false
+    @State private var plateCalcPrefillKg: Double?
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     var body: some View {
@@ -106,6 +108,9 @@ struct ActiveWorkoutView: View {
                     state.saveContext()
                     showSetEditor = nil
                 }
+            }
+            .sheet(isPresented: $showPlateCalculator) {
+                PlateCalculatorSheet(prefillKg: plateCalcPrefillKg)
             }
             .onAppear {
                 startHealthKitIfAvailable()
@@ -217,6 +222,16 @@ struct ActiveWorkoutView: View {
         )
     }
 
+    // MARK: - Plate calculator
+
+    /// Target weight (kg) used to pre-fill the plate calculator: the first working set's
+    /// target, falling back to the first set with any target weight.
+    private func workingTargetWeight(for exercise: WorkoutSessionExercise) -> Double? {
+        let sets = exercise.performedSets.sorted { $0.setIndex < $1.setIndex }
+        return sets.first(where: { $0.setType == .working && $0.targetWeight != nil })?.targetWeight
+            ?? sets.first(where: { $0.targetWeight != nil })?.targetWeight
+    }
+
     // MARK: - Block content
 
     private func blockContent(state: ActiveWorkoutState, block: [WorkoutSessionExercise]) -> some View {
@@ -236,6 +251,15 @@ struct ActiveWorkoutView: View {
                             Text(exercise.exerciseName)
                                 .font(.title2.weight(.semibold))
                             Spacer()
+                            Button {
+                                plateCalcPrefillKg = workingTargetWeight(for: exercise)
+                                showPlateCalculator = true
+                            } label: {
+                                Ph.barbell.regular
+                                    .icon(size: 22)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .accessibilityLabel("Plate calculator for \(exercise.exerciseName)")
                             Button("Skip") {
                                 state.skipExercise(exercise)
                             }
