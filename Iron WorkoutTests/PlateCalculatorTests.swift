@@ -16,12 +16,14 @@ struct PlateCalculatorTests {
 
     // MARK: - kg
 
-    @Test("100 kg on a 20 kg bar loads two 20s and one 5 per side")
+    @Test("100 kg on a 20 kg bar greedily loads 25 + 15 per side")
     func standardKgLoad() {
-        // (100 - 20) / 2 = 40 per side -> 20 + 20
+        // (100 - 20) / 2 = 40 per side; greedy from the heaviest plate gives 25 + 15.
         let loading = PlateCalculator.load(target: 100, barWeight: 20, unit: .kg)
         #expect(loading.isExact)
-        #expect(plate(loading, 20) == 2)
+        #expect(plate(loading, 25) == 1)
+        #expect(plate(loading, 15) == 1)
+        #expect(plate(loading, 20) == 0)
         #expect(loading.unmatchedPerSide == 0)
     }
 
