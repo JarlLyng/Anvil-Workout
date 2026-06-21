@@ -224,29 +224,28 @@ enum WorkoutCSVImporter {
 
     // MARK: - Dates
 
-    private static let dateFormatters: [DateFormatter] = {
-        let formats = [
-            "yyyy-MM-dd HH:mm:ss",
-            "yyyy-MM-dd'T'HH:mm:ss",
-            "yyyy-MM-dd HH:mm",
-            "yyyy-MM-dd",
-            "d MMM yyyy, HH:mm",       // Hevy: "20 Jan 2024, 07:21"
-            "MMM d yyyy, HH:mm",
-            "dd/MM/yyyy HH:mm",
-            "MM/dd/yyyy HH:mm:ss",
-        ]
-        return formats.map { format in
-            let f = DateFormatter()
-            f.locale = Locale(identifier: "en_US_POSIX")
-            f.timeZone = .current
-            f.dateFormat = format
-            return f
-        }
-    }()
+    /// Formats tried in order. Stored as Sendable strings (not DateFormatter, which is
+    /// non-Sendable) so the parser stays callable from any isolation — under the app's
+    /// default-MainActor Release config a shared DateFormatter static would otherwise
+    /// become main-actor-isolated and unusable from this pure code.
+    nonisolated private static let dateFormats: [String] = [
+        "yyyy-MM-dd HH:mm:ss",
+        "yyyy-MM-dd'T'HH:mm:ss",
+        "yyyy-MM-dd HH:mm",
+        "yyyy-MM-dd",
+        "d MMM yyyy, HH:mm",       // Hevy: "20 Jan 2024, 07:21"
+        "MMM d yyyy, HH:mm",
+        "dd/MM/yyyy HH:mm",
+        "MM/dd/yyyy HH:mm:ss",
+    ]
 
-    private static func parseDate(_ raw: String) -> Date? {
+    nonisolated private static func parseDate(_ raw: String) -> Date? {
         let trimmed = raw.trimmingCharacters(in: .whitespaces)
-        for formatter in dateFormatters {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = .current
+        for format in dateFormats {
+            formatter.dateFormat = format
             if let date = formatter.date(from: trimmed) { return date }
         }
         return ISO8601DateFormatter().date(from: trimmed)
