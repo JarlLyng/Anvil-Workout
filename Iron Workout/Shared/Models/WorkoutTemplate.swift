@@ -21,6 +21,10 @@ final class WorkoutTemplate: Identifiable {
     /// original author for display (e.g. "Inspired by Rippetoe") and to group related templates.
     var sourceProgramID: String?
 
+    /// User-assigned tags for grouping and filtering templates (e.g. "Hypertrophy",
+    /// "Powerlifting", "Deload"). Defaults to empty so existing data is unaffected.
+    var tags: [String] = []
+
     @Relationship(deleteRule: .cascade, inverse: \WorkoutTemplateExercise.template)
     var exercises: [WorkoutTemplateExercise] = []
 
@@ -31,7 +35,8 @@ final class WorkoutTemplate: Identifiable {
         isFavorite: Bool = false,
         createdAt: Date = .now,
         updatedAt: Date = .now,
-        sourceProgramID: String? = nil
+        sourceProgramID: String? = nil,
+        tags: [String] = []
     ) {
         self.id = id
         self.name = name
@@ -40,5 +45,28 @@ final class WorkoutTemplate: Identifiable {
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.sourceProgramID = sourceProgramID
+        self.tags = tags
+    }
+}
+
+// MARK: - Tag helpers
+
+enum TemplateTag {
+    /// Normalizes a raw tag: trims whitespace and collapses internal runs of spaces.
+    static func normalize(_ raw: String) -> String {
+        raw.trimmingCharacters(in: .whitespacesAndNewlines)
+            .split(whereSeparator: { $0 == " " || $0 == "\t" })
+            .joined(separator: " ")
+    }
+
+    /// Returns `tags` with `raw` appended, unless it is blank or a case-insensitive
+    /// duplicate. Preserves the casing already stored.
+    static func adding(_ raw: String, to tags: [String]) -> [String] {
+        let normalized = normalize(raw)
+        guard !normalized.isEmpty else { return tags }
+        if tags.contains(where: { $0.caseInsensitiveCompare(normalized) == .orderedSame }) {
+            return tags
+        }
+        return tags + [normalized]
     }
 }

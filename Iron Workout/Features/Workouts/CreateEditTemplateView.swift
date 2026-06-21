@@ -20,6 +20,7 @@ struct CreateEditTemplateView: View {
     @State private var showExercisePicker = false
     @State private var showEditExercise: WorkoutTemplateExercise?
     @State private var errorMessage: String?
+    @State private var newTag = ""
 
     private var sortedExercises: [WorkoutTemplateExercise] {
         template.exercises.sorted { $0.sortOrder < $1.sortOrder }
@@ -72,6 +73,38 @@ struct CreateEditTemplateView: View {
                 .lineLimit(2...4)
             Toggle("Favorite", isOn: $template.isFavorite)
         }
+
+        Section {
+            if !template.tags.isEmpty {
+                FlowLayout(spacing: DesignTokens.Spacing.sm) {
+                    ForEach(template.tags, id: \.self) { tag in
+                        TagChip(text: tag) { removeTag(tag) }
+                    }
+                }
+            }
+            HStack {
+                TextField("Add tag", text: $newTag)
+                    .submitLabel(.done)
+                    .onSubmit(addTag)
+                Button("Add", action: addTag)
+                    .disabled(TemplateTag.normalize(newTag).isEmpty)
+            }
+        } header: {
+            Text("Tags")
+        } footer: {
+            Text("Group programs by goal or block, e.g. Hypertrophy, Powerlifting, Deload.")
+        }
+    }
+
+    private func addTag() {
+        let updated = TemplateTag.adding(newTag, to: template.tags)
+        newTag = ""
+        guard updated != template.tags else { return }
+        template.tags = updated
+    }
+
+    private func removeTag(_ tag: String) {
+        template.tags.removeAll { $0 == tag }
     }
 
     @ViewBuilder

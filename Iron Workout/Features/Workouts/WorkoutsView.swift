@@ -20,10 +20,27 @@ struct WorkoutsView: View {
     @State private var toastMessage: String?
     @State private var searchText = ""
     @State private var showProgramLibrary = false
+    @State private var selectedTag: String?
+
+    /// Unique tags across all templates, case-insensitively de-duplicated, sorted for display.
+    private var allTags: [String] {
+        var seen = Set<String>()
+        var result: [String] = []
+        for template in templates {
+            for tag in template.tags where seen.insert(tag.lowercased()).inserted {
+                result.append(tag)
+            }
+        }
+        return result.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
+    }
 
     private var filteredTemplates: [WorkoutTemplate] {
-        if searchText.isEmpty { return templates }
-        return templates.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+        templates.filter { template in
+            let matchesSearch = searchText.isEmpty || template.name.localizedCaseInsensitiveContains(searchText)
+            let matchesTag = selectedTag == nil
+                || template.tags.contains { $0.caseInsensitiveCompare(selectedTag!) == .orderedSame }
+            return matchesSearch && matchesTag
+        }
     }
 
     var body: some View {
@@ -60,8 +77,19 @@ struct WorkoutsView: View {
                     ScrollView {
                         VStack(spacing: DesignTokens.Spacing.lg) {
                             programLibraryRow
-                            ForEach(filteredTemplates) { template in
-                                templateRow(template)
+                            if !allTags.isEmpty {
+                                tagFilterBar
+                            }
+                            if filteredTemplates.isEmpty {
+                                Text("No programs with this tag.")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                    .frame(maxWidth: .infinity, alignment: .center)
+                                    .padding(.top, DesignTokens.Spacing.xl)
+                            } else {
+                                ForEach(filteredTemplates) { template in
+                                    templateRow(template)
+                                }
                             }
                         }
                         .padding()
@@ -130,6 +158,23 @@ struct WorkoutsView: View {
 
     // MARK: - Row subviews
 
+    private var tagFilterBar: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: DesignTokens.Spacing.sm) {
+                TagFilterChip(text: "All", isSelected: selectedTag == nil) {
+                    selectedTag = nil
+                }
+                ForEach(allTags, id: \.self) { tag in
+                    TagFilterChip(text: tag, isSelected: selectedTag == tag) {
+                        selectedTag = (selectedTag == tag) ? nil : tag
+                    }
+                }
+            }
+            .padding(.vertical, DesignTokens.Spacing.xs)
+        }
+        .accessibilityLabel("Filter programs by tag")
+    }
+
     private var programLibraryRow: some View {
         Button {
             showProgramLibrary = true
@@ -195,6 +240,14 @@ struct WorkoutsView: View {
                             .foregroundStyle(.secondary)
                             .lineLimit(2)
                     }
+                    if !template.tags.isEmpty {
+                        FlowLayout(spacing: DesignTokens.Spacing.xs) {
+                            ForEach(template.tags, id: \.self) { tag in
+                                TagChip(text: tag)
+                            }
+                        }
+                        .padding(.top, 2)
+                    }
                 }
                 Spacer()
                 if template.isFavorite {
@@ -256,7 +309,8 @@ struct WorkoutsView: View {
         let copy = WorkoutTemplate(
             name: source.name + " (copy)",
             note: source.note,
-            isFavorite: false
+            isFavorite: false,
+            tags: source.tags
         )
         modelContext.insert(copy)
         let sorted = source.exercises.sorted { $0.sortOrder < $1.sortOrder }
