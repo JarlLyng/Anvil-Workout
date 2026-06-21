@@ -20,13 +20,14 @@ Anvil Workout/
 │   │   └── WeeklyPlanEditorSheet.swift# Edit weekly plan (day -> template mapping)
 │   │
 │   ├── Workouts/
-│   │   ├── WorkoutsView.swift         # Program list with search and toast feedback
+│   │   ├── WorkoutsView.swift         # Program list with search and tag filtering
 │   │   ├── TemplateDetailView.swift   # Template detail, start workout
-│   │   ├── CreateEditTemplateView.swift
+│   │   ├── CreateEditTemplateView.swift # Edit program incl. tags
 │   │   ├── ExercisePickerView.swift   # Pick exercise from library
 │   │   ├── EditTemplateExerciseSheet.swift
-│   │   ├── ActiveWorkoutView.swift    # Active workout: timer, sets, rest, pause, Live Activity
+│   │   ├── ActiveWorkoutView.swift    # Active workout: timer, sets, rest, pause, Live Activity, plate calc
 │   │   ├── ActiveWorkoutSubviews.swift# WorkoutTimerBar, PauseOverlay, RestBar, SetRow
+│   │   ├── PlateCalculatorSheet.swift # Per-side plate breakdown for a target weight
 │   │   ├── WorkoutCompletionView.swift# Summary with PR detection, share, review prompt
 │   │   ├── EditPerformedSetSheet.swift
 │   │   ├── ProgramLibraryView.swift   # Browse pre-built programs grouped by level
@@ -52,7 +53,7 @@ Anvil Workout/
 │   │   └── OnboardingView.swift       # 3-page onboarding with Next/Skip/Get Started
 │   │
 │   └── Settings/
-│       └── SettingsView.swift         # Units, CSV export, Health, About
+│       └── SettingsView.swift         # Units, CSV export/import (Strong/Hevy), Health, About
 │
 └── Shared/
     ├── Models/                        # SwiftData models + static reference data
@@ -71,12 +72,16 @@ Anvil Workout/
     │   ├── WorkoutSessionService.swift    # Create/finalize session from template
     │   ├── PersonalRecordService.swift    # Detect PRs (pure, testable)
     │   ├── StreakCalculator.swift         # Calculate workout streak (pure, testable)
+    │   ├── PlateCalculator.swift          # Barbell plate loading math (pure, testable)
+    │   ├── WorkoutCSVImporter.swift       # Parse Strong/Hevy CSV exports (pure, testable)
+    │   ├── WorkoutCSVImportService.swift  # Persist parsed CSV sessions to SwiftData
     │   ├── LiveActivityService.swift      # Start/update/end Live Activity
     │   ├── DataMigrationService.swift     # Runtime data migrations (tracked via UserDefaults flags)
     │   └── SentryConfig.swift             # Reads DSN from Info.plist
     │
     └── Components/
-        └── DesignSystem.swift             # Design token helpers
+        ├── DesignSystem.swift             # Design token helpers
+        └── TagComponents.swift            # FlowLayout + tag chips for template tags
 
 IronWorkoutWidget/
 ├── IronWorkoutWidgetBundle.swift          # Widget bundle (streak widget + Live Activity)
@@ -94,7 +99,7 @@ IronWorkoutWidget/
 - **No ViewModel layer** — logic lives in services or directly in views where simple enough. SwiftData's `@Query` and `@Bindable` replace much of what a ViewModel normally does.
 - **Single source of truth** — all domain models in `Shared/Models/`, used by both UI and services.
 - **Services for side effects** — `WorkoutSessionService`, `ExerciseLibraryService`, `ProgramLibraryService`, `HealthKitService`, and `LiveActivityService` handle business logic without being bound to UI.
-- **Pure services for pure logic** — `PersonalRecordService` and `StreakCalculator` are side-effect-free and covered by unit tests in `Anvil WorkoutTests`.
+- **Pure services for pure logic** — `PersonalRecordService`, `StreakCalculator`, `PlateCalculator`, and `WorkoutCSVImporter` are side-effect-free and covered by unit tests in `Anvil WorkoutTests`.
 - **View splitting for compilation** — heavy views are split into subview files (e.g. `ActiveWorkoutSubviews.swift`, `StatsChartViews.swift`, `DashboardSubviews.swift`) to avoid Swift type-checker bottlenecks.
 
 ---
@@ -140,7 +145,7 @@ This approach requires declaring each schema version as a `VersionedSchema` enum
 | Model | Purpose |
 |-------|---------|
 | **Exercise** | One exercise in the library (name, muscle group, equipment, `isBuiltin`) |
-| **WorkoutTemplate** | A program (name, note, favorite, list of exercises) |
+| **WorkoutTemplate** | A program (name, note, favorite, tags, list of exercises) |
 | **WorkoutTemplateExercise** | One exercise in a template incl. targets (sets, reps, weight, rest, note, supersetID) |
 | **WorkoutSession** | A completed workout (template name, start/end, duration, kcal, heart rate) |
 | **WorkoutSessionExercise** | One exercise in a session (name, sort order, rest, note, supersetID) |
@@ -208,13 +213,13 @@ The app and widget extension share data via App Group `group.com.iamjarl.Iron-Wo
 ```
 
 1. **Home tab:** Dashboard with weekly metrics, streak, weekly planner, quick-start.
-2. **Workouts tab:** Create/edit/delete/duplicate/favorite templates. Add exercises with sets/reps/weight/rest/supersets.
-3. **Active workout:** Timer, HealthKit workout, Live Activity on Lock Screen, mark sets done/skip, per-exercise notes, rest timer, pause/resume.
+2. **Workouts tab:** Create/edit/delete/duplicate/favorite templates, organize with tags and filter by them. Add exercises with sets/reps/weight/rest/supersets.
+3. **Active workout:** Timer, HealthKit workout, Live Activity on Lock Screen, mark sets done/skip, per-exercise notes, rest timer, pause/resume, plate calculator.
 4. **Completion:** Session saved (duration, sets, kcal/heart rate from Health). PR detection for weight and reps. Share workout summary. App Store review prompt at 5th, 15th, and 50th workout.
 5. **History tab:** Searchable list of sessions; detail view with set-by-set data and Health metrics.
 6. **Exercises tab:** Searchable library; per-exercise detail with history, PRs, and estimated 1RM.
 7. **Stats tab:** Volume over time, weekly frequency, estimated 1RM progression, muscle group distribution.
-8. **Settings tab:** Weight unit (kg/lbs), CSV export, Health permissions, about.
+8. **Settings tab:** Weight unit (kg/lbs), CSV export, CSV import from Strong/Hevy, Health permissions, about.
 
 ---
 
