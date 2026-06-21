@@ -104,7 +104,7 @@ enum WorkoutCSVImporter {
     // MARK: - Format detection
 
     private static func detectFormat(_ columns: [String: Int]) throws -> WorkoutCSVFormat {
-        if columns["exercise_title"] != nil || columns["weight_kg"] != nil {
+        if columns["exercise_title"] != nil || columns["weight_kg"] != nil || columns["weight_lbs"] != nil {
             return .hevy
         }
         if columns["exercise name"] != nil && columns["workout name"] != nil {
@@ -157,7 +157,15 @@ enum WorkoutCSVImporter {
             guard !exerciseName.isEmpty else { continue }
 
             let reps = Int(rounding: field(row, columns, "reps")) ?? 0
-            let weightKg = Double(localized: field(row, columns, "weight_kg"))
+            // Hevy names the weight column after the user's unit: weight_kg or weight_lbs.
+            let weightKg: Double?
+            if let kg = Double(localized: field(row, columns, "weight_kg")) {
+                weightKg = kg
+            } else if let lbs = Double(localized: field(row, columns, "weight_lbs")) {
+                weightKg = lbs * lbPerKg
+            } else {
+                weightKg = nil
+            }
             if reps == 0 && (weightKg ?? 0) == 0 { continue }
 
             let endValue = field(row, columns, "end_time").flatMap(parseDate)

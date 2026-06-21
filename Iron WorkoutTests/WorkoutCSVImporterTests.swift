@@ -86,6 +86,36 @@ struct WorkoutCSVImporterTests {
         #expect(bench.sets[1].weightKg == 80)
     }
 
+    @Test("Hevy export with imperial units (weight_lbs) converts to kg")
+    func hevyImperialWeight() throws {
+        // Hevy names the weight column after the user's unit; imperial users get weight_lbs.
+        let csv = """
+        title,start_time,end_time,exercise_title,superset_id,set_index,set_type,weight_lbs,reps,distance_miles,duration_seconds,rpe
+        Upper A,2024-02-01 07:00:00,2024-02-01 08:00:00,Bench Press,,0,normal,225,5,,,
+        """
+        let parsed = try WorkoutCSVImporter.parse(csv)
+        #expect(parsed.format == .hevy)
+        let weight = try #require(parsed.sessions[0].exercises[0].sets[0].weightKg)
+        // 225 lb -> ~102.06 kg
+        #expect(abs(weight - 225 * 0.45359237) < 0.0001)
+    }
+
+    @Test("Hevy 'd MMM yyyy, HH:mm' date format is parsed")
+    func hevyCommaDateFormat() throws {
+        // Real Hevy exports use e.g. "28 Mar 2025, 17:29" for start_time.
+        let csv = """
+        title,start_time,end_time,exercise_title,superset_id,set_index,set_type,weight_kg,reps
+        Leg Day,"28 Mar 2025, 17:29","28 Mar 2025, 18:52",Squat,,0,normal,100,5
+        """
+        let parsed = try WorkoutCSVImporter.parse(csv)
+        #expect(parsed.sessionCount == 1)
+        #expect(parsed.sessions[0].endedAt != nil)
+        // Duration spans ~1h23m; just assert the dates parsed into a positive range.
+        let session = parsed.sessions[0]
+        let duration = try #require(session.endedAt).timeIntervalSince(session.startedAt)
+        #expect(duration > 0)
+    }
+
     @Test("Hevy superset_id is carried through as a grouping key")
     func hevySupersets() throws {
         let parsed = try WorkoutCSVImporter.parse(hevyCSV)
