@@ -71,12 +71,30 @@ h1, h2, h3 { line-height: 1.2; }
     min-height: 90vh;
     display: flex;
     align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Atmospheric gym photo behind the hero. Heavy left-weighted scrim keeps the
+   text column on near-black for legibility; the bottom fade blends into the page. */
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(90deg, rgba(10, 10, 10, 0.97) 0%, rgba(10, 10, 10, 0.86) 38%, rgba(10, 10, 10, 0.45) 100%),
+        linear-gradient(0deg, var(--bg) 0%, rgba(10, 10, 10, 0) 32%),
+        url('images/luke-witter-k47w6BeapCs-unsplash.jpg') center / cover no-repeat;
+    z-index: 0;
+    pointer-events: none;
 }
 
 .hero .container {
     display: flex;
     align-items: center;
     gap: 64px;
+    position: relative;
+    z-index: 1;
 }
 
 .hero-content { flex: 1; }
@@ -389,6 +407,29 @@ h1, h2, h3 { line-height: 1.2; }
     color: var(--text-secondary);
     font-size: 0.95rem;
     line-height: 1.7;
+}
+
+/* ===== Mood band ===== */
+.mood-band {
+    min-height: 360px;
+    height: 42vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 24px;
+    background:
+        linear-gradient(180deg, var(--bg) 0%, rgba(10, 10, 10, 0.4) 28%, rgba(10, 10, 10, 0.55) 72%, var(--bg) 100%),
+        url('images/sven-mieke-optBC2FxCfc-unsplash.jpg') center / cover no-repeat;
+}
+
+.mood-band p {
+    font-size: clamp(1.5rem, 3.5vw, 2.4rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    max-width: 16ch;
+    margin: 0 auto;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.6);
 }
 
 /* ===== CTA ===== */
