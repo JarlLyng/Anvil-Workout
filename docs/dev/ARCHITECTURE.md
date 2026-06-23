@@ -69,15 +69,23 @@ Anvil Workout/
     ├── Services/
     │   ├── ExerciseLibraryService.swift   # Seed exercise library on first launch
     │   ├── ProgramLibraryService.swift    # Pre-built programs + import to WorkoutTemplate
+    │   ├── ProgramShareService.swift      # Encode/decode a template as a universal-link URL
     │   ├── WorkoutSessionService.swift    # Create/finalize session from template
     │   ├── PersonalRecordService.swift    # Detect PRs (pure, testable)
     │   ├── StreakCalculator.swift         # Calculate workout streak (pure, testable)
     │   ├── PlateCalculator.swift          # Barbell plate loading math (pure, testable)
+    │   ├── WeightFormatter.swift          # kg/lb display + input conversion (storage is always kg)
     │   ├── WorkoutCSVImporter.swift       # Parse Strong/Hevy CSV exports (pure, testable)
     │   ├── WorkoutCSVImportService.swift  # Persist parsed CSV sessions to SwiftData
+    │   ├── WatchConnectivityService.swift # iPhone-side WCSession: broadcast snapshots, receive actions
+    │   ├── WatchStatsBroadcaster.swift    # Build WatchStatsSnapshot from SwiftData for the watch widget
     │   ├── LiveActivityService.swift      # Start/update/end Live Activity
     │   ├── DataMigrationService.swift     # Runtime data migrations (tracked via UserDefaults flags)
+    │   ├── PersistenceLogger.swift        # Structured logging for SwiftData save/fetch failures
     │   └── SentryConfig.swift             # Reads DSN from Info.plist
+    │
+    ├── Watch/
+    │   └── WatchContracts.swift           # Codable snapshot/action contracts (mirrored to watch targets)
     │
     └── Components/
         ├── DesignSystem.swift             # Design token helpers
@@ -91,6 +99,19 @@ IronWorkoutWidget/
 ├── AppIntent.swift                        # Widget configuration intent
 ├── Info.plist
 └── IronWorkoutWidgetExtension.entitlements # App Group for shared data
+
+Anvil Watch Watch App/                       # watchOS companion app
+├── AnvilWatchApp.swift                      # Watch app entry
+├── WatchRootView.swift                      # Routes between idle and active-workout states
+├── WatchActiveWorkoutView.swift             # Active workout: current set, Done/Skip, rest timer
+├── WatchIdleView.swift                      # Standby state when no workout is active
+├── WatchConnectivityClient.swift            # Watch-side WCSession: receive snapshots, send actions
+└── WatchContracts.swift                     # Mirror of Shared/Watch/WatchContracts.swift
+
+Anvil Watch Widget/                          # watchOS widget / Smart Stack tile
+├── Anvil_Watch_WidgetBundle.swift           # Watch widget bundle
+├── AnvilWatchWidget.swift                   # Streak/stats tile backed by WatchStatsSnapshot
+└── WatchContracts.swift                     # Mirror of Shared/Watch/WatchContracts.swift
 ```
 
 ## Architecture principles
@@ -184,6 +205,14 @@ The exercise library is seeded in `ExerciseLibraryService.seedIfNeeded(modelCont
 ### App Group and shared data
 
 The app and widget extension share data via App Group `group.com.iamjarl.Iron-Workout`. The `ModelContainer` in `Iron_WorkoutApp.swift` is configured with `.groupContainer(.identifier("group.com.iamjarl.Iron-Workout"))` so both targets access the same SwiftData store.
+
+---
+
+## Apple Watch companion
+
+The phone is the source of truth. During a workout it broadcasts a lean `ActiveWorkoutSnapshot` to the watch (`WatchConnectivityService` → `WatchConnectivityClient`); the watch sends `WatchAction` values back (mark set done/skip, pause, rest). Between workouts, `WatchStatsBroadcaster` pushes a `WatchStatsSnapshot` that backs the watch widget / Smart Stack tile without the watch querying SwiftData itself.
+
+These Codable contracts live in `Shared/Watch/WatchContracts.swift` and are **mirrored** into both watch targets (`Anvil Watch Watch App/` and `Anvil Watch Widget/`) because Xcode's synchronized file groups don't share a single file across top-level targets. Any change must be applied to all three copies, or encoding/decoding breaks silently. `WatchContractsTests` pins the wire format to catch phone-side drift.
 
 ---
 
