@@ -279,3 +279,20 @@ NB: Link IKKE til Beef — den er ikke udgivet endnu.
 - **Umami/Analytics**: Sidevisninger, referral sources
 - **App Store Connect**: Downloads, keyword rankings, conversion rate
 - **Nøgletal**: Branded search volumen, organic trafik, App Store reviews
+
+---
+
+## 11. Google-retningslinjer (reference)
+
+Officiel Google-guidance (ikke andre AI-providers) — relevant for både GEO og vores AI-genererede indhold:
+
+- [AI features and your website](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)
+- [Using AI-generated content](https://developers.google.com/search/docs/fundamentals/using-gen-ai-content)
+
+**Nøglepointer:**
+
+- **Ingen særlig "AI-SEO".** Google's AI-features bygger på deres almindelige ranking. Fundamental SEO vinder: crawlbar, indekserbar, hurtig, people-first indhold, valid structured data. Ingen tricks.
+- **`llms.txt` bruges IKKE af Google** (de siger det eksplicit). Vores `docs/llms.txt` beholdes for evt. andre AI-motorer, men regn ikke med den for Google. Hold den faktuelt korrekt.
+- **AI-genereret indhold straffes ikke** i sig selv — men kvalitet og menneskelig værdi kræves. At masse-generere tynde sider = "scaled content abuse" (spam-policy). **Konsekvens for §6-landingssider:** hver ny side skal tilføje genuin, unik værdi, ikke være en tynd keyword-variant. Menneske-review før publicering.
+- **Undgå side-per-query og over-chunking** af indhold.
+- **Hold metadata/structured data korrekt** (titler, descriptions, JSON-LD, `softwareVersion`, featureList) — opdateres ved hver release.

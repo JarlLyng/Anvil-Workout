@@ -21,6 +21,9 @@ Anvil Workout is a paid app with a one-time purchase price on the App Store. The
 - **Apple Health and HealthKit Integration** (calories burned, heart rate from Apple Watch logged automatically)
 - **Per-Exercise History** with PR tracking and estimated 1RM chart
 - **CSV Export** of workout history (sessions, exercises, sets, reps, weights)
+- **CSV Import** from Strong or Hevy — migrate full workout history from other trackers in one step
+- **Plate Calculator** in the active workout to show which plates to load per side for a target weight
+- **Program Tags** to organize workout programs by goal or training block and filter the list
 - **Searchable Exercise Library** and workout history
 - **100% Offline** — no account, no internet, no ads, no in-app analytics (workout data stays on your device; anonymous crash reporting via Sentry for bug fixing)
 
