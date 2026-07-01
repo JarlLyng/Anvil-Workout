@@ -193,12 +193,13 @@ struct WorkoutSetRow: View {
     }
 
     var body: some View {
-        let targetWeight = set.targetWeight.map { " @ \(WeightFormatter.format(kg: $0, fractionDigits: 0, in: weightUnit))" } ?? ""
+        // Prefer values the user has already entered via the editor over template targets.
+        let pendingWeight = (set.actualWeight ?? set.targetWeight).map { " @ \(WeightFormatter.format(kg: $0, fractionDigits: 0, in: weightUnit))" } ?? ""
         HStack {
             if set.isCompleted {
                 completedContent
             } else {
-                pendingContent(targetWeight: targetWeight)
+                pendingContent(weightSuffix: pendingWeight)
             }
         }
         .padding(.vertical, DesignTokens.Spacing.md)
@@ -220,6 +221,14 @@ struct WorkoutSetRow: View {
             RoundedRectangle(cornerRadius: DesignTokens.Radius.lg)
                 .strokeBorder(DesignTokens.Common.primary(colorScheme), lineWidth: isNextUp && !set.isCompleted ? 2 : 0)
         )
+        // Tapping a pending row (outside its buttons) opens the set editor so the
+        // actual weight/reps can be entered BEFORE completing — markSetDone only
+        // fills nil values, so entered numbers survive the Done tap.
+        .contentShape(Rectangle())
+        .onTapGesture {
+            if !set.isCompleted { onEdit() }
+        }
+        .accessibilityAction(named: set.isCompleted ? "Edit set" : "Enter reps and weight") { onEdit() }
         .alert("Error", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
             Button("OK") { errorMessage = nil }
         } message: {
@@ -257,7 +266,7 @@ struct WorkoutSetRow: View {
         }
     }
 
-    private func pendingContent(targetWeight: String) -> some View {
+    private func pendingContent(weightSuffix: String) -> some View {
         Group {
             Ph.circle.regular
                 .icon()
@@ -290,7 +299,7 @@ struct WorkoutSetRow: View {
                     }
                 }
 
-                Text("\(set.targetReps) reps\(targetWeight)")
+                Text("\(set.actualReps ?? set.targetReps) reps\(weightSuffix)")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
