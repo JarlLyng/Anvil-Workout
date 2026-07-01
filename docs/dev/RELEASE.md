@@ -28,6 +28,8 @@ Google's guidance requires structured data and metadata to stay accurate, and
 
 - `docs/index.html` JSON-LD: **`softwareVersion`** and add any new features to **`featureList`**.
 - `docs/llms.txt`: add new features under **Key features**.
+- `docs/index.html` **roadmap section**: move the shipped items to "Recently shipped"
+  (with the new version tag) and refresh "Coming next" with what is actually in development.
 - Keep JSON-LD valid. (Google ignores `llms.txt`; keep it only for other AI engines.)
 
 ## 3. Verify — Release config, then full test target
