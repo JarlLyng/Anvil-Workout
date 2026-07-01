@@ -56,3 +56,4 @@ See `docs/dev/ARCHITECTURE.md` for full file tree and data model.
 See `docs/dev/DESIGN.md` for icon and color usage.
 See `docs/dev/SETUP.md` for Sentry, HealthKit, App Groups, and widget setup.
 See `docs/dev/CONTRIBUTING.md` for code patterns and conventions.
+See `docs/dev/RELEASE.md` for the release checklist (version bump, metadata, archive, tag).
