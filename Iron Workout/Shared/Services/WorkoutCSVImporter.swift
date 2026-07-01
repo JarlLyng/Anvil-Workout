@@ -25,6 +25,7 @@ struct ParsedImportSet: Equatable {
     let reps: Int
     let weightKg: Double?
     let type: SetType
+    let rpe: Double?
 }
 
 struct ParsedImportExercise: Equatable {
@@ -134,12 +135,13 @@ enum WorkoutCSVImporter {
             if reps == 0 && (weightKg ?? 0) == 0 { continue }
 
             let setOrder = Int(rounding: field(row, columns, "set order"))
+            let rpe = clampedRPE(Double(localized: field(row, columns, "rpe")))
             let sessionKey = date + "|" + workout
             builder.add(
                 sessionKey: sessionKey, sessionName: workout, startedAt: dateValue, endedAt: nil,
                 exerciseName: exerciseName, supersetKey: nil,
                 explicitSetIndex: setOrder.map { max(0, $0 - 1) },
-                reps: reps, weightKg: weightKg, type: .working
+                reps: reps, weightKg: weightKg, type: .working, rpe: rpe
             )
         }
         return builder.sessions
@@ -172,13 +174,14 @@ enum WorkoutCSVImporter {
             let superset = field(row, columns, "superset_id").flatMap { $0.isEmpty ? nil : $0 }
             let setIndex = Int(rounding: field(row, columns, "set_index"))
             let type = setType(fromHevy: field(row, columns, "set_type"))
+            let rpe = clampedRPE(Double(localized: field(row, columns, "rpe")))
             let sessionKey = title + "|" + start
 
             builder.add(
                 sessionKey: sessionKey, sessionName: title, startedAt: startValue, endedAt: endValue,
                 exerciseName: exerciseName, supersetKey: superset,
                 explicitSetIndex: setIndex,
-                reps: reps, weightKg: weightKg, type: type
+                reps: reps, weightKg: weightKg, type: type, rpe: rpe
             )
         }
         return builder.sessions
@@ -197,6 +200,12 @@ enum WorkoutCSVImporter {
 
     private static func toKg(_ value: Double, unit: WeightUnit) -> Double {
         unit == .lbs ? value * lbPerKg : value
+    }
+
+    /// RPE clamped to the conventional 1–10 scale; out-of-range or missing → nil.
+    private static func clampedRPE(_ value: Double?) -> Double? {
+        guard let value, value >= 1, value <= 10 else { return nil }
+        return value
     }
 
     private static func unitFromString(_ raw: String?) -> WeightUnit? {
@@ -343,7 +352,7 @@ private struct SessionBuilder {
     mutating func add(
         sessionKey: String, sessionName: String, startedAt: Date, endedAt: Date?,
         exerciseName: String, supersetKey: String?,
-        explicitSetIndex: Int?, reps: Int, weightKg: Double?, type: SetType
+        explicitSetIndex: Int?, reps: Int, weightKg: Double?, type: SetType, rpe: Double?
     ) {
         let sIndex: Int
         if let existing = sessionByKey[sessionKey] {
@@ -370,7 +379,7 @@ private struct SessionBuilder {
         let setIndex = explicitSetIndex ?? nextImplicit
 
         sessions[sIndex].exercises[exIndex].sets.append(
-            ParsedImportSet(setIndex: setIndex, reps: reps, weightKg: weightKg, type: type)
+            ParsedImportSet(setIndex: setIndex, reps: reps, weightKg: weightKg, type: type, rpe: rpe)
         )
     }
 }

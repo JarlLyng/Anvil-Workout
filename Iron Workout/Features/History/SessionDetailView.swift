@@ -121,6 +121,11 @@ struct SessionDetailView: View {
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
+                    if let rpe = set.rpe {
+                        Text("· RPE \(rpe.formatted(.number.precision(.fractionLength(0...1))))")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
                 } else {
                     Text("Set \(set.setIndex + 1): Skipped")
                         .font(.subheadline)

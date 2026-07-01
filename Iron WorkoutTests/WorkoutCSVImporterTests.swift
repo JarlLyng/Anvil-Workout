@@ -125,6 +125,28 @@ struct WorkoutCSVImporterTests {
         #expect(session.exercises[2].supersetKey == "1")        // Barbell Row, same superset
     }
 
+    @Test("RPE column is parsed from both formats and out-of-range values dropped")
+    func rpeParsing() throws {
+        let strong = """
+        Date,Workout Name,Exercise Name,Set Order,Weight,Reps,RPE
+        2024-01-15,Day,Squat,1,100,5,8.5
+        2024-01-15,Day,Squat,2,100,5,
+        2024-01-15,Day,Squat,3,100,5,42
+        """
+        let parsedStrong = try WorkoutCSVImporter.parse(strong)
+        let strongSets = parsedStrong.sessions[0].exercises[0].sets
+        #expect(strongSets[0].rpe == 8.5)
+        #expect(strongSets[1].rpe == nil)
+        #expect(strongSets[2].rpe == nil)   // 42 is not a valid RPE
+
+        let hevy = """
+        title,start_time,exercise_title,set_index,set_type,weight_kg,reps,rpe
+        Upper A,2024-02-01 07:00:00,Bench Press,0,normal,80,8,9
+        """
+        let parsedHevy = try WorkoutCSVImporter.parse(hevy)
+        #expect(parsedHevy.sessions[0].exercises[0].sets[0].rpe == 9)
+    }
+
     // MARK: - Errors & robustness
 
     @Test("Empty input throws .empty")

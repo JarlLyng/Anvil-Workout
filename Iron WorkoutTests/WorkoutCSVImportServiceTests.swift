@@ -27,11 +27,11 @@ struct WorkoutCSVImportServiceTests {
     }
 
     private let hevyCSV = """
-    title,start_time,end_time,exercise_title,superset_id,set_index,set_type,weight_kg,reps
-    Upper A,2024-02-01 07:00:00,2024-02-01 08:00:00,Bench Press,,0,warmup,40,12
-    Upper A,2024-02-01 07:00:00,2024-02-01 08:00:00,Bench Press,,1,normal,80,8
-    Upper A,2024-02-01 07:00:00,2024-02-01 08:00:00,Pull Up,1,0,normal,0,10
-    Upper A,2024-02-01 07:00:00,2024-02-01 08:00:00,Barbell Row,1,0,normal,60,10
+    title,start_time,end_time,exercise_title,superset_id,set_index,set_type,weight_kg,reps,rpe
+    Upper A,2024-02-01 07:00:00,2024-02-01 08:00:00,Bench Press,,0,warmup,40,12,
+    Upper A,2024-02-01 07:00:00,2024-02-01 08:00:00,Bench Press,,1,normal,80,8,8.5
+    Upper A,2024-02-01 07:00:00,2024-02-01 08:00:00,Pull Up,1,0,normal,0,10,
+    Upper A,2024-02-01 07:00:00,2024-02-01 08:00:00,Barbell Row,1,0,normal,60,10,
     """
 
     @MainActor
@@ -93,6 +93,8 @@ struct WorkoutCSVImportServiceTests {
         let allCompleted = sets.allSatisfy { $0.isCompleted }
         #expect(allCompleted)
         #expect(sets[0].setType == .warmup)
+        #expect(sets[0].rpe == nil)
         #expect(sets[1].actualWeight == 80)
+        #expect(sets[1].rpe == 8.5)
     }
 }

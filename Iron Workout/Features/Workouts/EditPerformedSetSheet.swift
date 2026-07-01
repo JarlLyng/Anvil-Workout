@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct EditPerformedSetSheet: View {
-    private enum Field { case reps, weight }
+    private enum Field { case reps, weight, rpe }
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
@@ -47,6 +47,15 @@ struct EditPerformedSetSheet: View {
                             .focused($focusedField, equals: .weight)
                             .accessibilityLabel("Weight in \(weightUnit == .lbs ? "pounds" : "kilograms")")
                     }
+                    HStack {
+                        Text("RPE")
+                        Spacer()
+                        TextField("Optional", value: rpeBinding, format: .number.precision(.fractionLength(0...1)))
+                            .keyboardType(.decimalPad)
+                            .multilineTextAlignment(.trailing)
+                            .focused($focusedField, equals: .rpe)
+                            .accessibilityLabel("Rate of perceived exertion, 1 to 10")
+                    }
                 }
             }
             .navigationTitle("Edit Set")
@@ -70,6 +79,19 @@ struct EditPerformedSetSheet: View {
                 focusedField = .reps
             }
         }
+    }
+
+    // MARK: - RPE
+
+    /// Clamps RPE to the conventional 1–10 scale and rounds to half steps
+    /// (e.g. 8.7 → 8.5) so stored values stay comparable across sessions.
+    private var rpeBinding: Binding<Double?> {
+        Binding(
+            get: { performedSet.rpe },
+            set: { newValue in
+                performedSet.rpe = newValue.map { min(10, max(1, ($0 * 2).rounded() / 2)) }
+            }
+        )
     }
 
     // MARK: - Pre-fill

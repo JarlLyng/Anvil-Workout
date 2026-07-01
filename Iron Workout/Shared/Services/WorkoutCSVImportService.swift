@@ -77,7 +77,8 @@ enum WorkoutCSVImportService {
                         targetWeight: parsedSet.weightKg,
                         actualWeight: parsedSet.weightKg,
                         isCompleted: true,
-                        completedAt: parsedSession.startedAt
+                        completedAt: parsedSession.startedAt,
+                        rpe: parsedSet.rpe
                     )
                     set.setType = parsedSet.type
                     set.sessionExercise = sessionExercise

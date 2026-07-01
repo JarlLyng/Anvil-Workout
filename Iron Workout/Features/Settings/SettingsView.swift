@@ -260,7 +260,7 @@ struct SettingsView: View {
         dateFormatter.dateFormat = "yyyy-MM-dd"
 
         let unit = WeightUnit(rawValue: weightUnit) ?? .kg
-        var rows: [String] = ["Date,Program,Duration (min),Exercise,Set,Reps,Weight (\(unit.label)),Type"]
+        var rows: [String] = ["Date,Program,Duration (min),Exercise,Set,Reps,Weight (\(unit.label)),Type,RPE"]
 
         for session in sessions {
             let date = dateFormatter.string(from: session.startedAt)
@@ -280,8 +280,9 @@ struct SettingsView: View {
                     let weightKg = set.actualWeight ?? set.targetWeight ?? 0
                     let weight = WeightFormatter.display(weightKg, in: unit)
                     let type = set.setType.displayName
+                    let rpe = set.rpe.map { $0.formatted(.number.precision(.fractionLength(0...1))) } ?? ""
 
-                    rows.append("\(date),\(program),\(duration),\(name),\(setNumber),\(reps),\(String(format: "%.1f", weight)),\(type)")
+                    rows.append("\(date),\(program),\(duration),\(name),\(setNumber),\(reps),\(String(format: "%.1f", weight)),\(type),\(rpe)")
                 }
             }
         }

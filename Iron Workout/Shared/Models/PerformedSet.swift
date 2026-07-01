@@ -40,6 +40,9 @@ final class PerformedSet: Identifiable {
     var isCompleted: Bool
     var completedAt: Date?
     var setTypeRaw: String = SetType.working.rawValue
+    /// Rate of Perceived Exertion (1–10, half steps allowed). Optional and additive so
+    /// existing data is unaffected; logging speed must not depend on filling it in.
+    var rpe: Double?
 
     var setType: SetType {
         get { SetType(rawValue: setTypeRaw) ?? .working }
@@ -56,7 +59,8 @@ final class PerformedSet: Identifiable {
         targetWeight: Double? = nil,
         actualWeight: Double? = nil,
         isCompleted: Bool = false,
-        completedAt: Date? = nil
+        completedAt: Date? = nil,
+        rpe: Double? = nil
     ) {
         self.id = id
         self.setIndex = setIndex
@@ -66,5 +70,6 @@ final class PerformedSet: Identifiable {
         self.actualWeight = actualWeight
         self.isCompleted = isCompleted
         self.completedAt = completedAt
+        self.rpe = rpe
     }
 }

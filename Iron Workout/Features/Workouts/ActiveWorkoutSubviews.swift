@@ -244,7 +244,9 @@ struct WorkoutSetRow: View {
                     }
                 }
                 if let reps = set.actualReps {
-                    Text("\(reps) reps\(set.actualWeight.map { " \u{00B7} \(WeightFormatter.format(kg: $0, in: weightUnit))" } ?? "")")
+                    let weightPart = set.actualWeight.map { " \u{00B7} \(WeightFormatter.format(kg: $0, in: weightUnit))" } ?? ""
+                    let rpePart = set.rpe.map { " \u{00B7} RPE \($0.formatted(.number.precision(.fractionLength(0...1))))" } ?? ""
+                    Text("\(reps) reps\(weightPart)\(rpePart)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
