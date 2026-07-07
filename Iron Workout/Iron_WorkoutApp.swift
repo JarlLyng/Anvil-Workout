@@ -58,6 +58,16 @@ struct Iron_WorkoutApp: App {
                            exception.value?.contains("unsupportedTarget") == true {
                             return nil
                         }
+                        // IOS-6/IOS-7: WatchConnectivity errors on devices with no usable
+                        // watch — deviceNotPaired (7005), watchAppNotInstalled (7006),
+                        // notReachable (7007), deliveryFailed (7014). Expected, not bugs.
+                        // The send paths already guard on isPaired/isWatchAppInstalled;
+                        // this catches any that slip through (e.g. unpair mid-send).
+                        if type == "WCErrorDomain",
+                           let value = exception.value,
+                           ["Code: 7005", "Code: 7006", "Code: 7007", "Code: 7014"].contains(value) {
+                            return nil
+                        }
                     }
                     return event
                 }

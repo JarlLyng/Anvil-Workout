@@ -51,13 +51,27 @@ final class WatchConnectivityService {
     }
     #endif
 
+    #if canImport(WatchConnectivity)
+    /// Returns the session only when a watch can actually receive application-context
+    /// updates: supported, activated, paired, and running our watch app. Without the
+    /// isPaired/isWatchAppInstalled guards, `updateApplicationContext` throws on the
+    /// many devices with no watch, producing WCError deviceNotPaired (7005) /
+    /// watchAppNotInstalled (7006) noise for something entirely expected.
+    private func sessionReadyForWatchApp() -> WCSession? {
+        guard WCSession.isSupported() else { return nil }
+        let session = WCSession.default
+        guard session.activationState == .activated,
+              session.isPaired,
+              session.isWatchAppInstalled else { return nil }
+        return session
+    }
+    #endif
+
     /// Push a snapshot of the active workout to the watch. Safe to call frequently —
     /// applicationContext coalesces to the latest value.
     func sendSnapshot(_ snapshot: ActiveWorkoutSnapshot) {
         #if canImport(WatchConnectivity)
-        guard WCSession.isSupported() else { return }
-        let session = WCSession.default
-        guard session.activationState == .activated else { return }
+        guard let session = sessionReadyForWatchApp() else { return }
         do {
             let data = try JSONEncoder().encode(snapshot)
             try session.updateApplicationContext(["snapshot": data])
@@ -71,9 +85,7 @@ final class WatchConnectivityService {
     /// has fresh data even when no workout is running.
     func sendStats(_ stats: WatchStatsSnapshot) {
         #if canImport(WatchConnectivity)
-        guard WCSession.isSupported() else { return }
-        let session = WCSession.default
-        guard session.activationState == .activated else { return }
+        guard let session = sessionReadyForWatchApp() else { return }
         do {
             let data = try JSONEncoder().encode(stats)
             // Coalesce with any in-flight snapshot via a dedicated key.
@@ -89,9 +101,7 @@ final class WatchConnectivityService {
     /// Tell the watch the workout has ended — clears its UI back to the idle screen.
     func sendWorkoutEnded() {
         #if canImport(WatchConnectivity)
-        guard WCSession.isSupported() else { return }
-        let session = WCSession.default
-        guard session.activationState == .activated else { return }
+        guard let session = sessionReadyForWatchApp() else { return }
         do {
             try session.updateApplicationContext(["workoutEnded": true])
         } catch {
