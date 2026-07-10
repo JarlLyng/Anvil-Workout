@@ -36,8 +36,7 @@ iOS strength training app. **Paid app** (one-time purchase on the App Store — 
 ## Workflow
 
 - **Task tracking** — use [GitHub Issues](https://github.com/JarlLyng/Anvil-Workout/issues) for bugs, features, and todos. Do not create task-tracking markdown files.
-- **SEO/GEO strategy** — `SEO_STRATEGY.md` is maintained by a separate AI. Keep project docs accurate so it has correct context.
-- **Target audience** — `TARGET_AUDIENCE.md` defines the ideal customer profile (who we build and market for). Use it to keep product decisions and marketing copy focused.
+- **Strategy & audience (private)** — target audience/ICP and SEO/ASO strategy live in the private [`iamjarl-strategy`](https://github.com/JarlLyng/iamjarl-strategy) hub under `AnvilWorkout/`, not in this repo. Keep strategic material there — never in public code or issues. This repo holds code, normal OSS docs, and the marketing site only.
 - **Marketing website** — static site in `docs/` (served via GitHub Pages). Developer docs are in `docs/dev/`.
 - **Business model rule** — the app is a **paid one-time purchase**. Never describe it as "free" in any copy, metadata, or structured data. "Subscription-free" and "distraction-free" are fine.
 

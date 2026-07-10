@@ -92,4 +92,4 @@ Static site served from `docs/` via GitHub Pages on the custom domain `anvilwork
 
 Also in `docs/`: `sitemap.xml`, `robots.txt`, `llms.txt`, `style.css`, `CNAME`, `screenshots/` (for the index hero + gallery), and favicon/OG image assets. Deployment is handled by [`.github/workflows/pages.yml`](.github/workflows/pages.yml) which triggers on every push to `main` that touches `docs/`.
 
-SEO strategy is maintained separately in [`SEO_STRATEGY.md`](SEO_STRATEGY.md) by a dedicated AI agent — do not edit that file from implementation work.
+SEO/ASO strategy and target-audience/ICP material live in the private [`iamjarl-strategy`](https://github.com/JarlLyng/iamjarl-strategy) hub (under `AnvilWorkout/`), not in this repo — keep strategic material there, never in public code or issues.
