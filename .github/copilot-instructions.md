@@ -39,6 +39,7 @@ iOS strength training app. **Paid app** (one-time purchase on the App Store — 
 - **Strategy & audience (private)** — target audience/ICP and SEO/ASO strategy live in the private [`iamjarl-strategy`](https://github.com/JarlLyng/iamjarl-strategy) hub under `AnvilWorkout/`, not in this repo. Keep strategic material there — never in public code or issues. This repo holds code, normal OSS docs, and the marketing site only.
 - **Marketing website** — static site in `docs/` (served via GitHub Pages). Developer docs are in `docs/dev/`.
 - **Business model rule** — the app is a **paid one-time purchase**. Never describe it as "free" in any copy, metadata, or structured data. "Subscription-free" and "distraction-free" are fine.
+- **Voice** — all public copy (App Store text, site, posts, replies) follows `VOICE.md` in the private strategy hub, base voice plus Anvil's overlay (athlete-direct, concrete numbers, no bro-hype). Hard rules: no em-dashes, no bullet lists in public copy, minimal emojis, avoid AI-sounding phrasing. A voice audit of existing copy is tracked in the hub's Anvil backlog; fold it into the next metadata or site touch.
 
 ## Build and run
 
