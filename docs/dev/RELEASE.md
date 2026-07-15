@@ -51,12 +51,24 @@ Google's guidance requires structured data and metadata to stay accurate, and
   > (suite display name ≠ type name) and report success vacuously. The full
   > target is the authoritative run.
 
-## 4. Archive and upload
+## 4. Build and upload (Xcode Cloud)
 
-- Xcode → **Product → Archive** (Release scheme, "Any iOS Device").
-  - Archive triggers `Scripts/sentry-upload-dsyms.sh` automatically. The dSYM
-    warning about the prebuilt `Sentry.framework` is harmless.
-- **Distribute App → App Store Connect → Upload.**
+- Merge `main` into `release` and push — that triggers the Xcode Cloud workflow,
+  which archives the iOS app (watch app + widgets are embedded) and delivers the
+  build to App Store Connect:
+  ```bash
+  git checkout release && git merge main --ff-only && git push && git checkout main
+  ```
+- Sentry secrets come from the workflow's environment variables
+  (`SENTRY_DSN`, `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT`) via
+  `ci_scripts/ci_post_clone.sh`, which regenerates the gitignored
+  `Secrets.xcconfig` and installs `sentry-cli`. Check the build log for
+  "Secrets.xcconfig generated" — without it the build ships without crash reporting.
+- Watch the build in Xcode (Report Navigator → Cloud) or App Store Connect.
+- **Manual fallback** (Xcode Cloud down or credits exhausted): Xcode →
+  Product → Archive (Release scheme) → Distribute App → App Store Connect.
+  The archive triggers `Scripts/sentry-upload-dsyms.sh` locally; the dSYM
+  warning about the prebuilt `Sentry.framework` is harmless.
 
 ## 5. App Store Connect
 
