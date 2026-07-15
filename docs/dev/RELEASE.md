@@ -7,13 +7,16 @@ learned the hard way (see the notes).
 
 In `Iron Workout.xcodeproj/project.pbxproj`:
 
-- **`MARKETING_VERSION`** → the new version (e.g. `1.5.0`) on **all** targets.
-- **`CURRENT_PROJECT_VERSION`** → the new build number, incremented, on **all** targets.
+- **`MARKETING_VERSION`** → the new version (e.g. `1.5.0`) on **all** targets. This is the
+  one that matters for the release flow.
+- **`CURRENT_PROJECT_VERSION`** → the build number. **Xcode Cloud assigns its own build
+  number and ignores this**, so for the normal (cloud) flow you don't need to touch it. Keep
+  it bumped and consistent only for the manual-archive fallback in §4.
 
-> ⚠️ **All targets must match**, including the watch app (`watchkitapp`) and
-> watch widget (`watchkitapp.Anvil-Watch-Widget`), not just the iOS app and iOS
-> widget. Apple rejects an archive whose embedded watch app version/build differs
-> from the host app. (These have drifted to `1.0` before — check them.)
+> ⚠️ **`MARKETING_VERSION` must match across all targets**, including the watch app
+> (`watchkitapp`) and watch widget (`watchkitapp.Anvil-Watch-Widget`), not just the iOS app
+> and iOS widget. Apple rejects an archive whose embedded watch app version differs from the
+> host app. (These have drifted to `1.0` before — check them.)
 
 Quick check:
 ```bash
