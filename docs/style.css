@@ -681,6 +681,8 @@ h1, h2, h3 { line-height: 1.2; }
     line-height: 1.5;
 }
 
+.footer-more p + p { margin-top: 8px; }
+
 .footer-more a { color: var(--text); text-decoration: none; }
 .footer-more a:hover { text-decoration: underline; }
 

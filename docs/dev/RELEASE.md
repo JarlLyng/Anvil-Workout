@@ -62,9 +62,10 @@ Google's guidance requires structured data and metadata to stay accurate, and
 
 - Create the new version, select the uploaded build.
 - Paste **What's New** release notes (EN + DA — the app UI is English but the DK
-  storefront copy can be Danish). **Write them as short prose, not bullet lists**, per the
-  portfolio voice rules (`VOICE.md` in the private strategy hub; see CLAUDE.md → Voice).
-  No em-dashes, pay-once framing, never "free".
+  storefront copy can be Danish). Follow the portfolio voice rules (`VOICE.md` in the
+  private strategy hub; see CLAUDE.md → Voice): no em-dashes, pay-once framing, never
+  "free". Short feature lists are fine here — App Store descriptions and release notes
+  are explicitly carved out of the no-bullets rule (that ban is for posts and replies).
 - Update screenshots if the UI changed materially.
 - Submit for review.
 
