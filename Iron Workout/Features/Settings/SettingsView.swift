@@ -118,6 +118,51 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Link(destination: URL(string: "https://apps.apple.com/app/wodrounds/id6759229877")!) {
+                        HStack {
+                            Ph.timer.regular
+                                .icon()
+                                .foregroundStyle(.secondary)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("WODrounds")
+                                    .foregroundStyle(.primary)
+                                Text("Interval and WOD timer")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            Ph.arrowSquareOut.regular
+                                .icon(size: 14)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .accessibilityHint("Opens WODrounds on the App Store")
+                    Link(destination: URL(string: "https://apps.apple.com/app/id6781303837")!) {
+                        HStack {
+                            Ph.personSimpleWalk.regular
+                                .icon()
+                                .foregroundStyle(.secondary)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Walkful")
+                                    .foregroundStyle(.primary)
+                                Text("Daily walking")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            Ph.arrowSquareOut.regular
+                                .icon(size: 14)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .accessibilityHint("Opens Walkful on the App Store")
+                } header: {
+                    Text("Also from IAMJARL")
+                } footer: {
+                    Text("Small, focused apps from the same maker. Pay once and own them, no accounts, no subscriptions.")
+                }
+
+                Section {
                     if health.isAvailable {
                         HStack {
                             Ph.heart.fill
