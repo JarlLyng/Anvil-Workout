@@ -17,17 +17,20 @@ struct Iron_WorkoutApp: App {
         if let dsn = SentryConfig.dsn, !dsn.isEmpty {
             SentrySDK.start { options in
                 options.dsn = dsn
+                // Privacy-first (portfolio DNA): crash reporting only. No performance
+                // tracing on real users, and no crash screenshot / view hierarchy, which
+                // can capture on-screen data. Debug keeps tracing for local diagnosis.
                 #if DEBUG
                 options.environment = "development"
                 options.debug = true
                 options.tracesSampleRate = 1.0
+                options.attachScreenshot = true
+                options.attachViewHierarchy = true
                 #else
                 options.environment = "production"
                 options.debug = false
-                options.tracesSampleRate = 0.2
+                options.tracesSampleRate = 0
                 #endif
-                options.attachScreenshot = true
-                options.attachViewHierarchy = true
                 options.enableLogs = true
                 options.beforeSend = { event in
                     // Drop noise from auto-captured system NSErrors that aren't actionable.
