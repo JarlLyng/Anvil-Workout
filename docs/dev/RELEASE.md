@@ -82,6 +82,9 @@ Google's guidance requires structured data and metadata to stay accurate, and
   "free". Short feature lists are fine here — App Store descriptions and release notes
   are explicitly carved out of the no-bullets rule (that ban is for posts and replies).
 - Update screenshots if the UI changed materially.
+- **Apply any pending App Store metadata** (subtitle, keyword field, localizations,
+  description tweaks) tracked in the private strategy hub — these are version-locked, so a
+  release is the only time they take effect. Check `AnvilWorkout/` for a current ASO proposal.
 - Submit for review.
 
 ## 6. Tag the release
