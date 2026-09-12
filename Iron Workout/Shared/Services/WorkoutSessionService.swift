@@ -46,12 +46,18 @@ enum WorkoutSessionService {
             modelContext.insert(sessionEx)
 
             for setIndex in 0..<te.targetSets {
+                // Actuals stay nil until the lifter enters or confirms them, matching what
+                // nil means everywhere else: not entered yet. Rows already display
+                // `actualWeight ?? targetWeight`, and markSetDone fills the target in on
+                // completion, so nothing looks different; it just stops a pending set from
+                // claiming a weight nobody typed, which is what made in-session inheritance
+                // impossible to detect (#79).
                 let set = PerformedSet(
                     setIndex: setIndex,
                     targetReps: te.targetReps,
                     actualReps: nil,
                     targetWeight: te.targetWeight,
-                    actualWeight: te.targetWeight,
+                    actualWeight: nil,
                     isCompleted: false
                 )
                 set.sessionExercise = sessionEx
@@ -89,6 +95,33 @@ enum WorkoutSessionService {
     /// End Workout. Threshold is conservative (6h) so we don't prompt for a workout the user
     /// is actively paused on. Returns the most recent matching session; in practice there
     /// should only ever be one.
+    /// The weight carried over from the most recent completed set of the same exercise
+    /// earlier in the same session, so a correction on set 1 follows through to set 2.
+    ///
+    /// Weight only: reps stay on the program's target, because inheriting a short set would
+    /// quietly lower the bar for the rest of the exercise (#79).
+    ///
+    /// The set row, the Done button and the set editor all resolve the pending weight the
+    /// same way, `actualWeight ?? inherited ?? targetWeight`, so the number on screen is
+    /// always the number that gets recorded.
+    static func inheritedWeight(for set: PerformedSet) -> Double? {
+        guard let sessionExercise = set.sessionExercise,
+              let session = sessionExercise.session else { return nil }
+
+        return session.exercises
+            .filter { $0.isSameExercise(as: sessionExercise) }
+            .flatMap(\.performedSets)
+            .filter { $0.isCompleted && $0.id != set.id && $0.setIndex < set.setIndex }
+            .sorted { $0.setIndex > $1.setIndex }
+            .first { ($0.actualWeight ?? 0) > 0 }?
+            .actualWeight
+    }
+
+    /// The weight a pending set will record if completed as-is.
+    static func pendingWeight(for set: PerformedSet) -> Double? {
+        set.actualWeight ?? inheritedWeight(for: set) ?? set.targetWeight
+    }
+
     static func findStaleSession(modelContext: ModelContext, olderThan threshold: TimeInterval = 6 * 60 * 60) -> WorkoutSession? {
         let cutoff = Date().addingTimeInterval(-threshold)
         let descriptor = FetchDescriptor<WorkoutSession>(

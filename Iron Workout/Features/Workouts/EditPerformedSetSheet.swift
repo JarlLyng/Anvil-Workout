@@ -99,6 +99,16 @@ struct EditPerformedSetSheet: View {
     /// Pre-fills `actualReps` and `actualWeight` for a pending set so the user only has to
     /// confirm or tweak the numbers instead of typing them from scratch every time.
     /// Skips pre-fill for completed sets so we don't overwrite real recorded values.
+    ///
+    /// Weight carries over from the previous set of this exercise in this session, because
+    /// weight is what a lifter adjusts to how the day is going: once you move set 1 to
+    /// 65 kg, set 2 is 65 kg until you say otherwise. Reps stay on the program's target,
+    /// because reps are what you are trying to hit; inheriting a short set would quietly
+    /// lower the bar for the rest of the exercise.
+    ///
+    /// Earlier sessions deliberately do not feed this. History is shown beside the set as a
+    /// reference the lifter can tap, so a deliberate target (a deload, say) is never
+    /// overwritten by what happened last week without anyone seeing it (#79).
     private func prefillIfNeeded() {
         guard !performedSet.isCompleted else { return }
 
@@ -107,49 +117,8 @@ struct EditPerformedSetSheet: View {
         }
 
         if performedSet.actualWeight == nil {
-            performedSet.actualWeight = recentWeightForSameExercise() ?? performedSet.targetWeight
+            performedSet.actualWeight = WorkoutSessionService.pendingWeight(for: performedSet)
         }
     }
 
-    /// Looks up the most recent completed actual weight for the same exercise. Prefers the
-    /// current session (e.g. set 2 of bench press inherits set 1's weight); falls back to
-    /// the most recent historical session for the exercise.
-    private func recentWeightForSameExercise() -> Double? {
-        guard let sessionExercise = performedSet.sessionExercise,
-              let session = sessionExercise.session else { return nil }
-
-        // 1. Current session — most recent prior set on same exercise
-        let currentSessionWeight = session.exercises
-            .filter { $0.isSameExercise(as: sessionExercise) }
-            .flatMap(\.performedSets)
-            .filter { $0.isCompleted && $0.id != performedSet.id }
-            .sorted { $0.setIndex > $1.setIndex }
-            .first(where: { ($0.actualWeight ?? 0) > 0 })?
-            .actualWeight
-
-        if let weight = currentSessionWeight {
-            return weight
-        }
-
-        // 2. History — walk completed sessions newest-first, return first matching set's weight
-        let descriptor = FetchDescriptor<WorkoutSession>(
-            sortBy: [SortDescriptor(\.startedAt, order: .reverse)]
-        )
-        guard let history = try? modelContext.fetch(descriptor) else { return nil }
-
-        for historicalSession in history where historicalSession.id != session.id {
-            let weight = historicalSession.exercises
-                .filter { $0.isSameExercise(as: sessionExercise) }
-                .flatMap(\.performedSets)
-                .filter { $0.isCompleted }
-                .compactMap(\.actualWeight)
-                .first { $0 > 0 }
-
-            if let weight {
-                return weight
-            }
-        }
-
-        return nil
-    }
 }

@@ -175,6 +175,9 @@ struct WorkoutSetRow: View {
     var onSkip: () -> Void
     var onEdit: () -> Void
     @State private var errorMessage: String?
+    /// What this exercise looked like last time, shown as a reference the lifter can tap.
+    /// Loaded once per row appearance rather than per render: the lookup reads history.
+    @State private var previous: PreviousSetReference?
     @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
     private var weightUnit: WeightUnit { WeightUnit(rawValue: weightUnitRaw) ?? .kg }
 
@@ -193,8 +196,10 @@ struct WorkoutSetRow: View {
     }
 
     var body: some View {
-        // Prefer values the user has already entered via the editor over template targets.
-        let pendingWeight = (set.actualWeight ?? set.targetWeight).map { " @ \(WeightFormatter.format(kg: $0, fractionDigits: 0, in: weightUnit))" } ?? ""
+        // What completing this set would record: entered value, else carried over from an
+        // earlier set of this exercise, else the template target.
+        let pendingWeight = WorkoutSessionService.pendingWeight(for: set)
+            .map { " @ \(WeightFormatter.format(kg: $0, fractionDigits: 0, in: weightUnit))" } ?? ""
         HStack {
             if set.isCompleted {
                 completedContent
@@ -229,10 +234,56 @@ struct WorkoutSetRow: View {
             if !set.isCompleted { onEdit() }
         }
         .accessibilityAction(named: set.isCompleted ? "Edit set" : "Enter reps and weight") { onEdit() }
+        .task(id: set.id) {
+            guard !set.isCompleted else { return }
+            previous = PreviousSetLookup.find(
+                for: exercise,
+                setIndex: set.setIndex,
+                isWarmup: set.setType == .warmup,
+                modelContext: modelContext
+            )
+        }
         .alert("Error", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
             Button("OK") { errorMessage = nil }
         } message: {
             Text(errorMessage ?? "")
+        }
+    }
+
+    /// "Last time: 65 kg x 8" under a pending set. Tapping reuses those numbers; the row's
+    /// own tap gesture still opens the editor, so the reference is an offer, never applied
+    /// on its own.
+    private func previousReferenceButton(_ reference: PreviousSetReference) -> some View {
+        // Kept short: the row also carries two large buttons, and a longer string squeezes
+        // their labels into wrapping.
+        let label = reference.weightKg
+            .map { "Last time: \(WeightFormatter.format(kg: $0, in: weightUnit)) x \(reference.reps)" }
+            ?? "Last time: \(reference.reps) reps"
+
+        return Button {
+            applyPrevious(reference)
+        } label: {
+            HStack(spacing: 4) {
+                Ph.arrowCounterClockwise.regular
+                    .icon(size: 11)
+                Text(label)
+                    .lineLimit(1)
+            }
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(label). Double tap to use these numbers for \(setContextLabel)")
+    }
+
+    private func applyPrevious(_ reference: PreviousSetReference) {
+        set.actualReps = reference.reps
+        if let weight = reference.weightKg { set.actualWeight = weight }
+        do {
+            try modelContext.save()
+        } catch {
+            SentrySDK.capture(error: error)
+            errorMessage = "Could not save: \(error.localizedDescription)"
         }
     }
 
@@ -302,6 +353,10 @@ struct WorkoutSetRow: View {
                 Text("\(set.actualReps ?? set.targetReps) reps\(weightSuffix)")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+
+                if let previous {
+                    previousReferenceButton(previous)
+                }
             }
             Spacer()
             HStack(spacing: DesignTokens.Spacing.sm) {
@@ -315,6 +370,9 @@ struct WorkoutSetRow: View {
                     .controlSize(.large)
                     .accessibilityLabel("Mark \(setContextLabel) done")
             }
+            // The action labels keep their intrinsic width; the set description truncates
+            // first if the row runs out of room, rather than "Skip" wrapping to two lines.
+            .fixedSize(horizontal: true, vertical: false)
         }
     }
 }

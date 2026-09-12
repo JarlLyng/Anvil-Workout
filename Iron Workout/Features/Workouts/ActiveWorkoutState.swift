@@ -90,7 +90,9 @@ final class ActiveWorkoutState {
 
     func markSetDone(_ set: PerformedSet, exercise: WorkoutSessionExercise) {
         if set.actualReps == nil { set.actualReps = set.targetReps }
-        if set.actualWeight == nil { set.actualWeight = set.targetWeight }
+        // Same resolution the row displays and the editor pre-fills, so completing a set
+        // without opening it records the weight the user was actually shown (#79).
+        if set.actualWeight == nil { set.actualWeight = WorkoutSessionService.pendingWeight(for: set) }
         set.isCompleted = true
         set.completedAt = .now
         recomputeCompletedCount()

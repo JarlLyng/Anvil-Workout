@@ -150,7 +150,117 @@ struct WorkoutSessionServiceTests {
             #expect(set.targetReps == 8)
             #expect(set.targetWeight == 82.5)
             #expect(set.isCompleted == false)
+            // Actuals stay nil until entered or confirmed. In-session inheritance and the
+            // previous-set reference both rely on nil meaning "nobody typed this" (#79).
+            #expect(set.actualReps == nil)
+            #expect(set.actualWeight == nil)
         }
+    }
+
+    @Test("completing a set without entering anything records the template target")
+    @MainActor
+    func markingDoneFillsTargetsFromNil() throws {
+        let context = try makeInMemoryContext()
+        let bench = makeBenchPress(in: context)
+        let template = makeTemplate(exerciseList: [(bench, 3, 8, 82.5)], context: context)
+        let session = try WorkoutSessionService.createSession(from: template, modelContext: context)
+
+        let exercise = try #require(session.exercises.first)
+        let set = try #require(exercise.performedSets.sorted { $0.setIndex < $1.setIndex }.first)
+
+        // Mirrors ActiveWorkoutState.markSetDone, which fills nil actuals from the targets.
+        if set.actualReps == nil { set.actualReps = set.targetReps }
+        if set.actualWeight == nil { set.actualWeight = set.targetWeight }
+        set.isCompleted = true
+
+        #expect(set.actualReps == 8)
+        #expect(set.actualWeight == 82.5)
+    }
+
+    // MARK: - In-session weight inheritance (#79)
+
+    @Test("a correction on an earlier set carries to the next pending set")
+    @MainActor
+    func inheritsWeightFromEarlierSet() throws {
+        let context = try makeInMemoryContext()
+        let bench = makeBenchPress(in: context)
+        let template = makeTemplate(exerciseList: [(bench, 3, 5, 40)], context: context)
+        let session = try WorkoutSessionService.createSession(from: template, modelContext: context)
+        let sets = try #require(session.exercises.first?.performedSets).sorted { $0.setIndex < $1.setIndex }
+
+        // Set 1 is corrected to 45 and completed.
+        sets[0].actualWeight = 45
+        sets[0].actualReps = 5
+        sets[0].isCompleted = true
+
+        #expect(WorkoutSessionService.inheritedWeight(for: sets[1]) == 45)
+        // Row, Done and the editor all resolve to the same number.
+        #expect(WorkoutSessionService.pendingWeight(for: sets[1]) == 45)
+        #expect(WorkoutSessionService.pendingWeight(for: sets[2]) == 45)
+    }
+
+    @Test("an untouched set falls back to the template target")
+    @MainActor
+    func pendingWeightFallsBackToTarget() throws {
+        let context = try makeInMemoryContext()
+        let bench = makeBenchPress(in: context)
+        let template = makeTemplate(exerciseList: [(bench, 3, 5, 40)], context: context)
+        let session = try WorkoutSessionService.createSession(from: template, modelContext: context)
+        let sets = try #require(session.exercises.first?.performedSets).sorted { $0.setIndex < $1.setIndex }
+
+        #expect(WorkoutSessionService.inheritedWeight(for: sets[0]) == nil)
+        #expect(WorkoutSessionService.pendingWeight(for: sets[0]) == 40)
+    }
+
+    @Test("a value the user entered wins over both inheritance and the target")
+    @MainActor
+    func enteredWeightWins() throws {
+        let context = try makeInMemoryContext()
+        let bench = makeBenchPress(in: context)
+        let template = makeTemplate(exerciseList: [(bench, 3, 5, 40)], context: context)
+        let session = try WorkoutSessionService.createSession(from: template, modelContext: context)
+        let sets = try #require(session.exercises.first?.performedSets).sorted { $0.setIndex < $1.setIndex }
+
+        sets[0].actualWeight = 45
+        sets[0].isCompleted = true
+        // The lifter deliberately drops set 2 back down.
+        sets[1].actualWeight = 35
+
+        #expect(WorkoutSessionService.pendingWeight(for: sets[1]) == 35)
+    }
+
+    @Test("a later set is never used as the source for an earlier one")
+    @MainActor
+    func inheritanceOnlyLooksBackwards() throws {
+        let context = try makeInMemoryContext()
+        let bench = makeBenchPress(in: context)
+        let template = makeTemplate(exerciseList: [(bench, 3, 5, 40)], context: context)
+        let session = try WorkoutSessionService.createSession(from: template, modelContext: context)
+        let sets = try #require(session.exercises.first?.performedSets).sorted { $0.setIndex < $1.setIndex }
+
+        sets[2].actualWeight = 60
+        sets[2].isCompleted = true
+
+        #expect(WorkoutSessionService.inheritedWeight(for: sets[0]) == nil)
+        #expect(WorkoutSessionService.pendingWeight(for: sets[0]) == 40)
+    }
+
+    @Test("a skipped set records no weight and is not inherited from")
+    @MainActor
+    func skippedSetsAreNotInherited() throws {
+        let context = try makeInMemoryContext()
+        let bench = makeBenchPress(in: context)
+        let template = makeTemplate(exerciseList: [(bench, 3, 5, 40)], context: context)
+        let session = try WorkoutSessionService.createSession(from: template, modelContext: context)
+        let sets = try #require(session.exercises.first?.performedSets).sorted { $0.setIndex < $1.setIndex }
+
+        // Mirrors markSetSkipped: completed, but nothing recorded.
+        sets[0].isCompleted = true
+        sets[0].actualReps = nil
+        sets[0].actualWeight = nil
+
+        #expect(WorkoutSessionService.inheritedWeight(for: sets[1]) == nil)
+        #expect(WorkoutSessionService.pendingWeight(for: sets[1]) == 40)
     }
 
     // MARK: - finalizeSession
