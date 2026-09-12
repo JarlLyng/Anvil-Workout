@@ -32,7 +32,28 @@ struct ParsedImportExercise: Equatable {
     let name: String
     /// Raw superset grouping key from the source file (nil when not part of a superset).
     let supersetKey: String?
+    /// Per-exercise note from the source file, shown in session detail. Empty when absent.
+    var note: String
     var sets: [ParsedImportSet]
+}
+
+/// What the parser could not bring across. Surfaced in the import preview so a partial
+/// import is a visible choice rather than a silent one (#75).
+struct ParsedImportSkips: Equatable {
+    /// Rows carrying only a duration or a distance: planks, timed holds, carries, cardio.
+    /// `PerformedSet` stores reps and weight, so there is nowhere to put these yet.
+    var timedOrDistanceSets = 0
+    /// Rows whose date could not be read, so they cannot be placed in history.
+    var unreadableDates = 0
+    /// Rows with no exercise name.
+    var namelessRows = 0
+    /// Workouts whose workout-level note was dropped. `WorkoutSession` has no note field;
+    /// per-exercise notes are preserved.
+    var droppedWorkoutNotes = 0
+
+    /// Rows that did not make it into the import at all.
+    var droppedRows: Int { timedOrDistanceSets + unreadableDates + namelessRows }
+    var isEmpty: Bool { droppedRows == 0 && droppedWorkoutNotes == 0 }
 }
 
 struct ParsedImportSession: Equatable {
@@ -45,6 +66,8 @@ struct ParsedImportSession: Equatable {
 struct ParsedImport: Equatable {
     let format: WorkoutCSVFormat
     let sessions: [ParsedImportSession]
+    /// Empty when everything in the file was imported.
+    var skipped = ParsedImportSkips()
 
     var sessionCount: Int { sessions.count }
     var exerciseCount: Int { sessions.reduce(0) { $0 + $1.exercises.count } }
@@ -90,16 +113,16 @@ enum WorkoutCSVImporter {
         let format = try detectFormat(columns)
         let dataRows = Array(rows.dropFirst())
 
-        let sessions: [ParsedImportSession]
+        let parsed: (sessions: [ParsedImportSession], skips: ParsedImportSkips)
         switch format {
         case .strong:
-            sessions = parseStrong(dataRows, columns: columns, fallbackUnit: strongFallbackUnit)
+            parsed = parseStrong(dataRows, columns: columns, fallbackUnit: strongFallbackUnit)
         case .hevy:
-            sessions = parseHevy(dataRows, columns: columns)
+            parsed = parseHevy(dataRows, columns: columns)
         }
 
-        guard !sessions.isEmpty else { throw WorkoutCSVImportError.noValidRows }
-        return ParsedImport(format: format, sessions: sessions)
+        guard !parsed.sessions.isEmpty else { throw WorkoutCSVImportError.noValidRows }
+        return ParsedImport(format: format, sessions: parsed.sessions, skipped: parsed.skips)
     }
 
     // MARK: - Format detection
@@ -116,23 +139,46 @@ enum WorkoutCSVImporter {
 
     // MARK: - Strong
 
-    private static func parseStrong(_ rows: [[String]], columns: [String: Int], fallbackUnit: WeightUnit) -> [ParsedImportSession] {
+    private static func parseStrong(
+        _ rows: [[String]], columns: [String: Int], fallbackUnit: WeightUnit
+    ) -> (sessions: [ParsedImportSession], skips: ParsedImportSkips) {
         var builder = SessionBuilder()
+        var skips = ParsedImportSkips()
+        var workoutsWithNotes: Set<String> = []
         let hasUnitColumn = columns["weight unit"] != nil
 
         for row in rows {
-            guard let date = field(row, columns, "date"), let dateValue = parseDate(date) else { continue }
+            guard let date = field(row, columns, "date"), let dateValue = parseDate(date) else {
+                // Ignore structurally blank rows; only count rows that carried something.
+                if rowHasContent(row) { skips.unreadableDates += 1 }
+                continue
+            }
             let workout = field(row, columns, "workout name") ?? "Workout"
             let exerciseName = field(row, columns, "exercise name")?.trimmingCharacters(in: .whitespaces) ?? ""
-            guard !exerciseName.isEmpty else { continue }
+            guard !exerciseName.isEmpty else {
+                skips.namelessRows += 1
+                continue
+            }
 
             let reps = Int(rounding: field(row, columns, "reps")) ?? 0
             let rawWeight = Double(localized: field(row, columns, "weight"))
             let unit = hasUnitColumn ? unitFromString(field(row, columns, "weight unit")) ?? fallbackUnit : fallbackUnit
             let weightKg = rawWeight.map { toKg($0, unit: unit) }
 
-            // Skip rows with no data at all (Strong sometimes exports placeholder rows).
-            if reps == 0 && (weightKg ?? 0) == 0 { continue }
+            let sessionKeyForNotes = date + "|" + workout
+            if field(row, columns, "workout notes") != nil, workoutsWithNotes.insert(sessionKeyForNotes).inserted {
+                skips.droppedWorkoutNotes += 1
+            }
+
+            // Strong exports placeholder rows with no reps and no weight. A row that instead
+            // holds Seconds or Distance is real training we cannot represent yet, so it is
+            // counted as a loss rather than discarded quietly.
+            if reps == 0 && (weightKg ?? 0) == 0 {
+                if hasPositiveValue(row, columns, in: ["seconds", "distance"]) {
+                    skips.timedOrDistanceSets += 1
+                }
+                continue
+            }
 
             let setOrder = Int(rounding: field(row, columns, "set order"))
             let rpe = clampedRPE(Double(localized: field(row, columns, "rpe")))
@@ -143,24 +189,34 @@ enum WorkoutCSVImporter {
             let endValue = parseDuration(field(row, columns, "duration")).map(dateValue.addingTimeInterval)
             builder.add(
                 sessionKey: sessionKey, sessionName: workout, startedAt: dateValue, endedAt: endValue,
-                exerciseName: exerciseName, supersetKey: nil,
+                exerciseName: exerciseName, supersetKey: nil, exerciseNote: field(row, columns, "notes"),
                 explicitSetIndex: setOrder.map { max(0, $0 - 1) },
                 reps: reps, weightKg: weightKg, type: .working, rpe: rpe
             )
         }
-        return builder.sessions
+        return (builder.sessions, skips)
     }
 
     // MARK: - Hevy
 
-    private static func parseHevy(_ rows: [[String]], columns: [String: Int]) -> [ParsedImportSession] {
+    private static func parseHevy(
+        _ rows: [[String]], columns: [String: Int]
+    ) -> (sessions: [ParsedImportSession], skips: ParsedImportSkips) {
         var builder = SessionBuilder()
+        var skips = ParsedImportSkips()
+        var workoutsWithNotes: Set<String> = []
 
         for row in rows {
-            guard let start = field(row, columns, "start_time"), let startValue = parseDate(start) else { continue }
+            guard let start = field(row, columns, "start_time"), let startValue = parseDate(start) else {
+                if rowHasContent(row) { skips.unreadableDates += 1 }
+                continue
+            }
             let title = field(row, columns, "title") ?? "Workout"
             let exerciseName = field(row, columns, "exercise_title")?.trimmingCharacters(in: .whitespaces) ?? ""
-            guard !exerciseName.isEmpty else { continue }
+            guard !exerciseName.isEmpty else {
+                skips.namelessRows += 1
+                continue
+            }
 
             let reps = Int(rounding: field(row, columns, "reps")) ?? 0
             // Hevy names the weight column after the user's unit: weight_kg or weight_lbs.
@@ -172,7 +228,19 @@ enum WorkoutCSVImporter {
             } else {
                 weightKg = nil
             }
-            if reps == 0 && (weightKg ?? 0) == 0 { continue }
+            let sessionKeyForNotes = title + "|" + start
+            if field(row, columns, "description") != nil, workoutsWithNotes.insert(sessionKeyForNotes).inserted {
+                skips.droppedWorkoutNotes += 1
+            }
+
+            // Same as Strong: a row with neither reps nor weight is either a placeholder or
+            // a timed/distance set the set model cannot hold. Only the latter is a loss.
+            if reps == 0 && (weightKg ?? 0) == 0 {
+                if hasPositiveValue(row, columns, in: ["duration_seconds", "distance_km", "distance_miles"]) {
+                    skips.timedOrDistanceSets += 1
+                }
+                continue
+            }
 
             let endValue = field(row, columns, "end_time").flatMap(parseDate)
             let superset = field(row, columns, "superset_id").flatMap { $0.isEmpty ? nil : $0 }
@@ -183,12 +251,12 @@ enum WorkoutCSVImporter {
 
             builder.add(
                 sessionKey: sessionKey, sessionName: title, startedAt: startValue, endedAt: endValue,
-                exerciseName: exerciseName, supersetKey: superset,
+                exerciseName: exerciseName, supersetKey: superset, exerciseNote: field(row, columns, "exercise_notes"),
                 explicitSetIndex: setIndex,
                 reps: reps, weightKg: weightKg, type: type, rpe: rpe
             )
         }
-        return builder.sessions
+        return (builder.sessions, skips)
     }
 
     private static func setType(fromHevy raw: String?) -> SetType {
@@ -218,6 +286,18 @@ enum WorkoutCSVImporter {
         case "lb", "lbs", "pounds": return .lbs
         default: return nil
         }
+    }
+
+    /// True when any of `names` holds a number above zero. Used to tell a genuine timed or
+    /// distance set apart from an empty placeholder row.
+    private static func hasPositiveValue(_ row: [String], _ columns: [String: Int], in names: [String]) -> Bool {
+        names.contains { (Double(localized: field(row, columns, $0)) ?? 0) > 0 }
+    }
+
+    /// True when the row has any non-empty cell, so trailing or structurally blank rows are
+    /// not reported to the user as lost data.
+    private static func rowHasContent(_ row: [String]) -> Bool {
+        row.contains { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
     }
 
     private static func field(_ row: [String], _ columns: [String: Int], _ name: String) -> String? {
@@ -412,7 +492,7 @@ private struct SessionBuilder {
 
     mutating func add(
         sessionKey: String, sessionName: String, startedAt: Date, endedAt: Date?,
-        exerciseName: String, supersetKey: String?,
+        exerciseName: String, supersetKey: String?, exerciseNote: String?,
         explicitSetIndex: Int?, reps: Int, weightKg: Double?, type: SetType, rpe: Double?
     ) {
         let sIndex: Int
@@ -431,7 +511,14 @@ private struct SessionBuilder {
         } else {
             exIndex = sessions[sIndex].exercises.count
             exerciseOrderBySession[sessionKey]?[exerciseName] = exIndex
-            sessions[sIndex].exercises.append(ParsedImportExercise(name: exerciseName, supersetKey: supersetKey, sets: []))
+            sessions[sIndex].exercises.append(
+                ParsedImportExercise(name: exerciseName, supersetKey: supersetKey, note: "", sets: [])
+            )
+        }
+
+        // Both apps repeat the exercise note on every set row; keep the first non-empty one.
+        if sessions[sIndex].exercises[exIndex].note.isEmpty, let exerciseNote, !exerciseNote.isEmpty {
+            sessions[sIndex].exercises[exIndex].note = exerciseNote
         }
 
         let setKey = sessionKey + "|" + exerciseName

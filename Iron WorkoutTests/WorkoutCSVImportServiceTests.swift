@@ -139,6 +139,22 @@ struct WorkoutCSVImportServiceTests {
     }
 
     @MainActor
+    @Test("Per-exercise notes reach the saved session so history shows them")
+    func exerciseNotesAreSaved() throws {
+        let context = try makeInMemoryContext()
+        let csv = """
+        "Date","Workout Name","Exercise Name","Set Order","Weight","Reps","Notes"
+        "2024-01-15 18:30:00","Day","Squat","1","100","5","Belt on"
+        """
+        let parsed = try WorkoutCSVImporter.parse(csv, strongFallbackUnit: .kg)
+        try WorkoutCSVImportService.save(parsed, modelContext: context)
+
+        let session = try context.fetch(FetchDescriptor<WorkoutSession>())[0]
+        let squat = try #require(session.exercises.first { $0.exerciseName == "Squat" })
+        #expect(squat.note == "Belt on")
+    }
+
+    @MainActor
     @Test("A genuinely abandoned workout is still offered for recovery after an import")
     func abandonedWorkoutStillFoundAlongsideImports() throws {
         let context = try makeInMemoryContext()

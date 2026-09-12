@@ -370,8 +370,37 @@ struct SettingsView: View {
             "Detected \(parsed.format.rawValue) export.",
             "\(parsed.sessionCount) workouts, \(parsed.setCount) sets across \(parsed.exerciseCount) exercises.",
         ]
+        if let exclusions = importExclusions(parsed.skipped) {
+            lines.append(exclusions)
+        }
         lines.append("Imported workouts are added to your history. New exercise names become custom exercises.")
         return lines.joined(separator: "\n\n")
+    }
+
+    /// Spells out what will not come across, so a partial import is a visible choice made
+    /// before anything is written rather than something discovered later (#75).
+    private func importExclusions(_ skipped: ParsedImportSkips) -> String? {
+        guard !skipped.isEmpty else { return nil }
+
+        var reasons: [String] = []
+        if skipped.timedOrDistanceSets > 0 {
+            reasons.append("\(skipped.timedOrDistanceSets) timed or distance \(skipped.timedOrDistanceSets == 1 ? "set" : "sets") (Anvil records reps and weight)")
+        }
+        if skipped.unreadableDates > 0 {
+            reasons.append("\(skipped.unreadableDates) \(skipped.unreadableDates == 1 ? "row" : "rows") with an unreadable date")
+        }
+        if skipped.namelessRows > 0 {
+            reasons.append("\(skipped.namelessRows) \(skipped.namelessRows == 1 ? "row" : "rows") with no exercise name")
+        }
+        if skipped.droppedWorkoutNotes > 0 {
+            reasons.append("workout notes on \(skipped.droppedWorkoutNotes) \(skipped.droppedWorkoutNotes == 1 ? "workout" : "workouts") (per-exercise notes are kept)")
+        }
+
+        let heading = skipped.droppedRows > 0
+            ? "Not everything can be imported. Leaving out:"
+            : "Everything will be imported except:"
+        return heading + "\n" + reasons.map { "• " + $0 }.joined(separator: "\n")
+            + "\n\nYour original file is not changed, so you can cancel and keep it."
     }
 
     private func commitImport(_ parsed: ParsedImport) {
@@ -381,6 +410,11 @@ struct SettingsView: View {
             var text = "Imported \(summary.importedSessions) workouts (\(summary.importedSets) sets) from \(summary.format.rawValue)."
             if summary.createdExercises > 0 {
                 text += "\n\nAdded \(summary.createdExercises) new custom \(summary.createdExercises == 1 ? "exercise" : "exercises")."
+            }
+            // Repeat the shortfall here so the success message cannot be mistaken for a
+            // complete migration after the fact.
+            if parsed.skipped.droppedRows > 0 {
+                text += "\n\n\(parsed.skipped.droppedRows) \(parsed.skipped.droppedRows == 1 ? "row was" : "rows were") left out, as listed before importing. Your original file still has them."
             }
             importResultMessage = text
         } catch {

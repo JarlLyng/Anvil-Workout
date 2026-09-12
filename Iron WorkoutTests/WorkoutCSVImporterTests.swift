@@ -110,6 +110,97 @@ struct WorkoutCSVImporterTests {
         #expect(parsed.sessions[0].endedAt == nil)
     }
 
+    // MARK: - Partial-import reporting (#75)
+
+    @Test("Strong timed sets are counted as skipped instead of vanishing")
+    func strongTimedSetsAreReported() throws {
+        let csv = """
+        "Date","Workout Name","Duration","Exercise Name","Set Order","Weight","Reps","Distance","Seconds","Notes","Workout Notes","RPE"
+        "2024-01-15 18:30:00","Core","30m","Bench Press","1","60","10","0","0","","",""
+        "2024-01-15 18:30:00","Core","30m","Plank","1","0","0","0","60","","",""
+        """
+        let parsed = try WorkoutCSVImporter.parse(csv, strongFallbackUnit: .kg)
+
+        #expect(parsed.setCount == 1)
+        #expect(parsed.skipped.timedOrDistanceSets == 1)
+        #expect(parsed.skipped.droppedRows == 1)
+        // The exercise itself is gone too, so the count must not imply it was partially kept.
+        #expect(parsed.sessions[0].exercises.count == 1)
+    }
+
+    @Test("Hevy duration and distance rows are counted as skipped")
+    func hevyTimedSetsAreReported() throws {
+        let csv = """
+        title,start_time,end_time,exercise_title,superset_id,set_index,set_type,weight_kg,reps,distance_km,duration_seconds
+        Mixed,2024-02-01 07:00:00,2024-02-01 08:00:00,Bench Press,,0,normal,80,8,,
+        Mixed,2024-02-01 07:00:00,2024-02-01 08:00:00,Plank,,0,normal,0,0,,60
+        Mixed,2024-02-01 07:00:00,2024-02-01 08:00:00,Run,,0,normal,0,0,5,
+        """
+        let parsed = try WorkoutCSVImporter.parse(csv)
+
+        #expect(parsed.setCount == 1)
+        #expect(parsed.skipped.timedOrDistanceSets == 2)
+    }
+
+    @Test("Placeholder rows with nothing in them are not reported as lost data")
+    func emptyPlaceholderRowsAreNotReported() throws {
+        let csv = """
+        "Date","Workout Name","Exercise Name","Set Order","Weight","Reps","Distance","Seconds"
+        "2024-01-15 18:30:00","Day","Squat","1","100","5","0","0"
+        "2024-01-15 18:30:00","Day","Squat","2","0","0","0","0"
+        """
+        let parsed = try WorkoutCSVImporter.parse(csv, strongFallbackUnit: .kg)
+
+        #expect(parsed.setCount == 1)
+        // The second row carries no training data at all, so there is nothing to warn about.
+        #expect(parsed.skipped.isEmpty)
+    }
+
+    @Test("Rows with an unreadable date are counted, blank rows are not")
+    func unreadableDatesAreReported() throws {
+        let csv = """
+        "Date","Workout Name","Exercise Name","Set Order","Weight","Reps"
+        "2024-01-15 18:30:00","Day","Squat","1","100","5"
+        "not a date","Day","Squat","2","100","5"
+        "","","","","",""
+        """
+        let parsed = try WorkoutCSVImporter.parse(csv, strongFallbackUnit: .kg)
+
+        #expect(parsed.setCount == 1)
+        #expect(parsed.skipped.unreadableDates == 1)
+    }
+
+    @Test("Workout-level notes are reported once per workout, not once per row")
+    func workoutNotesReportedPerWorkout() throws {
+        let csv = """
+        "Date","Workout Name","Exercise Name","Set Order","Weight","Reps","Notes","Workout Notes"
+        "2024-01-15 18:30:00","Day","Squat","1","100","5","","Felt strong"
+        "2024-01-15 18:30:00","Day","Squat","2","100","5","","Felt strong"
+        """
+        let parsed = try WorkoutCSVImporter.parse(csv, strongFallbackUnit: .kg)
+
+        #expect(parsed.skipped.droppedWorkoutNotes == 1)
+        #expect(parsed.skipped.droppedRows == 0)
+        #expect(!parsed.skipped.isEmpty)
+    }
+
+    @Test("A fully importable file reports nothing skipped")
+    func cleanFileReportsNoSkips() throws {
+        let parsed = try WorkoutCSVImporter.parse(strongCSV, strongFallbackUnit: .kg)
+        #expect(parsed.skipped.isEmpty)
+    }
+
+    @Test("Per-exercise notes survive the import")
+    func exerciseNotesArePreserved() throws {
+        let csv = """
+        "Date","Workout Name","Exercise Name","Set Order","Weight","Reps","Notes"
+        "2024-01-15 18:30:00","Day","Squat","1","100","5","Belt on"
+        "2024-01-15 18:30:00","Day","Squat","2","100","5",""
+        """
+        let parsed = try WorkoutCSVImporter.parse(csv, strongFallbackUnit: .kg)
+        #expect(parsed.sessions[0].exercises[0].note == "Belt on")
+    }
+
     // MARK: - Hevy
 
     // Hevy's CSV: includes set_type, weight already in kg, and superset grouping.

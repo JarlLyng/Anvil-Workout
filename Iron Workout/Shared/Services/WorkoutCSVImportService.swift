@@ -69,6 +69,7 @@ enum WorkoutCSVImportService {
                     exerciseID: exercise.id,
                     exerciseName: exercise.name,
                     sortOrder: exerciseOrder,
+                    note: parsedExercise.note,
                     supersetID: supersetID
                 )
                 sessionExercise.session = session
