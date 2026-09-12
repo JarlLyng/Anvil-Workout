@@ -97,4 +97,63 @@ struct WorkoutCSVImportServiceTests {
         #expect(sets[1].actualWeight == 80)
         #expect(sets[1].rpe == 8.5)
     }
+
+    // MARK: - Imported sessions are closed, not left open (#74)
+
+    private let strongCSV = """
+    "Date","Workout Name","Duration","Exercise Name","Set Order","Weight","Reps","Distance","Seconds","Notes","Workout Notes","RPE"
+    "2024-01-15 18:30:00","Push Day","1h 2m","Bench Press","1","60","10","0","0","","",""
+    "2024-01-15 18:30:00","Push Day","1h 2m","Overhead Press","1","40","8","0","0","","",""
+    """
+
+    @MainActor
+    @Test("Strong import stores the source duration and is never treated as abandoned")
+    func strongImportIsClosed() throws {
+        let context = try makeInMemoryContext()
+        let parsed = try WorkoutCSVImporter.parse(strongCSV, strongFallbackUnit: .kg)
+        try WorkoutCSVImportService.save(parsed, modelContext: context)
+
+        let session = try context.fetch(FetchDescriptor<WorkoutSession>())[0]
+        #expect(session.endedAt != nil)
+        #expect(session.durationSeconds == 3720)
+        // The whole point: startup recovery must not offer to save or discard imported history.
+        #expect(WorkoutSessionService.findStaleSession(modelContext: context) == nil)
+    }
+
+    @MainActor
+    @Test("Import without a source duration is still closed, with duration left at zero")
+    func importWithoutDurationIsClosed() throws {
+        let context = try makeInMemoryContext()
+        let csv = """
+        Date,Workout Name,Exercise Name,Set Order,Weight,Reps
+        2024-01-15 18:30:00,Push Day,Bench Press,1,60,10
+        """
+        let parsed = try WorkoutCSVImporter.parse(csv, strongFallbackUnit: .kg)
+        try WorkoutCSVImportService.save(parsed, modelContext: context)
+
+        let session = try context.fetch(FetchDescriptor<WorkoutSession>())[0]
+        // Closed so it never resurfaces, but the unknown length is stored as zero, not guessed.
+        #expect(session.endedAt == session.startedAt)
+        #expect(session.durationSeconds == 0)
+        #expect(WorkoutSessionService.findStaleSession(modelContext: context) == nil)
+    }
+
+    @MainActor
+    @Test("A genuinely abandoned workout is still offered for recovery after an import")
+    func abandonedWorkoutStillFoundAlongsideImports() throws {
+        let context = try makeInMemoryContext()
+        let parsed = try WorkoutCSVImporter.parse(strongCSV, strongFallbackUnit: .kg)
+        try WorkoutCSVImportService.save(parsed, modelContext: context)
+
+        let abandoned = WorkoutSession(
+            templateName: "Leg Day",
+            startedAt: Date().addingTimeInterval(-8 * 60 * 60),
+            endedAt: nil
+        )
+        context.insert(abandoned)
+        try context.save()
+
+        let stale = try #require(WorkoutSessionService.findStaleSession(modelContext: context))
+        #expect(stale.templateName == "Leg Day")
+    }
 }

@@ -57,6 +57,59 @@ struct WorkoutCSVImporterTests {
         #expect(abs(weight - 100 * 0.45359237) < 0.0001)
     }
 
+    // MARK: - Strong durations (#74)
+
+    @Test("Strong Duration column becomes an end date")
+    func strongDurationBecomesEndDate() throws {
+        let parsed = try WorkoutCSVImporter.parse(strongCSV, strongFallbackUnit: .kg)
+
+        // "1h 2m" = 3720s from 18:30:00.
+        let push = parsed.sessions[0]
+        let pushEnd = try #require(push.endedAt)
+        #expect(pushEnd.timeIntervalSince(push.startedAt) == 3720)
+
+        // "55m" = 3300s.
+        let pull = parsed.sessions[1]
+        let pullEnd = try #require(pull.endedAt)
+        #expect(pullEnd.timeIntervalSince(pull.startedAt) == 3300)
+    }
+
+    @Test(
+        "Duration strings parse across the formats Strong has exported",
+        arguments: [
+            ("1h 2m", 3720.0),
+            ("45m", 2700.0),
+            ("1h", 3600.0),
+            ("1h 2m 30s", 3750.0),
+            ("45 min", 2700.0),
+            ("1hr 2min", 3720.0),
+            ("30s", 30.0),
+            ("1:02:30", 3750.0),
+            ("45:30", 2730.0),
+        ]
+    )
+    func durationFormats(raw: String, expected: Double) {
+        #expect(WorkoutCSVImporter.parseDuration(raw) == expected)
+    }
+
+    @Test(
+        "Unusable duration values fall back to nil rather than a guess",
+        arguments: ["", "   ", "0m", "0:00", "-", "n/a", "3720"]
+    )
+    func durationRejectsUnusableValues(raw: String) {
+        #expect(WorkoutCSVImporter.parseDuration(raw) == nil)
+    }
+
+    @Test("Strong export without a Duration column parses with no end date")
+    func strongWithoutDurationColumn() throws {
+        let csv = """
+        Date,Workout Name,Exercise Name,Set Order,Weight,Reps
+        2024-01-15 18:30:00,Day,Squat,1,100,5
+        """
+        let parsed = try WorkoutCSVImporter.parse(csv, strongFallbackUnit: .kg)
+        #expect(parsed.sessions[0].endedAt == nil)
+    }
+
     // MARK: - Hevy
 
     // Hevy's CSV: includes set_type, weight already in kg, and superset grouping.

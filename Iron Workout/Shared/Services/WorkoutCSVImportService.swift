@@ -37,10 +37,17 @@ enum WorkoutCSVImportService {
         var importedSets = 0
 
         for parsedSession in parsed.sessions {
+            // Imported rows are historical by definition: the workout already happened.
+            // A nil end date would make `WorkoutSessionService.findStaleSession` treat the
+            // import as an abandoned live workout and prompt the user to save or discard it
+            // on the next launch, once per imported workout (#74). When the source carries
+            // no end time or duration, fall back to the start: an unknown length is stored
+            // as zero rather than guessed, but the session is still closed.
+            let endedAt = parsedSession.endedAt ?? parsedSession.startedAt
             let session = WorkoutSession(
                 templateName: parsedSession.name.isEmpty ? "Imported Workout" : parsedSession.name,
                 startedAt: parsedSession.startedAt,
-                endedAt: parsedSession.endedAt,
+                endedAt: endedAt,
                 exerciseCount: parsedSession.exercises.count
             )
             modelContext.insert(session)
@@ -89,9 +96,7 @@ enum WorkoutCSVImportService {
             }
 
             // Historical aggregates: duration from the source range when available, else 0.
-            if let endedAt = parsedSession.endedAt {
-                session.durationSeconds = Int(max(0, endedAt.timeIntervalSince(parsedSession.startedAt).rounded()))
-            }
+            session.durationSeconds = Int(max(0, endedAt.timeIntervalSince(parsedSession.startedAt).rounded()))
             session.completedSetCount = session.exercises.flatMap(\.performedSets).filter(\.isCompleted).count
         }
 

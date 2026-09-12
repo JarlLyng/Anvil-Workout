@@ -137,8 +137,12 @@ enum WorkoutCSVImporter {
             let setOrder = Int(rounding: field(row, columns, "set order"))
             let rpe = clampedRPE(Double(localized: field(row, columns, "rpe")))
             let sessionKey = date + "|" + workout
+            // Strong has no end column; it repeats the workout Duration on every row of
+            // that workout. The builder keeps the value from the row that opens the
+            // session, so deriving an end from the start is enough.
+            let endValue = parseDuration(field(row, columns, "duration")).map(dateValue.addingTimeInterval)
             builder.add(
-                sessionKey: sessionKey, sessionName: workout, startedAt: dateValue, endedAt: nil,
+                sessionKey: sessionKey, sessionName: workout, startedAt: dateValue, endedAt: endValue,
                 exerciseName: exerciseName, supersetKey: nil,
                 explicitSetIndex: setOrder.map { max(0, $0 - 1) },
                 reps: reps, weightKg: weightKg, type: .working, rpe: rpe
@@ -258,6 +262,63 @@ enum WorkoutCSVImporter {
             if let date = formatter.date(from: trimmed) { return date }
         }
         return ISO8601DateFormatter().date(from: trimmed)
+    }
+
+    // MARK: - Durations
+
+    /// Parses Strong's human-readable `Duration` column, e.g. "1h 2m", "45m", "1h 2m 30s",
+    /// "45 min". Older exports use a clock form instead ("1:02:30", "45:30").
+    ///
+    /// Returns nil for anything unrecognised or zero-length so the caller falls back to a
+    /// documented default rather than inventing a workout length. A bare number is
+    /// deliberately not accepted: the column gives no way to tell minutes from seconds.
+    nonisolated static func parseDuration(_ raw: String?) -> TimeInterval? {
+        guard let raw else { return nil }
+        let trimmed = raw.trimmingCharacters(in: .whitespaces).lowercased()
+        guard !trimmed.isEmpty else { return nil }
+
+        if trimmed.contains(":") {
+            let parts = trimmed.split(separator: ":").map(String.init)
+            let values = parts.compactMap { Int($0) }
+            guard values.count == parts.count else { return nil }
+            let seconds: Int
+            switch values.count {
+            case 3: seconds = values[0] * 3600 + values[1] * 60 + values[2]
+            case 2: seconds = values[0] * 60 + values[1]
+            default: return nil
+            }
+            return seconds > 0 ? TimeInterval(seconds) : nil
+        }
+
+        // Unit form: scan number/unit pairs, tolerating spaces and longer unit spellings
+        // ("1 h", "45 min"). Characters that are neither digits nor a unit reset the
+        // pending number so "1hr 2min" reads as 1 hour and 2 minutes, not 1-2-2.
+        var total: TimeInterval = 0
+        var pending = ""
+        for character in trimmed {
+            if character.isNumber || character == "." || character == "," {
+                pending.append(character == "," ? "." : character)
+            } else if character.isWhitespace {
+                continue
+            } else if let multiplier = unitSeconds(character), let value = Double(pending) {
+                total += value * multiplier
+                pending = ""
+            } else {
+                pending = ""
+            }
+        }
+        return total > 0 ? total : nil
+    }
+
+    /// `nonisolated` to match `parseDuration`: Release builds default to MainActor isolation,
+    /// and a nonisolated caller cannot reach an isolated helper.
+    nonisolated private static func unitSeconds(_ character: Character) -> TimeInterval? {
+        switch character {
+        case "h": return 3600
+        case "m": return 60
+        case "s": return 1
+        default: return nil
+        }
     }
 
     // MARK: - Text normalization & tokenizing
