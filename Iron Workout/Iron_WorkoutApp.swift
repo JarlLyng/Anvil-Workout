@@ -26,6 +26,12 @@ struct Iron_WorkoutApp: App {
                 options.tracesSampleRate = 1.0
                 options.attachScreenshot = true
                 options.attachViewHierarchy = true
+                // A paused debugger is indistinguishable from a hung main thread, so a
+                // Debug build reports every breakpoint as an app hang. IOS-8 and IOS-9 were
+                // both that: an idle CFRunLoop waiting in mach_msg with no app code on the
+                // stack. Left on, it refills the issue stream every time anyone develops
+                // and buries anything real. Production keeps hang detection.
+                options.enableAppHangTracking = false
                 #else
                 options.environment = "production"
                 options.debug = false
