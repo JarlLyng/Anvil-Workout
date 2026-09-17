@@ -24,7 +24,7 @@ account and no sync service.
 ## Requirements
 
 - **iOS 17.0+**, iPadOS 17.0+
-- **watchOS 10.0+** for the watch app. The watch **widget** target is set to watchOS 26.5, so it is unavailable below that. That gap is unintentional drift, not a decision.
+- **watchOS 10.0+** for the watch app and the watch widget. The widget's floor is set by `.containerBackground(for: .widget)`, which is watchOS 10; everything else it uses is watchOS 9. It drifted to 26.5 once (#85), so check all four watch configs together if you touch deployment targets.
 
 ## Strategy lives in the private hub
 
