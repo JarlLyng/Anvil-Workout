@@ -1,9 +1,10 @@
 # AGENTS.md
 
 Project context for AI assistants working on Anvil Workout.
-This file is mirrored verbatim to `.cursorrules`, `.windsurfrules` and
-`.github/copilot-instructions.md`, and to `AGENTS.md` with only the title line changed.
-**Change one, re-mirror all five.**
+This is the repo's only agent-context file, on purpose (#87): the repo is indifferent to which AI
+tool is used. Editor- and agent-specific files stay local and are gitignored. Do not add a
+`CLAUDE.md` beside this file; Claude Code reads `AGENTS.md` directly, and a `CLAUDE.md` would
+shadow it.
 
 ## What is Anvil Workout?
 
@@ -18,7 +19,7 @@ account and no sync service.
 - **Price:** $2.99 USD one-time. No subscription, no in-app purchases, no ads.
 - **Current version:** 1.8.0 (live 2026-09-17)
 - **License:** [MIT](LICENSE), like the sibling apps. It covers the code, not the Anvil name, brand or App Store listing.
-- **Repo status:** going public. The Sentry token that leaked into git history was revoked on 2026-09-22 and verified dead; the history is kept as is rather than rewritten (#63).
+- **Repo status:** public since 2026-09-22. The Sentry token that leaked into git history was revoked beforehand and verified dead; the history is kept as is rather than rewritten (#63).
 - **Formerly:** Iron Workout. The Xcode project, targets, scheme, folder and bundle ID still carry the old name (#83). **Never change the bundle ID** `com.iamjarl.Iron-Workout` or the App Group `group.com.iamjarl.Iron-Workout`; both would orphan existing users.
 
 ## Requirements
@@ -46,7 +47,7 @@ and write results there.
 
 **Issues and docs in this repo carry findings, never measured numbers.** No download, sales,
 revenue, rating-count or traffic figures here or in issues. State the finding, drop the number.
-The repo is slated to go public, so anything written here is written for that audience.
+The repo is public, so anything written here is written for that audience.
 
 ## App features (be precise, do not invent features that do not exist)
 
@@ -137,8 +138,8 @@ No extra config needed. Sentry is optional (runs without a DSN). HealthKit needs
 ## Keep this file current
 
 When the app ships a version, changes price or OS floor, or gains or loses a feature, update this
-file in the same change and re-mirror the four copies. A stale CLAUDE.md is worse than none,
-because an assistant will build on what it says.
+file in the same change. A stale agent file is worse than none, because an assistant will build
+on what it says.
 
 ## Project structure
 

@@ -24,5 +24,19 @@ Iron Workout/Config/Secrets.xcconfig
 /Screenshots/
 /app store screens/
 
-# Claude Code harness state
+# AI tooling stays local (#87). The repo is indifferent to which AI is used and should not
+# smell of tooling: AGENTS.md is the one agent-context file, and everything a specific
+# editor or agent writes stays on the machine that wrote it. From the hub's _template/.gitignore.
 .claude/
+CLAUDE.md
+CLAUDE.local.md
+.cursor/
+.cursorrules
+.windsurfrules
+.clinerules
+.aider*
+.continue/
+.codex/
+.mcp.json
+GEMINI.md
+.github/copilot-instructions.md
