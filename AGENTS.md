@@ -12,13 +12,13 @@ A strength training app for iPhone, iPad and Apple Watch. Users build workout pr
 progress afterwards. Everything is stored on the device with SwiftData. There is no backend, no
 account and no sync service.
 
-- **Developer:** [IAMJARL](https://iamjarl.com). Never the full personal name in copy or docs; see `BRAND_LEGAL.md` in the hub.
+- **Developer:** [IAMJARL](https://iamjarl.com). Never the full personal name in copy or docs; see `BRAND_LEGAL.md` in the hub. `LICENSE` is the one deliberate exception: IAMJARL is a sole proprietorship, so the licence names the legal person behind it. Do not "fix" it.
 - **Website:** [anvilworkout.iamjarl.com](https://anvilworkout.iamjarl.com)
 - **App Store:** [id6760627760](https://apps.apple.com/app/id6760627760)
 - **Price:** $2.99 USD one-time. No subscription, no in-app purchases, no ads.
 - **Current version:** 1.8.0 (live 2026-09-17)
-- **License:** proprietary, all rights reserved. This is **not** an open-source repo, unlike several sibling apps.
-- **Repo status:** private. Going public is gated on #63 (a leaked Sentry token in git history).
+- **License:** [MIT](LICENSE), like the sibling apps. It covers the code, not the Anvil name, brand or App Store listing.
+- **Repo status:** going public. The Sentry token that leaked into git history was revoked on 2026-09-22 and verified dead; the history is kept as is rather than rewritten (#63).
 - **Formerly:** Iron Workout. The Xcode project, targets, scheme, folder and bundle ID still carry the old name (#83). **Never change the bundle ID** `com.iamjarl.Iron-Workout` or the App Group `group.com.iamjarl.Iron-Workout`; both would orphan existing users.
 
 ## Requirements

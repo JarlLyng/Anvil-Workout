@@ -28,10 +28,13 @@ No backend, login, or external APIs beyond Health and Sentry. Paid app (one-time
 ## Quick start
 
 ```bash
-git clone <repo-url>
-open "Anvil Workout.xcodeproj"
-# Select scheme "Anvil Workout", pick a simulator -> Cmd+R
+git clone https://github.com/JarlLyng/Anvil-Workout.git
+cd Anvil-Workout
+open "Iron Workout.xcodeproj"
+# Select scheme "Iron Workout", pick a simulator -> Cmd+R
 ```
+
+The project, scheme and targets still carry the app's former name, Iron Workout (#83). The app itself is Anvil Workout.
 
 The app runs without additional configuration. The exercise library is seeded automatically on first launch.
 
