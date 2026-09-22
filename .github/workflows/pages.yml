@@ -3,7 +3,12 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-    paths: [docs/**]
+    paths:
+      - "docs/**"
+      - ".github/workflows/pages.yml"
+  # Manual redeploy without touching the site. Without this, the only way to
+  # recover from a failed deployment was to change something under docs/.
+  workflow_dispatch:
 
 permissions:
   contents: read
