@@ -126,7 +126,7 @@
         <ul>
             <li><strong>No account, ever.</strong> You install the app and start using it. No email, no password, no "create account" screen.</li>
             <li><strong>No cloud service.</strong> There is no Anvil Workout server. Nothing to go down, nothing to get breached, nothing to paywall later.</li>
-            <li><strong>No outbound workout data.</strong> Your programs, sets, reps, and personal records never leave your devices. Sync between your iPhone and Apple Watch companion app happens entirely over local connectivity (WatchConnectivity) without touching external servers. The only things that leave the iPhone are optional, anonymous crash reports via Sentry.</li>
+            <li><strong>No outbound workout data.</strong> Your programs, sets, reps and personal records are never sent to a server. The iPhone and the Apple Watch companion talk to each other directly over local connectivity (WatchConnectivity), with no server in between. The one thing the app sends is a crash report via Sentry if it crashes, and it contains no workout or Health data.</li>
             <li><strong>HealthKit integration is local.</strong> If you let the app write workouts to Apple Health, that happens on-device through Apple's HealthKit APIs. Apple decides where HealthKit data goes — not us.</li>
         </ul>
 
@@ -136,13 +136,13 @@
         <p>The squat rack is usually in the back corner of the basement of the building, and that's exactly where cell service dies. An app that needs to phone home between sets is an app that freezes mid-workout. Anvil Workout doesn't care — your workout runs the same whether you're in airplane mode or on 5G.</p>
 
         <h3>Travel, planes, and remote training</h3>
-        <p>Hotel gyms, garage gyms, outdoor calisthenics, a cabin in the woods with no Wi-Fi. If you can open the app, you can train. Everything syncs back to Apple Health the next time you're near a Mac or on a flaky connection — and that's it.</p>
+        <p>Hotel gyms, garage gyms, outdoor calisthenics, a cabin in the woods with no Wi-Fi. If you can open the app, you can train. Apple Health lives on the iPhone too, so a finished workout is saved there straight away, with nothing waiting to sync later.</p>
 
         <h3>Privacy</h3>
         <p>Your workout history is personal data. It reveals your schedule, your physical capacity, and patterns that can be combined with other leaks to identify you. We chose not to collect it at all, because the safest data is the data that never leaves your device.</p>
 
         <h3>Longevity of your data</h3>
-        <p>When a cloud fitness app shuts down or pivots — and many do — your data usually goes with it. On Anvil Workout, your data lives in your iPhone's local storage and is included in your normal iCloud device backup. It's as durable as anything else on your phone.</p>
+        <p>When a cloud fitness app shuts down or pivots, and many do, your data usually goes with it. On Anvil Workout, your data lives in your iPhone's local storage. If you use iCloud Backup or back up to a computer, it is included in that backup, so it is as durable as anything else on your phone.</p>
 
         <h2>How it works under the hood</h2>
         <p>Anvil Workout is a native SwiftUI + SwiftData app. SwiftData is Apple's on-device persistence framework — think of it as a private, local database optimized for Apple hardware. Your programs, session history, and exercise library all live in SwiftData on your device.</p>
@@ -174,7 +174,7 @@
             </div>
             <div class="comparison-row">
                 <div class="comparison-cell">Cross-device sync</div>
-                <div class="comparison-cell neutral">Local Watch app sync / iCloud backup for restore</div>
+                <div class="comparison-cell neutral">None between iPhone and iPad. The Watch follows the iPhone.</div>
                 <div class="comparison-cell good">Yes (via server)</div>
             </div>
             <div class="comparison-row">
@@ -197,7 +197,7 @@
             <li><a href="programs.html">Six pre-built strength programs</a> ready to import in one tap</li>
             <li>70+ built-in exercises plus custom exercise creation</li>
             <li>Workout builder supporting sets, reps, rest timers, and supersets</li>
-            <li>Fully offline **Apple Watch companion app** to log sets from your wrist</li>
+            <li><strong>Apple Watch companion</strong> to log sets from your wrist, with no internet needed. It follows the workout on your iPhone.</li>
             <li>**iPad support** with two-column screen for gym-stand tracking</li>
             <li>Real-time set tracking with haptic rest countdown</li>
             <li>Live Activity on the Lock Screen and Dynamic Island during workouts</li>

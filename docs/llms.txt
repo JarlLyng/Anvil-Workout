@@ -1,6 +1,6 @@
 # Anvil Workout
 
-> Anvil Workout is a paid iOS, watchOS, and iPadOS strength training app (one-time purchase, no subscription) for planning workouts, tracking sets and reps, and reviewing progress over time. It works fully offline with no account required, no ads, and no in-app analytics. Workout data stays on your device.
+> Anvil Workout is a paid iOS, watchOS, and iPadOS strength training app (one-time purchase, no subscription) for planning workouts, tracking sets and reps, and reviewing progress over time. It needs no internet connection and no account, and has no ads and no in-app analytics. Workout data is stored on the device and never sent to a server. Data is per device: there is no sync between iPhone and iPad.
 
 Anvil Workout is developed by IAMJARL and is available on the Apple App Store for iPhone, iPad, and Apple Watch: https://apps.apple.com/app/id6760627760. The app focuses on a streamlined gym experience: users create workout programs with exercises, sets, reps, weight targets, and rest timers, then follow them in real time during training.
 
@@ -12,13 +12,13 @@ Anvil Workout is a paid app with a one-time purchase price on the App Store. The
 
 - **Workout Program Builder** with exercises, sets, reps, weight targets, rest timers, and **supersets** (paired exercises linked for alternating sets)
 - **Real-Time Workout Tracking** with haptic rest countdown on phone and watch
-- **Apple Watch Companion App** for wrist-based logging: view active set, log reps/weight, skip/complete sets, rest timer wrist haptics, and watch Smart Stack widget (runs fully offline, syncing directly with the iPhone via local WatchConnectivity)
+- **Apple Watch Companion App** for wrist-based logging: view active set, log reps/weight, skip/complete sets, rest timer wrist haptics, and watch Smart Stack widget (needs no internet; it follows and controls the workout running on the iPhone over local WatchConnectivity, so it needs the iPhone nearby and does not work on its own)
 - **iPad Support** with a multi-pane layout (NavigationSplitView) and a two-column active workout screen (displays current set logger on the left, upcoming exercises/sets sidebar on the right)
 - **Automatic Personal Record Detection** for weight and reps
 - **Progress Charts**: volume over time, weekly frequency, estimated 1RM progression, muscle group distribution
 - **Live Activity** on Lock Screen and Dynamic Island during workouts
 - **Smart Dashboard** with weekly metrics, workout streak, and training planner
-- **Apple Health and HealthKit Integration** (calories burned, heart rate from Apple Watch logged automatically)
+- **Apple Health and HealthKit Integration**, with the user's permission: completed workouts are written to Health, and the calories and heart rate Health recorded during the workout (usually from an Apple Watch) are read back into the workout history
 - **Per-Exercise History** with PR tracking and estimated 1RM chart
 - **CSV Export** of workout history (sessions, exercises, sets, reps, weights)
 - **CSV Import** from Strong or Hevy in one step, bringing across workouts, exercises, sets, reps, weights and RPE. Sets recorded only as a duration or a distance (planks, carries, cardio) cannot be represented yet; the import preview lists what will be left out before anything is saved
@@ -28,7 +28,7 @@ Anvil Workout is a paid app with a one-time purchase price on the App Store. The
 - **Pre-Completion Set Entry** — tap a pending set to enter the actual weight and reps before marking it done
 - **Previous-Session Reference** on every pending set, showing the weight and reps from the matching set last time, with one tap to reuse them (imported history counts, so it works from the first workout after switching apps)
 - **Searchable Exercise Library** and workout history
-- **100% Offline** — no account, no internet, no ads, no in-app analytics (workout data stays on your device; anonymous crash reporting via Sentry for bug fixing)
+- **Works offline**: no account, no internet connection needed, no ads, no in-app analytics. Workout data is never sent to a server. The only outbound traffic is a Sentry crash report when the app crashes, which carries no workout or Health data
 
 ## Technical details
 

@@ -109,7 +109,7 @@
           "name": "Does Anvil Workout work offline?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes. Anvil Workout works 100% offline. All workout data is stored locally on your iPhone using Apple's SwiftData framework. There is no account to create, no cloud dependency, and no data sent to external servers."
+            "text": "Yes. Anvil Workout needs no internet connection to plan, run or review a workout. Your programs, sets and history are stored on your iPhone using Apple's SwiftData framework and are never sent to a server. There is no account and no cloud dependency. The only thing the app sends is a crash report if it crashes, and that contains no workout or Health data."
           }
         },
         {
@@ -117,7 +117,31 @@
           "name": "Does Anvil Workout sync with Apple Health?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes. Completed workouts automatically sync to Apple HealthKit, including workout duration and calories burned. If you have an Apple Watch, heart rate data also appears in your workout history."
+            "text": "Yes, if you allow it. Each completed workout is saved to Apple Health. Anvil then reads back the calories and average heart rate that Health recorded during the workout and shows them in your history. Those numbers come from another source, usually an Apple Watch, so without one they are often empty."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does the Apple Watch app work on its own?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Start the workout on your iPhone and the watch follows it, so you can log and skip sets from your wrist. It needs no internet, but it does need your iPhone nearby."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does my data sync between iPhone and iPad?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Each device keeps its own programs and history, and nothing syncs between them. The Apple Watch is different because it shows the workout running on your iPhone instead of keeping its own."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens to my data if I get a new iPhone?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It moves with your device backup. If you use iCloud Backup or back up to a computer, your Anvil data is included and comes back when you restore to the new phone. Without a backup it stays on the old one. You can also export your workout history as a CSV file from Settings at any time."
           }
         },
         {
@@ -133,7 +157,7 @@
           "name": "How does Anvil Workout compare to other workout apps?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Anvil Workout is built for lifters who want a focused, distraction-free gym experience. Unlike apps that require monthly subscriptions and cloud accounts, Anvil Workout is a one-time purchase with no recurring fees, works offline, and keeps all data on your device. It also supports Live Activity on the Lock Screen and Dynamic Island, automatic personal records, and Apple Health integration."
+            "text": "Anvil Workout is built for lifters who want a focused, distraction-free gym experience. Unlike apps that require monthly subscriptions and cloud accounts, Anvil Workout is a one-time purchase with no recurring fees, works offline, and keeps your workouts on your device. It also supports Live Activity on the Lock Screen and Dynamic Island, automatic personal records, and Apple Health integration."
           }
         }
       ]
@@ -221,7 +245,7 @@
                         <svg aria-hidden="true" viewBox="0 0 256 256" width="32" height="32" fill="currentColor"><path d="M176,80v96a48.05,48.05,0,0,1-40,47.33V240a8,8,0,0,1-16,0V223.33A48.05,48.05,0,0,1,80,176V80A48.05,48.05,0,0,1,120,32.67V16a8,8,0,0,1,16,0V32.67A48.05,48.05,0,0,1,176,80ZM96,80v96a32,32,0,0,0,32,32h0a32,32,0,0,0,32-32V80a32,32,0,0,0-32-32h0A32,32,0,0,0,96,80Z"/></svg>
                     </div>
                     <h3>Apple Watch App</h3>
-                    <p>Log sets, skip exercises, and receive haptic wrist vibration cues when your rest timer finishes—fully offline from your wrist. Includes watch widget.</p>
+                    <p>Log sets, skip exercises, and feel a tap on your wrist when your rest timer finishes. The watch follows the workout running on your iPhone, with no internet needed. Includes a watch widget.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -235,7 +259,7 @@
                         <svg aria-hidden="true" viewBox="0 0 256 256" width="32" height="32" fill="currentColor"><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM128,160a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z"/></svg>
                     </div>
                     <h3>Apple Health</h3>
-                    <p>Workouts sync to HealthKit automatically. Calories burned and heart rate from Apple Watch show up in your workout history.</p>
+                    <p>With your permission, finished workouts are saved to Apple Health, and the calories and heart rate your Apple Watch recorded show up in your workout history.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -337,11 +361,23 @@
                 </details>
                 <details class="faq-item">
                     <summary>Does Anvil Workout work offline?</summary>
-                    <p>Yes. Anvil Workout works 100% offline. All workout data is stored locally on your iPhone. There is no account to create, no cloud dependency, and no data sent to external servers.</p>
+                    <p>Yes. Anvil Workout needs no internet connection to plan, run or review a workout. Your programs, sets and history are stored on your iPhone and are never sent to a server. There is no account and no cloud dependency. The only thing the app sends is a crash report if it crashes, and that contains no workout or Health data.</p>
                 </details>
                 <details class="faq-item">
                     <summary>Does it sync with Apple Health?</summary>
-                    <p>Yes. Completed workouts automatically sync to Apple HealthKit, including workout duration and calories burned. If you have an Apple Watch, heart rate data also appears in your workout history.</p>
+                    <p>Yes, if you allow it. Each completed workout is saved to Apple Health. Anvil then reads back the calories and average heart rate that Health recorded during the workout and shows them in your history. Those numbers come from another source, usually an Apple Watch, so without one they are often empty.</p>
+                </details>
+                <details class="faq-item">
+                    <summary>Does the Apple Watch app work on its own?</summary>
+                    <p>No. Start the workout on your iPhone and the watch follows it, so you can log and skip sets from your wrist. It needs no internet, but it does need your iPhone nearby.</p>
+                </details>
+                <details class="faq-item">
+                    <summary>Does my data sync between iPhone and iPad?</summary>
+                    <p>No. Each device keeps its own programs and history, and nothing syncs between them. The Apple Watch is different because it shows the workout running on your iPhone instead of keeping its own.</p>
+                </details>
+                <details class="faq-item">
+                    <summary>What happens to my data if I get a new iPhone?</summary>
+                    <p>It moves with your device backup. If you use iCloud Backup or back up to a computer, your Anvil data is included and comes back when you restore to the new phone. Without a backup it stays on the old one. You can also export your workout history as a CSV file from Settings at any time.</p>
                 </details>
                 <details class="faq-item">
                     <summary>What can I track?</summary>
@@ -349,7 +385,7 @@
                 </details>
                 <details class="faq-item">
                     <summary>How is Anvil Workout different from other gym apps?</summary>
-                    <p>Anvil Workout is built for lifters who want a focused, distraction-free gym experience. Unlike apps that require monthly subscriptions and cloud accounts, Anvil Workout is a one-time purchase that works offline and keeps all data on your device. It includes native support for iPad (ideal for gym stands) and a fully offline Apple Watch companion app to log sets from your wrist, alongside Live Activity and Apple Health integration.</p>
+                    <p>Anvil Workout is built for lifters who want a focused, distraction-free gym experience. Unlike apps that require monthly subscriptions and cloud accounts, Anvil Workout is a one-time purchase that works offline and keeps your workouts on your device. It includes native support for iPad (ideal for gym stands) and an Apple Watch companion that follows the workout on your iPhone so you can log sets from your wrist, alongside Live Activity and Apple Health integration.</p>
                 </details>
             </div>
         </div>
