@@ -94,7 +94,7 @@ The repo is public, so anything written here is written for that audience.
 - **Export covers sessions, exercises and sets only.** Not programs, not the weekly plan, not custom exercise definitions.
 - **No timed or distance sets.** Planks, carries and cardio cannot be represented; `PerformedSet` stores reps and weight. The importer reports these as skipped rather than inventing values.
 - **No Family Sharing.** Apple removed the toggle for paid apps; see #60. Not a decision of ours.
-- **No in-app analytics, no ads, no tracking.** The only outbound traffic is anonymous Sentry crash reporting.
+- **No in-app analytics, no ads, no tracking.** The only outbound traffic is Sentry diagnostics: crash, hang and error reports, plus a session record on every launch. Reports carry workout breadcrumbs (program and exercise names, set counts, duration) but never weights, reps, notes or Health data. Do not call any of it "anonymous"; it carries a per-installation identifier.
 - **No user-facing crash-reporting toggle.** Do not describe crash reports as "optional" in copy.
 - **No subscription and no in-app purchases.** Never describe the app as "free".
 
@@ -119,6 +119,7 @@ The repo is public, so anything written here is written for that audience.
 - `LiveActivityAttributes.swift` needs target membership on both the app and the widget extension.
 - The Sentry script phase must come after "Embed Foundation Extensions" to avoid a dependency cycle.
 - New files are picked up automatically (`PBXFileSystemSynchronizedRootGroup`); no pbxproj editing needed.
+- **Privacy copy must match what the SDK sends.** Before writing any privacy claim on the site or in the privacy policy, read the `SentrySDK.start` options in `Iron_WorkoutApp.swift` and every `addBreadcrumb`, `setExtra` and `capture` call. The site once said "no workout data" while three breadcrumbs sent program and exercise names, and "only on crash" while session tracking reported every launch.
 
 ## Workflow
 

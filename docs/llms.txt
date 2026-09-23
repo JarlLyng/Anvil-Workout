@@ -1,6 +1,6 @@
 # Anvil Workout
 
-> Anvil Workout is a paid iOS, watchOS, and iPadOS strength training app (one-time purchase, no subscription) for planning workouts, tracking sets and reps, and reviewing progress over time. It needs no internet connection and no account, and has no ads and no in-app analytics. Workout data is stored on the device and never sent to a server. Data is per device: there is no sync between iPhone and iPad.
+> Anvil Workout is a paid iOS, watchOS, and iPadOS strength training app (one-time purchase, no subscription) for planning workouts, tracking sets and reps, and reviewing progress over time. It needs no internet connection and no account, and has no ads and no in-app analytics. Workout history is stored only on the device and is never uploaded or synced. Data is per device: there is no sync between iPhone and iPad.
 
 Anvil Workout is developed by IAMJARL and is available on the Apple App Store for iPhone, iPad, and Apple Watch: https://apps.apple.com/app/id6760627760. The app focuses on a streamlined gym experience: users create workout programs with exercises, sets, reps, weight targets, and rest timers, then follow them in real time during training.
 
@@ -28,7 +28,7 @@ Anvil Workout is a paid app with a one-time purchase price on the App Store. The
 - **Pre-Completion Set Entry** — tap a pending set to enter the actual weight and reps before marking it done
 - **Previous-Session Reference** on every pending set, showing the weight and reps from the matching set last time, with one tap to reuse them (imported history counts, so it works from the first workout after switching apps)
 - **Searchable Exercise Library** and workout history
-- **Works offline**: no account, no internet connection needed, no ads, no in-app analytics. Workout data is never sent to a server. The only outbound traffic is a Sentry crash report when the app crashes, which carries no workout or Health data
+- **Works offline**: no account, no internet connection needed, no ads, no in-app analytics. Workout history is never uploaded or synced. The app does send diagnostics to Sentry: crash, hang and error reports, and a session record each time it opens. Reports can name the program and exercise in progress and set counts, but never include weights, reps, notes or Health data
 
 ## Technical details
 
@@ -37,14 +37,14 @@ Anvil Workout is a paid app with a one-time purchase price on the App Store. The
 - WidgetKit home screen widget (streak and weekly stats for iPhone; Smart Stack widget for Apple Watch)
 - ActivityKit Live Activity (Lock Screen and Dynamic Island for iPhone)
 - HealthKit integration for workout sessions, calories, and heart rate
-- No backend, no cloud, no third-party analytics in the app (the marketing website uses Umami for anonymous, cookieless page-view counts)
+- No backend and no cloud sync. The only third-party service in the app is Sentry, for crash, error and session diagnostics (the marketing website uses Umami for anonymous, cookieless page-view counts)
 
 ## Links
 
 - [App Store](https://apps.apple.com/app/id6760627760): Download Anvil Workout for iPhone, iPad, and Apple Watch
 - [Home](https://anvilworkout.iamjarl.com/): Product page with features
 - [Workout Programs](https://anvilworkout.iamjarl.com/programs.html): Catalogue of the six built-in strength programs (Starting Strength, StrongLifts 5×5, Greyskull LP, GZCLP, Upper/Lower, Push/Pull/Legs) with author, frequency, structure, and progression details
-- [Offline Workout App](https://anvilworkout.iamjarl.com/offline-workout-app.html): Explains how the app runs fully on-device with no cloud, no account, and no outbound workout data — includes a comparison table vs cloud-based apps
+- [Offline Workout App](https://anvilworkout.iamjarl.com/offline-workout-app.html): Explains how the app runs on-device with no cloud and no account, what it does and does not send, and a comparison table vs cloud-based apps
 - [Apple Health for Strength Training](https://anvilworkout.iamjarl.com/apple-health-strength-training.html): Details on the HealthKit integration — what gets written (workout sessions), what gets read (calories, heart rate), the Apple Watch companion app, and the permission model
 - [No-Subscription Workout App](https://anvilworkout.iamjarl.com/no-subscription-workout-app.html): Explains the one-time purchase business model versus subscription workout trackers, with honest tradeoff comparison
 - [Support](https://anvilworkout.iamjarl.com/support.html): Help and contact information
