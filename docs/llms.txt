@@ -28,7 +28,7 @@ Anvil Workout is a paid app with a one-time purchase price on the App Store. The
 - **Pre-Completion Set Entry** — tap a pending set to enter the actual weight and reps before marking it done
 - **Previous-Session Reference** on every pending set, showing the weight and reps from the matching set last time, with one tap to reuse them (imported history counts, so it works from the first workout after switching apps)
 - **Searchable Exercise Library** and workout history
-- **Works offline**: no account, no internet connection needed, no ads, no in-app analytics. Workout history is never uploaded or synced. The app does send diagnostics to Sentry: crash, hang and error reports, and a session record each time it opens. Reports can name the program and exercise in progress and set counts, but never include weights, reps, notes or Health data
+- **Works offline**: no account, no internet connection needed, no ads, no in-app analytics. Workout history is never uploaded or synced. The only outbound traffic is a crash, hang or error report to Sentry, which carries no workout or Health data and can be turned off in Settings
 
 ## Technical details
 
@@ -37,7 +37,7 @@ Anvil Workout is a paid app with a one-time purchase price on the App Store. The
 - WidgetKit home screen widget (streak and weekly stats for iPhone; Smart Stack widget for Apple Watch)
 - ActivityKit Live Activity (Lock Screen and Dynamic Island for iPhone)
 - HealthKit integration for workout sessions, calories, and heart rate
-- No backend and no cloud sync. The only third-party service in the app is Sentry, for crash, error and session diagnostics (the marketing website uses Umami for anonymous, cookieless page-view counts)
+- No backend and no cloud sync. The only third-party service in the app is Sentry, for crash and error reports, which the user can turn off (the marketing website uses Umami for anonymous, cookieless page-view counts)
 
 ## Links
 
