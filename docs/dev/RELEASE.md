@@ -26,6 +26,13 @@ grep -oE "CURRENT_PROJECT_VERSION = [0-9]+;" "Iron Workout.xcodeproj/project.pbx
 
 ## 2. Update AI-facing / marketing metadata (keep it accurate)
 
+> ⚠️ **Prepare this on a branch and merge it only once the version is live on the App
+> Store.** Pages deploys `main` the moment `docs/` changes, so updating the site during
+> release prep makes it describe an app nobody can download yet. That happened with 1.8.0,
+> which the site called "Recently shipped" a day before it was. For privacy claims it
+> matters more: the site would promise behaviour current users cannot check in their own
+> app. Use a branch such as `site/<topic>-X.Y`, and merge it as part of §7.
+
 Google's guidance requires structured data and metadata to stay accurate, and
 `llms.txt` feeds AI engines a summary. Update for the new version:
 
@@ -97,5 +104,7 @@ git push origin vX.Y.Z
 
 ## 7. Post-launch
 
+- **Once the version is live**, merge the §2 site branch into `main`, then check the live
+  site against `main` rather than trusting a green Pages run.
 - Watch Sentry for version-specific crashes for the first few days.
 - Consider a short "shipped X.Y.Z" update where the audience is (Indie Hackers, etc.).
