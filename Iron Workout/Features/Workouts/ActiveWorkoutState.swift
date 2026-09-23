@@ -98,10 +98,7 @@ final class ActiveWorkoutState {
         recomputeCompletedCount()
         saveContext()
 
-        let crumb = Breadcrumb(level: .info, category: "workout")
-        crumb.message = "Set completed"
-        crumb.data = ["exercise": exercise.exerciseName, "setIndex": set.setIndex, "completed": session.completedSetCount]
-        SentrySDK.addBreadcrumb(crumb)
+        SentrySDK.addBreadcrumb(DiagnosticsService.workoutBreadcrumb("Set completed"))
 
         onSetCompleted?()
         startRestIfNeeded(exercise: exercise)

@@ -203,10 +203,7 @@ struct ActiveWorkoutView: View {
             currentExercise: currentExerciseName,
             totalSets: totalSets
         )
-        let crumb = Breadcrumb(level: .info, category: "workout")
-        crumb.message = "Workout started"
-        crumb.data = ["template": session.templateName, "exercises": session.exercises.count, "totalSets": totalSets]
-        SentrySDK.addBreadcrumb(crumb)
+        SentrySDK.addBreadcrumb(DiagnosticsService.workoutBreadcrumb("Workout started"))
     }
 
     private func updateLiveActivity(state: ActiveWorkoutState) {
@@ -448,10 +445,7 @@ struct ActiveWorkoutView: View {
             elapsedSeconds: elapsed
         )
 
-        let crumb = Breadcrumb(level: .info, category: "workout")
-        crumb.message = "Workout ended"
-        crumb.data = ["template": session.templateName, "completedSets": session.completedSetCount, "totalSets": totalSets, "elapsedSeconds": elapsed]
-        SentrySDK.addBreadcrumb(crumb)
+        SentrySDK.addBreadcrumb(DiagnosticsService.workoutBreadcrumb("Workout ended"))
 
         let context = modelContext
         Task {

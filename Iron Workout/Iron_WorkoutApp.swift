@@ -14,74 +14,9 @@ struct Iron_WorkoutApp: App {
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
 
     init() {
-        if let dsn = SentryConfig.dsn, !dsn.isEmpty {
-            SentrySDK.start { options in
-                options.dsn = dsn
-                // Privacy-first (portfolio DNA): crash reporting only. No performance
-                // tracing on real users, and no crash screenshot / view hierarchy, which
-                // can capture on-screen data. Debug keeps tracing for local diagnosis.
-                #if DEBUG
-                options.environment = "development"
-                options.debug = true
-                options.tracesSampleRate = 1.0
-                options.attachScreenshot = true
-                options.attachViewHierarchy = true
-                // A paused debugger is indistinguishable from a hung main thread, so a
-                // Debug build reports every breakpoint as an app hang. IOS-8 and IOS-9 were
-                // both that: an idle CFRunLoop waiting in mach_msg with no app code on the
-                // stack. Left on, it refills the issue stream every time anyone develops
-                // and buries anything real. Production keeps hang detection.
-                options.enableAppHangTracking = false
-                #else
-                options.environment = "production"
-                options.debug = false
-                options.tracesSampleRate = 0
-                #endif
-                options.enableLogs = true
-                options.beforeSend = { event in
-                    // Drop noise from auto-captured system NSErrors that aren't actionable.
-                    // Each entry below has a corresponding Sentry issue (IOS-N) we've
-                    // confirmed is not a bug but a system signal we can't act on.
-                    let noisyDomains: Set<String> = [
-                        // IOS-4: Guided Access blocking UIApplication.open
-                        "_UIViewServiceHostSessionErrorDomain",
-                        "FBSOpenApplicationServiceErrorDomain",
-                        "FBSOpenApplicationErrorDomain",
-                    ]
-                    if let exception = event.exceptions?.first,
-                       let type = exception.type {
-                        if noisyDomains.contains(type) {
-                            return nil
-                        }
-                        // IOS-1: HealthKit code 11 = HKErrorAuthorizationDenied. Expected
-                        // user behaviour (declined permission), not a bug. We still want
-                        // other HealthKit errors (e.g. authorization changes mid-workout),
-                        // so we filter only code 11.
-                        if type == "com.apple.healthkit", exception.value == "Code: 11" {
-                            return nil
-                        }
-                        // IOS-2: ActivityKit.ActivityAuthorization unsupportedTarget.
-                        // Means Live Activity isn't supported on the device or in the
-                        // current iOS region — nothing to fix in the app.
-                        if type == "com.apple.ActivityKit.ActivityAuthorization",
-                           exception.value?.contains("unsupportedTarget") == true {
-                            return nil
-                        }
-                        // IOS-6/IOS-7: WatchConnectivity errors on devices with no usable
-                        // watch — deviceNotPaired (7005), watchAppNotInstalled (7006),
-                        // notReachable (7007), deliveryFailed (7014). Expected, not bugs.
-                        // The send paths already guard on isPaired/isWatchAppInstalled;
-                        // this catches any that slip through (e.g. unpair mid-send).
-                        if type == "WCErrorDomain",
-                           let value = exception.value,
-                           ["Code: 7005", "Code: 7006", "Code: 7007", "Code: 7014"].contains(value) {
-                            return nil
-                        }
-                    }
-                    return event
-                }
-            }
-        }
+        // Sentry configuration, and the user's switch to turn it off, live in
+        // DiagnosticsService so what the app sends is defined in one place.
+        DiagnosticsService.startIfAllowed()
     }
 
     var sharedModelContainer: ModelContainer = {

@@ -195,8 +195,7 @@ struct CreateEditTemplateView: View {
         do { try modelContext.save() } catch {
             PersistenceLogger.capture(error, operation: "add-exercise-to-template", extra: [
                 "templateID": template.id.uuidString,
-                "exerciseID": exercise.id.uuidString,
-                "exerciseName": exercise.name
+                "exerciseID": exercise.id.uuidString
             ])
             errorMessage = PersistenceLogger.userMessage(prefix: "Could not save", error: error)
         }

@@ -18,6 +18,8 @@ struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \WorkoutSession.startedAt, order: .reverse) private var sessions: [WorkoutSession]
     @AppStorage(WeightFormatter.appStorageKey) private var weightUnit: String = WeightUnit.kg.rawValue
+    /// Opt-out switch for crash reporting (#91). Same key and default as DiagnosticsService.
+    @AppStorage(DiagnosticsService.preferenceKey) private var crashReportingEnabled = true
     @State private var requestInProgress = false
     @State private var message: String?
     @State private var messageIsError = false
@@ -76,6 +78,24 @@ struct SettingsView: View {
                     Text("Data")
                 } footer: {
                     Text("Export all workout sessions as a CSV file, or import your history from Strong or Hevy.")
+                }
+
+                Section {
+                    Toggle(isOn: $crashReportingEnabled) {
+                        Label {
+                            Text("Send Crash Reports")
+                        } icon: {
+                            Ph.bug.regular
+                                .icon()
+                        }
+                    }
+                    .onChange(of: crashReportingEnabled) { _, enabled in
+                        DiagnosticsService.apply(enabled: enabled)
+                    }
+                } header: {
+                    Text("Privacy")
+                } footer: {
+                    Text("If the app crashes, hangs or hits an error, a report is sent so it can be fixed. Reports never include your workouts, notes or Health data. Turning this off stops them straight away.")
                 }
 
                 Section {
