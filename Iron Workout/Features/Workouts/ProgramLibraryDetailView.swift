@@ -159,7 +159,8 @@ struct ProgramLibraryDetailView: View {
             onImportComplete(program.name)
         } catch {
             PersistenceLogger.capture(error, operation: "import-program", extra: [
-                "programID": program.id,
+                // No programID: library IDs are readable slugs ("stronglifts-5x5"), so they
+                // would put a program name in the report (#91).
                 "workoutCount": program.workouts.count
             ])
             errorMessage = PersistenceLogger.userMessage(prefix: "Could not import program", error: error)
