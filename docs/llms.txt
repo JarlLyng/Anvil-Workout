@@ -27,6 +27,7 @@ Anvil Workout is a paid app with a one-time purchase price on the App Store. The
 - **RPE Tracking** per set (1–10, half steps) for intensity trends, included in CSV export/import
 - **Pre-Completion Set Entry** — tap a pending set to enter the actual weight and reps before marking it done
 - **Previous-Session Reference** on every pending set, showing the weight and reps from the matching set last time, with one tap to reuse them (imported history counts, so it works from the first workout after switching apps)
+- **Crash-Reporting Switch** in Settings, under Privacy, to turn crash reports off entirely (1.9.0). Reports never include workout, note or Health data
 - **Searchable Exercise Library** and workout history
 - **Works offline**: no account, no internet connection needed, no ads, no in-app analytics. Workout history is never uploaded or synced. The only outbound traffic is a crash, hang or error report to Sentry, which carries no workout or Health data and can be turned off in Settings
 
