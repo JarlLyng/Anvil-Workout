@@ -96,7 +96,8 @@ Google's guidance requires structured data and metadata to stay accurate, and
 
 ## 6. Tag the release
 
-After the release commit is pushed:
+After the release commit is pushed, change the version's `CHANGELOG.md` entry from
+"(unreleased)" to the tag date, then tag:
 ```bash
 git tag -a vX.Y.Z -m "Anvil Workout X.Y.Z (build N)"
 git push origin vX.Y.Z
