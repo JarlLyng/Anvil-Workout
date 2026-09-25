@@ -54,6 +54,12 @@ struct ActiveWorkoutSnapshot: Codable, Equatable, Sendable {
     let restSecondsRemaining: Int?
     let restTotalSeconds: Int?
 
+    /// When the current rest ends. The watch counts down from this itself, so the
+    /// countdown keeps going when the phone is locked and stops sending snapshots (#90).
+    /// Optional so either side on an older build still decodes the other: without it,
+    /// the watch falls back to `restSecondsRemaining`.
+    let restEndsAt: Date?
+
     let completedSetCount: Int
     let totalSetCount: Int
 }
@@ -79,4 +85,16 @@ enum WatchAction: Codable, Equatable, Sendable {
     case resume
     case addRestTime(seconds: Int)
     case skipRest
+}
+
+/// Rest-timer arithmetic shared by the phone and the watch, so both derive the seconds
+/// left from the same end date in the same way (#90).
+enum RestCountdown {
+    /// Whole seconds left at `date`, rounded up so the display reads "1s" until the rest
+    /// is actually over. nil once it is.
+    nonisolated static func secondsRemaining(until endsAt: Date, at date: Date) -> Int? {
+        let left = endsAt.timeIntervalSince(date)
+        guard left > 0 else { return nil }
+        return Int(left.rounded(.up))
+    }
 }

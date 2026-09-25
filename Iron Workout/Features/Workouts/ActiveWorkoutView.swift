@@ -28,6 +28,7 @@ struct ActiveWorkoutView: View {
     @State private var showPlateCalculator = false
     @State private var plateCalcPrefillKg: Double?
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         Group {
@@ -121,6 +122,12 @@ struct ActiveWorkoutView: View {
                 state.stopRestTimer()
                 WatchConnectivityService.shared.actionHandler = nil
                 WatchConnectivityService.shared.sendWorkoutEnded()
+            }
+            .onChange(of: scenePhase) { _, phase in
+                // The app is suspended while the phone is locked. Catch the rest timer up
+                // with the clock as soon as it is back, so a rest that ended in a pocket
+                // ends now rather than on the next one-second tick (#90).
+                if phase == .active { state.refreshRest() }
             }
             .onChange(of: state.restSecondsRemaining) { oldValue, newValue in
                 if oldValue != nil && newValue == nil {

@@ -8,7 +8,9 @@
 //  session there.
 //
 //  When a rest timer is running on the phone, this view swaps to the rest
-//  countdown instead of the set actions, mirroring the phone UI.
+//  countdown instead of the set actions, mirroring the phone UI. The countdown
+//  runs from the rest's end date on the watch's own clock, so it keeps going
+//  when the phone is locked and stops sending snapshots (#90).
 //
 
 import SwiftUI
@@ -18,6 +20,10 @@ struct WatchActiveWorkoutView: View {
     @Environment(WatchConnectivityClient.self) private var client
     let snapshot: ActiveWorkoutSnapshot
 
+    /// The rest end the watch has already tapped the wrist for, so the phone's later
+    /// "rest over" snapshot does not tap a second time.
+    @State private var tappedForRestEnd: Date?
+
     var body: some View {
         ScrollView {
             VStack(spacing: 8) {
@@ -25,7 +31,15 @@ struct WatchActiveWorkoutView: View {
 
                 Divider()
 
-                if let rest = snapshot.restSecondsRemaining {
+                if let endsAt = snapshot.restEndsAt {
+                    // Count down locally. With the phone locked no new snapshot arrives,
+                    // and the old per-second snapshots were the only thing that moved it.
+                    TimelineView(.periodic(from: .now, by: 1)) { context in
+                        let seconds = RestCountdown.secondsRemaining(until: endsAt, at: context.date) ?? 0
+                        restBlock(seconds: seconds, total: snapshot.restTotalSeconds ?? seconds)
+                    }
+                } else if let rest = snapshot.restSecondsRemaining {
+                    // A phone on a build before #90 sends no end date; follow its seconds.
                     restBlock(seconds: rest, total: snapshot.restTotalSeconds ?? rest)
                 } else if let exerciseName = snapshot.currentExerciseName,
                           let setID = snapshot.currentSetID {
@@ -37,12 +51,30 @@ struct WatchActiveWorkoutView: View {
             .padding(.horizontal, 6)
         }
         .navigationTitle(snapshot.templateName)
+        .task(id: snapshot.restEndsAt) {
+            // Tap the wrist when rest ends on the watch's own clock, without waiting for
+            // the phone. This only fires while the watch app is running: with the wrist
+            // lowered watchOS suspends it, and an on-time alert then needs a notification
+            // (#89).
+            guard let endsAt = snapshot.restEndsAt else { return }
+            let wait = endsAt.timeIntervalSinceNow
+            if wait > 0 {
+                try? await Task.sleep(for: .seconds(wait))
+            }
+            guard !Task.isCancelled else { return }
+            // Suspended past the end and only just woken: a late tap is noise, not a cue.
+            guard Date().timeIntervalSince(endsAt) < 3 else { return }
+            WKInterfaceDevice.current().play(.notification)
+            tappedForRestEnd = endsAt
+        }
         .onChange(of: snapshot.restSecondsRemaining) { oldValue, newValue in
-            // Wrist tap when the rest timer hits zero — matches the phone's
-            // notification haptic so the user gets the cue on whichever
-            // device they happen to be looking at.
+            // Wrist tap when the phone reports the rest is over, matching the phone's
+            // notification haptic. Skipped if the watch already tapped for this rest.
             if oldValue != nil && newValue == nil {
-                WKInterfaceDevice.current().play(.notification)
+                if tappedForRestEnd == nil {
+                    WKInterfaceDevice.current().play(.notification)
+                }
+                tappedForRestEnd = nil
             }
         }
     }
@@ -121,7 +153,9 @@ struct WatchActiveWorkoutView: View {
 
     private func restBlock(seconds: Int, total: Int) -> some View {
         VStack(spacing: 8) {
-            Text("Rest")
+            // At zero with the phone locked, the watch has no next set to show until the
+            // phone wakes and sends one, so say the rest is over rather than showing 0s of rest.
+            Text(seconds == 0 ? "Rest over" : "Rest")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Text("\(seconds)s")

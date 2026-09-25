@@ -25,8 +25,13 @@ final class ActiveWorkoutState {
     var pausedAt: Date?
     var totalPausedSeconds: Int = 0
 
+    /// Seconds of rest left, for display. Derived from `restEndsAt`, never counted down on
+    /// its own, so it is right again the moment the app runs after being suspended (#90).
     var restSecondsRemaining: Int?
     var restTotalSeconds: Int = 0
+    /// When the current rest ends; the source of truth for the rest timer. nil means no
+    /// rest is active.
+    private(set) var restEndsAt: Date?
     private var restTimer: Timer?
 
     var errorMessage: String?
@@ -172,14 +177,25 @@ final class ActiveWorkoutState {
 
     // MARK: - Rest timer
 
-    func startRestIfNeeded(exercise: WorkoutSessionExercise) {
+    // The rest timer stores when rest ends and derives the seconds left from it, the same
+    // way elapsed time is derived from startedAt. It used to count down by subtracting one
+    // per timer tick, and iOS suspends the app when the phone locks, so the countdown froze
+    // in a pocket and resumed on unlock: a 90-second rest could run for minutes (#90). The
+    // one-second timer now only refreshes the display.
+
+    func startRestIfNeeded(exercise: WorkoutSessionExercise, now: Date = .now) {
         guard let rest = exercise.restSeconds, rest > 0 else { return }
-        restTotalSeconds = rest
-        restSecondsRemaining = rest
+        beginRest(seconds: rest, now: now)
+    }
+
+    private func beginRest(seconds: Int, now: Date) {
+        restTotalSeconds = seconds
+        restEndsAt = now.addingTimeInterval(TimeInterval(seconds))
+        restSecondsRemaining = seconds
         restTimer?.invalidate()
         restTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             Task { @MainActor [weak self] in
-                self?.tickRest()
+                self?.refreshRest()
             }
         }
         if let timer = restTimer {
@@ -187,13 +203,15 @@ final class ActiveWorkoutState {
         }
     }
 
-    private func tickRest() {
-        guard var r = restSecondsRemaining else { return }
-        r -= 1
-        restSecondsRemaining = r <= 0 ? nil : r
-        if restSecondsRemaining == nil {
-            restTimer?.invalidate()
-            restTimer = nil
+    /// Brings the rest timer up to date with the clock. Called every second by the timer,
+    /// and when the app returns to the foreground so a rest that ended while the phone was
+    /// locked ends at once rather than on the next tick.
+    func refreshRest(at date: Date = .now) {
+        guard let endsAt = restEndsAt else { return }
+        if let left = RestCountdown.secondsRemaining(until: endsAt, at: date) {
+            if restSecondsRemaining != left { restSecondsRemaining = left }
+        } else {
+            stopRestTimer()
             advanceToNextBlockIfNeeded()
             onSetCompleted?()
         }
@@ -202,12 +220,22 @@ final class ActiveWorkoutState {
     func stopRestTimer() {
         restTimer?.invalidate()
         restTimer = nil
+        restEndsAt = nil
         restSecondsRemaining = nil
     }
 
-    func addRestTime(_ seconds: Int) {
+    /// Moves the end of the current rest later. With no rest running, which can happen when
+    /// the watch sends "+30s" just as rest ends on the phone, it starts a fresh rest of that
+    /// length instead: that is what the tap asked for, and the old code left a countdown
+    /// with no timer behind it that never moved.
+    func addRestTime(_ seconds: Int, now: Date = .now) {
+        guard let endsAt = restEndsAt else {
+            beginRest(seconds: seconds, now: now)
+            return
+        }
         restTotalSeconds += seconds
-        restSecondsRemaining = (restSecondsRemaining ?? 0) + seconds
+        restEndsAt = endsAt.addingTimeInterval(TimeInterval(seconds))
+        refreshRest(at: now)
     }
 
     func skipRest() {
@@ -243,6 +271,7 @@ final class ActiveWorkoutState {
             currentSetID: pendingSet?.id,
             restSecondsRemaining: restSecondsRemaining,
             restTotalSeconds: restSecondsRemaining == nil ? nil : restTotalSeconds,
+            restEndsAt: restEndsAt,
             completedSetCount: session.completedSetCount,
             totalSetCount: totalSetCount
         )

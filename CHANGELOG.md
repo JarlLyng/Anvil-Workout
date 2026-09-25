@@ -3,6 +3,12 @@
 What changed in each version of Anvil Workout, newest first. Dates are when a version was tagged
 for release; it reaches the App Store after review.
 
+## Unreleased
+
+- The rest timer keeps time while the phone is locked. It used to stop in your pocket and pick up
+  where it left off on unlock, so a rest could run far past its length. The Apple Watch now counts
+  down on its own as well, instead of waiting for the phone.
+
 ## 1.9.0 (unreleased)
 
 - Crash reports can be turned off in Settings, under Privacy. It takes effect straight away.
