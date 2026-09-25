@@ -644,7 +644,8 @@ h1, h2, h3 { line-height: 1.2; }
 
 .footer-links {
     display: flex;
-    gap: 24px;
+    flex-wrap: wrap;
+    gap: 12px 24px;
 }
 
 .footer-links a {
