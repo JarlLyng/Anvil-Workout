@@ -12,7 +12,7 @@ for release; it reaches the App Store after review.
   displayed it, because the app was missing the setting that turns it on. It keeps the workout clock
   running, counts rest down with a bar, and says when rest is over, all without the app open.
 
-## 1.9.0 (unreleased)
+## 1.9.0 (2026-09-23)
 
 - Crash reports can be turned off in Settings, under Privacy. It takes effect straight away.
 - Crash reports carry less. They no longer include the names of programs or exercises or any
