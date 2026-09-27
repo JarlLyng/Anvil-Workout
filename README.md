@@ -54,7 +54,7 @@ See [docs/dev/SETUP.md](docs/dev/SETUP.md) for full setup including Sentry, Heal
 - **Settings** — Weight unit preference (kg/lbs), HealthKit permissions, CSV data export
 - **Onboarding** — 3-page intro for new users
 - **Widget** — Home screen streak widget (small + medium sizes)
-- **Live Activity** — Lock Screen and Dynamic Island showing current exercise, time, and set progress during workouts
+- **Live Activity** — Lock Screen and Dynamic Island showing current exercise, time, set progress and a rest countdown during workouts
 
 ---
 

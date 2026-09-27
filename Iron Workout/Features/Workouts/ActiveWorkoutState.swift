@@ -277,6 +277,24 @@ final class ActiveWorkoutState {
         )
     }
 
+    // MARK: - Live Activity state
+
+    /// What the Lock Screen and Dynamic Island show. The clock and the rest go out as dates
+    /// rather than seconds, so the system counts them without the app running (#96).
+    func makeLiveActivityState(now: Date = .now) -> IronWorkoutWidgetAttributes.ContentState {
+        IronWorkoutWidgetAttributes.ContentState(
+            currentExercise: currentBlock?.first?.exerciseName ?? "Done",
+            completedSets: session.completedSetCount,
+            totalSets: session.exercises.flatMap(\.performedSets).count,
+            elapsedSeconds: elapsedSeconds(at: now),
+            isPaused: isPaused,
+            elapsedCountsFrom: session.startedAt.addingTimeInterval(TimeInterval(totalPausedSeconds)),
+            pausedAt: pausedAt,
+            restEndsAt: restEndsAt,
+            restTotalSeconds: restEndsAt == nil ? nil : restTotalSeconds
+        )
+    }
+
     /// Routes an action received from the watch into the matching state mutation.
     /// Looks the set up by ID inside the current session so a stale watch snapshot
     /// can never mutate the wrong set.

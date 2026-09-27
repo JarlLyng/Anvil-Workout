@@ -89,7 +89,6 @@ struct ActiveWorkoutView: View {
                     WorkoutPauseOverlay(onResume: {
                         state.resume()
                         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                        updateLiveActivity(state: state)
                     })
                 }
             }
@@ -135,11 +134,20 @@ struct ActiveWorkoutView: View {
                 }
                 WatchConnectivityService.shared.sendSnapshot(state.makeWatchSnapshot())
             }
+            .onChange(of: state.restEndsAt) { _, _ in
+                // Rest started, got more time, was skipped or ended. The Lock Screen counts
+                // down from the end date on its own, so it needs to hear about each (#96).
+                updateLiveActivity(state: state)
+            }
             .onChange(of: state.currentBlockIndex) { _, _ in
                 WatchConnectivityService.shared.sendSnapshot(state.makeWatchSnapshot())
+                updateLiveActivity(state: state)
             }
             .onChange(of: state.isPaused) { _, _ in
+                // Here rather than in the pause and resume buttons, so a pause or resume
+                // from the watch reaches the Live Activity too.
                 WatchConnectivityService.shared.sendSnapshot(state.makeWatchSnapshot())
+                updateLiveActivity(state: state)
             }
             .alert("Error", isPresented: Binding(
                 get: { state.errorMessage != nil },
@@ -165,14 +173,12 @@ struct ActiveWorkoutView: View {
                 Button("Resume") {
                     state.resume()
                     UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                    updateLiveActivity(state: state)
                 }
             } else {
                 Menu {
                     Button("Pause workout") {
                         state.pause()
                         UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-                        updateLiveActivity(state: state)
                     }
                     if state.currentBlock != nil {
                         Button("Skip current", role: .destructive) { state.skipBlock() }
@@ -202,28 +208,18 @@ struct ActiveWorkoutView: View {
     // MARK: - Live Activity
 
     private func startLiveActivity(state: ActiveWorkoutState) {
-        let totalSets = session.exercises.flatMap(\.performedSets).count
-        let currentExerciseName = state.currentBlock?.first?.exerciseName ?? session.templateName
+        var initial = state.makeLiveActivityState()
+        if state.currentBlock == nil { initial.currentExercise = session.templateName }
         LiveActivityService.startLiveActivity(
             templateName: session.templateName,
             startedAt: session.startedAt,
-            currentExercise: currentExerciseName,
-            totalSets: totalSets
+            state: initial
         )
         SentrySDK.addBreadcrumb(DiagnosticsService.workoutBreadcrumb("Workout started"))
     }
 
     private func updateLiveActivity(state: ActiveWorkoutState) {
-        let totalSets = session.exercises.flatMap(\.performedSets).count
-        let currentExerciseName = state.currentBlock?.first?.exerciseName ?? "Done"
-        let elapsed = state.elapsedSeconds(at: .now)
-        LiveActivityService.updateLiveActivity(
-            currentExercise: currentExerciseName,
-            completedSets: session.completedSetCount,
-            totalSets: totalSets,
-            elapsedSeconds: elapsed,
-            isPaused: state.isPaused
-        )
+        LiveActivityService.updateLiveActivity(state.makeLiveActivityState())
     }
 
     // MARK: - Plate calculator

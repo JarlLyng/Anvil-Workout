@@ -8,6 +8,9 @@ for release; it reaches the App Store after review.
 - The rest timer keeps time while the phone is locked. It used to stop in your pocket and pick up
   where it left off on unlock, so a rest could run far past its length. The Apple Watch now counts
   down on its own as well, instead of waiting for the phone.
+- The Live Activity on the Lock Screen and in the Dynamic Island shows up. Earlier versions never
+  displayed it, because the app was missing the setting that turns it on. It keeps the workout clock
+  running, counts rest down with a bar, and says when rest is over, all without the app open.
 
 ## 1.9.0 (unreleased)
 

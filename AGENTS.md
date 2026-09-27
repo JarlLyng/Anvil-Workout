@@ -64,7 +64,7 @@ The repo is public, so anything written here is written for that audience.
 - Previous-session reference under each pending set, showing the matching set's weight and reps, with one tap to reuse them (1.8.0)
 - Weight carries from an earlier set of the same exercise in the same session; reps stay on the program target
 - Plate calculator for per-side barbell loading
-- Live Activity on Lock Screen and Dynamic Island
+- Live Activity on Lock Screen and Dynamic Island: workout clock, set progress and a rest countdown. Only from the version after 1.9.0: every release up to and including 1.9.0 lacked `NSSupportsLiveActivities`, so iOS never showed it (#96). Do not credit released versions with it.
 - Recovery prompt for a workout left running, offering to save or discard it
 
 **After**
@@ -118,6 +118,7 @@ The repo is public, so anything written here is written for that audience.
 - A scoped `-only-testing:"Iron WorkoutTests/SomeSuite"` can match nothing and pass vacuously. **Run the whole `Iron WorkoutTests` target.**
 - `MARKETING_VERSION` must match on all 16 targets including the watch app and watch widget. They have drifted to 1.0 before.
 - `LiveActivityAttributes.swift` needs target membership on both the app and the widget extension.
+- The Live Activity only appears because `Iron Workout/Info.plist` has `NSSupportsLiveActivities`. Without it `Activity.request` fails, `LiveActivityService` treats that as an expected `ActivityAuthorizationError` and leaves only a breadcrumb, so nothing looks wrong. That is how every release through 1.9.0 shipped without it (#96). Check the Lock Screen in the simulator after touching it.
 - The Sentry script phase must come after "Embed Foundation Extensions" to avoid a dependency cycle.
 - New files are picked up automatically (`PBXFileSystemSynchronizedRootGroup`); no pbxproj editing needed.
 - **Privacy copy must match what the SDK sends.** Before writing any privacy claim on the site or in the privacy policy, read `DiagnosticsService.swift` and every `addBreadcrumb`, `setExtra` and `capture` call. Site copy describes the **released** app, not `main`: Pages deploys `main` at once, so change privacy copy only when the release carrying the change is live. The site once said "no workout data" while three breadcrumbs sent program and exercise names, and "only on crash" while session tracking reported every launch.

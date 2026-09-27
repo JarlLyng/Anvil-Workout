@@ -17,6 +17,7 @@ struct Iron_WorkoutApp: App {
         // Sentry configuration, and the user's switch to turn it off, live in
         // DiagnosticsService so what the app sends is defined in one place.
         DiagnosticsService.startIfAllowed()
+        LiveActivityService.endLeftoverActivities()
     }
 
     var sharedModelContainer: ModelContainer = {
