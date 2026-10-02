@@ -80,7 +80,7 @@ The repo is public, so anything written here is written for that audience.
 
 **Other surfaces**
 - Native iPad layout with multi-pane navigation and a two-column active workout screen
-- Apple Watch companion for logging sets, skipping sets and rest haptics
+- Apple Watch companion for logging sets, skipping sets and rest haptics; the workout screen fits on one screen and shows weight in the user's unit (1.9.1)
 - Settings switch to turn crash reporting off (1.9.0)
 
 ### Features that do NOT exist (common hallucination targets)
