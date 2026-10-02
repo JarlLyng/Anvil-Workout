@@ -46,6 +46,11 @@ struct ActiveWorkoutSnapshot: Codable, Equatable, Sendable {
     let targetReps: Int?
     let targetWeightKg: Double?
 
+    /// The pending set's weight as the phone shows it, in the user's unit ("102.5 kg",
+    /// "225 lb"). Optional so either side on an older build still decodes the other;
+    /// without it the watch writes `targetWeightKg` in kilograms.
+    let targetWeightText: String?
+
     /// Stable identifier of the current pending set, used by the watch when sending
     /// a markDone / markSkipped action — guards against acting on a stale snapshot.
     let currentSetID: UUID?

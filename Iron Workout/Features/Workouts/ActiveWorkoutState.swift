@@ -256,6 +256,9 @@ final class ActiveWorkoutState {
         let focusExercise = currentBlock?.first ?? sortedExercises.first
         let setsInExercise = focusExercise?.performedSets.sorted { $0.setIndex < $1.setIndex } ?? []
         let pendingSet = setsInExercise.first(where: { !$0.isCompleted })
+        // The weight the phone's row shows and that Done records, which carries from an
+        // earlier set (#79), rather than the program target, which the watch used to show.
+        let pendingWeight = pendingSet.flatMap { WorkoutSessionService.pendingWeight(for: $0) }
 
         return ActiveWorkoutSnapshot(
             sessionID: session.id,
@@ -267,7 +270,8 @@ final class ActiveWorkoutState {
             currentSetNumber: (pendingSet?.setIndex ?? 0) + 1,
             totalSetsInExercise: setsInExercise.count,
             targetReps: pendingSet?.targetReps,
-            targetWeightKg: pendingSet?.targetWeight,
+            targetWeightKg: pendingWeight,
+            targetWeightText: pendingWeight.map { WeightFormatter.compact(kg: $0) },
             currentSetID: pendingSet?.id,
             restSecondsRemaining: restSecondsRemaining,
             restTotalSeconds: restSecondsRemaining == nil ? nil : restTotalSeconds,

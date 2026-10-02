@@ -47,6 +47,7 @@ struct WatchContractsTests {
             totalSetsInExercise: 5,
             targetReps: 8,
             targetWeightKg: 100,
+            targetWeightText: "220.5 lb",
             currentSetID: UUID(uuidString: "22222222-2222-2222-2222-222222222222")!,
             restSecondsRemaining: 60,
             restTotalSeconds: 90,
@@ -68,6 +69,7 @@ struct WatchContractsTests {
             totalSetsInExercise: 1,
             targetReps: nil,
             targetWeightKg: nil,
+            targetWeightText: nil,
             currentSetID: nil,
             restSecondsRemaining: nil,
             restTotalSeconds: nil,
@@ -106,6 +108,8 @@ struct WatchContractsTests {
             "restSecondsRemaining", "restTotalSeconds",
             // Added deliberately in #90 so the watch can count rest down on its own clock.
             "restEndsAt",
+            // Added deliberately so the watch shows the weight in the user's unit.
+            "targetWeightText",
             "completedSetCount", "totalSetCount",
         ]
         let keys = try topLevelKeys(encoder.encode(fullSnapshot()))
@@ -125,11 +129,23 @@ struct WatchContractsTests {
         #expect(decoded.restSecondsRemaining == 60)
     }
 
+    @Test("A snapshot from a phone without targetWeightText still decodes")
+    func decodesSnapshotWithoutWeightText() throws {
+        // A phone on an older build sends only kilograms; the watch falls back to them.
+        var json = try JSONSerialization.jsonObject(with: encoder.encode(fullSnapshot())) as! [String: Any]
+        json.removeValue(forKey: "targetWeightText")
+        let data = try JSONSerialization.data(withJSONObject: json)
+        let decoded = try decoder.decode(ActiveWorkoutSnapshot.self, from: data)
+        #expect(decoded.targetWeightText == nil)
+        #expect(decoded.targetWeightKg == 100)
+    }
+
     @Test("Nil optionals are omitted from the wire payload")
     func nilOptionalsOmitted() throws {
         let keys = try topLevelKeys(encoder.encode(minimalSnapshot()))
         #expect(!keys.contains("pausedAt"))
         #expect(!keys.contains("targetWeightKg"))
+        #expect(!keys.contains("targetWeightText"))
         #expect(!keys.contains("restSecondsRemaining"))
         #expect(!keys.contains("restEndsAt"))
         // Required fields are still present.

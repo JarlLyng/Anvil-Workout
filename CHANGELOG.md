@@ -3,6 +3,14 @@
 What changed in each version of Anvil Workout, newest first. Dates are when a version was tagged
 for release; it reaches the App Store after review.
 
+## Unreleased
+
+- The Apple Watch workout screen fits on one screen, down to the 40 mm watch. The workout clock
+  moves up beside the time, Done stands out from Skip, and rest is a ring with the next set below
+  it.
+- The watch shows weights in your unit, kg or lb, and the same weight as the phone. It used to
+  show the program's target in kg, even after a corrected weight had carried to the next set.
+
 ## 1.9.1 (unreleased)
 
 - The rest timer keeps time while the phone is locked. It used to stop in your pocket and pick up

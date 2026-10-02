@@ -171,4 +171,33 @@ struct RestTimerTests {
         #expect(snapshot.restEndsAt == t0.addingTimeInterval(90))
         #expect(snapshot.restSecondsRemaining == 90)
     }
+
+    @MainActor
+    @Test("The watch shows the weight the phone shows, which Done also records")
+    func snapshotCarriesPendingWeight() throws {
+        let (state, exercise) = try makeState()
+        defer { state.stopRestTimer() }
+
+        let first = state.makeWatchSnapshot()
+        #expect(first.targetWeightKg == 60)
+        #expect(first.targetWeightText == WeightFormatter.compact(kg: 60))
+
+        // A correction on set 1 carries to set 2 (#79). The watch used to keep showing the
+        // program's 60 kg while Done on the watch recorded 65.
+        let set1 = try #require(exercise.performedSets.first { $0.setIndex == 0 })
+        set1.actualWeight = 65
+        state.markSetDone(set1, exercise: exercise)
+
+        let second = state.makeWatchSnapshot()
+        #expect(second.targetWeightKg == 65)
+        #expect(second.targetWeightText == WeightFormatter.compact(kg: 65))
+    }
+
+    @Test("Weight text has a decimal only where it would not read x.0", arguments: [
+        // 225.97 is 102.5 kg in pounds: one decimal would print "226.0".
+        (100.0, 0), (102.5, 1), (225.00000000000003, 0), (225.97, 0), (225.4, 1),
+    ])
+    func weightFractionDigits(value: Double, digits: Int) {
+        #expect(WeightFormatter.fractionDigits(for: value) == digits)
+    }
 }

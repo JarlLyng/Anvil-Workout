@@ -42,6 +42,18 @@ enum WeightFormatter {
         return "\(value.formatted(.number.precision(.fractionLength(fractionDigits)))) \(unit.label)"
     }
 
+    /// "100 kg", "102.5 kg", "225 lb": a decimal only where the weight has one, so a
+    /// half-kilo target does not round away and a whole one does not read "100.0".
+    static func compact(kg: Double, in unit: WeightUnit = current) -> String {
+        format(kg: kg, fractionDigits: fractionDigits(for: display(kg, in: unit)), in: unit)
+    }
+
+    /// 0 when the value would show as "x.0" at one decimal, 1 otherwise. That also absorbs
+    /// the float error in a pound value that went through kilograms for storage.
+    static func fractionDigits(for value: Double) -> Int {
+        abs(value - value.rounded()) < 0.05 ? 0 : 1
+    }
+
     /// Two-way Binding for an optional kg-stored Double exposed in the active unit.
     static func displayBinding(kg: Binding<Double?>, unit: WeightUnit = current) -> Binding<Double?> {
         Binding(

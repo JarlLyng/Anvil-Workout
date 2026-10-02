@@ -15,7 +15,11 @@ struct WatchRootView: View {
 
     var body: some View {
         if let snapshot = client.snapshot {
-            WatchActiveWorkoutView(snapshot: snapshot)
+            // The stack is what gives the workout screen a title in the top bar, beside the
+            // clock, where the elapsed time goes instead of taking a row of the screen.
+            NavigationStack {
+                WatchActiveWorkoutView(snapshot: snapshot)
+            }
         } else {
             WatchIdleView(isReachable: client.isReachable)
         }

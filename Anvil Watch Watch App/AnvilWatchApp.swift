@@ -16,7 +16,12 @@ struct AnvilWatchApp: App {
         WindowGroup {
             WatchRootView()
                 .environment(client)
-                .onAppear { client.activate() }
+                .onAppear {
+                    client.activate()
+                    #if DEBUG
+                    if let demo = WatchDemoSnapshots.requested() { client.snapshot = demo }
+                    #endif
+                }
         }
     }
 }
