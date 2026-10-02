@@ -3,7 +3,7 @@
 What changed in each version of Anvil Workout, newest first. Dates are when a version was tagged
 for release; it reaches the App Store after review.
 
-## Unreleased
+## 1.9.1 (unreleased)
 
 - The rest timer keeps time while the phone is locked. It used to stop in your pocket and pick up
   where it left off on unlock, so a rest could run far past its length. The Apple Watch now counts

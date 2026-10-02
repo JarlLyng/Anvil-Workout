@@ -64,7 +64,7 @@ The repo is public, so anything written here is written for that audience.
 - Previous-session reference under each pending set, showing the matching set's weight and reps, with one tap to reuse them (1.8.0)
 - Weight carries from an earlier set of the same exercise in the same session; reps stay on the program target
 - Plate calculator for per-side barbell loading
-- Live Activity on Lock Screen and Dynamic Island: workout clock, set progress and a rest countdown. Only from the version after 1.9.0: every release up to and including 1.9.0 lacked `NSSupportsLiveActivities`, so iOS never showed it (#96). Do not credit released versions with it.
+- Live Activity on Lock Screen and Dynamic Island: workout clock, set progress and a rest countdown (1.9.1). Every release up to and including 1.9.0 lacked `NSSupportsLiveActivities`, so iOS never showed it (#96). Do not credit 1.9.0 or earlier with it.
 - Recovery prompt for a workout left running, offering to save or discard it
 
 **After**
