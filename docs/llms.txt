@@ -11,12 +11,12 @@ Anvil Workout is a paid app with a one-time purchase price on the App Store. The
 ## Key features
 
 - **Workout Program Builder** with exercises, sets, reps, weight targets, rest timers, and **supersets** (paired exercises linked for alternating sets)
-- **Real-Time Workout Tracking** with haptic rest countdown on phone and watch
+- **Real-Time Workout Tracking** with haptic rest countdown on phone and watch. The countdown keeps time while the phone is locked, and the watch counts rest down on its own clock (1.9.1)
 - **Apple Watch Companion App** for wrist-based logging: view active set, log reps/weight, skip/complete sets, rest timer wrist haptics, and watch Smart Stack widget (needs no internet; it follows and controls the workout running on the iPhone over local WatchConnectivity, so it needs the iPhone nearby and does not work on its own)
 - **iPad Support** with a multi-pane layout (NavigationSplitView) and a two-column active workout screen (displays current set logger on the left, upcoming exercises/sets sidebar on the right)
 - **Automatic Personal Record Detection** for weight and reps
 - **Progress Charts**: volume over time, weekly frequency, estimated 1RM progression, muscle group distribution
-- **Live Activity** on Lock Screen and Dynamic Island during workouts
+- **Live Activity** on Lock Screen and Dynamic Island during workouts: current exercise, the workout clock, set progress and a rest countdown, all counting without the app open (1.9.1; earlier versions never displayed it)
 - **Smart Dashboard** with weekly metrics, workout streak, and training planner
 - **Apple Health and HealthKit Integration**, with the user's permission: completed workouts are written to Health, and the calories and heart rate Health recorded during the workout (usually from an Apple Watch) are read back into the workout history
 - **Per-Exercise History** with PR tracking and estimated 1RM chart
