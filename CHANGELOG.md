@@ -13,6 +13,15 @@ for release; it reaches the App Store after review.
   the largest thing on screen and the only Done button; the other sets are single lines, and
   tapping one makes it the current set. Rest reads as a clock, and the top shows which exercise you
   are on and how many sets are done.
+- Stats looks back over 4, 12 or 26 weeks. It opens on what the period added up to and how volume
+  compares with the period before, then volume, workouts or sets per week with the current week
+  marked. Records show the latest one for each exercise, with the previous best. Strength follows
+  the estimated one-rep max of the lift you train most, or any other you pick, and muscle groups
+  count the sets in the period.
+- Warm-up sets no longer count towards volume or sets, on the home screen or in Stats. Drop and
+  failure sets still do. The estimated one-rep max only uses sets of 1 to 12 reps, in Stats and on
+  each exercise.
+- Record weights use your region's decimal separator, like every other weight in the app.
 - The first launch after installing the app no longer crashes. The home-screen widget could create
   the app's database at the same moment the app opened it.
 

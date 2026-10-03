@@ -43,8 +43,8 @@ Anvil Workout/
 │   │   └── CreateExerciseSheet.swift  # Add custom exercise
 │   │
 │   ├── Stats/
-│   │   ├── StatsView.swift            # Stats coordinator with computed data
-│   │   └── StatsChartViews.swift      # Volume, frequency, 1RM, muscle group charts
+│   │   ├── StatsView.swift            # Period picker; memoizes buckets, records, 1RM and muscle groups
+│   │   └── StatsChartViews.swift      # Summary, per-week, records, strength and muscle group cards
 │   │
 │   ├── Health/
 │   │   └── HealthKitService.swift     # HealthKit: auth, workout start/end, metrics query
@@ -73,6 +73,7 @@ Anvil Workout/
     │   ├── WorkoutSessionService.swift    # Create/finalize session from template
     │   ├── PersonalRecordService.swift    # Detect PRs (pure, testable)
     │   ├── StreakCalculator.swift         # Calculate workout streak (pure, testable)
+    │   ├── TrainingSummary.swift          # Volume, work sets, weeks and 1RM for Home and Stats (pure, testable)
     │   ├── PlateCalculator.swift          # Barbell plate loading math (pure, testable)
     │   ├── WeightFormatter.swift          # kg/lb display + input conversion (storage is always kg)
     │   ├── WorkoutCSVImporter.swift       # Parse Strong/Hevy CSV exports (pure, testable)
@@ -81,6 +82,7 @@ Anvil Workout/
     │   ├── WatchStatsBroadcaster.swift    # Build WatchStatsSnapshot from SwiftData for the watch widget
     │   ├── LiveActivityService.swift      # Start/update/end Live Activity
     │   ├── DataMigrationService.swift     # Runtime data migrations (tracked via UserDefaults flags)
+    │   ├── DemoHistory.swift              # Debug only: -AnvilDemoHistory seeds 12 weeks of training
     │   ├── PersistenceLogger.swift        # Structured logging for SwiftData save/fetch failures
     │   └── SentryConfig.swift             # Reads DSN from Info.plist
     │
@@ -247,7 +249,7 @@ These Codable contracts live in `Shared/Watch/WatchContracts.swift` and are **mi
 4. **Completion:** Session saved (duration, sets, kcal/heart rate from Health). PR detection for weight and reps. Share workout summary. App Store review prompt at 5th, 15th, and 50th workout.
 5. **History tab:** Searchable list of sessions; detail view with set-by-set data and Health metrics.
 6. **Exercises tab:** Searchable library; per-exercise detail with history, PRs, and estimated 1RM.
-7. **Stats tab:** Volume over time, weekly frequency, estimated 1RM progression, muscle group distribution.
+7. **Stats tab:** A 4, 12 or 26 week period: totals against the previous period, volume, workouts or sets per week, latest records, estimated 1RM per lift, sets per muscle group. The numbers come from `TrainingSummary`, shared with the home screen.
 8. **Settings tab:** Weight unit (kg/lbs), CSV export, CSV import from Strong/Hevy, Health permissions, about.
 
 ---

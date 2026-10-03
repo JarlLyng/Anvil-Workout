@@ -289,7 +289,7 @@ struct DashboardView: View {
                 week: week,
                 lastWeekWorkouts: lastWeekWorkouts,
                 streak: StreakCalculator.currentStreak(from: sessions),
-                volumeText: WeightFormatter.compact(kg: week.volumeKg, in: weightUnit),
+                volumeText: WeightFormatter.volume(kg: week.volumeKg, in: weightUnit),
                 planned: planned,
                 onEditPlan: { showPlanEditor = true }
             )
@@ -330,9 +330,10 @@ struct DashboardView: View {
     private func recentDetail(_ session: WorkoutSession) -> String {
         var parts: [String] = []
         if session.durationSeconds > 0 { parts.append(TrainingSummary.durationText(seconds: session.durationSeconds)) }
-        parts.append(session.completedSetCount == 1 ? "1 set" : "\(session.completedSetCount) sets")
+        let sets = TrainingSummary.workSetCount(of: session)
+        parts.append(sets == 1 ? "1 set" : "\(sets) sets")
         let volume = TrainingSummary.volumeKg(of: session)
-        if volume > 0 { parts.append(WeightFormatter.compact(kg: volume, in: weightUnit)) }
+        if volume > 0 { parts.append(WeightFormatter.volume(kg: volume, in: weightUnit)) }
         return parts.joined(separator: " \u{00B7} ")
     }
 

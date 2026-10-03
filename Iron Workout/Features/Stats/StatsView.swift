@@ -15,154 +15,178 @@ struct StatsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \WorkoutSession.startedAt, order: .forward) private var sessions: [WorkoutSession]
     @Query(sort: \Exercise.name) private var exercises: [Exercise]
+    @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
+    private var weightUnit: WeightUnit { WeightUnit(rawValue: weightUnitRaw) ?? .kg }
 
-    @State private var selectedExerciseFor1RM: Exercise?
+    @State private var period: StatsPeriod = .twelveWeeks
+    @State private var metric: PerWeekMetric = .volume
+    @State private var selectedExercise: Exercise?
 
-    // Memoized chart inputs. Recomputed only when the underlying counts or selected
-    // exercise change — never on every body invocation. Recomputing on every redraw
-    // walked the full session graph, allocating thousands of transient arrays per
-    // frame and could trigger watchdog termination on iPad with rich histories.
-    @State private var volumeData: [VolumeDataPoint] = []
-    @State private var frequencyData: [FrequencyDataPoint] = []
-    @State private var oneRepMaxData: [OneRepMaxDataPoint] = []
-    @State private var muscleGroupData: [MuscleGroupDataPoint] = []
+    // Memoized inputs. Recomputed only when the sessions, the period or the selected
+    // exercise change, never on every body invocation: walking the session graph per
+    // redraw allocated thousands of arrays a frame and could trip the watchdog on iPad
+    // with a long history.
+    @State private var buckets: [TrainingSummary.WeekBucket] = []
+    @State private var previousVolumeKg: Double = 0
+    @State private var records: [RecordItem] = []
+    @State private var strengthExercises: [Exercise] = []
+    @State private var strengthHistory: [(date: Date, kg: Double)] = []
+    @State private var muscleGroups: [MuscleGroupDataPoint] = []
 
-    /// Volume and 1RM charts are bounded to roughly the last six months. Earlier sets
-    /// still count toward PRs in `ExerciseDetailView`, but plotting years of daily bars
-    /// is both unreadable and a memory hazard.
-    private static let chartHistoryWeeks = 26
+    private var hasTraining: Bool { sessions.contains { $0.completedSetCount > 0 } }
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: DesignTokens.Spacing.xxl) {
-                    VolumeChartView(data: volumeData)
-                    FrequencyChartView(data: frequencyData)
-                    OneRepMaxChartView(
-                        data: oneRepMaxData,
-                        exercises: exercises,
-                        selectedExercise: $selectedExerciseFor1RM
-                    )
-                    MuscleGroupChartView(data: muscleGroupData)
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
+                    if hasTraining {
+                        Picker("Period", selection: $period) {
+                            ForEach(StatsPeriod.allCases) { Text($0.label).tag($0) }
+                        }
+                        .pickerStyle(.segmented)
+                        .padding(.top, DesignTokens.Spacing.sm)
+
+                        let volume = buckets.reduce(0) { $0 + $1.volumeKg }
+                        StatsSummaryCard(
+                            period: period,
+                            workouts: buckets.reduce(0) { $0 + $1.workouts },
+                            sets: buckets.reduce(0) { $0 + $1.sets },
+                            volumeText: WeightFormatter.volume(kg: volume, in: weightUnit),
+                            comparison: volumeComparisonText(current: volume, previous: previousVolumeKg, period: period)
+                        )
+                        PerWeekChartCard(buckets: buckets, metric: $metric, weightUnit: weightUnit)
+                        RecordsCard(records: records, period: period)
+                        StrengthCard(
+                            history: strengthHistory,
+                            exercises: strengthExercises,
+                            selected: $selectedExercise,
+                            weightUnit: weightUnit,
+                            period: period
+                        )
+                        MuscleGroupCard(data: muscleGroups, period: period)
+                    } else {
+                        emptyState
+                    }
                 }
                 .padding()
             }
             .background(Color(uiColor: .systemGroupedBackground))
-            .task {
-                if selectedExerciseFor1RM == nil {
-                    selectedExerciseFor1RM = exercises.first(where: { $0.name.lowercased().contains("bench") }) ?? exercises.first
-                }
-                recomputeAll()
+            .safeAreaInset(edge: .top, spacing: 0) {
+                Color.clear.frame(height: 0).background(Color(uiColor: .systemGroupedBackground))
             }
+            .toolbar(.hidden, for: .navigationBar)
+            .task { recomputeAll() }
             .onChange(of: sessions.count) { _, _ in recomputeAll() }
-            .onChange(of: selectedExerciseFor1RM) { _, _ in
-                oneRepMaxData = computeOneRepMaxData()
-            }
+            .onChange(of: period) { _, _ in recomputeAll() }
+            .onChange(of: selectedExercise) { _, _ in recomputeStrength() }
         }
+    }
+
+    private var emptyState: some View {
+        VStack(spacing: DesignTokens.Spacing.md) {
+            Ph.chartBar.regular
+                .icon(size: 40)
+                .foregroundStyle(.secondary)
+            Text("Your stats fill in as you train")
+                .font(.headline)
+            Text("Finish a workout and this is where you see your volume per week, your records and how your lifts are moving.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, DesignTokens.Spacing.xxxl)
     }
 
     // MARK: - Memoization
 
     private func recomputeAll() {
-        volumeData = computeVolumeData()
-        frequencyData = computeFrequencyData()
-        oneRepMaxData = computeOneRepMaxData()
-        muscleGroupData = computeMuscleGroupData()
+        let doubled = TrainingSummary.weeklyBuckets(weeks: period.weeks * 2, sessions: sessions)
+        buckets = Array(doubled.suffix(period.weeks))
+        previousVolumeKg = doubled.prefix(doubled.count - buckets.count).reduce(0) { $0 + $1.volumeKg }
+        records = computeRecords()
+        muscleGroups = computeMuscleGroups()
+        strengthExercises = computeStrengthExercises()
+        if selectedExercise == nil || !strengthExercises.contains(where: { $0.id == selectedExercise?.id }) {
+            selectedExercise = strengthExercises.first
+        }
+        recomputeStrength()
     }
 
-    private func computeVolumeData() -> [VolumeDataPoint] {
-        let calendar = Calendar.current
-        guard let cutoff = calendar.date(byAdding: .weekOfYear, value: -Self.chartHistoryWeeks, to: .now) else { return [] }
-
-        var data: [Date: Double] = [:]
-        for session in sessions where session.startedAt >= cutoff {
-            let day = calendar.startOfDay(for: session.startedAt)
-            var sessionVolume = 0.0
-            for ex in session.exercises {
-                for set in ex.performedSets where set.isCompleted && set.setType == .working {
-                    if let reps = set.actualReps, let weight = set.actualWeight {
-                        sessionVolume += Double(reps) * weight
-                    }
-                }
-            }
-            if sessionVolume > 0 {
-                data[day, default: 0] += sessionVolume
-            }
+    private func recomputeStrength() {
+        guard let exercise = selectedExercise, let since = periodStart else {
+            strengthHistory = []
+            return
         }
-        return data.map { VolumeDataPoint(date: $0.key, volume: $0.value) }
-            .sorted { $0.date < $1.date }
+        strengthHistory = TrainingSummary.oneRepMaxHistory(for: exercise, since: since, sessions: sessions)
     }
 
-    private func computeFrequencyData() -> [FrequencyDataPoint] {
-        let calendar = Calendar.current
-        let now = Date()
-        guard let eightWeeksAgo = calendar.date(byAdding: .weekOfYear, value: -8, to: now) else { return [] }
+    private var periodStart: Date? { buckets.first?.start }
 
-        var weekBuckets: [Date: Int] = [:]
-        for i in 0..<8 {
-            if let weekStart = calendar.date(byAdding: .weekOfYear, value: -(7 - i), to: now),
-               let interval = calendar.dateInterval(of: .weekOfYear, for: weekStart) {
-                weekBuckets[interval.start] = 0
-            }
-        }
-
-        for session in sessions where session.startedAt >= eightWeeksAgo && session.completedSetCount > 0 {
-            if let interval = calendar.dateInterval(of: .weekOfYear, for: session.startedAt) {
-                weekBuckets[interval.start, default: 0] += 1
-            }
-        }
-
-        return weekBuckets.map { FrequencyDataPoint(weekStart: $0.key, count: $0.value) }
-            .sorted { $0.weekStart < $1.weekStart }
+    private var sessionsInPeriod: [WorkoutSession] {
+        guard let since = periodStart else { return [] }
+        return sessions.filter { $0.completedSetCount > 0 && $0.startedAt >= since }
     }
 
-    private func computeMuscleGroupData() -> [MuscleGroupDataPoint] {
-        var counts: [String: Int] = [:]
-        let groupByID = Dictionary(uniqueKeysWithValues: exercises.map { ($0.id, $0.muscleGroup.rawValue) })
+    /// The latest record for each exercise in the period, newest first, each workout
+    /// compared with everything before it rather than with what came later. A weight
+    /// record wins over a reps record from the same workout: lifting a new weight for
+    /// five reps is also "the most reps at that weight", which says nothing new.
+    private func computeRecords() -> [RecordItem] {
+        let completed = sessions.filter { $0.completedSetCount > 0 }
+        guard let since = periodStart else { return [] }
+        var items: [RecordItem] = []
+        var seen: Set<String> = []
+        for (index, session) in completed.enumerated().reversed() where session.startedAt >= since {
+            let found = PersonalRecordService.detectPersonalRecords(in: session, history: Array(completed[..<index]))
+            for name in Set(found.map(\.exerciseName)) where !seen.contains(name) {
+                let forExercise = found.filter { $0.exerciseName == name }
+                guard let record = forExercise.first(where: { $0.type == .weight }) ?? forExercise.first else { continue }
+                seen.insert(name)
+                items.append(RecordItem(
+                    exerciseName: record.exerciseName,
+                    value: record.value,
+                    previousBest: record.previousBest,
+                    date: session.startedAt
+                ))
+            }
+            if items.count >= 6 { break }
+        }
+        return Array(items.sorted { ($0.date, $1.exerciseName) > ($1.date, $0.exerciseName) }.prefix(6))
+    }
+
+    private func computeMuscleGroups() -> [MuscleGroupDataPoint] {
+        let groupByID = Dictionary(exercises.map { ($0.id, $0.muscleGroup.rawValue) }, uniquingKeysWith: { first, _ in first })
         let groupByName = Dictionary(exercises.map { ($0.name, $0.muscleGroup.rawValue) }, uniquingKeysWith: { first, _ in first })
-
-        for session in sessions {
+        var counts: [String: Int] = [:]
+        for session in sessionsInPeriod {
             for ex in session.exercises {
-                let completedSets = ex.performedSets.filter(\.isCompleted).count
-                guard completedSets > 0 else { continue }
-                let group: String
-                if let exerciseID = ex.exerciseID, let g = groupByID[exerciseID] {
-                    group = g
-                } else {
-                    group = groupByName[ex.exerciseName] ?? "Other"
-                }
-                counts[group, default: 0] += completedSets
+                let sets = ex.performedSets.filter { TrainingSummary.isWorkSet($0) && $0.actualReps != nil }.count
+                guard sets > 0 else { continue }
+                let group = ex.exerciseID.flatMap { groupByID[$0] } ?? groupByName[ex.exerciseName] ?? "Other"
+                counts[group, default: 0] += sets
             }
         }
-
         return counts.map { MuscleGroupDataPoint(muscleGroup: $0.key, setCount: $0.value) }
             .sorted { $0.setCount > $1.setCount }
     }
 
-    private func computeOneRepMaxData() -> [OneRepMaxDataPoint] {
-        guard let exercise = selectedExerciseFor1RM else { return [] }
-        let calendar = Calendar.current
-        guard let cutoff = calendar.date(byAdding: .weekOfYear, value: -Self.chartHistoryWeeks, to: .now) else { return [] }
-
-        var data: [Date: Double] = [:]
-        for session in sessions where session.startedAt >= cutoff {
-            let day = calendar.startOfDay(for: session.startedAt)
-            for ex in session.exercises where ex.matches(exercise) {
-                var max1RM = 0.0
-                for set in ex.performedSets where set.isCompleted && set.setType == .working {
-                    if let reps = set.actualReps, let weight = set.actualWeight, reps > 0, reps < 37 {
-                        let e1rm = weight * (36.0 / (37.0 - Double(reps)))
-                        if e1rm > max1RM { max1RM = e1rm }
-                    }
-                }
-                if max1RM > 0 {
-                    let currentMax = data[day] ?? 0
-                    if max1RM > currentMax { data[day] = max1RM }
-                }
-            }
+    /// Exercises with a weighted work set in the period, the most trained first, so the
+    /// picker opens on a lift that has a line to show.
+    private func computeStrengthExercises() -> [Exercise] {
+        var setsByExercise: [UUID: Int] = [:]
+        let inPeriod = sessionsInPeriod
+        for exercise in exercises {
+            let count = inPeriod.flatMap(\.exercises)
+                .filter { $0.matches(exercise) }
+                .flatMap(\.performedSets)
+                .filter { TrainingSummary.isWorkSet($0) && $0.actualWeight != nil && $0.actualReps != nil }
+                .count
+            if count > 0 { setsByExercise[exercise.id] = count }
         }
-        return data.map { OneRepMaxDataPoint(date: $0.key, estimated1RM: $0.value) }
-            .sorted { $0.date < $1.date }
+        return exercises
+            .filter { setsByExercise[$0.id] != nil }
+            .sorted { (setsByExercise[$0.id] ?? 0) > (setsByExercise[$1.id] ?? 0) }
     }
 }
 

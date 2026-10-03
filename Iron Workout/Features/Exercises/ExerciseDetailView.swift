@@ -145,8 +145,7 @@ struct ExerciseDetailView: View {
                             if volume > currentBest {
                                 newStats.bestVolume = (reps: r, weight: w)
                             }
-                            if r > 0, r < 37 {
-                                let e1rm = w * 36.0 / (37.0 - Double(r))
+                            if let e1rm = TrainingSummary.estimatedOneRepMax(reps: r, weightKg: w) {
                                 if newStats.bestEstimated1RM.map({ e1rm > $0 }) ?? true {
                                     newStats.bestEstimated1RM = e1rm
                                 }

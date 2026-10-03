@@ -70,7 +70,7 @@ The repo is public, so anything written here is written for that audience.
 **After**
 - History with duration, calories and heart rate
 - Per-exercise history and automatic personal-record detection for weight and reps
-- Stats: training volume, weekly frequency, estimated 1RM, muscle-group distribution
+- Stats over 4, 12 or 26 weeks: totals compared with the previous period, volume, workouts or sets per week, the latest record per exercise, estimated 1RM per lift (sets of 1 to 12 reps) and sets per muscle group. Warm-up sets never count towards volume or sets
 - Home-screen and watch widgets for the streak
 
 **Data**

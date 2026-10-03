@@ -75,6 +75,52 @@ struct TrainingSummaryTests {
         #expect(TrainingSummary.volumeKg(of: s) == 1000)
     }
 
+    @MainActor
+    @Test("Warm-up sets add no volume and do not count as sets")
+    func warmupsExcluded() throws {
+        let context = try makeContext()
+        let s = session(at: Self.wednesday, sets: [(10, 40, true), (5, 100, true)], in: context)
+        s.exercises[0].performedSets.first { $0.setIndex == 0 }?.setType = .warmup
+
+        #expect(TrainingSummary.volumeKg(of: s) == 500)
+        #expect(TrainingSummary.workSetCount(of: s) == 1)
+    }
+
+    // MARK: - Weekly buckets
+
+    @MainActor
+    @Test("Weekly buckets cover every week, oldest first, with empty weeks as zeros")
+    func weeklyBuckets() throws {
+        let context = try makeContext()
+        let sessions = [
+            session(at: Self.wednesday, sets: [(5, 100, true), (5, 100, true)], in: context), // this week: 1000
+            session(at: Self.day(-14), sets: [(5, 50, true)], in: context),                   // two weeks back: 250
+            session(at: Self.day(-70), sets: [(5, 50, true)], in: context),                   // outside
+        ]
+
+        let buckets = TrainingSummary.weeklyBuckets(weeks: 4, endingAt: Self.wednesday, sessions: sessions, calendar: Self.monday)
+
+        #expect(buckets.count == 4)
+        #expect(buckets.map(\.workouts) == [0, 1, 0, 1])
+        #expect(buckets.map(\.volumeKg) == [0, 250, 0, 1000])
+        #expect(buckets.map(\.sets) == [0, 1, 0, 2])
+        #expect(buckets.last?.start == Self.day(-2).addingTimeInterval(-12 * 3600)) // Monday 00:00
+    }
+
+    // MARK: - Strength
+
+    @Test("Estimated 1RM is Brzycki's, for 1 to 12 reps only", arguments: [
+        (1, 100.0, 100.0), (5, 100.0, 112.5), (10, 100.0, 36.0 * 100 / 27), (13, 100.0, -1), (0, 100.0, -1),
+    ])
+    func oneRepMax(reps: Int, weight: Double, expected: Double) {
+        let value = TrainingSummary.estimatedOneRepMax(reps: reps, weightKg: weight)
+        if expected < 0 {
+            #expect(value == nil)
+        } else {
+            #expect(abs((value ?? 0) - expected) < 0.0001)
+        }
+    }
+
     // MARK: - Week
 
     @MainActor

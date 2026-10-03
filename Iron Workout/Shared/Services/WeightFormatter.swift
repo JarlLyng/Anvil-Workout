@@ -48,6 +48,11 @@ enum WeightFormatter {
         format(kg: kg, fractionDigits: fractionDigits(for: display(kg, in: unit)), in: unit)
     }
 
+    /// Volume, "11,899 kg": whole units, since a decimal on a total of thousands is noise.
+    static func volume(kg: Double, in unit: WeightUnit = current) -> String {
+        format(kg: kg, fractionDigits: 0, in: unit)
+    }
+
     /// 0 when the value would show as "x.0" at one decimal, 1 otherwise. That also absorbs
     /// the float error in a pound value that went through kilograms for storage.
     static func fractionDigits(for value: Double) -> Int {

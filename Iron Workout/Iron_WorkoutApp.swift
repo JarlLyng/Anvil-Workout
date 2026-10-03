@@ -73,6 +73,9 @@ struct Iron_WorkoutApp: App {
         ExerciseLibraryService.seedIfNeeded(modelContext: context)
         // Run after library seeding so any matching-by-name migrations have the full library available.
         DataMigrationService.runMigrationsIfNeeded(modelContext: context)
+        #if DEBUG
+        DemoHistory.seedIfRequested(modelContext: context)
+        #endif
     }
 }
 

@@ -157,12 +157,8 @@ enum PersonalRecordService {
 
     // MARK: - Formatting
 
+    /// "80 kg", "67,5 kg": the user's unit and decimal separator, like every other weight.
     private static func formatWeight(_ weight: Double) -> String {
-        let unit = WeightFormatter.current
-        let display = WeightFormatter.display(weight, in: unit)
-        if display.truncatingRemainder(dividingBy: 1) == 0 {
-            return "\(Int(display)) \(unit.label)"
-        }
-        return String(format: "%.1f \(unit.label)", display)
+        WeightFormatter.compact(kg: weight)
     }
 }
