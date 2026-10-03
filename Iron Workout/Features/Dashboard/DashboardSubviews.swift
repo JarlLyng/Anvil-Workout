@@ -9,109 +9,279 @@ import SwiftUI
 import IAMJARLDesignTokens
 import PhosphorSwift
 
-// MARK: - DashboardCard
+// MARK: - Section label
 
-struct DashboardCard<Icon: View>: View {
+/// "UP NEXT", "THIS WEEK": the small heading over each home card.
+struct DashboardSectionLabel<Trailing: View>: View {
     let title: String
-    let value: String
-    let icon: Icon
+    @ViewBuilder var trailing: () -> Trailing
 
     var body: some View {
-        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
-            HStack {
-                icon
-                Spacer()
-            }
+        HStack(alignment: .firstTextBaseline) {
+            Text(title)
+                .font(.caption.weight(.semibold))
+                .textCase(.uppercase)
+                .foregroundStyle(.secondary)
+                .accessibilityAddTraits(.isHeader)
+            Spacer()
+            trailing()
+        }
+        .padding(.horizontal, DesignTokens.Spacing.xs)
+    }
+}
+
+extension DashboardSectionLabel where Trailing == EmptyView {
+    init(title: String) {
+        self.init(title: title) { EmptyView() }
+    }
+}
+
+// MARK: - Up next
+
+/// The workout to do next, with its exercises and the one button the home screen is for.
+struct UpNextCard: View {
+    @Environment(\.colorScheme) private var colorScheme
+    let title: String
+    /// "Planned for today · last done 3 days ago".
+    let context: String
+    /// Exercise name and plan ("5 × 5 · 40 kg"), in program order.
+    let lines: [(name: String, plan: String)]
+    var onStart: () -> Void
+
+    private static let shownLines = 5
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
-                Text(value)
-                    .font(.title2.bold())
                 Text(title)
-                    .font(.caption)
+                    .font(.title3.weight(.semibold))
+                Text(context)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+
+            if !lines.isEmpty {
+                VStack(spacing: DesignTokens.Spacing.sm) {
+                    ForEach(Array(lines.prefix(Self.shownLines).enumerated()), id: \.offset) { _, line in
+                        HStack(alignment: .firstTextBaseline) {
+                            Text(line.name)
+                                .lineLimit(1)
+                            Spacer(minLength: DesignTokens.Spacing.md)
+                            Text(line.plan)
+                                .monospacedDigit()
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                        }
+                        .font(.subheadline)
+                    }
+                    if lines.count > Self.shownLines {
+                        Text("+\(lines.count - Self.shownLines) more")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+                .accessibilityElement(children: .combine)
+            }
+
+            Button(action: onStart) {
+                HStack(spacing: DesignTokens.Spacing.sm) {
+                    Ph.play.fill.icon(size: 18)
+                    Text("Start Workout")
+                        .fontWeight(.semibold)
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
+            .controlSize(.large)
+            .accessibilityLabel("Start \(title)")
+        }
+        .padding(DesignTokens.Spacing.lg)
+        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+    }
+}
+
+// MARK: - Start here
+
+/// What a new lifter sees instead of an empty home screen: the two ways to get a first
+/// program, and where importing lives.
+struct StartHereCard: View {
+    @Environment(\.colorScheme) private var colorScheme
+    var onLibrary: () -> Void
+    var onCreate: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+                Text("Start with a program")
+                    .font(.title3.weight(.semibold))
+                Text("Pick a proven one like StrongLifts 5×5 and change anything you like, or build your own.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            Button(action: onLibrary) {
+                Label { Text("Browse Program Library").fontWeight(.semibold) } icon: { Ph.bookOpen.regular.icon(size: 18) }
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
+            .controlSize(.large)
+            Button(action: onCreate) {
+                Text("Build My Own").frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.large)
+            Text("Coming from Strong or Hevy? Import your history under Settings.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
+        .padding(DesignTokens.Spacing.lg)
+        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+    }
+}
+
+// MARK: - This week
+
+/// The week at a glance: a strip of days (trained, planned, nothing) and three numbers.
+/// A planned day that passed without a workout is shown as planned, not as missed; the
+/// strip records, it does not judge.
+struct WeekCard: View {
+    @Environment(\.colorScheme) private var colorScheme
+    let week: TrainingSummary.Week
+    let lastWeekWorkouts: Int
+    let streak: Int
+    let volumeText: String
+    /// Planned program names by weekday index, Monday = 0.
+    let planned: [Int: [String]]
+    var onEditPlan: () -> Void
+
+    private let calendar = Calendar.current
+
+    private static let fullNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    private static let initials = ["M", "T", "W", "T", "F", "S", "S"]
+
+    var body: some View {
+        let today = TrainingSummary.weekdayIndex(of: .now, calendar: calendar)
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
+            HStack(spacing: 0) {
+                ForEach(TrainingSummary.weekOrder(calendar: calendar), id: \.self) { index in
+                    dayColumn(index, isToday: index == today)
+                        .frame(maxWidth: .infinity)
+                }
+            }
+            .contentShape(Rectangle())
+            .onTapGesture { onEditPlan() }
+
+            if week.workouts == 0 && lastWeekWorkouts == 0 && streak == 0 {
+                // A plan but no training yet: a row of zeros says nothing.
+                Text("Your week fills in as you train.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            } else {
+                HStack(alignment: .firstTextBaseline, spacing: DesignTokens.Spacing.md) {
+                    metric(value: "\(week.workouts)", label: week.workouts == 1 ? "workout" : "workouts")
+                    metric(value: volumeText, label: "volume")
+                    metric(value: "\(streak)", label: "day streak")
+                }
+
+                Text("Last week: \(lastWeekWorkouts) \(lastWeekWorkouts == 1 ? "workout" : "workouts")")
+                    .font(.footnote)
                     .foregroundStyle(.secondary)
             }
         }
         .padding(DesignTokens.Spacing.lg)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+    }
+
+    private func dayColumn(_ index: Int, isToday: Bool) -> some View {
+        let trained = week.trainedDays.contains(index)
+        let plannedNames = planned[index] ?? []
+        return VStack(spacing: DesignTokens.Spacing.sm) {
+            Text(Self.initials[index])
+                .font(.caption.weight(isToday ? .bold : .regular))
+                .foregroundStyle(isToday ? .primary : .secondary)
+            ZStack {
+                if trained {
+                    Circle().fill(DesignTokens.Common.primary(colorScheme))
+                        .frame(width: 12, height: 12)
+                } else if !plannedNames.isEmpty {
+                    Circle().strokeBorder(.secondary, lineWidth: 1.5)
+                        .frame(width: 12, height: 12)
+                } else {
+                    Circle().fill(.quaternary)
+                        .frame(width: 5, height: 5)
+                }
+            }
+            .frame(height: 12)
+        }
+        .padding(.vertical, DesignTokens.Spacing.sm)
+        .frame(maxWidth: .infinity)
+        .background {
+            if isToday {
+                RoundedRectangle(cornerRadius: DesignTokens.Radius.sm).fill(.quaternary.opacity(0.6))
+            }
+        }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(title)
-        .accessibilityValue(value)
+        .accessibilityLabel("\(Self.fullNames[index])\(isToday ? ", today" : "")")
+        .accessibilityValue(dayValue(trained: trained, planned: plannedNames))
+        .accessibilityHint("Edit weekly plan")
+        .accessibilityAddTraits(.isButton)
+    }
+
+    private func dayValue(trained: Bool, planned: [String]) -> String {
+        let plan = planned.isEmpty ? "" : "Planned: \(planned.joined(separator: ", "))"
+        if trained { return plan.isEmpty ? "Trained" : "Trained. \(plan)" }
+        return plan.isEmpty ? "Nothing planned" : plan
+    }
+
+    private func metric(value: String, label: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(value)
+                .font(.system(.title2, design: .rounded, weight: .bold).monospacedDigit())
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+            Text(label)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
     }
 }
 
-// MARK: - WeeklyPlanRow
+// MARK: - Recent workout
 
-struct WeeklyPlanRow: View {
-    @Environment(\.colorScheme) private var colorScheme
-    let weeklyPlan: [Int: [WorkoutTemplate]]
-    var onEdit: () -> Void
-
-    static let dayAbbreviations = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-    static let dayFullNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-
-    private static let columns = Array(repeating: GridItem(.flexible(), spacing: DesignTokens.Spacing.sm), count: 4)
-
-    /// Short label for a day's planned programs. Shows one name when there's one,
-    /// or "N workouts" when there are multiple, to keep the grid tile compact.
-    private func label(for programs: [WorkoutTemplate]?) -> String {
-        guard let programs, !programs.isEmpty else { return "\u{2014}" }
-        if programs.count == 1 { return programs[0].name }
-        return "\(programs.count) workouts"
-    }
+struct RecentWorkoutRow: View {
+    let name: String
+    let dateLabel: String
+    /// "32 min · 15 sets · 1,240 kg"
+    let detail: String
 
     var body: some View {
-        let calendar = Calendar.current
-        // ISO weekday: Mon=2..Sun=1 -> map to 0-based index
-        let todayWeekday = calendar.component(.weekday, from: .now)
-        let todayIndex = (todayWeekday + 5) % 7  // Mon=0, Tue=1, ..., Sun=6
-
-        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
-            HStack {
-                Text("Weekly Plan")
-                    .font(.title2.bold())
-                Spacer()
-                Button {
-                    onEdit()
-                } label: {
-                    Ph.pencilSimple.regular
-                        .icon()
+        HStack(spacing: DesignTokens.Spacing.md) {
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text(name)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                    Spacer(minLength: DesignTokens.Spacing.sm)
+                    Text(dateLabel)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
-                .accessibilityLabel("Edit weekly plan")
+                Text(detail)
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.secondary)
             }
-
-            LazyVGrid(columns: Self.columns, spacing: DesignTokens.Spacing.sm) {
-                ForEach(0..<7, id: \.self) { index in
-                    let programs = weeklyPlan[index]
-                    let isToday = index == todayIndex
-
-                    VStack(spacing: DesignTokens.Spacing.xs) {
-                        Text(Self.dayAbbreviations[index])
-                            .font(.caption.bold())
-                            .foregroundStyle(isToday ? DesignTokens.Common.OnPrimary.text(colorScheme) : .secondary)
-
-                        Text(label(for: programs))
-                            .font(.caption2)
-                            .foregroundStyle(isToday ? DesignTokens.Common.OnPrimary.text(colorScheme).opacity(0.9) : .primary)
-                            .lineLimit(2)
-                            .truncationMode(.tail)
-                            .multilineTextAlignment(.center)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 60)
-                    .background {
-                        RoundedRectangle(cornerRadius: DesignTokens.Radius.lg)
-                            .fill(isToday ? Color.accentColor : Color.clear)
-                            .background(.regularMaterial.opacity(isToday ? 0 : 1), in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
-                    }
-                    .onTapGesture {
-                        onEdit()
-                    }
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel("\(Self.dayFullNames[index])\(isToday ? ", today" : "")")
-                    .accessibilityValue(programs?.isEmpty == false ? label(for: programs) : "No workout planned")
-                    .accessibilityHint("Edit weekly plan")
-                    .accessibilityAddTraits(.isButton)
-                }
-            }
+            Ph.caretRight.regular
+                .icon(size: 14)
+                .foregroundStyle(.tertiary)
         }
+        .padding(DesignTokens.Spacing.lg)
+        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(name), \(dateLabel), \(detail)")
     }
 }

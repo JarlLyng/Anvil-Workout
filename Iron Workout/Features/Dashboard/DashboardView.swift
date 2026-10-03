@@ -17,10 +17,17 @@ struct DashboardView: View {
     @Query(sort: \WorkoutSession.startedAt, order: .reverse) private var sessions: [WorkoutSession]
     @Query(sort: \WorkoutTemplate.updatedAt, order: .reverse) private var templates: [WorkoutTemplate]
     
+    @Query(sort: \Exercise.name) private var allExercises: [Exercise]
+
     @AppStorage("weeklyPlan") private var weeklyPlanJSON: String = "{}"
+    @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
     @State private var showPlanEditor = false
-    @State private var templateToStart: WorkoutTemplate?
     @State private var activeSession: WorkoutSession?
+    @State private var showProgramLibrary = false
+    @State private var templateToCreate: WorkoutTemplate?
+    @State private var errorMessage: String?
+
+    private var weightUnit: WeightUnit { WeightUnit(rawValue: weightUnitRaw) ?? .kg }
 
     /// Raw plan entries keyed by weekday index (Mon=0 ... Sun=6). Each string is either
     /// a template UUID (current format) or a legacy template name (v1.1.x and earlier).
@@ -99,40 +106,15 @@ struct DashboardView: View {
         return weeklyPlanResolved[todayIndex] ?? []
     }
 
-    private var morningGreeting: String {
-        let hour = Calendar.current.component(.hour, from: .now)
-        switch hour {
-        case 0..<5: return "Good night"
-        case 5..<12: return "Good morning"
-        case 12..<18: return "Good afternoon"
-        default: return "Good evening"
-        }
-    }
-    
-    private var thisWeekSessions: Int {
-        let calendar = Calendar.current
-        let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: .now)?.start ?? .now
-        return sessions.filter { $0.startedAt >= startOfWeek && $0.completedSetCount > 0 }.count
+    private var completedSessions: [WorkoutSession] {
+        sessions.filter { $0.completedSetCount > 0 }
     }
 
-    private var lastWeekSessions: Int {
+    private var lastWeekWorkouts: Int {
         let calendar = Calendar.current
         let thisWeekStart = calendar.dateInterval(of: .weekOfYear, for: .now)?.start ?? .now
         let lastWeekStart = calendar.date(byAdding: .weekOfYear, value: -1, to: thisWeekStart) ?? thisWeekStart
-        return sessions.filter { $0.startedAt >= lastWeekStart && $0.startedAt < thisWeekStart && $0.completedSetCount > 0 }.count
-    }
-
-    private var currentStreak: Int {
-        StreakCalculator.currentStreak(from: sessions)
-    }
-    
-    private var lastWorkoutText: String {
-        guard let last = sessions.first(where: { $0.completedSetCount > 0 }) else { return "No history yet" }
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .full
-        formatter.dateTimeStyle = .named
-        let relativeDate = formatter.localizedString(for: last.startedAt, relativeTo: .now)
-        return "Last: \(last.templateName) (\(relativeDate))"
+        return completedSessions.filter { $0.startedAt >= lastWeekStart && $0.startedAt < thisWeekStart }.count
     }
 
     /// Fallback recommendation when the user has no programs planned for today.
@@ -151,21 +133,41 @@ struct DashboardView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: DesignTokens.Spacing.xxl) {
-                    greetingSection
-                    metricsSection
-                    weeklyPlanSection
-                    quickStartSection
-                    recentWorkoutsSection
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxl) {
+                    Text(Date.now.formatted(.dateTime.weekday(.wide).day().month(.wide)))
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, DesignTokens.Spacing.xs)
+                        .padding(.top, DesignTokens.Spacing.sm)
+
+                    upNextSection
+                    // Nothing to show a new lifter yet: no workouts and no plan.
+                    if !completedSessions.isEmpty || !weeklyPlanResolved.isEmpty {
+                        thisWeekSection
+                    }
+                    recentSection
                 }
                 .padding()
             }
-            .navigationBarTitleDisplayMode(.inline)
             .background(Color(uiColor: .systemGroupedBackground))
+            // No title on a tab root, so nothing covers the status bar: an empty inset with
+            // the screen's own background keeps content from scrolling under the clock.
+            .safeAreaInset(edge: .top, spacing: 0) {
+                Color.clear.frame(height: 0).background(Color(uiColor: .systemGroupedBackground))
+            }
+            .toolbar(.hidden, for: .navigationBar)
             .onAppear { migrateWeeklyPlanToIDsIfNeeded() }
             .sheet(isPresented: $showPlanEditor) {
                 WeeklyPlanEditorSheet(plan: weeklyPlanRaw) { newPlan in
                     saveWeeklyPlan(newPlan)
+                }
+            }
+            .sheet(isPresented: $showProgramLibrary) {
+                ProgramLibraryView { _ in showProgramLibrary = false }
+            }
+            .sheet(item: $templateToCreate) { template in
+                NavigationStack {
+                    CreateEditTemplateView(template: template)
                 }
             }
             .fullScreenCover(item: $activeSession) { session in
@@ -184,239 +186,183 @@ struct DashboardView: View {
             .navigationDestination(for: WorkoutSession.self) { session in
                 SessionDetailView(session: session)
             }
-        }
-    }
-    
-    private var greetingSection: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(morningGreeting)
-                    .font(.largeTitle.bold())
-                Text("Ready for today's workout?")
-                    .font(.headline)
-                    .foregroundStyle(.secondary)
-            }
-            Spacer()
-            Ph.userCircle.fill
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 50, height: 50)
-                .foregroundStyle(Color.primary.opacity(0.8))
-                .accessibilityHidden(true)
-        }
-        .padding(.top, DesignTokens.Spacing.lg)
-    }
-
-    private var metricsSection: some View {
-        VStack(spacing: DesignTokens.Spacing.lg) {
-            HStack(spacing: DesignTokens.Spacing.lg) {
-                DashboardCard(
-                    title: "This Week",
-                    value: "\(thisWeekSessions)",
-                    icon: Ph.calendarCheck.fill
-                        .icon(size: 24)
-                        .foregroundStyle(DesignTokens.ColorToken.State.success)
-                )
-
-                DashboardCard(
-                    title: "Last Week",
-                    value: "\(lastWeekSessions)",
-                    icon: Ph.clockCounterClockwise.regular
-                        .icon(size: 24)
-                        .foregroundStyle(.secondary)
-                )
-            }
-
-            HStack(spacing: DesignTokens.Spacing.lg) {
-                DashboardCard(
-                    title: "Streak",
-                    value: "\(currentStreak) days",
-                    icon: Ph.flame.fill
-                        .icon(size: 24)
-                        .foregroundStyle(DesignTokens.ColorToken.State.error)
-                )
-
-                DashboardCard(
-                    title: "Total",
-                    value: "\(sessions.filter({ $0.completedSetCount > 0 }).count)",
-                    icon: Ph.trophy.fill
-                        .icon(size: 24)
-                        .foregroundStyle(DesignTokens.ColorToken.State.warning)
-                )
+            .alert("Error", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
+                Button("OK") { errorMessage = nil }
+            } message: {
+                Text(errorMessage ?? "")
             }
         }
     }
-    
-    private var weeklyPlanSection: some View {
-        WeeklyPlanRow(weeklyPlan: weeklyPlanResolved) {
-            showPlanEditor = true
-        }
-    }
 
-    private var quickStartSection: some View {
-        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
-            let planned = todaysPlannedPrograms
-            Text(planned.isEmpty ? "Recommended for You" : "Today's Workouts")
-                .font(.title2.bold())
+    // MARK: - Up next
 
-            if !planned.isEmpty {
-                ForEach(planned, id: \.id) { template in
-                    plannedWorkoutCard(template)
+    @ViewBuilder
+    private var upNextSection: some View {
+        let planned = todaysPlannedPrograms
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+            if templates.isEmpty {
+                DashboardSectionLabel(title: "Get started")
+                StartHereCard(onLibrary: { showProgramLibrary = true }, onCreate: createTemplate)
+            } else if let first = planned.first {
+                DashboardSectionLabel(title: planned.count > 1 ? "Today" : "Up next")
+                upNextCard(first, context: contextLine(for: first, planned: true))
+                ForEach(planned.dropFirst(), id: \.id) { template in
+                    alsoTodayRow(template)
                 }
             } else if let rec = fallbackRecommendation {
-                recommendedCard(rec)
-            } else {
-                Text("Create your first workout program in the Workouts tab to see recommendations here.")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .padding(DesignTokens.Spacing.lg)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+                DashboardSectionLabel(title: "Up next")
+                upNextCard(rec, context: contextLine(for: rec, planned: false))
             }
         }
     }
 
-    private func plannedWorkoutCard(_ template: WorkoutTemplate) -> some View {
-        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
-            HStack {
-                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
-                    Text(template.name)
-                        .font(.headline)
-                    Text("\(template.exercises.count) exercises")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                Spacer()
-            }
+    private func upNextCard(_ template: WorkoutTemplate, context: String) -> some View {
+        UpNextCard(
+            title: template.name,
+            context: context,
+            lines: planLines(for: template),
+            onStart: { startSession(from: template) }
+        )
+    }
 
-            Button {
-                startSession(from: template)
-            } label: {
-                HStack {
-                    Spacer()
-                    Text("Start Workout")
-                        .font(.headline)
-                    Ph.playCircle.fill.icon()
-                    Spacer()
-                }
-                .padding()
+    /// A second program planned for the same day: one line with its own Start.
+    private func alsoTodayRow(_ template: WorkoutTemplate) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(template.name).font(.subheadline.weight(.semibold))
+                Text("\(template.exercises.count) exercises").font(.caption).foregroundStyle(.secondary)
             }
-            .buttonStyle(.borderedProminent)
-            .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
-            .accessibilityLabel("Start \(template.name)")
+            Spacer()
+            Button("Start") { startSession(from: template) }
+                .buttonStyle(.bordered)
+                .accessibilityLabel("Start \(template.name)")
         }
         .padding(DesignTokens.Spacing.lg)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
     }
 
-    private var recentWorkoutsSection: some View {
-        let recent = Array(sessions.lazy.filter { $0.completedSetCount > 0 }.prefix(3))
+    /// "Planned for today · last done 3 days ago", or "Next in rotation" for the fallback.
+    private func contextLine(for template: WorkoutTemplate, planned: Bool) -> String {
+        let last = completedSessions.first { $0.templateName == template.name }
+            .map { "last done \(daysAgoText($0.startedAt))" }
+        if planned {
+            return ["Planned for today", last].compactMap { $0 }.joined(separator: " \u{00B7} ")
+        }
+        return last.map { $0.prefix(1).uppercased() + $0.dropFirst() } ?? "Not done yet"
+    }
 
-        return VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
-            HStack {
-                Text("Recent Workouts")
-                    .font(.title2.bold())
-                Spacer()
-                if !recent.isEmpty {
+    /// "today", "yesterday", "3 days ago", then a date.
+    private func daysAgoText(_ date: Date) -> String {
+        let calendar = Calendar.current
+        let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: date), to: calendar.startOfDay(for: .now)).day ?? 0
+        switch days {
+        case ..<1: return "today"
+        case 1: return "yesterday"
+        case 2...13: return "\(days) days ago"
+        default: return "on \(date.formatted(.dateTime.day().month(.abbreviated)))"
+        }
+    }
+
+    /// Each exercise with its plan, "5 × 5 · 40 kg", in program order.
+    private func planLines(for template: WorkoutTemplate) -> [(name: String, plan: String)] {
+        let names = Dictionary(allExercises.map { ($0.id, $0.name) }, uniquingKeysWith: { first, _ in first })
+        return template.exercises
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .map { item in
+                let weight = item.targetWeight.map { " \u{00B7} \(WeightFormatter.compact(kg: $0, in: weightUnit))" } ?? ""
+                return (names[item.exerciseID] ?? "Exercise", "\(item.targetSets) \u{00D7} \(item.targetReps)\(weight)")
+            }
+    }
+
+    // MARK: - This week
+
+    private var thisWeekSection: some View {
+        let week = TrainingSummary.week(containing: .now, sessions: sessions)
+        let planned = weeklyPlanResolved.mapValues { $0.map(\.name) }
+        return VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+            DashboardSectionLabel(title: "This week") {
+                Button("Edit Plan") { showPlanEditor = true }
+                    .font(.subheadline)
+                    .accessibilityLabel("Edit weekly plan")
+            }
+            WeekCard(
+                week: week,
+                lastWeekWorkouts: lastWeekWorkouts,
+                streak: StreakCalculator.currentStreak(from: sessions),
+                volumeText: WeightFormatter.compact(kg: week.volumeKg, in: weightUnit),
+                planned: planned,
+                onEditPlan: { showPlanEditor = true }
+            )
+        }
+    }
+
+    // MARK: - Recent
+
+    @ViewBuilder
+    private var recentSection: some View {
+        let recent = Array(completedSessions.prefix(3))
+        if !recent.isEmpty {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                DashboardSectionLabel(title: "Recent") {
                     NavigationLink(value: DashboardDestination.history) {
                         HStack(spacing: 2) {
-                            Text("View All")
-                            Ph.caretRight.regular.icon(size: 14)
+                            Text("History")
+                            Ph.caretRight.regular.icon(size: 12)
                         }
                         .font(.subheadline)
                     }
                 }
-            }
-
-            if recent.isEmpty {
-                Text("Your completed workouts will show up here.")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .padding(DesignTokens.Spacing.lg)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
-            } else {
-                VStack(spacing: DesignTokens.Spacing.sm) {
-                    ForEach(recent) { session in
-                        NavigationLink(value: session) {
-                            recentWorkoutRow(session)
-                        }
-                        .buttonStyle(.plain)
+                ForEach(recent) { session in
+                    NavigationLink(value: session) {
+                        RecentWorkoutRow(
+                            name: session.templateName,
+                            dateLabel: relativeDateLabel(session.startedAt),
+                            detail: recentDetail(session)
+                        )
                     }
+                    .buttonStyle(.plain)
                 }
             }
         }
     }
 
-    private func recentWorkoutRow(_ session: WorkoutSession) -> some View {
-        HStack(spacing: DesignTokens.Spacing.md) {
-            Ph.checkCircle.fill
-                .icon(size: 22)
-                .foregroundStyle(DesignTokens.ColorToken.State.success)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(session.templateName)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.primary)
-                Text("\(session.completedSetCount) sets · \(relativeDateLabel(session.startedAt))")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            Spacer()
-            Ph.caretRight.regular
-                .icon(size: 14)
-                .foregroundStyle(.secondary)
-        }
-        .padding(DesignTokens.Spacing.lg)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(session.templateName), \(session.completedSetCount) sets, \(relativeDateLabel(session.startedAt))")
+    /// "32 min · 15 sets · 1,240 kg", leaving out what is zero.
+    private func recentDetail(_ session: WorkoutSession) -> String {
+        var parts: [String] = []
+        if session.durationSeconds > 0 { parts.append(TrainingSummary.durationText(seconds: session.durationSeconds)) }
+        parts.append(session.completedSetCount == 1 ? "1 set" : "\(session.completedSetCount) sets")
+        let volume = TrainingSummary.volumeKg(of: session)
+        if volume > 0 { parts.append(WeightFormatter.compact(kg: volume, in: weightUnit)) }
+        return parts.joined(separator: " \u{00B7} ")
     }
 
     private func relativeDateLabel(_ date: Date) -> String {
         let cal = Calendar.current
         if cal.isDateInToday(date) { return "Today" }
         if cal.isDateInYesterday(date) { return "Yesterday" }
-        return date.formatted(date: .abbreviated, time: .omitted)
+        return date.formatted(.dateTime.day().month(.abbreviated))
     }
 
-    private func recommendedCard(_ template: WorkoutTemplate) -> some View {
-        VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
-            HStack {
-                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
-                    Text(template.name)
-                        .font(.headline)
-                    Text(lastWorkoutText)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                Spacer()
-            }
-
-            Button {
-                startSession(from: template)
-            } label: {
-                HStack {
-                    Spacer()
-                    Text("Start Workout")
-                        .font(.headline)
-                    Ph.playCircle.fill.icon()
-                    Spacer()
-                }
-                .padding()
-            }
-            .buttonStyle(.borderedProminent)
-            .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
-            .accessibilityLabel("Start \(template.name)")
+    private func createTemplate() {
+        let newTemplate = WorkoutTemplate(name: "New Program")
+        modelContext.insert(newTemplate)
+        do {
+            try modelContext.save()
+            templateToCreate = newTemplate
+        } catch {
+            PersistenceLogger.capture(error, operation: "create-template")
+            modelContext.delete(newTemplate)
+            errorMessage = PersistenceLogger.userMessage(prefix: "Could not create program", error: error)
         }
-        .padding(DesignTokens.Spacing.lg)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
     }
-    
+
     private func startSession(from template: WorkoutTemplate) {
         do {
             let s = try WorkoutSessionService.createSession(from: template, modelContext: modelContext)
             activeSession = s
         } catch {
             SentrySDK.capture(error: error)
+            errorMessage = "Could not start the workout: \(error.localizedDescription)"
         }
     }
 }
