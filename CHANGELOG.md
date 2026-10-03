@@ -5,6 +5,10 @@ for release; it reaches the App Store after review.
 
 ## Unreleased
 
+- The workout screen puts the numbers first. The current set is a card with its reps and weight as
+  the largest thing on screen and the only Done button; the other sets are single lines, and
+  tapping one makes it the current set. Rest reads as a clock, and the top shows which exercise you
+  are on and how many sets are done.
 - The first launch after installing the app no longer crashes. The home-screen widget could create
   the app's database at the same moment the app opened it.
 

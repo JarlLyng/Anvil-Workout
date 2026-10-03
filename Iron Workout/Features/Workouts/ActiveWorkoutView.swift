@@ -27,6 +27,9 @@ struct ActiveWorkoutView: View {
     @State private var showCompletionSummary = false
     @State private var showPlateCalculator = false
     @State private var plateCalcPrefillKg: Double?
+    /// The pending set the lifter tapped to do next, out of order. Nil means each exercise's
+    /// first pending set is the current one.
+    @State private var focusedSetID: UUID?
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.scenePhase) private var scenePhase
 
@@ -65,7 +68,12 @@ struct ActiveWorkoutView: View {
                         isPaused: state.isPaused,
                         startedAt: session.startedAt,
                         totalPausedSeconds: state.totalPausedSeconds,
-                        pausedAt: state.pausedAt
+                        pausedAt: state.pausedAt,
+                        positionText: state.currentBlock == nil
+                            ? nil
+                            : "Exercise \(state.currentBlockIndex + 1) of \(state.exerciseBlocks.count)",
+                        completedSets: session.completedSetCount,
+                        totalSets: session.exercises.flatMap(\.performedSets).count
                     )
                     if let rest = state.restSecondsRemaining {
                         WorkoutRestBar(
@@ -247,25 +255,39 @@ struct ActiveWorkoutView: View {
 
                 ForEach(block, id: \.id) { exercise in
                     VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
-                        HStack {
+                        HStack(alignment: .center, spacing: DesignTokens.Spacing.sm) {
                             Text(exercise.exerciseName)
                                 .font(.title2.weight(.semibold))
+                                .lineLimit(2)
                             Spacer()
                             Button {
                                 plateCalcPrefillKg = workingTargetWeight(for: exercise)
                                 showPlateCalculator = true
                             } label: {
-                                Ph.barbell.regular
-                                    .icon(size: 22)
-                                    .foregroundStyle(.secondary)
+                                Label {
+                                    Text("Plates")
+                                } icon: {
+                                    Ph.barbell.regular.icon(size: 16)
+                                }
+                                .font(.subheadline)
                             }
+                            .buttonStyle(.bordered)
+                            .tint(.primary)
+                            .controlSize(.small)
                             .accessibilityLabel("Plate calculator for \(exercise.exerciseName)")
-                            Button("Skip") {
-                                state.skipExercise(exercise)
+                            Menu {
+                                Button("Skip exercise", role: .destructive) {
+                                    state.skipExercise(exercise)
+                                }
+                            } label: {
+                                Ph.dotsThreeCircle.regular
+                                    .icon(size: 24)
+                                    .foregroundStyle(.secondary)
+                                    .frame(width: 32, height: 32)
+                                    .contentShape(Rectangle())
                             }
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .accessibilityLabel("Skip \(exercise.exerciseName)")
+                            .tint(.secondary)
+                            .accessibilityLabel("More for \(exercise.exerciseName)")
                         }
 
                         // Note field
@@ -286,26 +308,36 @@ struct ActiveWorkoutView: View {
                         }
 
                         let sets = exercise.performedSets.sorted { $0.setIndex < $1.setIndex }
-                        let firstPendingID = sets.first(where: { !$0.isCompleted })?.id
-                        ForEach(sets, id: \.id) { set in
-                            WorkoutSetRow(
-                                set: set,
-                                exercise: exercise,
-                                isNextUp: set.id == firstPendingID,
-                                onDone: {
-                                    withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                        state.markSetDone(set, exercise: exercise)
+                        let pendingIDs = sets.filter { !$0.isCompleted }.map(\.id)
+                        let currentID = focusedSetID.flatMap { pendingIDs.contains($0) ? $0 : nil } ?? pendingIDs.first
+                        VStack(spacing: DesignTokens.Spacing.xs) {
+                            ForEach(sets, id: \.id) { set in
+                                WorkoutSetRow(
+                                    set: set,
+                                    exercise: exercise,
+                                    isCurrent: set.id == currentID,
+                                    onDone: {
+                                        withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
+                                            focusedSetID = nil
+                                            state.markSetDone(set, exercise: exercise)
+                                        }
+                                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                    },
+                                    onSkip: {
+                                        withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
+                                            focusedSetID = nil
+                                            state.markSetSkipped(set, exercise: exercise)
+                                        }
+                                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                    },
+                                    onEdit: { showSetEditor = set },
+                                    onFocus: {
+                                        withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+                                            focusedSetID = set.id
+                                        }
                                     }
-                                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                                },
-                                onSkip: {
-                                    withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                        state.markSetSkipped(set, exercise: exercise)
-                                    }
-                                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                },
-                                onEdit: { showSetEditor = set }
-                            )
+                                )
+                            }
                         }
                     }
                     if exercise.id != block.last?.id {
@@ -327,11 +359,16 @@ struct ActiveWorkoutView: View {
             if state.currentBlockIndex + 1 < state.exerciseBlocks.count {
                 let nextBlock = state.exerciseBlocks[state.currentBlockIndex + 1]
                 let names = nextBlock.map(\.exerciseName).joined(separator: " + ")
+                // "5 × 5" for a single exercise; a superset is long enough with its names.
+                let plan = nextBlock.count == 1
+                    ? nextBlock.first.map { " \u{00B7} \($0.performedSets.count) \u{00D7} \($0.performedSets.first?.targetReps ?? 0)" } ?? ""
+                    : ""
                 HStack {
                     Ph.arrowCircleDown.regular
                         .icon()
-                    Text("Next: \(names)")
-                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    Text("Next: \(names)\(plan)")
+                        .font(.subheadline.monospacedDigit())
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                 }
