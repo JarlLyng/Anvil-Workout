@@ -13,6 +13,7 @@ import PhosphorSwift
 
 struct StatsView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Query(sort: \WorkoutSession.startedAt, order: .forward) private var sessions: [WorkoutSession]
     @Query(sort: \Exercise.name) private var exercises: [Exercise]
     @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
@@ -69,12 +70,15 @@ struct StatsView: View {
                     }
                 }
                 .padding()
+                .frame(maxWidth: 640)
+                .frame(maxWidth: .infinity)
             }
             .background(Color(uiColor: .systemGroupedBackground))
             .safeAreaInset(edge: .top, spacing: 0) {
                 Color.clear.frame(height: 0).background(Color(uiColor: .systemGroupedBackground))
             }
-            .toolbar(.hidden, for: .navigationBar)
+            // Hidden on iPhone only: on iPad the bar holds the button that shows the sidebar.
+            .toolbar(horizontalSizeClass == .compact ? .hidden : .automatic, for: .navigationBar)
             .task { recomputeAll() }
             .onChange(of: sessions.count) { _, _ in recomputeAll() }
             .onChange(of: period) { _, _ in recomputeAll() }

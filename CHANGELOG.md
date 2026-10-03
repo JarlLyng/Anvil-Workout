@@ -40,6 +40,18 @@ for release; it reaches the App Store after review.
 - History groups workouts into this week, last week and months, in the same rows as the home
   screen, and search finds exercises as well as programs. A past workout opens with the same
   summary and records, then every set, with warm-ups marked W and the work sets numbered.
+- A superset alternates its exercises one set at a time, with one set to finish on screen, and the
+  rest comes after each round rather than between the exercises. The screen follows whoever is up.
+- The Workouts tab groups a library program's workouts together in order, so Workout A comes
+  before B, and each program shows what is in it and when you last did it. A program shows each
+  exercise as "5 × 5 · 40 kg · 3 min rest", with its supersets marked, and Edit is a button
+  instead of a menu item. A new program's editor is titled New Program.
+- Library programs describe their progression in pounds when you lift in pounds.
+- Ending a workout is no longer shown as a destructive action, and the other choice reads Keep
+  Training.
+- At the largest text sizes, numbers stack instead of being cut short, and names and plans wrap.
+- On iPad, the home screen and Stats keep the button that shows the sidebar, and keep to a
+  readable width.
 - The first launch after installing the app no longer crashes. The home-screen widget could create
   the app's database at the same moment the app opened it.
 

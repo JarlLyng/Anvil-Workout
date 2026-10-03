@@ -64,7 +64,7 @@ struct OnboardingView: View {
         }
         .sheet(item: $templateToBuild, onDismiss: finishBuilding) { template in
             NavigationStack {
-                CreateEditTemplateView(template: template)
+                CreateEditTemplateView(template: template, isNew: true)
             }
         }
         .workoutImport(isPresented: $showImporter) { summary in

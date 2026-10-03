@@ -40,6 +40,19 @@ enum ProgramLibraryService {
         programs.first { $0.id == id }
     }
 
+    /// The progression text in the user's unit. The texts are written in kilograms; in
+    /// pounds each increment doubles, the way lifters convert plate jumps (2.5 kg is 5 lb,
+    /// 5 kg is 10 lb), rather than an exact 5.5 lb no bar is loaded to.
+    static func progressionDescription(of entry: ProgramLibraryEntry, unit: WeightUnit) -> String {
+        guard unit == .lbs else { return entry.progressionDescription }
+        let text = entry.progressionDescription
+        let pattern = /(\d+(?:\.\d+)?) kg/
+        return text.replacing(pattern) { match in
+            let pounds = (Double(match.1) ?? 0) * 2
+            return "\(pounds.formatted(.number.precision(.fractionLength(0...1)).locale(Locale(identifier: "en_US_POSIX")))) lb"
+        }
+    }
+
     // MARK: - Import
 
     /// Imports a program as one or more editable `WorkoutTemplate` records.

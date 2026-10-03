@@ -87,7 +87,8 @@ struct WorkoutTimerBar: View {
                         Text(progressLine)
                             .font(.subheadline.monospacedDigit())
                             .foregroundStyle(.secondary)
-                            .lineLimit(1)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.trailing)
                             .minimumScaleFactor(0.8)
                     }
                 }
@@ -264,11 +265,20 @@ struct WorkoutSetRow: View {
 
     private var currentCard: some View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
-            HStack(alignment: .firstTextBaseline) {
-                setTypeMenu
-                Spacer()
-                if let previous {
-                    previousReferenceButton(previous)
+            // Side by side when they fit; the last set's numbers go under at large text sizes.
+            ViewThatFits(in: .horizontal) {
+                HStack(alignment: .firstTextBaseline) {
+                    setTypeMenu
+                    Spacer()
+                    if let previous {
+                        previousReferenceButton(previous)
+                    }
+                }
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+                    setTypeMenu
+                    if let previous {
+                        previousReferenceButton(previous)
+                    }
                 }
             }
 

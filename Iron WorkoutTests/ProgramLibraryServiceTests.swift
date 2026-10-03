@@ -148,6 +148,18 @@ struct ProgramLibraryServiceTests {
         }
     }
 
+    @Test("progression text doubles kilogram increments into pounds")
+    func progressionInPounds() {
+        let program = ProgramLibraryService.programs.first { $0.id == "stronglifts-5x5" }!
+
+        let pounds = ProgramLibraryService.progressionDescription(of: program, unit: .lbs)
+
+        #expect(ProgramLibraryService.progressionDescription(of: program, unit: .kg) == program.progressionDescription)
+        #expect(pounds.contains("Add 5 lb per session"))
+        #expect(pounds.contains("Deadlift progresses 10 lb per session"))
+        #expect(!pounds.contains("kg"))
+    }
+
     @Test("plate-friendly weights", arguments: [
         (40.0, WeightUnit.lbs, 90.0), (20.0, .lbs, 45.0), (60.0, .lbs, 130.0), (42.5, .kg, 42.5),
     ])

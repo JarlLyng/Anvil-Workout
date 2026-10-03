@@ -63,16 +63,8 @@ struct UpNextCard: View {
             if !lines.isEmpty {
                 VStack(spacing: DesignTokens.Spacing.sm) {
                     ForEach(Array(lines.prefix(Self.shownLines).enumerated()), id: \.offset) { _, line in
-                        HStack(alignment: .firstTextBaseline) {
-                            Text(line.name)
-                                .lineLimit(1)
-                            Spacer(minLength: DesignTokens.Spacing.md)
-                            Text(line.plan)
-                                .monospacedDigit()
-                                .foregroundStyle(.secondary)
-                                .lineLimit(1)
-                        }
-                        .font(.subheadline)
+                        NameValueLine(name: line.name, value: line.plan)
+                            .font(.subheadline)
                     }
                     if lines.count > Self.shownLines {
                         Text("+\(lines.count - Self.shownLines) more")
@@ -183,10 +175,10 @@ struct WeekCard: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             } else {
-                HStack(alignment: .firstTextBaseline, spacing: DesignTokens.Spacing.md) {
-                    metric(value: "\(week.workouts)", label: week.workouts == 1 ? "workout" : "workouts")
-                    metric(value: volumeText, label: "volume")
-                    metric(value: "\(streak)", label: "day streak")
+                NumberRow {
+                    BigNumber(value: "\(week.workouts)", label: week.workouts == 1 ? "workout" : "workouts")
+                    BigNumber(value: volumeText, label: "volume")
+                    BigNumber(value: "\(streak)", label: "day streak")
                 }
 
                 Text("Last week: \(lastWeekWorkouts) \(lastWeekWorkouts == 1 ? "workout" : "workouts")")
@@ -239,19 +231,6 @@ struct WeekCard: View {
         return plan.isEmpty ? "Nothing planned" : plan
     }
 
-    private func metric(value: String, label: String) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(value)
-                .font(.system(.title2, design: .rounded, weight: .bold).monospacedDigit())
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-            Text(label)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .accessibilityElement(children: .combine)
-    }
 }
 
 // MARK: - Recent workout
@@ -269,7 +248,7 @@ struct RecentWorkoutRow: View {
                     Text(name)
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(.primary)
-                        .lineLimit(1)
+                        .lineLimit(2)
                     Spacer(minLength: DesignTokens.Spacing.sm)
                     Text(dateLabel)
                         .font(.caption)

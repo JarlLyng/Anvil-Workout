@@ -104,12 +104,13 @@ struct ActiveWorkoutView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbarContent(state: state) }
             .confirmationDialog("End Workout?", isPresented: $showEndConfirm, titleVisibility: .visible) {
-                Button("Save and End", role: .destructive) {
+                // Not destructive: ending saves the workout, so it is not shown in red.
+                Button("Save and End") {
                     endWorkout(state: state)
                 }
-                Button("Continue", role: .cancel) { }
+                Button("Keep Training", role: .cancel) { }
             } message: {
-                Text("The workout will be saved as is. You can view it in History.")
+                Text("The workout is saved as it is now. You find it under History on the home screen.")
             }
             .sheet(item: $showSetEditor) { set in
                 EditPerformedSetSheet(performedSet: set) {
@@ -242,110 +243,131 @@ struct ActiveWorkoutView: View {
 
     // MARK: - Block content
 
-    private func blockContent(state: ActiveWorkoutState, block: [WorkoutSessionExercise]) -> some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxl) {
-                if block.count > 1 {
-                    HStack {
-                        Ph.link.fill.icon().foregroundStyle(DesignTokens.ColorToken.State.warning)
-                        Text("Superset").font(.headline).foregroundStyle(DesignTokens.ColorToken.State.warning)
-                    }
-                    .padding(.bottom, -DesignTokens.Spacing.md)
-                }
-
-                ForEach(block, id: \.id) { exercise in
-                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
-                        HStack(alignment: .center, spacing: DesignTokens.Spacing.sm) {
-                            Text(exercise.exerciseName)
-                                .font(.title2.weight(.semibold))
-                                .lineLimit(2)
-                            Spacer()
-                            Button {
-                                plateCalcPrefillKg = workingTargetWeight(for: exercise)
-                                showPlateCalculator = true
-                            } label: {
-                                Label {
-                                    Text("Plates")
-                                } icon: {
-                                    Ph.barbell.regular.icon(size: 16)
-                                }
-                                .font(.subheadline)
-                            }
-                            .buttonStyle(.bordered)
-                            .tint(.primary)
-                            .controlSize(.small)
-                            .accessibilityLabel("Plate calculator for \(exercise.exerciseName)")
-                            Menu {
-                                Button("Skip exercise", role: .destructive) {
-                                    state.skipExercise(exercise)
-                                }
-                            } label: {
-                                Ph.dotsThreeCircle.regular
-                                    .icon(size: 24)
-                                    .foregroundStyle(.secondary)
-                                    .frame(width: 32, height: 32)
-                                    .contentShape(Rectangle())
-                            }
-                            .tint(.secondary)
-                            .accessibilityLabel("More for \(exercise.exerciseName)")
-                        }
-
-                        // Note field
-                        HStack(spacing: DesignTokens.Spacing.sm) {
-                            Ph.notepad.regular
-                                .icon(size: 16)
-                                .foregroundStyle(.secondary)
-                            TextField("Add note...", text: Binding(
-                                get: { exercise.note },
-                                set: { newValue in
-                                    exercise.note = newValue
-                                    state.saveContext()
-                                }
-                            ), axis: .vertical)
-                            .font(.caption)
-                            .lineLimit(1...3)
-                            .foregroundStyle(.secondary)
-                        }
-
-                        let sets = exercise.performedSets.sorted { $0.setIndex < $1.setIndex }
-                        let pendingIDs = sets.filter { !$0.isCompleted }.map(\.id)
-                        let currentID = focusedSetID.flatMap { pendingIDs.contains($0) ? $0 : nil } ?? pendingIDs.first
-                        VStack(spacing: DesignTokens.Spacing.xs) {
-                            ForEach(sets, id: \.id) { set in
-                                WorkoutSetRow(
-                                    set: set,
-                                    exercise: exercise,
-                                    isCurrent: set.id == currentID,
-                                    onDone: {
-                                        withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
-                                            focusedSetID = nil
-                                            state.markSetDone(set, exercise: exercise)
-                                        }
-                                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                                    },
-                                    onSkip: {
-                                        withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
-                                            focusedSetID = nil
-                                            state.markSetSkipped(set, exercise: exercise)
-                                        }
-                                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                    },
-                                    onEdit: { showSetEditor = set },
-                                    onFocus: {
-                                        withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
-                                            focusedSetID = set.id
-                                        }
-                                    }
-                                )
-                            }
-                        }
-                    }
-                    if exercise.id != block.last?.id {
-                        Divider().padding(.vertical, DesignTokens.Spacing.sm)
-                    }
-                }
+    /// The one set on screen with a Done button: the set the lifter tapped, or else the
+    /// next set of the exercise whose turn it is, so a superset shows one at a time.
+    private func currentSetID(in exercise: WorkoutSessionExercise, pendingIDs: [UUID], block: [WorkoutSessionExercise], state: ActiveWorkoutState) -> UUID? {
+        if let focused = focusedSetID {
+            if pendingIDs.contains(focused) { return focused }
+            let focusedElsewhere = block.contains { other in
+                other.performedSets.contains { $0.id == focused && !$0.isCompleted }
             }
-            .padding()
+            if focusedElsewhere { return nil }
+        }
+        return exercise.id == state.currentExercise?.id ? pendingIDs.first : nil
+    }
+
+    private func blockContent(state: ActiveWorkoutState, block: [WorkoutSessionExercise]) -> some View {
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxl) {
+                    if block.count > 1 {
+                        HStack {
+                            Ph.link.fill.icon().foregroundStyle(DesignTokens.ColorToken.State.warning)
+                            Text("Superset").font(.headline).foregroundStyle(DesignTokens.ColorToken.State.warning)
+                        }
+                        .padding(.bottom, -DesignTokens.Spacing.md)
+                    }
+
+                    ForEach(block, id: \.id) { exercise in
+                        VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
+                            HStack(alignment: .center, spacing: DesignTokens.Spacing.sm) {
+                                Text(exercise.exerciseName)
+                                    .font(.title2.weight(.semibold))
+                                    .lineLimit(2)
+                                Spacer()
+                                Button {
+                                    plateCalcPrefillKg = workingTargetWeight(for: exercise)
+                                    showPlateCalculator = true
+                                } label: {
+                                    Label {
+                                        Text("Plates")
+                                    } icon: {
+                                        Ph.barbell.regular.icon(size: 16)
+                                    }
+                                    .font(.subheadline)
+                                }
+                                .buttonStyle(.bordered)
+                                .tint(.primary)
+                                .controlSize(.small)
+                                .accessibilityLabel("Plate calculator for \(exercise.exerciseName)")
+                                Menu {
+                                    Button("Skip exercise", role: .destructive) {
+                                        state.skipExercise(exercise)
+                                    }
+                                } label: {
+                                    Ph.dotsThreeCircle.regular
+                                        .icon(size: 24)
+                                        .foregroundStyle(.secondary)
+                                        .frame(width: 32, height: 32)
+                                        .contentShape(Rectangle())
+                                }
+                                .tint(.secondary)
+                                .accessibilityLabel("More for \(exercise.exerciseName)")
+                            }
+
+                            // Note field
+                            HStack(spacing: DesignTokens.Spacing.sm) {
+                                Ph.notepad.regular
+                                    .icon(size: 16)
+                                    .foregroundStyle(.secondary)
+                                TextField("Add note...", text: Binding(
+                                    get: { exercise.note },
+                                    set: { newValue in
+                                        exercise.note = newValue
+                                        state.saveContext()
+                                    }
+                                ), axis: .vertical)
+                                .font(.caption)
+                                .lineLimit(1...3)
+                                .foregroundStyle(.secondary)
+                            }
+
+                            let sets = exercise.performedSets.sorted { $0.setIndex < $1.setIndex }
+                            let pendingIDs = sets.filter { !$0.isCompleted }.map(\.id)
+                            let currentID = currentSetID(in: exercise, pendingIDs: pendingIDs, block: block, state: state)
+                            VStack(spacing: DesignTokens.Spacing.xs) {
+                                ForEach(sets, id: \.id) { set in
+                                    WorkoutSetRow(
+                                        set: set,
+                                        exercise: exercise,
+                                        isCurrent: set.id == currentID,
+                                        onDone: {
+                                            withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
+                                                focusedSetID = nil
+                                                state.markSetDone(set, exercise: exercise)
+                                            }
+                                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                        },
+                                        onSkip: {
+                                            withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
+                                                focusedSetID = nil
+                                                state.markSetSkipped(set, exercise: exercise)
+                                            }
+                                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                        },
+                                        onEdit: { showSetEditor = set },
+                                        onFocus: {
+                                            withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+                                                focusedSetID = set.id
+                                            }
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                        .id(exercise.id)
+                        if exercise.id != block.last?.id {
+                            Divider().padding(.vertical, DesignTokens.Spacing.sm)
+                        }
+                    }
+                }
+                .padding()
+            }
+            // In a superset the turn moves between exercises; keep the one up in view.
+            .onChange(of: state.currentExercise?.id) { _, id in
+                guard block.count > 1, let id else { return }
+                withAnimation(.easeInOut) { proxy.scrollTo(id, anchor: .top) }
+            }
         }
         .safeAreaInset(edge: .bottom) {
             if !state.isAtLastBlock {

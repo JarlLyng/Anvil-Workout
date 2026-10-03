@@ -22,7 +22,7 @@ struct SessionNumbersCard: View {
         let volume = TrainingSummary.volumeKg(of: session)
         let sets = TrainingSummary.workSetCount(of: session)
         SectionCard(title: "Summary") {
-            HStack(alignment: .firstTextBaseline, spacing: DesignTokens.Spacing.md) {
+            NumberRow {
                 BigNumber(
                     value: session.durationSeconds > 0 ? TrainingSummary.durationText(seconds: session.durationSeconds) : "–",
                     label: "time"
@@ -104,34 +104,14 @@ struct SessionExercisesCard: View {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
                 ForEach(exercises, id: \.id) { exercise in
                     let summary = TrainingSummary.setsSummary(TrainingSummary.workSets(of: exercise), unit: unit)
-                    ViewThatFits(in: .horizontal) {
-                        HStack(alignment: .firstTextBaseline) {
-                            name(exercise)
-                            Spacer(minLength: DesignTokens.Spacing.sm)
-                            sets(summary)
-                        }
-                        VStack(alignment: .leading, spacing: 2) {
-                            name(exercise)
-                            sets(summary)
-                        }
-                    }
-                    .accessibilityElement(children: .combine)
+                    NameValueLine(name: exercise.exerciseName, value: summary ?? "Not done",
+                                  valueStyle: summary == nil ? .tertiary : .secondary)
+                        .font(.subheadline)
                 }
             }
         }
     }
 
-    private func name(_ exercise: WorkoutSessionExercise) -> some View {
-        Text(exercise.exerciseName)
-            .font(.subheadline.weight(.semibold))
-            .lineLimit(1)
-    }
-
-    private func sets(_ summary: String?) -> some View {
-        Text(summary ?? "Not done")
-            .font(.subheadline.monospacedDigit())
-            .foregroundStyle(summary == nil ? .tertiary : .secondary)
-    }
 }
 
 /// One exercise of a past workout, set by set: warm-ups marked W, work sets numbered,

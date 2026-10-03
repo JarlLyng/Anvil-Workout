@@ -74,6 +74,29 @@ final class ActiveWorkoutState {
         return blocks[currentBlockIndex]
     }
 
+    // MARK: - Supersets
+
+    /// Whose turn it is in a block: of the exercises with a set left, the one that has
+    /// done the fewest, the first on a tie. A superset goes A1, B1, A2, B2; a lone
+    /// exercise is always its own turn.
+    static func turn(in block: [WorkoutSessionExercise]) -> WorkoutSessionExercise? {
+        block
+            .enumerated()
+            .filter { $0.element.performedSets.contains { !$0.isCompleted } }
+            .min { (resolvedSets($0.element), $0.offset) < (resolvedSets($1.element), $1.offset) }?
+            .element
+    }
+
+    private static func resolvedSets(_ exercise: WorkoutSessionExercise) -> Int {
+        exercise.performedSets.filter(\.isCompleted).count
+    }
+
+    /// The exercise to do now: whose turn it is in the current block.
+    var currentExercise: WorkoutSessionExercise? {
+        guard let block = currentBlock else { return nil }
+        return Self.turn(in: block) ?? block.first
+    }
+
     var isAtLastBlock: Bool {
         currentBlockIndex >= exerciseBlocks.count - 1
     }
@@ -183,8 +206,14 @@ final class ActiveWorkoutState {
     // in a pocket and resumed on unlock: a 90-second rest could run for minutes (#90). The
     // one-second timer now only refreshes the display.
 
+    /// Rest after a set, except within a superset round: there the next exercise follows
+    /// straight away, and the rest comes once every exercise in it has had its turn.
     func startRestIfNeeded(exercise: WorkoutSessionExercise, now: Date = .now) {
         guard let rest = exercise.restSeconds, rest > 0 else { return }
+        if let block = currentBlock, block.count > 1, block.contains(where: { $0.id == exercise.id }),
+           let next = Self.turn(in: block), Self.resolvedSets(next) < Self.resolvedSets(exercise) {
+            return
+        }
         beginRest(seconds: rest, now: now)
     }
 
@@ -253,7 +282,7 @@ final class ActiveWorkoutState {
 
         // Locate the next pending set, preferring the current block so the watch
         // tracks the user's focus rather than jumping to a far-future exercise.
-        let focusExercise = currentBlock?.first ?? sortedExercises.first
+        let focusExercise = currentExercise ?? sortedExercises.first
         let setsInExercise = focusExercise?.performedSets.sorted { $0.setIndex < $1.setIndex } ?? []
         let pendingSet = setsInExercise.first(where: { !$0.isCompleted })
         // The weight the phone's row shows and that Done records, which carries from an
@@ -287,7 +316,7 @@ final class ActiveWorkoutState {
     /// rather than seconds, so the system counts them without the app running (#96).
     func makeLiveActivityState(now: Date = .now) -> IronWorkoutWidgetAttributes.ContentState {
         IronWorkoutWidgetAttributes.ContentState(
-            currentExercise: currentBlock?.first?.exerciseName ?? "Done",
+            currentExercise: currentExercise?.exerciseName ?? "Done",
             completedSets: session.completedSetCount,
             totalSets: session.exercises.flatMap(\.performedSets).count,
             elapsedSeconds: elapsedSeconds(at: now),

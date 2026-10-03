@@ -47,7 +47,7 @@ struct ProgramLibraryDetailView: View {
 
             // MARK: - Progression
             Section("Progression") {
-                Text(program.progressionDescription)
+                Text(ProgramLibraryService.progressionDescription(of: program, unit: weightUnit))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                 if let cycle = program.cycleLengthWeeks {

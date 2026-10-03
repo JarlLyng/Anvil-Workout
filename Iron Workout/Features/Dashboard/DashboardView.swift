@@ -14,6 +14,7 @@ import PhosphorSwift
 struct DashboardView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Query(sort: \WorkoutSession.startedAt, order: .reverse) private var sessions: [WorkoutSession]
     @Query(sort: \WorkoutTemplate.updatedAt, order: .reverse) private var templates: [WorkoutTemplate]
     
@@ -147,6 +148,9 @@ struct DashboardView: View {
                     recentSection
                 }
                 .padding()
+                // A readable column on iPad, as on every other screen.
+                .frame(maxWidth: 640)
+                .frame(maxWidth: .infinity)
             }
             .background(Color(uiColor: .systemGroupedBackground))
             // No title on a tab root, so nothing covers the status bar: an empty inset with
@@ -154,7 +158,8 @@ struct DashboardView: View {
             .safeAreaInset(edge: .top, spacing: 0) {
                 Color.clear.frame(height: 0).background(Color(uiColor: .systemGroupedBackground))
             }
-            .toolbar(.hidden, for: .navigationBar)
+            // Hidden on iPhone only: on iPad the bar holds the button that shows the sidebar.
+            .toolbar(horizontalSizeClass == .compact ? .hidden : .automatic, for: .navigationBar)
             .onAppear { migrateWeeklyPlanToIDsIfNeeded() }
             .sheet(isPresented: $showPlanEditor) {
                 WeeklyPlanEditorSheet(plan: weeklyPlanRaw) { newPlan in
@@ -176,7 +181,7 @@ struct DashboardView: View {
             #endif
             .sheet(item: $templateToCreate) { template in
                 NavigationStack {
-                    CreateEditTemplateView(template: template)
+                    CreateEditTemplateView(template: template, isNew: true)
                 }
             }
             .fullScreenCover(item: $activeSession) { session in
@@ -280,8 +285,8 @@ struct DashboardView: View {
         return template.exercises
             .sorted { $0.sortOrder < $1.sortOrder }
             .map { item in
-                let weight = item.targetWeight.map { " \u{00B7} \(WeightFormatter.compact(kg: $0, in: weightUnit))" } ?? ""
-                return (names[item.exerciseID] ?? "Exercise", "\(item.targetSets) \u{00D7} \(item.targetReps)\(weight)")
+                (names[item.exerciseID] ?? "Exercise",
+                 TrainingSummary.planText(sets: item.targetSets, reps: item.targetReps, kg: item.targetWeight, unit: weightUnit))
             }
     }
 

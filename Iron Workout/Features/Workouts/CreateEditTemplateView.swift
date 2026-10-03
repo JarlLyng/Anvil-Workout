@@ -15,6 +15,8 @@ struct CreateEditTemplateView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Bindable var template: WorkoutTemplate
+    /// A program just created, so the title says New rather than Edit.
+    var isNew = false
     @Query(sort: \Exercise.name) private var allExercises: [Exercise]
 
     @State private var showExercisePicker = false
@@ -35,10 +37,10 @@ struct CreateEditTemplateView: View {
             programSection
             exercisesSection
         }
-        .navigationTitle(template.name.isEmpty ? "New Program" : "Edit Program")
+        .navigationTitle(isNew ? "New Program" : "Edit Program")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
+            ToolbarItem(placement: .confirmationAction) {
                 Button("Done") {
                     template.updatedAt = .now
                     do { try modelContext.save() } catch {
@@ -119,6 +121,8 @@ struct CreateEditTemplateView: View {
                         exerciseTitle: exerciseName(for: item.exerciseID)
                     )
                 }
+                // Rows read as content, not as accent-coloured buttons.
+                .tint(.primary)
                 .contextMenu {
                         let sorted = sortedExercises
                         if let idx = sorted.firstIndex(of: item), idx < sorted.count - 1 {
@@ -162,7 +166,7 @@ struct CreateEditTemplateView: View {
             } header: {
                 Text("Exercises")
             } footer: {
-                Text("Drag to reorder. Tap an exercise to edit sets, reps and rest.")
+                Text("Drag to reorder. Tap an exercise to edit sets, reps and rest. Touch and hold one to make a superset with the exercise below it.")
             }
     }
 
@@ -265,20 +269,17 @@ private struct TemplateExerciseRowLabel: View {
             Text(exerciseTitle)
                 .font(.subheadline.weight(.medium))
                 .foregroundStyle(.primary)
-            Text("\(item.targetSets) sets x \(item.targetReps) reps")
-                .font(.caption)
+            Text(planLine)
+                .font(.caption.monospacedDigit())
                 .foregroundStyle(.secondary)
-            if let w = item.targetWeight, w > 0 {
-                Text(WeightFormatter.format(kg: w, in: weightUnit))
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-            }
-            if let r = item.restSeconds, r > 0 {
-                Text("\(r) s rest")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-            }
         }
+    }
+
+    /// "5 × 5 · 40 kg · 3 min rest"
+    private var planLine: String {
+        var parts = [TrainingSummary.planText(sets: item.targetSets, reps: item.targetReps, kg: item.targetWeight, unit: weightUnit)]
+        if let rest = item.restSeconds, rest > 0 { parts.append(TrainingSummary.restText(seconds: rest)) }
+        return parts.joined(separator: " \u{00B7} ")
     }
 
     private var disclosureChevron: some View {

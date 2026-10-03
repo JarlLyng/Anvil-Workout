@@ -58,6 +58,7 @@ The repo is public, so anything written here is written for that audience.
 
 **Running a workout**
 - Set tracking with a rest timer and haptics on phone and watch
+- A superset alternates its exercises one set at a time and rests after each round, not between its exercises
 - Set types: working, warm-up, drop set, failure
 - RPE per set, 1 to 10 in half steps
 - Tap a pending set to enter actual weight and reps before completing it

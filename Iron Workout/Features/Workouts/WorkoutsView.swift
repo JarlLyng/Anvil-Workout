@@ -14,7 +14,10 @@ import IAMJARLDesignTokens
 struct WorkoutsView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \WorkoutTemplate.updatedAt, order: .reverse) private var templates: [WorkoutTemplate]
+    /// In the order they were added, so a library program's workouts read A, B, C.
+    @Query(sort: \WorkoutTemplate.createdAt) private var templates: [WorkoutTemplate]
+    @Query(sort: \WorkoutSession.startedAt, order: .reverse) private var sessions: [WorkoutSession]
+    @Query(sort: \Exercise.name) private var allExercises: [Exercise]
     @State private var templateToCreate: WorkoutTemplate?
     @State private var errorMessage: String?
     @State private var toastMessage: String?
@@ -34,13 +37,59 @@ struct WorkoutsView: View {
         return result.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
     }
 
+    private var exerciseNames: [UUID: String] {
+        Dictionary(allExercises.map { ($0.id, $0.name) }, uniquingKeysWith: { first, _ in first })
+    }
+
+    /// Matches the program name or any of its exercises, within the selected tag.
     private var filteredTemplates: [WorkoutTemplate] {
-        templates.filter { template in
-            let matchesSearch = searchText.isEmpty || template.name.localizedCaseInsensitiveContains(searchText)
+        let names = exerciseNames
+        let query = searchText.trimmingCharacters(in: .whitespaces)
+        return templates.filter { template in
+            let matchesSearch = query.isEmpty
+                || template.name.localizedCaseInsensitiveContains(query)
+                || template.exercises.contains { names[$0.exerciseID]?.localizedCaseInsensitiveContains(query) == true }
             let matchesTag = selectedTag == nil
                 || template.tags.contains { $0.caseInsensitiveCompare(selectedTag!) == .orderedSame }
             return matchesSearch && matchesTag
         }
+    }
+
+    /// One group per library program, its workouts together in order, and one for the
+    /// user's own programs with favorites first. Groups follow the order they were added.
+    private var groups: [ProgramGroup] {
+        var library: [String: (entry: ProgramLibraryEntry, templates: [WorkoutTemplate])] = [:]
+        var order: [String] = []
+        var own: [WorkoutTemplate] = []
+        for template in filteredTemplates {
+            if let id = template.sourceProgramID, let entry = ProgramLibraryService.program(withID: id) {
+                if library[id] == nil { library[id] = (entry, []); order.append(id) }
+                library[id]?.templates.append(template)
+            } else {
+                if own.isEmpty { order.append(Self.ownGroupID) }
+                own.append(template)
+            }
+        }
+        return order.compactMap { id in
+            if id == Self.ownGroupID {
+                return ProgramGroup(id: id, title: "Your programs", detail: nil, prefix: nil,
+                                    templates: own.filter(\.isFavorite) + own.filter { !$0.isFavorite })
+            }
+            guard let group = library[id] else { return nil }
+            return ProgramGroup(id: id, title: group.entry.name, detail: "Inspired by \(group.entry.author)",
+                                prefix: "\(group.entry.name) \u{2014} ", templates: group.templates)
+        }
+    }
+
+    private static let ownGroupID = "own"
+
+    /// When each program was last trained, by name, as sessions record it.
+    private var lastTrained: [String: Date] {
+        var result: [String: Date] = [:]
+        for session in sessions where session.completedSetCount > 0 && result[session.templateName] == nil {
+            result[session.templateName] = session.startedAt
+        }
+        return result
     }
 
     var body: some View {
@@ -48,7 +97,7 @@ struct WorkoutsView: View {
             Group {
                 if templates.isEmpty {
                     ContentUnavailableView {
-                        Label("No Programs Yet", systemImage: "dumbbell.fill")
+                        Label { Text("No programs yet") } icon: { Ph.barbell.regular.icon(size: 44) }
                     } description: {
                         Text("Start with a proven program, or build your own.")
                     } actions: {
@@ -87,13 +136,29 @@ struct WorkoutsView: View {
                                     .frame(maxWidth: .infinity, alignment: .center)
                                     .padding(.top, DesignTokens.Spacing.xl)
                             } else {
-                                ForEach(filteredTemplates) { template in
-                                    templateRow(template)
+                                let trained = lastTrained
+                                let names = exerciseNames
+                                ForEach(groups) { group in
+                                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                                        DashboardSectionLabel(title: group.title) {
+                                            if let detail = group.detail {
+                                                Text(detail)
+                                                    .font(.footnote)
+                                                    .foregroundStyle(.secondary)
+                                            }
+                                        }
+                                        ForEach(group.templates) { template in
+                                            templateRow(template, group: group, lastTrained: trained[template.name], names: names)
+                                        }
+                                    }
                                 }
                             }
                         }
                         .padding()
+                        .frame(maxWidth: 640)
+                        .frame(maxWidth: .infinity)
                     }
+                    .background(Color(uiColor: .systemGroupedBackground))
                 }
             }
             .searchable(text: $searchText, prompt: "Search programs")
@@ -122,7 +187,7 @@ struct WorkoutsView: View {
             }
             .sheet(item: $templateToCreate, onDismiss: { templateToCreate = nil }) { template in
                 NavigationStack {
-                    CreateEditTemplateView(template: template)
+                    CreateEditTemplateView(template: template, isNew: true)
                 }
             }
             .sheet(isPresented: $showProgramLibrary) {
@@ -197,49 +262,56 @@ struct WorkoutsView: View {
                     .foregroundStyle(.secondary)
             }
             .padding(DesignTokens.Spacing.lg)
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+            .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Open Program Library")
     }
 
+    /// A program: its name (without the library program's name inside that program's
+    /// group), when it was last trained, and what is in it.
     @ViewBuilder
-    private func templateRow(_ template: WorkoutTemplate) -> some View {
-        let displayName = template.name.isEmpty ? "Untitled" : template.name
-        let subtitle: String? = {
-            if let programID = template.sourceProgramID,
-               let program = ProgramLibraryService.program(withID: programID) {
-                return "Inspired by \(program.author)"
-            }
-            return template.note.isEmpty ? nil : template.note
-        }()
+    private func templateRow(_ template: WorkoutTemplate, group: ProgramGroup, lastTrained: Date?, names: [UUID: String]) -> some View {
+        let fullName = template.name.isEmpty ? "Untitled" : template.name
+        let displayName = group.prefix.flatMap { prefix in
+            fullName.hasPrefix(prefix) ? String(fullName.dropFirst(prefix.count)) : nil
+        } ?? fullName
+        let exercises = template.exercises
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .compactMap { names[$0.exerciseID] }
+        let contents = exercises.isEmpty ? "No exercises yet" : exercises.joined(separator: ", ")
+        let lastLabel = lastTrained.map(lastTrainedLabel)
         let a11yLabel = [
             template.isFavorite ? "Favorite" : nil,
-            displayName,
-            subtitle
+            fullName,
+            lastLabel.map { "last done \($0)" },
+            contents
         ].compactMap { $0 }.joined(separator: ", ")
 
         NavigationLink(value: template) {
-            HStack {
-                VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
-                    Text(displayName)
-                        .font(.headline)
-                        .foregroundStyle(.primary)
-                    if let subtitle, template.sourceProgramID != nil {
-                        HStack(spacing: 4) {
-                            Ph.bookBookmark.regular
-                                .icon(size: 12)
-                                .foregroundStyle(.secondary)
-                            Text(subtitle)
+            HStack(spacing: DesignTokens.Spacing.md) {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+                    HStack(alignment: .firstTextBaseline) {
+                        if template.isFavorite {
+                            Ph.star.fill
+                                .icon(size: 14)
+                                .foregroundStyle(DesignTokens.ColorToken.State.warning)
+                        }
+                        Text(displayName)
+                            .font(.headline)
+                            .foregroundStyle(.primary)
+                            .lineLimit(2)
+                        Spacer(minLength: DesignTokens.Spacing.sm)
+                        if let lastLabel {
+                            Text(lastLabel)
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
-                    } else if let subtitle {
-                        Text(subtitle)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(2)
                     }
+                    Text(contents)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
                     if !template.tags.isEmpty {
                         FlowLayout(spacing: DesignTokens.Spacing.xs) {
                             ForEach(template.tags, id: \.self) { tag in
@@ -249,19 +321,12 @@ struct WorkoutsView: View {
                         .padding(.top, 2)
                     }
                 }
-                Spacer()
-                if template.isFavorite {
-                    Ph.star.fill
-                        .icon()
-                        .foregroundStyle(DesignTokens.ColorToken.State.warning)
-                } else {
-                    Ph.caretRight.regular
-                        .icon()
-                        .foregroundStyle(.secondary)
-                }
+                Ph.caretRight.regular
+                    .icon(size: 14)
+                    .foregroundStyle(.tertiary)
             }
             .padding(DesignTokens.Spacing.lg)
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+            .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(a11yLabel)
         }
@@ -278,6 +343,14 @@ struct WorkoutsView: View {
                 Label { Text("Delete") } icon: { Ph.trash.regular.icon() }
             }
         }
+    }
+
+    /// "Today", "Yesterday", then "2 Oct".
+    private func lastTrainedLabel(_ date: Date) -> String {
+        let calendar = Calendar.current
+        if calendar.isDateInToday(date) { return "Today" }
+        if calendar.isDateInYesterday(date) { return "Yesterday" }
+        return date.formatted(.dateTime.day().month(.abbreviated))
     }
 
     private func createTemplate() {
@@ -314,7 +387,15 @@ struct WorkoutsView: View {
         )
         modelContext.insert(copy)
         let sorted = source.exercises.sorted { $0.sortOrder < $1.sortOrder }
+        // Fresh superset IDs, so the copy keeps its pairs without sharing them with the source.
+        var supersets: [UUID: UUID] = [:]
         for (index, item) in sorted.enumerated() {
+            let supersetID = item.supersetID.map { old in
+                if let new = supersets[old] { return new }
+                let new = UUID()
+                supersets[old] = new
+                return new
+            }
             let newItem = WorkoutTemplateExercise(
                 exerciseID: item.exerciseID,
                 sortOrder: index,
@@ -322,7 +403,8 @@ struct WorkoutsView: View {
                 targetReps: item.targetReps,
                 targetWeight: item.targetWeight,
                 restSeconds: item.restSeconds,
-                note: item.note
+                note: item.note,
+                supersetID: supersetID
             )
             newItem.template = copy
             copy.exercises.append(newItem)
@@ -345,6 +427,16 @@ struct WorkoutsView: View {
             toastMessage = nil
         }
     }
+}
+
+private struct ProgramGroup: Identifiable {
+    let id: String
+    let title: String
+    /// "Inspired by …" for a library program.
+    let detail: String?
+    /// "StrongLifts 5×5 — ", taken off the front of its workouts' names inside the group.
+    let prefix: String?
+    let templates: [WorkoutTemplate]
 }
 
 #Preview {

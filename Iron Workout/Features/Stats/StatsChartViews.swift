@@ -66,7 +66,7 @@ struct StatsSummaryCard: View {
 
     var body: some View {
         SectionCard(title: "Last \(period.label)") {
-            HStack(alignment: .firstTextBaseline, spacing: DesignTokens.Spacing.md) {
+            NumberRow {
                 BigNumber(value: "\(workouts)", label: workouts == 1 ? "workout" : "workouts")
                 BigNumber(value: "\(sets)", label: "sets")
                 BigNumber(value: volumeText, label: "volume")

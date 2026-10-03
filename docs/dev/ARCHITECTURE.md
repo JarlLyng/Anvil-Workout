@@ -94,7 +94,7 @@ Anvil Workout/
     │
     └── Components/
         ├── DesignSystem.swift             # Design token helpers
-        ├── SummaryCards.swift             # SectionCard and BigNumber, shared by Stats and workout summaries
+        ├── SummaryCards.swift             # SectionCard, BigNumber, NumberRow, NameValueLine: shared cards that hold up at large text sizes
         └── TagComponents.swift            # FlowLayout + tag chips for template tags
 
 IronWorkoutWidget/

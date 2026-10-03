@@ -102,6 +102,22 @@ enum TrainingSummary {
         .joined(separator: " · ")
     }
 
+    // MARK: - Plans
+
+    /// A planned exercise the way Home shows it: "5 × 5 · 40 kg", or "3 × 10" without a weight.
+    static func planText(sets: Int, reps: Int, kg: Double?, unit: WeightUnit) -> String {
+        let base = "\(sets) \u{00D7} \(reps)"
+        guard let kg, kg > 0 else { return base }
+        return "\(base) \u{00B7} \(WeightFormatter.compact(kg: kg, in: unit))"
+    }
+
+    /// "3 min rest", "1:30 rest", "45 s rest".
+    static func restText(seconds: Int) -> String {
+        if seconds < 60 { return "\(seconds) s rest" }
+        if seconds % 60 == 0 { return "\(seconds / 60) min rest" }
+        return String(format: "%d:%02d rest", seconds / 60, seconds % 60)
+    }
+
     // MARK: - History
 
     /// Items grouped for the history list, newest first: this week, last week, then one

@@ -201,3 +201,65 @@ struct RestTimerTests {
         #expect(WeightFormatter.fractionDigits(for: value) == digits)
     }
 }
+
+@Suite("Supersets")
+struct SupersetTests {
+
+    /// A superset of two exercises, two sets each, 90 s rest.
+    @MainActor
+    private func makeState() throws -> (ActiveWorkoutState, WorkoutSessionExercise, WorkoutSessionExercise, ModelContainer) {
+        let schema = Schema([
+            Exercise.self, WorkoutTemplate.self, WorkoutTemplateExercise.self,
+            WorkoutSession.self, WorkoutSessionExercise.self, PerformedSet.self,
+        ])
+        let container = try ModelContainer(for: schema, configurations: [ModelConfiguration(isStoredInMemoryOnly: true)])
+        let context = ModelContext(container)
+        let template = WorkoutTemplate(name: "Upper")
+        context.insert(template)
+        let pair = UUID()
+        for (order, name) in ["Bench Press", "Barbell Row"].enumerated() {
+            let exercise = Exercise(name: name, muscleGroup: .chest, isBuiltin: true)
+            context.insert(exercise)
+            let te = WorkoutTemplateExercise(exerciseID: exercise.id, sortOrder: order, targetSets: 2, targetReps: 5,
+                                             targetWeight: 60, restSeconds: 90, supersetID: pair)
+            te.template = template
+            template.exercises.append(te)
+            context.insert(te)
+        }
+        let session = try WorkoutSessionService.createSession(from: template, modelContext: context)
+        let state = ActiveWorkoutState(session: session, modelContext: context)
+        let sorted = session.exercises.sorted { $0.sortOrder < $1.sortOrder }
+        return (state, sorted[0], sorted[1], container)
+    }
+
+    private func nextSet(_ exercise: WorkoutSessionExercise) -> PerformedSet {
+        exercise.performedSets.sorted { $0.setIndex < $1.setIndex }.first { !$0.isCompleted }!
+    }
+
+    @MainActor
+    @Test("A superset alternates its exercises, one set at a time")
+    func alternates() throws {
+        let (state, bench, row, _) = try makeState()
+        #expect(state.exerciseBlocks.count == 1)
+        #expect(state.currentExercise?.id == bench.id)
+
+        state.markSetDone(nextSet(bench), exercise: bench)
+        #expect(state.currentExercise?.id == row.id)
+
+        state.markSetDone(nextSet(row), exercise: row)
+        #expect(state.currentExercise?.id == bench.id)
+    }
+
+    @MainActor
+    @Test("Rest comes after the round, not between the exercises in it")
+    func restAfterRound() throws {
+        let (state, bench, row, _) = try makeState()
+
+        state.markSetDone(nextSet(bench), exercise: bench)
+        #expect(state.restEndsAt == nil)
+
+        state.markSetDone(nextSet(row), exercise: row)
+        #expect(state.restEndsAt != nil)
+        state.stopRestTimer()
+    }
+}
