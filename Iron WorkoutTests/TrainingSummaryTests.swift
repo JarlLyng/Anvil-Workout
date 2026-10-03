@@ -170,3 +170,90 @@ struct TrainingSummaryTests {
         #expect(TrainingSummary.durationText(seconds: seconds) == text)
     }
 }
+
+@Suite("TrainingSummary, one workout")
+struct TrainingSummaryWorkoutTests {
+
+    @Test("A run of sets reads the way lifters write it", arguments: [
+        ([(5, 100.0), (5, 100.0), (5, 100.0)], "3 × 5 · 100 kg"),
+        ([(5, 100.0), (5, 100.0), (4, 100.0), (3, 100.0)], "100 kg × 5/5/4/3"),
+        ([(5, 60.0), (5, 80.0), (5, 100.0), (3, 100.0)], "60 kg × 5 · 80 kg × 5 · 100 kg × 5/3"),
+    ])
+    func setsSummaryWeighted(sets: [(Int, Double)], text: String) {
+        let input = sets.map { (reps: $0.0, kg: Optional($0.1)) }
+        #expect(TrainingSummary.setsSummary(input, unit: .kg) == text)
+    }
+
+    @Test("Sets without weight read as reps")
+    func setsSummaryBodyweight() {
+        #expect(TrainingSummary.setsSummary([(10, nil), (10, nil), (10, nil)], unit: .kg) == "3 × 10")
+        #expect(TrainingSummary.setsSummary([(10, nil), (8, nil), (6, nil)], unit: .kg) == "10/8/6 reps")
+        #expect(TrainingSummary.setsSummary([], unit: .kg) == nil)
+    }
+
+    @Test("Percent change rounds, and needs something to compare with")
+    func percentChange() {
+        #expect(TrainingSummary.percentChange(from: 1000, to: 1060) == 6)
+        #expect(TrainingSummary.percentChange(from: 1000, to: 955) == -5)
+        #expect(TrainingSummary.percentChange(from: 0, to: 500) == nil)
+    }
+
+    @MainActor
+    @Test("Last time means the latest earlier workout of the same program with a set done")
+    func previousSession() throws {
+        let schema = Schema([
+            Exercise.self, WorkoutTemplate.self, WorkoutTemplateExercise.self,
+            WorkoutSession.self, WorkoutSessionExercise.self, PerformedSet.self,
+        ])
+        let context = ModelContext(try ModelContainer(for: schema, configurations: [ModelConfiguration(isStoredInMemoryOnly: true)]))
+        func session(_ name: String, daysAgo: Double, sets: Int = 3) -> WorkoutSession {
+            let s = WorkoutSession(templateName: name, startedAt: Date(timeIntervalSince1970: 1_800_000_000 - daysAgo * 86_400))
+            s.completedSetCount = sets
+            context.insert(s)
+            return s
+        }
+        let today = session("A", daysAgo: 0)
+        let lastA = session("A", daysAgo: 2)
+        _ = session("A", daysAgo: 1, sets: 0)   // started, nothing done
+        _ = session("B", daysAgo: 1)            // another program in between
+        _ = session("A", daysAgo: 4)
+        let all = [today, lastA] + (try context.fetch(FetchDescriptor<WorkoutSession>()))
+
+        #expect(TrainingSummary.previousSession(of: today, in: all)?.id == lastA.id)
+        #expect(TrainingSummary.previousSession(of: session("C", daysAgo: 0), in: all) == nil)
+    }
+
+    @Test("History groups this week, last week, then months, newest first")
+    func historyGroups() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        calendar.firstWeekday = 2
+        calendar.locale = Locale(identifier: "en_US_POSIX")
+        // Wednesday 2026-10-07.
+        let now = calendar.date(from: DateComponents(year: 2026, month: 10, day: 7, hour: 12))!
+        func day(_ month: Int, _ day: Int, year: Int = 2026) -> Date {
+            calendar.date(from: DateComponents(year: year, month: month, day: day, hour: 18))!
+        }
+        let dates = [day(9, 2), day(10, 6), day(9, 29), day(10, 5), day(9, 15), day(12, 1, year: 2025)]
+
+        let groups = TrainingSummary.historyGroups(dates, date: { $0 }, now: now, calendar: calendar)
+
+        #expect(groups.map(\.title) == ["This week", "Last week", "September", "December 2025"])
+        #expect(groups.map(\.items.count) == [2, 1, 2, 1])
+        #expect(groups[0].items == [day(10, 6), day(10, 5)])
+    }
+
+    @Test("One record per exercise, a weight record first")
+    func onePerExercise() {
+        let records = [
+            DetectedPersonalRecord(exerciseName: "Squat", type: .reps, value: "8 reps @ 100 kg", previousBest: "6 reps"),
+            DetectedPersonalRecord(exerciseName: "Squat", type: .weight, value: "105 kg", previousBest: "100 kg"),
+            DetectedPersonalRecord(exerciseName: "Bench", type: .reps, value: "6 reps @ 80 kg", previousBest: "5 reps"),
+        ]
+
+        let result = PersonalRecordService.onePerExercise(records)
+
+        #expect(result.map(\.exerciseName) == ["Squat", "Bench"])
+        #expect(result.map(\.type) == [.weight, .reps])
+    }
+}

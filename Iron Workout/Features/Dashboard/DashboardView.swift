@@ -25,6 +25,11 @@ struct DashboardView: View {
     @State private var activeSession: WorkoutSession?
     @State private var showProgramLibrary = false
     @State private var showImporter = false
+    #if DEBUG
+    /// `-AnvilDemoCompletion` opens the completion screen for the latest full workout, to
+    /// check and screenshot it against the demo history without training first.
+    @State private var demoCompletion: WorkoutSession?
+    #endif
     @State private var templateToCreate: WorkoutTemplate?
     @State private var errorMessage: String?
 
@@ -160,6 +165,15 @@ struct DashboardView: View {
                 ProgramLibraryView { _ in showProgramLibrary = false }
             }
             .workoutImport(isPresented: $showImporter)
+            #if DEBUG
+            .fullScreenCover(item: $demoCompletion) { session in
+                WorkoutCompletionView(session: session) { demoCompletion = nil }
+            }
+            .task {
+                guard ProcessInfo.processInfo.arguments.contains("-AnvilDemoCompletion") else { return }
+                demoCompletion = completedSessions.first { TrainingSummary.workSetCount(of: $0) > 5 }
+            }
+            #endif
             .sheet(item: $templateToCreate) { template in
                 NavigationStack {
                     CreateEditTemplateView(template: template)
@@ -314,24 +328,13 @@ struct DashboardView: View {
                         RecentWorkoutRow(
                             name: session.templateName,
                             dateLabel: relativeDateLabel(session.startedAt),
-                            detail: recentDetail(session)
+                            detail: TrainingSummary.detailLine(of: session, unit: weightUnit)
                         )
                     }
                     .buttonStyle(.plain)
                 }
             }
         }
-    }
-
-    /// "32 min · 15 sets · 1,240 kg", leaving out what is zero.
-    private func recentDetail(_ session: WorkoutSession) -> String {
-        var parts: [String] = []
-        if session.durationSeconds > 0 { parts.append(TrainingSummary.durationText(seconds: session.durationSeconds)) }
-        let sets = TrainingSummary.workSetCount(of: session)
-        parts.append(sets == 1 ? "1 set" : "\(sets) sets")
-        let volume = TrainingSummary.volumeKg(of: session)
-        if volume > 0 { parts.append(WeightFormatter.volume(kg: volume, in: weightUnit)) }
-        return parts.joined(separator: " \u{00B7} ")
     }
 
     private func relativeDateLabel(_ date: Date) -> String {

@@ -129,9 +129,8 @@ struct StatsView: View {
     }
 
     /// The latest record for each exercise in the period, newest first, each workout
-    /// compared with everything before it rather than with what came later. A weight
-    /// record wins over a reps record from the same workout: lifting a new weight for
-    /// five reps is also "the most reps at that weight", which says nothing new.
+    /// compared with everything before it rather than with what came later. An exercise's
+    /// first time is a baseline, not a record.
     private func computeRecords() -> [RecordItem] {
         let completed = sessions.filter { $0.completedSetCount > 0 }
         guard let since = periodStart else { return [] }
@@ -139,10 +138,8 @@ struct StatsView: View {
         var seen: Set<String> = []
         for (index, session) in completed.enumerated().reversed() where session.startedAt >= since {
             let found = PersonalRecordService.detectPersonalRecords(in: session, history: Array(completed[..<index]))
-            for name in Set(found.map(\.exerciseName)) where !seen.contains(name) {
-                let forExercise = found.filter { $0.exerciseName == name }
-                guard let record = forExercise.first(where: { $0.type == .weight }) ?? forExercise.first else { continue }
-                seen.insert(name)
+            for record in PersonalRecordService.onePerExercise(found) where !record.isFirstTime && !seen.contains(record.exerciseName) {
+                seen.insert(record.exerciseName)
                 items.append(RecordItem(
                     exerciseName: record.exerciseName,
                     value: record.value,

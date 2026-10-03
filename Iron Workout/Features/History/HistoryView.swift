@@ -4,6 +4,10 @@
 //
 //  Created by Jarl Lyng on 14/03/2026.
 //
+//  Every workout, newest first, grouped into this week, last week and months, each row in
+//  the same form as the home screen's recent workouts. Search finds a program or an
+//  exercise.
+//
 
 import SwiftUI
 import SwiftData
@@ -12,106 +16,76 @@ import PhosphorSwift
 
 struct HistoryView: View {
     @Query(sort: \WorkoutSession.startedAt, order: .reverse) private var sessions: [WorkoutSession]
+    @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
+    private var weightUnit: WeightUnit { WeightUnit(rawValue: weightUnitRaw) ?? .kg }
     @State private var searchText = ""
 
+    /// Matches the program name or any exercise in the workout, so "deadlift" finds every
+    /// workout with one.
     private var filteredSessions: [WorkoutSession] {
-        if searchText.isEmpty { return sessions }
-        return sessions.filter { $0.templateName.localizedCaseInsensitiveContains(searchText) }
+        let query = searchText.trimmingCharacters(in: .whitespaces)
+        guard !query.isEmpty else { return sessions }
+        return sessions.filter { session in
+            session.templateName.localizedCaseInsensitiveContains(query)
+                || session.exercises.contains { $0.exerciseName.localizedCaseInsensitiveContains(query) }
+        }
     }
 
     var body: some View {
         Group {
             if sessions.isEmpty {
                 ContentUnavailableView {
-                    Label("No Workouts Yet", systemImage: "clock.arrow.circlepath")
+                    Label { Text("No workouts yet") } icon: { Ph.clockCounterClockwise.regular.icon(size: 44) }
                 } description: {
-                    Text("When you complete a workout from the Workouts tab, it will appear here with duration, sets and optional heart rate and calories from Health.")
+                    Text("Finished workouts show up here, with their sets, weights and time.")
                 }
             } else if filteredSessions.isEmpty {
                 ContentUnavailableView.search(text: searchText)
             } else {
-                List(filteredSessions) { session in
-                    NavigationLink(value: session) {
-                        sessionRow(session)
-                    }
-                    .accessibilityLabel(sessionA11yLabel(session))
-                }
+                list
             }
         }
+        .background(Color(uiColor: .systemGroupedBackground))
         .navigationTitle("History")
         .navigationBarTitleDisplayMode(.inline)
-        .searchable(text: $searchText, prompt: "Search history")
-        .navigationDestination(for: WorkoutSession.self) { session in
-            SessionDetailView(session: session)
-        }
+        .searchable(text: $searchText, prompt: "Programs and exercises")
     }
 
-    @ViewBuilder
-    private func sessionRow(_ session: WorkoutSession) -> some View {
-        VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
-            HStack {
-                Text(session.templateName)
-                    .font(.headline)
-                Spacer()
-                Text(relativeDate(session.startedAt))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            HStack(spacing: DesignTokens.Spacing.lg) {
-                Label { Text("\(session.exerciseCount) exercises") } icon: { Ph.listBullets.regular.icon(size: 16) }
-                Label { Text("\(session.completedSetCount) sets") } icon: { Ph.checkCircle.regular.icon(size: 16) }
-                if session.durationSeconds > 0 {
-                    Label { Text(formatDuration(session.durationSeconds)) } icon: { Ph.timer.regular.icon(size: 16) }
-                }
-            }
-            .font(.caption)
-            .foregroundStyle(.secondary)
-            if session.calories != nil || session.averageHeartRate != nil {
-                HStack(spacing: DesignTokens.Spacing.md) {
-                    if let cal = session.calories, cal > 0 {
-                        Label { Text("\(Int(cal)) kcal") } icon: { Ph.flame.regular.icon(size: 14) }
-                            .font(.caption2)
-                            .foregroundStyle(DesignTokens.ColorToken.State.warning)
+    private var list: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                ForEach(TrainingSummary.historyGroups(filteredSessions, date: \.startedAt), id: \.title) { group in
+                    DashboardSectionLabel(title: group.title) {
+                        Text(group.items.count == 1 ? "1 workout" : "\(group.items.count) workouts")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
                     }
-                    if let hr = session.averageHeartRate, hr > 0 {
-                        Label { Text("\(Int(hr)) bpm") } icon: { Ph.heart.regular.icon(size: 14) }
-                            .font(.caption2)
-                            .foregroundStyle(DesignTokens.ColorToken.State.error)
+                    .padding(.top, DesignTokens.Spacing.md)
+                    ForEach(group.items) { session in
+                        NavigationLink(value: session) {
+                            RecentWorkoutRow(
+                                name: session.templateName,
+                                dateLabel: dateLabel(session.startedAt),
+                                detail: TrainingSummary.detailLine(of: session, unit: weightUnit)
+                            )
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
             }
+            .padding(.horizontal)
+            .padding(.bottom)
+            .frame(maxWidth: 640)
+            .frame(maxWidth: .infinity)
         }
-        .padding(.vertical, DesignTokens.Spacing.xs)
     }
 
-    private func sessionA11yLabel(_ session: WorkoutSession) -> String {
-        var parts: [String] = [session.templateName, relativeDate(session.startedAt)]
-        parts.append("\(session.exerciseCount) exercises")
-        parts.append("\(session.completedSetCount) sets")
-        if session.durationSeconds > 0 { parts.append(formatDuration(session.durationSeconds)) }
-        if let cal = session.calories, cal > 0 { parts.append("\(Int(cal)) kilocalories") }
-        if let hr = session.averageHeartRate, hr > 0 { parts.append("\(Int(hr)) beats per minute") }
-        return parts.joined(separator: ", ")
-    }
-
-    private func formatDuration(_ seconds: Int) -> String {
-        let m = seconds / 60
-        let s = seconds % 60
-        if s > 0 {
-            return "\(m)m \(s)s"
-        }
-        return "\(m) min"
-    }
-
-    private func relativeDate(_ date: Date) -> String {
-        let cal = Calendar.current
-        if cal.isDateInToday(date) {
-            return "Today " + date.formatted(date: .omitted, time: .shortened)
-        }
-        if cal.isDateInYesterday(date) {
-            return "Yesterday " + date.formatted(date: .omitted, time: .shortened)
-        }
-        return date.formatted(date: .abbreviated, time: .shortened)
+    /// "Today", "Yesterday", then "Fri 2 Oct".
+    private func dateLabel(_ date: Date) -> String {
+        let calendar = Calendar.current
+        if calendar.isDateInToday(date) { return "Today" }
+        if calendar.isDateInYesterday(date) { return "Yesterday" }
+        return date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated))
     }
 }
 

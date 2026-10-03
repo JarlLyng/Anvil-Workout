@@ -4,6 +4,9 @@
 //
 //  Created by Jarl Lyng on 14/03/2026.
 //
+//  Straight after a workout: what it added up to and how that compares with the last time,
+//  any records, and each exercise in one line. Done is the one thing to press.
+//
 
 import SwiftUI
 import SwiftData
@@ -15,119 +18,119 @@ struct WorkoutCompletionView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.requestReview) private var requestReview
     @Query(sort: \WorkoutSession.startedAt, order: .reverse) private var allSessions: [WorkoutSession]
-    @State private var showShareSheet = false
+    @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
+    private var weightUnit: WeightUnit { WeightUnit(rawValue: weightUnitRaw) ?? .kg }
+
     var session: WorkoutSession
     var onDone: () -> Void
 
-    private var durationText: String {
-        let m = session.durationSeconds / 60
-        let s = session.durationSeconds % 60
-        if s > 0 { return "\(m)m \(s)s" }
-        return "\(m) min"
-    }
+    // Worked out once when the screen appears; the history does not change under it.
+    @State private var records: [DetectedPersonalRecord] = []
+    @State private var previous: WorkoutSession?
 
-    private var personalRecords: [DetectedPersonalRecord] {
-        PersonalRecordService.detectPersonalRecords(in: session, history: allSessions)
-    }
-
-    private var shareText: String {
-        var text = "Anvil Workout — \(session.templateName)\n\n"
-        text += "Time: \(durationText)\n"
-        text += "Sets: \(session.completedSetCount)\n"
-        text += "Exercises: \(session.exerciseCount)"
-
-        if !personalRecords.isEmpty {
-            text += "\n\nNew PRs:"
-            for record in personalRecords {
-                text += "\n- \(record.exerciseName): \(record.value)"
-            }
-        }
-
-        return text
+    private var sortedExercises: [WorkoutSessionExercise] {
+        session.exercises.sorted { $0.sortOrder < $1.sortOrder }
     }
 
     var body: some View {
-        VStack(spacing: DesignTokens.Spacing.xxl) {
-            Spacer()
-            Ph.checkCircle.fill
-                .icon(size: 70)
-                .foregroundStyle(DesignTokens.ColorToken.State.success)
-            Text("Workout Complete")
-                .font(.title.bold())
-                .foregroundStyle(DesignTokens.Common.Text.primary(colorScheme))
-            VStack(spacing: DesignTokens.Spacing.sm) {
-                Label { Text(session.templateName) } icon: { Ph.listBullets.regular.icon() }
-                Label { Text(durationText) } icon: { Ph.timer.regular.icon() }
-                Label { Text("\(session.completedSetCount) sets") } icon: { Ph.checkCircle.regular.icon() }
-                Label { Text("\(session.exerciseCount) exercises") } icon: { Ph.barbell.regular.icon() }
-            }
-            .font(.body)
-            .foregroundStyle(DesignTokens.Common.Text.secondary(colorScheme))
-
-            if !personalRecords.isEmpty {
-                VStack(spacing: DesignTokens.Spacing.md) {
-                    Ph.trophy.fill
-                        .icon(size: 40)
-                        .foregroundStyle(DesignTokens.ColorToken.State.warning)
-                    Text("New Personal Records!")
-                        .font(.headline)
-                        .foregroundStyle(DesignTokens.Common.Text.primary(colorScheme))
-                    ForEach(personalRecords) { record in
-                        VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
-                            Text(record.exerciseName)
-                                .font(.headline)
-                                .foregroundStyle(DesignTokens.Common.Text.primary(colorScheme))
-                            Text("New: \(record.value)")
-                                .font(.subheadline)
-                                .foregroundStyle(DesignTokens.ColorToken.State.success)
-                            Text("Previous: \(record.previousBest)")
-                                .font(.subheadline)
-                                .foregroundStyle(DesignTokens.Common.Text.secondary(colorScheme))
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(DesignTokens.Spacing.md)
-                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
-                    }
+        ScrollView {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
+                header
+                SessionNumbersCard(session: session, previous: previous, unit: weightUnit)
+                if !records.isEmpty {
+                    SessionRecordsCard(records: records)
                 }
-                .padding(.horizontal, DesignTokens.Spacing.lg)
+                SessionExercisesCard(exercises: sortedExercises, unit: weightUnit)
             }
-
-            Spacer()
-            HStack(spacing: DesignTokens.Spacing.md) {
-                ShareLink(item: shareText) {
-                    Label {
-                        Text("Share")
-                    } icon: {
-                        Ph.shareFat.regular
-                            .icon()
-                    }
-                }
-                .buttonStyle(.bordered)
-                .controlSize(.large)
-
-                Button("Done") {
-                    onDone()
-                }
-                .buttonStyle(.borderedProminent)
-                .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
-                .controlSize(.large)
-            }
-            .padding(.horizontal, DesignTokens.Spacing.xxxl)
-            .padding(.bottom, DesignTokens.Spacing.xl)
+            .padding()
+            .frame(maxWidth: 640)
+            .frame(maxWidth: .infinity)
         }
-        .background(DesignTokens.Common.Background.app(colorScheme))
-        .onAppear {
-            if !personalRecords.isEmpty {
-                UINotificationFeedbackGenerator().notificationOccurred(.success)
+        .background(Color(uiColor: .systemGroupedBackground))
+        .safeAreaInset(edge: .bottom, spacing: 0) { actions }
+        .onAppear(perform: summarize)
+    }
+
+    private var header: some View {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+            Label {
+                Text("Workout done")
+            } icon: {
+                Ph.checkCircle.fill.icon(size: 18)
             }
-            // Ask for review after 5th completed workout
-            let completedCount = allSessions.filter { $0.completedSetCount > 0 }.count
-            if completedCount == 5 || completedCount == 15 || completedCount == 50 {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    requestReview()
-                }
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(DesignTokens.ColorToken.State.success)
+            Text(session.templateName)
+                .font(.title.bold())
+                .accessibilityAddTraits(.isHeader)
+            Text(session.startedAt.formatted(.dateTime.weekday(.wide).day().month(.wide).hour().minute()))
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+        .padding(.top, DesignTokens.Spacing.lg)
+    }
+
+    private var actions: some View {
+        HStack(spacing: DesignTokens.Spacing.md) {
+            ShareLink(item: shareText) {
+                Label { Text("Share") } icon: { Ph.shareFat.regular.icon(size: 18) }
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.large)
+            .fixedSize()
+
+            Button {
+                onDone()
+            } label: {
+                Text("Done")
+                    .fontWeight(.semibold)
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .foregroundStyle(DesignTokens.Common.OnPrimary.text(colorScheme))
+            .controlSize(.large)
+        }
+        .padding(.horizontal)
+        .padding(.top, DesignTokens.Spacing.sm)
+        .padding(.bottom, DesignTokens.Spacing.md)
+        .frame(maxWidth: 640)
+        .frame(maxWidth: .infinity)
+        .background(Color(uiColor: .systemGroupedBackground))
+    }
+
+    /// The workout as text: name, the summary line, each exercise and any records.
+    private var shareText: String {
+        var lines = ["Anvil Workout: \(session.templateName)", TrainingSummary.detailLine(of: session, unit: weightUnit), ""]
+        for exercise in sortedExercises {
+            if let summary = TrainingSummary.setsSummary(TrainingSummary.workSets(of: exercise), unit: weightUnit) {
+                lines.append("\(exercise.exerciseName): \(summary)")
+            }
+        }
+        if !records.isEmpty {
+            lines.append("")
+            lines.append(records.count == 1 ? "New record:" : "New records:")
+            lines += records.map { "\($0.exerciseName): \($0.value)" }
+        }
+        return lines.joined(separator: "\n")
+    }
+
+    private func summarize() {
+        let history = allSessions.filter { $0.id != session.id && $0.completedSetCount > 0 }
+        records = PersonalRecordService.onePerExercise(
+            PersonalRecordService.detectPersonalRecords(in: session, history: history, unit: weightUnit)
+        )
+        .filter { !$0.isFirstTime }
+        previous = TrainingSummary.previousSession(of: session, in: allSessions)
+
+        if !records.isEmpty {
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+        }
+        // Ask for a review after the 5th, 15th and 50th completed workout.
+        let completedCount = allSessions.filter { $0.completedSetCount > 0 }.count
+        if completedCount == 5 || completedCount == 15 || completedCount == 50 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                requestReview()
             }
         }
     }
 }
-

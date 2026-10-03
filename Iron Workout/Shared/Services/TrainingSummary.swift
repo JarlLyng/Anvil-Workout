@@ -34,6 +34,103 @@ enum TrainingSummary {
         session.exercises.flatMap(\.performedSets).filter { isWorkSet($0) && $0.actualReps != nil }.count
     }
 
+    // MARK: - One workout
+
+    /// The workout before `session` with the same name, so "last time" means the same
+    /// program rather than whatever was trained in between.
+    static func previousSession(of session: WorkoutSession, in sessions: [WorkoutSession]) -> WorkoutSession? {
+        sessions
+            .filter {
+                $0.id != session.id && $0.templateName == session.templateName
+                    && $0.completedSetCount > 0 && $0.startedAt < session.startedAt
+            }
+            .max { $0.startedAt < $1.startedAt }
+    }
+
+    /// The change from `previous` to `current` in whole percent, or nil with nothing to
+    /// compare with.
+    static func percentChange(from previous: Double, to current: Double) -> Int? {
+        guard previous > 0 else { return nil }
+        return Int(((current - previous) / previous * 100).rounded())
+    }
+
+    /// "32 min · 15 sets · 1,240 kg", leaving out a time or volume that is zero.
+    static func detailLine(of session: WorkoutSession, unit: WeightUnit) -> String {
+        var parts: [String] = []
+        if session.durationSeconds > 0 { parts.append(durationText(seconds: session.durationSeconds)) }
+        let sets = workSetCount(of: session)
+        parts.append(sets == 1 ? "1 set" : "\(sets) sets")
+        let volume = volumeKg(of: session)
+        if volume > 0 { parts.append(WeightFormatter.volume(kg: volume, in: unit)) }
+        return parts.joined(separator: " \u{00B7} ")
+    }
+
+    /// An exercise's completed work sets with reps, in the order they were done.
+    static func workSets(of exercise: WorkoutSessionExercise) -> [(reps: Int, kg: Double?)] {
+        exercise.performedSets
+            .filter { isWorkSet($0) && $0.actualReps != nil }
+            .sorted { $0.setIndex < $1.setIndex }
+            .map { ($0.actualReps ?? 0, $0.actualWeight) }
+    }
+
+    /// One line for a run of sets, written the way lifters write them: "5 × 5 · 100 kg"
+    /// when every set matched, "100 kg × 5/5/5/4/3" when the reps varied, "60 kg × 5 ·
+    /// 80 kg × 5/5" across weights, and "3 × 10" or "10/8/6 reps" without weight. Reps are
+    /// split by slashes, so they never read as a decimal comma. Nil for no sets.
+    static func setsSummary(_ sets: [(reps: Int, kg: Double?)], unit: WeightUnit) -> String? {
+        guard let first = sets.first else { return nil }
+        func weight(_ kg: Double?) -> String? {
+            guard let kg, kg > 0 else { return nil }
+            return WeightFormatter.compact(kg: kg, in: unit)
+        }
+        if sets.allSatisfy({ $0.reps == first.reps && $0.kg == first.kg }) {
+            let base = "\(sets.count) × \(first.reps)"
+            return weight(first.kg).map { "\(base) · \($0)" } ?? base
+        }
+        var groups: [(kg: Double?, reps: [Int])] = []
+        for set in sets {
+            if let last = groups.last, last.kg == set.kg {
+                groups[groups.count - 1].reps.append(set.reps)
+            } else {
+                groups.append((set.kg, [set.reps]))
+            }
+        }
+        return groups.map { group in
+            let reps = group.reps.map(String.init).joined(separator: "/")
+            return weight(group.kg).map { "\($0) × \(reps)" } ?? "\(reps) reps"
+        }
+        .joined(separator: " · ")
+    }
+
+    // MARK: - History
+
+    /// Items grouped for the history list, newest first: this week, last week, then one
+    /// group per month, "September", with the year added for an earlier year.
+    static func historyGroups<Item>(
+        _ items: [Item],
+        date: (Item) -> Date,
+        now: Date = .now,
+        calendar: Calendar = .current
+    ) -> [(title: String, items: [Item])] {
+        guard let thisWeek = calendar.dateInterval(of: .weekOfYear, for: now)?.start,
+              let lastWeek = calendar.date(byAdding: .weekOfYear, value: -1, to: thisWeek) else { return [] }
+        let year = calendar.component(.year, from: now)
+        let month = Date.FormatStyle(locale: calendar.locale ?? .current, calendar: calendar, timeZone: calendar.timeZone).month(.wide)
+        var groups: [(title: String, items: [Item])] = []
+        for item in items.sorted(by: { date($0) > date($1) }) {
+            let day = date(item)
+            let title = day >= thisWeek ? "This week"
+                : day >= lastWeek ? "Last week"
+                : day.formatted(calendar.component(.year, from: day) == year ? month : month.year())
+            if groups.last?.title == title {
+                groups[groups.count - 1].items.append(item)
+            } else {
+                groups.append((title, [item]))
+            }
+        }
+        return groups
+    }
+
     // MARK: - Weeks over a period
 
     struct WeekBucket: Identifiable, Equatable {

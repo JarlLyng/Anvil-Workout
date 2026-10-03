@@ -18,6 +18,9 @@ struct DetectedPersonalRecord: Identifiable, Equatable {
     /// Display-ready description of the previous best, or "None" if this is the first time.
     let previousBest: String
 
+    /// Nothing to beat yet: the exercise's first time. A baseline, not a record.
+    var isFirstTime: Bool { previousBest == "None" }
+
     enum PRType: String, Equatable {
         case weight
         case reps
@@ -66,7 +69,8 @@ enum PersonalRecordService {
         let previousSessions = history.filter { $0.id != currentSession.id }
         var records: [DetectedPersonalRecord] = []
 
-        for exercise in currentSession.exercises {
+        // In the workout's order, so records read the way the workout went.
+        for exercise in currentSession.exercises.sorted(by: { $0.sortOrder < $1.sortOrder }) {
             let completedWorkingSets = exercise.performedSets.filter {
                 $0.isCompleted && $0.setType == .working
             }
@@ -98,6 +102,17 @@ enum PersonalRecordService {
         }
 
         return records
+    }
+
+    /// One record per exercise, in the order found, a weight record ahead of a reps record
+    /// for the same exercise: a new weight for five reps is also the most reps at that
+    /// weight, which says nothing new.
+    static func onePerExercise(_ records: [DetectedPersonalRecord]) -> [DetectedPersonalRecord] {
+        var seen: Set<String> = []
+        return records.compactMap { record in
+            guard seen.insert(record.exerciseName).inserted else { return nil }
+            return records.first { $0.exerciseName == record.exerciseName && $0.type == .weight } ?? record
+        }
     }
 
     // MARK: - Weight PR

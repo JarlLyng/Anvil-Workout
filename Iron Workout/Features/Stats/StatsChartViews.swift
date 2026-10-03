@@ -45,47 +45,6 @@ struct RecordItem: Identifiable {
     let date: Date
 }
 
-// MARK: - Card container
-
-private struct StatsCard<Content: View>: View {
-    let title: String
-    @ViewBuilder var content: () -> Content
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
-            Text(title)
-                .font(.caption.weight(.semibold))
-                .textCase(.uppercase)
-                .foregroundStyle(.secondary)
-                .accessibilityAddTraits(.isHeader)
-            content()
-        }
-        .padding(DesignTokens.Spacing.lg)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
-    }
-}
-
-/// A large number with a small label under it.
-private struct BigNumber: View {
-    let value: String
-    let label: String
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(value)
-                .font(.system(.title2, design: .rounded, weight: .bold).monospacedDigit())
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-            Text(label)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .accessibilityElement(children: .combine)
-    }
-}
-
 /// "Volume up 12% on the previous 4 weeks", "Same volume as the previous 4 weeks", or a
 /// note that there is nothing to compare with yet.
 func volumeComparisonText(current: Double, previous: Double, period: StatsPeriod) -> String {
@@ -106,7 +65,7 @@ struct StatsSummaryCard: View {
     let comparison: String
 
     var body: some View {
-        StatsCard(title: "Last \(period.label)") {
+        SectionCard(title: "Last \(period.label)") {
             HStack(alignment: .firstTextBaseline, spacing: DesignTokens.Spacing.md) {
                 BigNumber(value: "\(workouts)", label: workouts == 1 ? "workout" : "workouts")
                 BigNumber(value: "\(sets)", label: "sets")
@@ -161,7 +120,7 @@ struct PerWeekChartCard: View {
     private var labelStride: Int { buckets.count <= 4 ? 1 : (buckets.count <= 12 ? 3 : 6) }
 
     var body: some View {
-        StatsCard(title: "Per week") {
+        SectionCard(title: "Per week") {
             Picker("Metric", selection: $metric) {
                 ForEach(PerWeekMetric.allCases) { Text($0.rawValue).tag($0) }
             }
@@ -202,7 +161,7 @@ struct RecordsCard: View {
     let period: StatsPeriod
 
     var body: some View {
-        StatsCard(title: "Personal records") {
+        SectionCard(title: "Personal records") {
             if records.isEmpty {
                 Text("No new records in the last \(period.label). They show up here when you lift more weight, or more reps at a weight, than ever before.")
                     .font(.subheadline)
@@ -214,7 +173,7 @@ struct RecordsCard: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(record.exerciseName)
                                     .font(.subheadline.weight(.semibold))
-                                Text(record.previousBest == "None" ? "First time" : "Before: \(record.previousBest)")
+                                Text("Before: \(record.previousBest)")
                                     .font(.caption.monospacedDigit())
                                     .foregroundStyle(.secondary)
                             }
@@ -260,7 +219,7 @@ struct StrengthCard: View {
     }
 
     var body: some View {
-        StatsCard(title: "Strength") {
+        SectionCard(title: "Strength") {
             if exercises.isEmpty {
                 Text("Your estimated one-rep max shows up here once you log working sets with weight.")
                     .font(.subheadline)
@@ -329,7 +288,7 @@ struct MuscleGroupCard: View {
     let period: StatsPeriod
 
     var body: some View {
-        StatsCard(title: "Sets per muscle group") {
+        SectionCard(title: "Sets per muscle group") {
             if data.isEmpty {
                 Text("No sets in the last \(period.label).")
                     .font(.subheadline)

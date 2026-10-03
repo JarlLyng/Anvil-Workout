@@ -28,14 +28,15 @@ Anvil Workout/
 │   │   ├── ActiveWorkoutView.swift    # Active workout: timer, sets, rest, pause, Live Activity, plate calc
 │   │   ├── ActiveWorkoutSubviews.swift# WorkoutTimerBar, PauseOverlay, RestBar, SetRow
 │   │   ├── PlateCalculatorSheet.swift # Per-side plate breakdown for a target weight
-│   │   ├── WorkoutCompletionView.swift# Summary with PR detection, share, review prompt
+│   │   ├── WorkoutCompletionView.swift# Summary, records, exercises; share, review prompt
 │   │   ├── EditPerformedSetSheet.swift
 │   │   ├── ProgramLibraryView.swift   # Browse pre-built programs grouped by level
 │   │   └── ProgramLibraryDetailView.swift # Preview + "Add to My Programs"
 │   │
 │   ├── History/
-│   │   ├── HistoryView.swift          # Searchable list of completed workouts
-│   │   └── SessionDetailView.swift    # Detail: exercises, set-by-set, Health data
+│   │   ├── HistoryView.swift          # Workouts by this week, last week and month; search by program or exercise
+│   │   ├── SessionDetailView.swift    # Summary, records, then every set
+│   │   └── SessionSummaryViews.swift  # Cards shared by the completion screen and SessionDetailView
 │   │
 │   ├── Exercises/
 │   │   ├── ExercisesView.swift        # Exercise library with search
@@ -93,6 +94,7 @@ Anvil Workout/
     │
     └── Components/
         ├── DesignSystem.swift             # Design token helpers
+        ├── SummaryCards.swift             # SectionCard and BigNumber, shared by Stats and workout summaries
         └── TagComponents.swift            # FlowLayout + tag chips for template tags
 
 IronWorkoutWidget/
@@ -248,8 +250,8 @@ These Codable contracts live in `Shared/Watch/WatchContracts.swift` and are **mi
 1. **Home tab:** Dashboard with weekly metrics, streak, weekly planner, quick-start.
 2. **Workouts tab:** Create/edit/delete/duplicate/favorite templates, organize with tags and filter by them. Add exercises with sets/reps/weight/rest/supersets.
 3. **Active workout:** Timer, HealthKit workout, Live Activity on Lock Screen, mark sets done/skip, per-exercise notes, rest timer, pause/resume, plate calculator.
-4. **Completion:** Session saved (duration, sets, kcal/heart rate from Health). PR detection for weight and reps. Share workout summary. App Store review prompt at 5th, 15th, and 50th workout.
-5. **History tab:** Searchable list of sessions; detail view with set-by-set data and Health metrics.
+4. **Completion:** Session saved. Time, work sets and volume compared with the last time the same program was trained, kcal/heart rate from Health, new records (one per exercise; a first time is not a record), each exercise in one line. Share workout summary. App Store review prompt at 5th, 15th, and 50th workout.
+5. **History (from Home):** Sessions grouped by this week, last week and month, searchable by program or exercise; detail view with the same summary and records as the completion screen, then every set.
 6. **Exercises tab:** Searchable library; per-exercise detail with history, PRs, and estimated 1RM.
 7. **Stats tab:** A 4, 12 or 26 week period: totals against the previous period, volume, workouts or sets per week, latest records, estimated 1RM per lift, sets per muscle group. The numbers come from `TrainingSummary`, shared with the home screen.
 8. **Settings tab:** Weight unit (kg/lbs), CSV export, CSV import from Strong/Hevy, Health permissions, about.

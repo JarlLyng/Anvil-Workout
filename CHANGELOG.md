@@ -34,6 +34,12 @@ for release; it reaches the App Store after review.
 - With nothing planned for today, the home screen offers the program after the last one trained,
   in the order programs were added. A new lifter starts on Workout A rather than B, and a library
   program alternates its own workouts.
+- The screen after a workout leads with time, sets and volume, and says how the volume compares
+  with the last time you did the same program. New records come next, then each exercise in one
+  line, such as "5 × 5 · 100 kg". An exercise's first time is no longer listed as a record.
+- History groups workouts into this week, last week and months, in the same rows as the home
+  screen, and search finds exercises as well as programs. A past workout opens with the same
+  summary and records, then every set, with warm-ups marked W and the work sets numbered.
 - The first launch after installing the app no longer crashes. The home-screen widget could create
   the app's database at the same moment the app opened it.
 
