@@ -13,14 +13,19 @@ import Sentry
 struct Iron_WorkoutApp: App {
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
 
+    /// Opened in `init`, after Sentry has started. As a property initializer it ran before
+    /// `init`, so a store that failed to open crashed the app before the SDK could report it.
+    let sharedModelContainer: ModelContainer
+
     init() {
         // Sentry configuration, and the user's switch to turn it off, live in
         // DiagnosticsService so what the app sends is defined in one place.
         DiagnosticsService.startIfAllowed()
         LiveActivityService.endLeftoverActivities()
+        sharedModelContainer = Self.makeModelContainer()
     }
 
-    var sharedModelContainer: ModelContainer = {
+    private static func makeModelContainer() -> ModelContainer {
         let schema = Schema([
             Exercise.self,
             WorkoutTemplate.self,
@@ -36,11 +41,21 @@ struct Iron_WorkoutApp: App {
         do {
             return try ModelContainer(for: schema, configurations: [config])
         } catch {
+            // On the first launch after an install, the widget extension could be creating the
+            // same store at the same moment, and this open failed as a migration error: every
+            // fresh install crashed once in the simulator (#100). The widget no longer creates
+            // the store; one retry covers a read that overlaps this open.
             SentrySDK.capture(error: error)
-            SentrySDK.flush(timeout: 2)
-            fatalError("Could not create ModelContainer: \(error)")
+            Thread.sleep(forTimeInterval: 1)
+            do {
+                return try ModelContainer(for: schema, configurations: [config])
+            } catch {
+                SentrySDK.capture(error: error)
+                SentrySDK.flush(timeout: 2)
+                fatalError("Could not create ModelContainer: \(error)")
+            }
         }
-    }()
+    }
 
     var body: some Scene {
         WindowGroup {

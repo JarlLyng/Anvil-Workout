@@ -3,6 +3,11 @@
 What changed in each version of Anvil Workout, newest first. Dates are when a version was tagged
 for release; it reaches the App Store after review.
 
+## Unreleased
+
+- The first launch after installing the app no longer crashes. The home-screen widget could create
+  the app's database at the same moment the app opened it.
+
 ## 1.9.1 (2026-10-03)
 
 - The rest timer keeps time while the phone is locked. It used to stop in your pocket and pick up

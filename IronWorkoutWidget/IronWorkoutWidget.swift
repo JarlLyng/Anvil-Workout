@@ -12,7 +12,22 @@ import SwiftData
 // MARK: - Timeline Provider
 
 struct Provider: AppIntentTimelineProvider {
-    private let modelContainer: ModelContainer? = {
+    /// The app's store, opened for reading only and only once the app has created it.
+    ///
+    /// The widget used to create the store itself when it ran first, and the first launch
+    /// after an install raced it: the app found the store mid-creation, failed to open it
+    /// and crashed (#100). Read-only also means the widget can never migrate the store,
+    /// which is how #42 lost templates.
+    private static func openStore() -> ModelContainer? {
+        guard let group = FileManager.default.containerURL(
+            forSecurityApplicationGroupIdentifier: "group.com.iamjarl.Iron-Workout"
+        ) else { return nil }
+        // Where SwiftData puts the default store for a group container.
+        let storeURL = group.appending(path: "Library/Application Support/default.store")
+        guard FileManager.default.fileExists(atPath: storeURL.path(percentEncoded: false)) else {
+            return nil
+        }
+
         // IMPORTANT: this schema MUST be a superset of every entity ever stored in the
         // App Group container, even if the widget only queries WorkoutSession. Two
         // consumers of the same persistent store with mismatched schemas can cause
@@ -31,10 +46,11 @@ struct Provider: AppIntentTimelineProvider {
         ])
         let config = ModelConfiguration(
             isStoredInMemoryOnly: false,
+            allowsSave: false,
             groupContainer: .identifier("group.com.iamjarl.Iron-Workout")
         )
         return try? ModelContainer(for: schema, configurations: [config])
-    }()
+    }
 
     func placeholder(in context: Context) -> WorkoutEntry {
         WorkoutEntry(date: .now, thisWeek: 3, streak: 5, lastWorkoutName: "Push Day", lastWorkoutDate: .now)
@@ -53,7 +69,7 @@ struct Provider: AppIntentTimelineProvider {
 
     @MainActor
     private func fetchEntry() -> WorkoutEntry {
-        guard let container = modelContainer else {
+        guard let container = Self.openStore() else {
             return WorkoutEntry(date: .now, thisWeek: 0, streak: 0, lastWorkoutName: nil, lastWorkoutDate: nil)
         }
 
