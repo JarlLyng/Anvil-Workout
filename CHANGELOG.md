@@ -22,6 +22,18 @@ for release; it reaches the App Store after review.
   failure sets still do. The estimated one-rep max only uses sets of 1 to 12 reps, in Stats and on
   each exercise.
 - Record weights use your region's decimal separator, like every other weight in the app.
+- A new lifter starts in three short steps: the unit they lift in, whether workouts go to Apple
+  Health, and how to start: pick a program from the library, import history from Strong or Hevy,
+  or build a program. Picking or building one opens the app on its first workout. Asking about
+  Health here means the system no longer asks at the start of the first workout in the gym, unless
+  it was skipped.
+- The home screen's first card can import history from Strong or Hevy directly, instead of sending
+  you to Settings.
+- Programs from the library start with weights you can load when you lift in pounds: 40 kg reads
+  90 lb instead of 88.2 lb.
+- With nothing planned for today, the home screen offers the program after the last one trained,
+  in the order programs were added. A new lifter starts on Workout A rather than B, and a library
+  program alternates its own workouts.
 - The first launch after installing the app no longer crashes. The home-screen widget could create
   the app's database at the same moment the app opened it.
 

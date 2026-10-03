@@ -136,7 +136,7 @@ struct ProgramLibraryDetailView: View {
                     .foregroundStyle(.secondary)
             }
             if let weight = exercise.suggestedWeight {
-                Text("Suggested start: \(WeightFormatter.format(kg: weight, in: weightUnit))")
+                Text("Suggested start: \(WeightFormatter.compact(kg: WeightFormatter.plateFriendly(kg: weight, in: weightUnit), in: weightUnit))")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -154,7 +154,7 @@ struct ProgramLibraryDetailView: View {
     private func importProgram() {
         isImporting = true
         do {
-            _ = try ProgramLibraryService.importProgram(program, modelContext: modelContext)
+            _ = try ProgramLibraryService.importProgram(program, unit: weightUnit, modelContext: modelContext)
             UINotificationFeedbackGenerator().notificationOccurred(.success)
             onImportComplete(program.name)
         } catch {

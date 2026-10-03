@@ -50,10 +50,11 @@ Anvil Workout/
 │   │   └── HealthKitService.swift     # HealthKit: auth, workout start/end, metrics query
 │   │
 │   ├── Onboarding/
-│   │   └── OnboardingView.swift       # 3-page onboarding with Next/Skip/Get Started
+│   │   └── OnboardingView.swift       # First launch: unit, Apple Health, how to start (library, import, build)
 │   │
 │   └── Settings/
-│       └── SettingsView.swift         # Units, CSV export/import (Strong/Hevy), Health, About
+│       ├── SettingsView.swift         # Units, CSV export/import (Strong/Hevy), Health, About
+│       └── WorkoutImportFlow.swift    # Strong/Hevy import: picker, preview, result; used by Settings, onboarding, Home
 │
 └── Shared/
     ├── Models/                        # SwiftData models + static reference data
@@ -74,6 +75,7 @@ Anvil Workout/
     │   ├── PersonalRecordService.swift    # Detect PRs (pure, testable)
     │   ├── StreakCalculator.swift         # Calculate workout streak (pure, testable)
     │   ├── TrainingSummary.swift          # Volume, work sets, weeks and 1RM for Home and Stats (pure, testable)
+    │   ├── ProgramRotation.swift          # Which program Home offers next when none is planned (pure, testable)
     │   ├── PlateCalculator.swift          # Barbell plate loading math (pure, testable)
     │   ├── WeightFormatter.swift          # kg/lb display + input conversion (storage is always kg)
     │   ├── WorkoutCSVImporter.swift       # Parse Strong/Hevy CSV exports (pure, testable)

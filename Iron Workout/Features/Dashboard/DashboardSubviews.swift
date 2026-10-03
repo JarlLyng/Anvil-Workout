@@ -110,6 +110,7 @@ struct StartHereCard: View {
     @Environment(\.colorScheme) private var colorScheme
     var onLibrary: () -> Void
     var onCreate: () -> Void
+    var onImport: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
@@ -132,9 +133,12 @@ struct StartHereCard: View {
             }
             .buttonStyle(.bordered)
             .controlSize(.large)
-            Text("Coming from Strong or Hevy? Import your history under Settings.")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+            Button(action: onImport) {
+                Label { Text("Import history from Strong or Hevy") } icon: { Ph.downloadSimple.regular.icon(size: 16) }
+                    .font(.subheadline)
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderless)
         }
         .padding(DesignTokens.Spacing.lg)
         .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))

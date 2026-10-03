@@ -4,7 +4,7 @@
 //
 //  Static reference data for the pre-built program library. These are plain structs
 //  (not SwiftData @Model) because they're immutable bundled content — users import
-//  them as editable copies via `ProgramLibraryService.importProgram(_:modelContext:)`,
+//  them as editable copies via `ProgramLibraryService.importProgram(_:unit:modelContext:)`,
 //  which produces regular WorkoutTemplate records that the user fully owns.
 //
 

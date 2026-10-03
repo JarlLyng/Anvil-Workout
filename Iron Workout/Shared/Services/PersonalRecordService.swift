@@ -57,9 +57,11 @@ enum PersonalRecordService {
     ///   - currentSession: The session whose exercises are being evaluated.
     ///   - history: All other sessions to compare against. The `currentSession` should not
     ///     be included; if it is, it will be filtered out by id.
+    ///   - unit: The unit the record texts are written in.
     static func detectPersonalRecords(
         in currentSession: WorkoutSession,
-        history: [WorkoutSession]
+        history: [WorkoutSession],
+        unit: WeightUnit = WeightFormatter.current
     ) -> [DetectedPersonalRecord] {
         let previousSessions = history.filter { $0.id != currentSession.id }
         var records: [DetectedPersonalRecord] = []
@@ -79,7 +81,8 @@ enum PersonalRecordService {
             if let weightPR = weightPR(
                 exerciseName: exercise.exerciseName,
                 currentSets: completedWorkingSets,
-                previousSets: previousSets
+                previousSets: previousSets,
+                unit: unit
             ) {
                 records.append(weightPR)
             }
@@ -87,7 +90,8 @@ enum PersonalRecordService {
             if let repsPR = repsPR(
                 exerciseName: exercise.exerciseName,
                 currentSets: completedWorkingSets,
-                previousSets: previousSets
+                previousSets: previousSets,
+                unit: unit
             ) {
                 records.append(repsPR)
             }
@@ -101,7 +105,8 @@ enum PersonalRecordService {
     private static func weightPR(
         exerciseName: String,
         currentSets: [PerformedSet],
-        previousSets: [PerformedSet]
+        previousSets: [PerformedSet],
+        unit: WeightUnit
     ) -> DetectedPersonalRecord? {
         let currentMaxWeight = currentSets.compactMap(\.actualWeight).max() ?? 0
         guard currentMaxWeight > 0 else { return nil }
@@ -109,11 +114,11 @@ enum PersonalRecordService {
         let previousMaxWeight = previousSets.compactMap(\.actualWeight).max() ?? 0
         guard currentMaxWeight > previousMaxWeight else { return nil }
 
-        let previousText = previousMaxWeight > 0 ? formatWeight(previousMaxWeight) : "None"
+        let previousText = previousMaxWeight > 0 ? formatWeight(previousMaxWeight, in: unit) : "None"
         return DetectedPersonalRecord(
             exerciseName: exerciseName,
             type: .weight,
-            value: formatWeight(currentMaxWeight),
+            value: formatWeight(currentMaxWeight, in: unit),
             previousBest: previousText
         )
     }
@@ -123,7 +128,8 @@ enum PersonalRecordService {
     private static func repsPR(
         exerciseName: String,
         currentSets: [PerformedSet],
-        previousSets: [PerformedSet]
+        previousSets: [PerformedSet],
+        unit: WeightUnit
     ) -> DetectedPersonalRecord? {
         let repsWeightPairs: [(reps: Int, weight: Double)] = currentSets.compactMap { set in
             guard let reps = set.actualReps, let weight = set.actualWeight else { return nil }
@@ -150,7 +156,7 @@ enum PersonalRecordService {
         return DetectedPersonalRecord(
             exerciseName: exerciseName,
             type: .reps,
-            value: "\(current.reps) reps @ \(formatWeight(current.weight))",
+            value: "\(current.reps) reps @ \(formatWeight(current.weight, in: unit))",
             previousBest: previousText
         )
     }
@@ -158,7 +164,7 @@ enum PersonalRecordService {
     // MARK: - Formatting
 
     /// "80 kg", "67,5 kg": the user's unit and decimal separator, like every other weight.
-    private static func formatWeight(_ weight: Double) -> String {
-        WeightFormatter.compact(kg: weight)
+    private static func formatWeight(_ weight: Double, in unit: WeightUnit) -> String {
+        WeightFormatter.compact(kg: weight, in: unit)
     }
 }

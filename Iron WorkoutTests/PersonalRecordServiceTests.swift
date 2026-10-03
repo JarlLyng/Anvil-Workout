@@ -54,7 +54,7 @@ struct PersonalRecordServiceTests {
             Self.exercise(name: "Bench Press", id: id, sets: [Self.set(reps: 5, weight: 80)])
         ])
 
-        let prs = PersonalRecordService.detectPersonalRecords(in: current, history: [])
+        let prs = PersonalRecordService.detectPersonalRecords(in: current, history: [], unit: .kg)
 
         let weightPRs = prs.filter { $0.type == .weight }
         #expect(weightPRs.count == 1)
@@ -75,7 +75,7 @@ struct PersonalRecordServiceTests {
             ])
         ]
 
-        let prs = PersonalRecordService.detectPersonalRecords(in: current, history: history)
+        let prs = PersonalRecordService.detectPersonalRecords(in: current, history: history, unit: .kg)
 
         let weightPRs = prs.filter { $0.type == .weight }
         #expect(weightPRs.count == 1)
@@ -95,7 +95,7 @@ struct PersonalRecordServiceTests {
             ])
         ]
 
-        let prs = PersonalRecordService.detectPersonalRecords(in: current, history: history)
+        let prs = PersonalRecordService.detectPersonalRecords(in: current, history: history, unit: .kg)
         let weightPRs = prs.filter { $0.type == .weight }
         #expect(weightPRs.isEmpty)
     }
@@ -114,7 +114,7 @@ struct PersonalRecordServiceTests {
             ])
         ]
 
-        let prs = PersonalRecordService.detectPersonalRecords(in: current, history: history)
+        let prs = PersonalRecordService.detectPersonalRecords(in: current, history: history, unit: .kg)
         let repsPRs = prs.filter { $0.type == .reps }
         #expect(repsPRs.count == 1)
         #expect(repsPRs.first?.value == "8 reps @ 50 kg")
@@ -133,7 +133,7 @@ struct PersonalRecordServiceTests {
             ])
         ]
 
-        let prs = PersonalRecordService.detectPersonalRecords(in: current, history: history)
+        let prs = PersonalRecordService.detectPersonalRecords(in: current, history: history, unit: .kg)
         let repsPRs = prs.filter { $0.type == .reps }
         #expect(repsPRs.isEmpty)
     }
@@ -153,7 +153,7 @@ struct PersonalRecordServiceTests {
             ])
         ]
 
-        let prs = PersonalRecordService.detectPersonalRecords(in: current, history: history)
+        let prs = PersonalRecordService.detectPersonalRecords(in: current, history: history, unit: .kg)
         let repsPRs = prs.filter { $0.type == .reps }
         #expect(repsPRs.isEmpty)
     }
@@ -166,7 +166,7 @@ struct PersonalRecordServiceTests {
         let current = Self.session(exercises: [
             Self.exercise(name: "Curl", id: id, sets: [Self.set(reps: 10, weight: 15, completed: false)])
         ])
-        let prs = PersonalRecordService.detectPersonalRecords(in: current, history: [])
+        let prs = PersonalRecordService.detectPersonalRecords(in: current, history: [], unit: .kg)
         #expect(prs.isEmpty)
     }
 
@@ -178,7 +178,7 @@ struct PersonalRecordServiceTests {
                 Self.set(reps: 5, weight: 100, type: .warmup)
             ])
         ])
-        let prs = PersonalRecordService.detectPersonalRecords(in: current, history: [])
+        let prs = PersonalRecordService.detectPersonalRecords(in: current, history: [], unit: .kg)
         #expect(prs.isEmpty)
     }
 
@@ -192,7 +192,7 @@ struct PersonalRecordServiceTests {
 
         // Pass same session as both current and in history. Should still detect weight PR
         // because currentSession is filtered by id.
-        let prs = PersonalRecordService.detectPersonalRecords(in: current, history: [current])
+        let prs = PersonalRecordService.detectPersonalRecords(in: current, history: [current], unit: .kg)
         let weightPRs = prs.filter { $0.type == .weight }
         #expect(weightPRs.count == 1)
         #expect(weightPRs.first?.previousBest == "None")
@@ -214,7 +214,7 @@ struct PersonalRecordServiceTests {
             ])
         ]
 
-        let prs = PersonalRecordService.detectPersonalRecords(in: current, history: history)
+        let prs = PersonalRecordService.detectPersonalRecords(in: current, history: history, unit: .kg)
         let weightPRs = prs.filter { $0.type == .weight }
         #expect(weightPRs.count == 1)
         #expect(weightPRs.first?.previousBest == "100 kg")

@@ -48,6 +48,14 @@ enum WeightFormatter {
         format(kg: kg, fractionDigits: fractionDigits(for: display(kg, in: unit)), in: unit)
     }
 
+    /// A suggested weight as it would be loaded on a bar: in pounds, the nearest 5 lb, so a
+    /// 40 kg start reads 90 lb rather than 88.2 lb. Kilograms come back as they are. Takes
+    /// and returns kilograms, the storage unit.
+    static func plateFriendly(kg: Double, in unit: WeightUnit = current) -> Double {
+        guard unit == .lbs else { return kg }
+        return toKg((display(kg, in: .lbs) / 5).rounded() * 5, from: .lbs)
+    }
+
     /// Volume, "11,899 kg": whole units, since a decimal on a total of thousands is noise.
     static func volume(kg: Double, in unit: WeightUnit = current) -> String {
         format(kg: kg, fractionDigits: 0, in: unit)

@@ -24,6 +24,7 @@ struct DashboardView: View {
     @State private var showPlanEditor = false
     @State private var activeSession: WorkoutSession?
     @State private var showProgramLibrary = false
+    @State private var showImporter = false
     @State private var templateToCreate: WorkoutTemplate?
     @State private var errorMessage: String?
 
@@ -117,17 +118,10 @@ struct DashboardView: View {
         return completedSessions.filter { $0.startedAt >= lastWeekStart && $0.startedAt < thisWeekStart }.count
     }
 
-    /// Fallback recommendation when the user has no programs planned for today.
-    /// Rotates through templates based on the last completed session.
+    /// Fallback recommendation when the user has no programs planned for today: the
+    /// program after the last one trained, in the order programs were added.
     private var fallbackRecommendation: WorkoutTemplate? {
-        guard let lastSession = sessions.first(where: { $0.completedSetCount > 0 }) else {
-            return templates.first
-        }
-        if let idx = templates.firstIndex(where: { $0.name == lastSession.templateName }) {
-            let nextIdx = (idx + 1) % templates.count
-            return templates[nextIdx]
-        }
-        return templates.first
+        ProgramRotation.next(after: completedSessions.first?.templateName, in: templates)
     }
 
     var body: some View {
@@ -165,6 +159,7 @@ struct DashboardView: View {
             .sheet(isPresented: $showProgramLibrary) {
                 ProgramLibraryView { _ in showProgramLibrary = false }
             }
+            .workoutImport(isPresented: $showImporter)
             .sheet(item: $templateToCreate) { template in
                 NavigationStack {
                     CreateEditTemplateView(template: template)
@@ -202,7 +197,7 @@ struct DashboardView: View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
             if templates.isEmpty {
                 DashboardSectionLabel(title: "Get started")
-                StartHereCard(onLibrary: { showProgramLibrary = true }, onCreate: createTemplate)
+                StartHereCard(onLibrary: { showProgramLibrary = true }, onCreate: createTemplate, onImport: { showImporter = true })
             } else if let first = planned.first {
                 DashboardSectionLabel(title: planned.count > 1 ? "Today" : "Up next")
                 upNextCard(first, context: contextLine(for: first, planned: true))
@@ -241,14 +236,16 @@ struct DashboardView: View {
         .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
     }
 
-    /// "Planned for today · last done 3 days ago", or "Next in rotation" for the fallback.
+    /// "Planned for today · last done 3 days ago"; for the fallback, when it was last done,
+    /// "Not done yet", or "Your first workout" before any.
     private func contextLine(for template: WorkoutTemplate, planned: Bool) -> String {
         let last = completedSessions.first { $0.templateName == template.name }
             .map { "last done \(daysAgoText($0.startedAt))" }
         if planned {
             return ["Planned for today", last].compactMap { $0 }.joined(separator: " \u{00B7} ")
         }
-        return last.map { $0.prefix(1).uppercased() + $0.dropFirst() } ?? "Not done yet"
+        return last.map { $0.prefix(1).uppercased() + $0.dropFirst() }
+            ?? (completedSessions.isEmpty ? "Your first workout" : "Not done yet")
     }
 
     /// "today", "yesterday", "3 days ago", then a date.

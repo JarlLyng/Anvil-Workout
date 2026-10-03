@@ -89,7 +89,7 @@ struct ProgramLibraryServiceTests {
         let context = try makeInMemoryContextWithLibrary()
         let program = ProgramLibraryService.programs.first { $0.id == "starting-strength" }!
 
-        let templates = try ProgramLibraryService.importProgram(program, modelContext: context)
+        let templates = try ProgramLibraryService.importProgram(program, unit: .kg, modelContext: context)
 
         #expect(templates.count == program.workouts.count)
         #expect(templates[0].name == "Starting Strength — Workout A")
@@ -102,7 +102,7 @@ struct ProgramLibraryServiceTests {
         let context = try makeInMemoryContextWithLibrary()
         let program = ProgramLibraryService.programs.first { $0.id == "stronglifts-5x5" }!
 
-        let templates = try ProgramLibraryService.importProgram(program, modelContext: context)
+        let templates = try ProgramLibraryService.importProgram(program, unit: .kg, modelContext: context)
 
         for template in templates {
             #expect(template.note == program.summary)
@@ -116,7 +116,7 @@ struct ProgramLibraryServiceTests {
         let program = ProgramLibraryService.programs.first { $0.id == "stronglifts-5x5" }!
         let workoutA = program.workouts[0]
 
-        let templates = try ProgramLibraryService.importProgram(program, modelContext: context)
+        let templates = try ProgramLibraryService.importProgram(program, unit: .kg, modelContext: context)
         let workoutATemplate = templates[0]
         let sorted = workoutATemplate.exercises.sorted { $0.sortOrder < $1.sortOrder }
 
@@ -132,13 +132,37 @@ struct ProgramLibraryServiceTests {
         }
     }
 
+    @Test("for someone lifting in pounds, suggested weights become the nearest 5 lb")
+    @MainActor
+    func importedWeightsRoundToPlatesInPounds() throws {
+        let context = try makeInMemoryContextWithLibrary()
+        let program = ProgramLibraryService.programs.first { $0.id == "stronglifts-5x5" }!
+
+        let templates = try ProgramLibraryService.importProgram(program, unit: .lbs, modelContext: context)
+        let weights = templates.flatMap(\.exercises).compactMap(\.targetWeight)
+
+        #expect(!weights.isEmpty)
+        for kg in weights {
+            let lb = WeightFormatter.display(kg, in: .lbs)
+            #expect(abs(lb - (lb / 5).rounded() * 5) < 0.001)
+        }
+    }
+
+    @Test("plate-friendly weights", arguments: [
+        (40.0, WeightUnit.lbs, 90.0), (20.0, .lbs, 45.0), (60.0, .lbs, 130.0), (42.5, .kg, 42.5),
+    ])
+    func plateFriendly(kg: Double, unit: WeightUnit, shown: Double) {
+        let result = WeightFormatter.display(WeightFormatter.plateFriendly(kg: kg, in: unit), in: unit)
+        #expect(abs(result - shown) < 0.001)
+    }
+
     @Test("imported template exercises reference stable exerciseID from library")
     @MainActor
     func importedExercisesUseStableID() throws {
         let context = try makeInMemoryContextWithLibrary()
         let program = ProgramLibraryService.programs.first { $0.id == "starting-strength" }!
 
-        let templates = try ProgramLibraryService.importProgram(program, modelContext: context)
+        let templates = try ProgramLibraryService.importProgram(program, unit: .kg, modelContext: context)
         let allExercises = try context.fetch(FetchDescriptor<Exercise>())
         let idByName = Dictionary(uniqueKeysWithValues: allExercises.map { ($0.name, $0.id) })
 
@@ -158,7 +182,7 @@ struct ProgramLibraryServiceTests {
         let context = try makeInMemoryContextWithLibrary()
         let program = ProgramLibraryService.programs.first { $0.id == "starting-strength" }!
 
-        let templates = try ProgramLibraryService.importProgram(program, modelContext: context)
+        let templates = try ProgramLibraryService.importProgram(program, unit: .kg, modelContext: context)
 
         for template in templates {
             #expect(template.sourceProgramID == "starting-strength")
@@ -181,8 +205,8 @@ struct ProgramLibraryServiceTests {
         let context = try makeInMemoryContextWithLibrary()
         let program = ProgramLibraryService.programs.first { $0.id == "greyskull-lp" }!
 
-        let firstImport = try ProgramLibraryService.importProgram(program, modelContext: context)
-        let secondImport = try ProgramLibraryService.importProgram(program, modelContext: context)
+        let firstImport = try ProgramLibraryService.importProgram(program, unit: .kg, modelContext: context)
+        let secondImport = try ProgramLibraryService.importProgram(program, unit: .kg, modelContext: context)
 
         // Two independent sets of templates — different ids
         let firstIDs = Set(firstImport.map(\.id))

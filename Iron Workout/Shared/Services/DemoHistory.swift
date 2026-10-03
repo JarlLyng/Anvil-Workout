@@ -22,7 +22,7 @@ enum DemoHistory {
         guard let entry = ProgramLibraryService.program(withID: "stronglifts-5x5") else { return }
         let templates = (try? modelContext.fetch(FetchDescriptor<WorkoutTemplate>())) ?? []
         if templates.isEmpty {
-            _ = try? ProgramLibraryService.importProgram(entry, modelContext: modelContext)
+            _ = try? ProgramLibraryService.importProgram(entry, unit: .kg, modelContext: modelContext)
         }
         let exercises = (try? modelContext.fetch(FetchDescriptor<Exercise>())) ?? []
         let byName = Dictionary(exercises.map { ($0.name, $0) }, uniquingKeysWith: { first, _ in first })

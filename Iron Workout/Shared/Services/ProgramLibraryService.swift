@@ -53,10 +53,14 @@ enum ProgramLibraryService {
     /// in production because the library and programs are curated together; the fallback
     /// keeps the import partially useful if the library drifts ahead of our curated set.
     ///
+    /// Suggested weights are kilograms; for someone lifting in `unit` pounds they are rounded
+    /// to the nearest 5 lb, so the first workout asks for weights a bar can be loaded to.
+    ///
     /// - Returns: The newly created templates, in the order they were created.
     @discardableResult
     static func importProgram(
         _ entry: ProgramLibraryEntry,
+        unit: WeightUnit,
         modelContext: ModelContext
     ) throws -> [WorkoutTemplate] {
         let allExercises = try modelContext.fetch(FetchDescriptor<Exercise>())
@@ -89,7 +93,7 @@ enum ProgramLibraryService {
                     sortOrder: sortOrder,
                     targetSets: programExercise.sets,
                     targetReps: programExercise.reps,
-                    targetWeight: programExercise.suggestedWeight,
+                    targetWeight: programExercise.suggestedWeight.map { WeightFormatter.plateFriendly(kg: $0, in: unit) },
                     restSeconds: programExercise.restSeconds,
                     note: programExercise.notes ?? ""
                 )

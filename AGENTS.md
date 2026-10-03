@@ -54,7 +54,7 @@ The repo is public, so anything written here is written for that audience.
 **Programs**
 - Program builder: exercises, target sets, reps, weight, rest seconds, supersets, per-exercise notes
 - Tags for organising and filtering programs
-- Bundled library of classic programs (StrongLifts 5×5, Starting Strength, Greyskull LP, GZCLP, Upper/Lower and others), importable and then fully editable
+- Bundled library of classic programs (StrongLifts 5×5, Starting Strength, Greyskull LP, GZCLP, Upper/Lower and others), importable and then fully editable. For someone lifting in pounds, suggested weights import rounded to the nearest 5 lb
 
 **Running a workout**
 - Set tracking with a rest timer and haptics on phone and watch
@@ -75,7 +75,7 @@ The repo is public, so anything written here is written for that audience.
 
 **Data**
 - CSV export of workout history
-- CSV import from Strong and Hevy, with a preview that lists what cannot be imported before anything is saved
+- CSV import from Strong and Hevy, with a preview that lists what cannot be imported before anything is saved. Offered in Settings, in onboarding and on the home screen before the first program
 - Apple Health: writes completed workouts, reads calories and heart rate when authorised
 
 **Other surfaces**
