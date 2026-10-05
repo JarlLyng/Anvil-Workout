@@ -100,7 +100,7 @@ private struct WorkoutImportFlow: ViewModifier {
         if let exclusions = importExclusions(parsed.skipped) {
             lines.append(exclusions)
         }
-        lines.append("Imported workouts are added to your history. New exercise names become custom exercises.")
+        lines.append("Imported workouts are added to your history. Exercises are matched to Anvil's own where they are the same lift; the rest become custom exercises.")
         return lines.joined(separator: "\n\n")
     }
 

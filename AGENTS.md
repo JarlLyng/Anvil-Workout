@@ -76,7 +76,7 @@ The repo is public, so anything written here is written for that audience.
 
 **Data**
 - CSV export of workout history
-- CSV import from Strong and Hevy, with a preview that lists what cannot be imported before anything is saved. Offered in Settings, in onboarding and on the home screen before the first program
+- CSV import from Strong and Hevy, with a preview that lists what cannot be imported before anything is saved. Their exercise names ("Bench Press (Barbell)") are matched to the library when the equipment fits; the rest become custom exercises in their muscle group. Offered in Settings, in onboarding and on the home screen before the first program
 - Apple Health: writes completed workouts, reads calories and heart rate when authorised
 
 **Other surfaces**

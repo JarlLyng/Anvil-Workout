@@ -55,6 +55,10 @@ for release; it reaches the App Store after review.
 - The streak counts weeks in a row with a workout, on the home screen and in both widgets. A day
   streak sat at 0 or 1 for anyone training three days a week, and read as a failure on every rest
   day. While a week has no workout yet, the streak still runs to the week before.
+- Importing from Strong or Hevy links their exercise names to Anvil's own, so "Bench Press
+  (Barbell)" joins the bench press your programs use instead of becoming a separate exercise.
+  The equipment has to match, so a dumbbell bench press stays its own exercise. Anything with no
+  match is filed under its muscle group rather than Full Body.
 - The first launch after installing the app no longer crashes. The home-screen widget could create
   the app's database at the same moment the app opened it.
 

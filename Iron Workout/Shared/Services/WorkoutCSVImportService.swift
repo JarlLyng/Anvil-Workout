@@ -3,9 +3,10 @@
 //  Anvil Workout
 //
 //  Persists a ParsedImport (from WorkoutCSVImporter) into SwiftData as historical
-//  WorkoutSessions. Exercise names are matched case-insensitively against the
-//  existing library so PRs and stats line up; unmatched names become custom
-//  exercises so the history is still complete and editable.
+//  WorkoutSessions. Exercise names are matched against the existing exercises, then
+//  through ExerciseNameMatcher onto the library ("Bench Press (Barbell)" is the
+//  library's Bench Press), so PRs and stats line up; anything else becomes a custom
+//  exercise in its muscle group, so the history is still complete and editable.
 //
 
 import Foundation
@@ -21,8 +22,8 @@ enum WorkoutCSVImportService {
         let createdExercises: Int
     }
 
-    /// Inserts the parsed sessions. Matches exercises by name (case-insensitive), creating
-    /// custom `Exercise` records for unknown names. Saves once at the end.
+    /// Inserts the parsed sessions. Matches exercises by name, then onto the library, and
+    /// creates custom `Exercise` records for the rest. Saves once at the end.
     @discardableResult
     static func save(_ parsed: ParsedImport, modelContext: ModelContext) throws -> Summary {
         let existing = (try? modelContext.fetch(FetchDescriptor<Exercise>())) ?? []
@@ -31,6 +32,9 @@ enum WorkoutCSVImportService {
         for exercise in existing {
             let key = exercise.name.lowercased()
             if libraryByName[key] == nil { libraryByName[key] = exercise }
+        }
+        let library = existing.filter(\.isBuiltin).map {
+            ExerciseNameMatcher.Entry(name: $0.name, equipment: $0.equipmentType, muscleGroup: $0.muscleGroup)
         }
 
         var createdExercises = 0
@@ -56,7 +60,7 @@ enum WorkoutCSVImportService {
             var supersetIDByKey: [String: UUID] = [:]
 
             for (exerciseOrder, parsedExercise) in parsedSession.exercises.enumerated() {
-                let exercise = resolveExercise(named: parsedExercise.name, libraryByName: &libraryByName, modelContext: modelContext, createdCount: &createdExercises)
+                let exercise = resolveExercise(named: parsedExercise.name, library: library, libraryByName: &libraryByName, modelContext: modelContext, createdCount: &createdExercises)
 
                 let supersetID = parsedExercise.supersetKey.map { key -> UUID in
                     if let id = supersetIDByKey[key] { return id }
@@ -116,9 +120,12 @@ enum WorkoutCSVImportService {
         )
     }
 
-    /// Finds an existing exercise by case-insensitive name or creates a custom one.
+    /// An existing exercise with the same name, else the library exercise the name means,
+    /// else a new custom exercise in the muscle group its movement belongs to. Each name is
+    /// resolved once; later rows with it reuse the answer.
     private static func resolveExercise(
         named name: String,
+        library: [ExerciseNameMatcher.Entry],
         libraryByName: inout [String: Exercise],
         modelContext: ModelContext,
         createdCount: inout Int
@@ -126,7 +133,19 @@ enum WorkoutCSVImportService {
         let key = name.lowercased()
         if let match = libraryByName[key] { return match }
 
-        let created = Exercise(name: name, muscleGroup: .fullBody, isBuiltin: false)
+        let muscleGroup: MuscleGroup
+        switch ExerciseNameMatcher.resolve(name, library: library) {
+        case .library(let libraryName):
+            if let match = libraryByName[libraryName.lowercased()] {
+                libraryByName[key] = match
+                return match
+            }
+            muscleGroup = .fullBody
+        case .custom(let group):
+            muscleGroup = group
+        }
+
+        let created = Exercise(name: name, muscleGroup: muscleGroup, isBuiltin: false)
         modelContext.insert(created)
         libraryByName[key] = created
         createdCount += 1
