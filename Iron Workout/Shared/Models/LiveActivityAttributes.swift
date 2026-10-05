@@ -11,7 +11,9 @@
 import ActivityKit
 import Foundation
 
-struct IronWorkoutWidgetAttributes: ActivityAttributes {
+// Plain data that ActivityKit uses off the main actor, so nonisolated even where the app
+// target makes types main-actor isolated by default (#99).
+nonisolated struct IronWorkoutWidgetAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         var currentExercise: String
         var completedSets: Int

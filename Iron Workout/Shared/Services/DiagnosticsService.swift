@@ -18,7 +18,8 @@ import Sentry
 enum DiagnosticsService {
 
     /// UserDefaults key behind the Settings switch.
-    static let preferenceKey = "crashReportingEnabled"
+    /// A constant, read from the nonisolated `isEnabled(in:)` as well as the main actor.
+    nonisolated static let preferenceKey = "crashReportingEnabled"
 
     /// Whether the user allows crash reporting. Unset means on: the switch is an opt-out,
     /// so existing installs keep reporting until someone turns it off.

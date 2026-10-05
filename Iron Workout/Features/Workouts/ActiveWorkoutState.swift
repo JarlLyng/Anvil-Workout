@@ -222,7 +222,8 @@ final class ActiveWorkoutState {
         restEndsAt = now.addingTimeInterval(TimeInterval(seconds))
         restSecondsRemaining = seconds
         restTimer?.invalidate()
-        restTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+        // Weak in the timer's closure too, so it never holds the state while it ticks (#99).
+        restTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
                 self?.refreshRest()
             }

@@ -22,7 +22,7 @@ enum TrainingSummary {
     static func volumeKg(of session: WorkoutSession) -> Double {
         session.exercises
             .flatMap(\.performedSets)
-            .filter(isWorkSet)
+            .filter { isWorkSet($0) }
             .reduce(0) { total, set in
                 guard let reps = set.actualReps, let weight = set.actualWeight else { return total }
                 return total + Double(reps) * weight
@@ -195,7 +195,7 @@ enum TrainingSummary {
                 let best = session.exercises
                     .filter { $0.matches(exercise) }
                     .flatMap(\.performedSets)
-                    .filter(isWorkSet)
+                    .filter { isWorkSet($0) }
                     .compactMap { set -> Double? in
                         guard let reps = set.actualReps, let weight = set.actualWeight else { return nil }
                         return estimatedOneRepMax(reps: reps, weightKg: weight)
