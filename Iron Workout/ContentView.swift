@@ -51,8 +51,22 @@ struct ContentView: View {
     @State private var staleSession: WorkoutSession?
     @State private var staleSessionError: String?
 
-    /// iPad sidebar selection. Ignored on iPhone (TabView manages its own selection).
-    @State private var selectedDestination: RootDestination? = .home
+    /// iPad sidebar selection.
+    @State private var selectedDestination: RootDestination? = Self.initialDestination
+    /// iPhone tab selection.
+    @State private var selectedTab: RootDestination = Self.initialDestination
+
+    /// Home, unless a Debug screenshot capture asks for another tab.
+    private static var initialDestination: RootDestination {
+        #if DEBUG
+        switch ScreenshotMode.screen {
+        case .stats: return .stats
+        case .library: return .workouts
+        default: break
+        }
+        #endif
+        return .home
+    }
 
     var body: some View {
         Group {
@@ -88,12 +102,13 @@ struct ContentView: View {
     // MARK: - Layouts
 
     private var iPhoneLayout: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             ForEach(RootDestination.allCases) { destination in
                 destinationView(destination)
                     .tabItem {
                         Label(destination.title, systemImage: destination.systemImage)
                     }
+                    .tag(destination)
             }
         }
     }

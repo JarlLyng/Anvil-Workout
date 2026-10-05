@@ -204,6 +204,9 @@ struct ActiveWorkoutView: View {
     // MARK: - HealthKit
 
     private func startHealthKitIfAvailable() {
+        #if DEBUG
+        if ScreenshotMode.isOn { return }   // no permission prompt in a capture
+        #endif
         guard !healthKitStarted else { return }
         healthKitStarted = true
         Task {
@@ -217,6 +220,9 @@ struct ActiveWorkoutView: View {
     // MARK: - Live Activity
 
     private func startLiveActivity(state: ActiveWorkoutState) {
+        #if DEBUG
+        if ScreenshotMode.isOn { return }
+        #endif
         var initial = state.makeLiveActivityState()
         if state.currentBlock == nil { initial.currentExercise = session.templateName }
         LiveActivityService.startLiveActivity(

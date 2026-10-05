@@ -18,6 +18,9 @@ struct Iron_WorkoutApp: App {
     let sharedModelContainer: ModelContainer
 
     init() {
+        #if DEBUG
+        ScreenshotMode.prepare()
+        #endif
         // Sentry configuration, and the user's switch to turn it off, live in
         // DiagnosticsService so what the app sends is defined in one place.
         DiagnosticsService.startIfAllowed()

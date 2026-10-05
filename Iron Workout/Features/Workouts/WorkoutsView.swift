@@ -218,6 +218,9 @@ struct WorkoutsView: View {
                 }
             }
             .animation(.easeInOut, value: toastMessage)
+            #if DEBUG
+            .task { if ScreenshotMode.screen == .library { showProgramLibrary = true } }
+            #endif
         }
     }
 

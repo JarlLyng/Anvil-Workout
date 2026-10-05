@@ -85,7 +85,8 @@ Anvil Workout/
     │   ├── WatchStatsBroadcaster.swift    # Build WatchStatsSnapshot from SwiftData for the watch widget
     │   ├── LiveActivityService.swift      # Start/update/end Live Activity
     │   ├── DataMigrationService.swift     # Runtime data migrations (tracked via UserDefaults flags)
-    │   ├── DemoHistory.swift              # Debug only: -AnvilDemoHistory seeds 12 weeks of training
+    │   ├── DemoHistory.swift              # Debug only: -AnvilDemoHistory seeds 24 weeks of training
+    │   ├── ScreenshotMode.swift           # Debug only: -screenshots -screen <name> for App Store captures (see appstore/README.md)
     │   ├── PersistenceLogger.swift        # Structured logging for SwiftData save/fetch failures
     │   └── SentryConfig.swift             # Reads DSN from Info.plist
     │

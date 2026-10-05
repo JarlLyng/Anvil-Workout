@@ -23,7 +23,15 @@ struct OnboardingView: View {
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @AppStorage(WeightFormatter.appStorageKey) private var weightUnit: String = WeightUnit.kg.rawValue
 
-    @State private var step: Step = .unit
+    @State private var step: Step = Self.initialStep
+
+    /// The first step, or the choice of how to start for a Debug screenshot capture.
+    private static var initialStep: Step {
+        #if DEBUG
+        if ScreenshotMode.screen == .onboarding { return .start }
+        #endif
+        return .unit
+    }
     @State private var healthRequestInProgress = false
     @State private var showLibrary = false
     @State private var importedProgram = false

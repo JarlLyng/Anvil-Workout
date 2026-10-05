@@ -1,0 +1,136 @@
+{
+  "app": "Anvil Workout",
+  "mode": "dark",
+  "accent": "#D0FF00",
+  "out_dir": "1.10.0",
+  "shots": [
+    {
+      "raw": "raw/en/iphone-workout.png",
+      "slot": "iphone-6.9",
+      "caption": "Log every set\n*in one tap*",
+      "out": "en/iphone-1.png",
+      "caption_pos": "top",
+      "bleed": true
+    },
+    {
+      "raw": "raw/en/iphone-home.png",
+      "slot": "iphone-6.9",
+      "caption": "[Pay once.]\nNo subscription, no account",
+      "out": "en/iphone-2.png",
+      "caption_pos": "bottom",
+      "bleed": false
+    },
+    {
+      "raw": "raw/en/iphone-stats.png",
+      "slot": "iphone-6.9",
+      "caption": "See your lifts\n*week by week*",
+      "out": "en/iphone-3.png",
+      "caption_pos": "top",
+      "bleed": true
+    },
+    {
+      "raw": "raw/en/iphone-completion.png",
+      "slot": "iphone-6.9",
+      "caption": "Know if you beat\n*last time*",
+      "out": "en/iphone-4.png",
+      "caption_pos": "bottom",
+      "bleed": false
+    },
+    {
+      "raw": "raw/en/iphone-history.png",
+      "slot": "iphone-6.9",
+      "caption": "Your log stays\n*on your phone*",
+      "out": "en/iphone-5.png",
+      "caption_pos": "top",
+      "bleed": true
+    },
+    {
+      "raw": "raw/en/ipad-workout.png",
+      "slot": "ipad-13",
+      "caption": "Log every set\n*in one tap*",
+      "out": "en/ipad-1.png",
+      "caption_pos": "top",
+      "bleed": true
+    },
+    {
+      "raw": "raw/en/ipad-stats.png",
+      "slot": "ipad-13",
+      "caption": "See your lifts\n*week by week*",
+      "out": "en/ipad-2.png",
+      "caption_pos": "bottom",
+      "bleed": false
+    },
+    {
+      "raw": "raw/en/ipad-completion.png",
+      "slot": "ipad-13",
+      "caption": "Know if you beat\n*last time*",
+      "out": "en/ipad-3.png",
+      "caption_pos": "top",
+      "bleed": true
+    },
+    {
+      "raw": "raw/da/iphone-workout.png",
+      "slot": "iphone-6.9",
+      "caption": "Log hvert sæt\n*med ét tryk*",
+      "out": "da/iphone-1.png",
+      "caption_pos": "top",
+      "bleed": true
+    },
+    {
+      "raw": "raw/da/iphone-home.png",
+      "slot": "iphone-6.9",
+      "caption": "[Betal én gang.]\nSå er appen din.\nIngen konto.",
+      "out": "da/iphone-2.png",
+      "caption_pos": "bottom",
+      "bleed": false
+    },
+    {
+      "raw": "raw/da/iphone-stats.png",
+      "slot": "iphone-6.9",
+      "caption": "Se dine løft\n*uge for uge*",
+      "out": "da/iphone-3.png",
+      "caption_pos": "top",
+      "bleed": true
+    },
+    {
+      "raw": "raw/da/iphone-completion.png",
+      "slot": "iphone-6.9",
+      "caption": "Se om du slog\n*sidste gang*",
+      "out": "da/iphone-4.png",
+      "caption_pos": "bottom",
+      "bleed": false
+    },
+    {
+      "raw": "raw/da/iphone-history.png",
+      "slot": "iphone-6.9",
+      "caption": "Din log bliver\n*på din telefon*",
+      "out": "da/iphone-5.png",
+      "caption_pos": "top",
+      "bleed": true
+    },
+    {
+      "raw": "raw/da/ipad-workout.png",
+      "slot": "ipad-13",
+      "caption": "Log hvert sæt\n*med ét tryk*",
+      "out": "da/ipad-1.png",
+      "caption_pos": "top",
+      "bleed": true
+    },
+    {
+      "raw": "raw/da/ipad-stats.png",
+      "slot": "ipad-13",
+      "caption": "Se dine løft\n*uge for uge*",
+      "out": "da/ipad-2.png",
+      "caption_pos": "bottom",
+      "bleed": false
+    },
+    {
+      "raw": "raw/da/ipad-completion.png",
+      "slot": "ipad-13",
+      "caption": "Se om du slog\n*sidste gang*",
+      "out": "da/ipad-3.png",
+      "caption_pos": "top",
+      "bleed": true
+    }
+  ]
+}

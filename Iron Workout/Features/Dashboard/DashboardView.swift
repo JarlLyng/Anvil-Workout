@@ -26,9 +26,11 @@ struct DashboardView: View {
     @State private var activeSession: WorkoutSession?
     @State private var showProgramLibrary = false
     @State private var showImporter = false
+    @State private var path = NavigationPath()
     #if DEBUG
-    /// `-AnvilDemoCompletion` opens the completion screen for the latest full workout, to
-    /// check and screenshot it against the demo history without training first.
+    /// `-AnvilDemoCompletion` (or `-screenshots -screen completion`) opens the completion
+    /// screen for the latest full workout, to check and screenshot it against the demo
+    /// history without training first.
     @State private var demoCompletion: WorkoutSession?
     #endif
     @State private var templateToCreate: WorkoutTemplate?
@@ -131,7 +133,7 @@ struct DashboardView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             ScrollView {
                 VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxl) {
                     Text(Date.now.formatted(.dateTime.weekday(.wide).day().month(.wide)))
@@ -175,10 +177,7 @@ struct DashboardView: View {
             .fullScreenCover(item: $demoCompletion) { session in
                 WorkoutCompletionView(session: session) { demoCompletion = nil }
             }
-            .task {
-                guard ProcessInfo.processInfo.arguments.contains("-AnvilDemoCompletion") else { return }
-                demoCompletion = completedSessions.first { TrainingSummary.workSetCount(of: $0) > 5 }
-            }
+            .task { openScreenshotScreen() }
             #endif
             .sheet(item: $templateToCreate) { template in
                 NavigationStack {
@@ -349,6 +348,37 @@ struct DashboardView: View {
         if cal.isDateInYesterday(date) { return "Yesterday" }
         return date.formatted(.dateTime.day().month(.abbreviated))
     }
+
+    #if DEBUG
+    /// The Home-side screens of a screenshot capture: the completion screen, History, or a
+    /// workout under way, two sets into its first exercise.
+    private func openScreenshotScreen() {
+        let screen = ScreenshotMode.screen
+        if ProcessInfo.processInfo.arguments.contains("-AnvilDemoCompletion") || screen == .completion {
+            // The latest full workout that set a record, so the capture shows the records card.
+            let completed = completedSessions
+            let withRecords = completed.indices.first { index in
+                TrainingSummary.workSetCount(of: completed[index]) > 5
+                    && PersonalRecordService.detectPersonalRecords(in: completed[index], history: Array(completed[(index + 1)...]))
+                        .contains { !$0.isFirstTime }
+            }
+            demoCompletion = withRecords.map { completed[$0] } ?? completed.first { TrainingSummary.workSetCount(of: $0) > 5 }
+        } else if screen == .history {
+            path.append(DashboardDestination.history)
+        } else if screen == .workout, let template = todaysPlannedPrograms.first ?? fallbackRecommendation,
+                  let session = try? WorkoutSessionService.createSession(from: template, modelContext: modelContext) {
+            let first = session.exercises.sorted { $0.sortOrder < $1.sortOrder }.first
+            for set in (first?.performedSets.sorted { $0.setIndex < $1.setIndex } ?? []).prefix(2) {
+                set.actualReps = set.targetReps
+                set.actualWeight = WorkoutSessionService.pendingWeight(for: set)
+                set.isCompleted = true
+                set.completedAt = .now
+            }
+            session.completedSetCount = 2
+            activeSession = session
+        }
+    }
+    #endif
 
     private func createTemplate() {
         let newTemplate = WorkoutTemplate(name: "New Program")
