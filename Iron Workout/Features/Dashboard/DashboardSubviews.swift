@@ -178,7 +178,7 @@ struct WeekCard: View {
                 NumberRow {
                     BigNumber(value: "\(week.workouts)", label: week.workouts == 1 ? "workout" : "workouts")
                     BigNumber(value: volumeText, label: "volume")
-                    BigNumber(value: "\(streak)", label: "day streak")
+                    BigNumber(value: "\(streak)", label: streak == 1 ? "week in a row" : "weeks in a row")
                 }
 
                 Text("Last week: \(lastWeekWorkouts) \(lastWeekWorkouts == 1 ? "workout" : "workouts")")

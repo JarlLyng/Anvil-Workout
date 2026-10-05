@@ -89,22 +89,15 @@ struct Provider: AppIntentTimelineProvider {
         let weekStart = calendar.dateInterval(of: .weekOfYear, for: .now)?.start ?? .now
         let thisWeek = completed.filter { $0.startedAt >= weekStart }.count
 
-        // Streak
+        // Streak: weeks in a row with a workout, as the app's StreakCalculator.weekStreak
+        // counts it (the widget target does not share that file). While this week has none
+        // yet, it runs to last week.
+        let trainedWeeks = Set(completed.compactMap { calendar.dateInterval(of: .weekOfYear, for: $0.startedAt)?.start })
         var streak = 0
-        var checkDate = Date.now
-        let hasTodaySession = completed.contains { calendar.isDate($0.startedAt, inSameDayAs: checkDate) }
-        if !hasTodaySession {
-            checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate
-        }
-        while true {
-            let dayStart = calendar.startOfDay(for: checkDate)
-            let hasSession = completed.contains { calendar.isDate($0.startedAt, inSameDayAs: dayStart) }
-            if hasSession {
-                streak += 1
-                checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate
-            } else {
-                break
-            }
+        var week = trainedWeeks.contains(weekStart) ? weekStart : calendar.date(byAdding: .weekOfYear, value: -1, to: weekStart)
+        while let current = week, trainedWeeks.contains(current) {
+            streak += 1
+            week = calendar.date(byAdding: .weekOfYear, value: -1, to: current)
         }
 
         // Latest workout
@@ -163,7 +156,7 @@ struct IronWorkoutWidgetEntryView: View {
                 .font(.system(size: 44, weight: .bold, design: .rounded))
                 .foregroundStyle(.primary)
 
-            Text(entry.streak == 1 ? "day" : "days")
+            Text(entry.streak == 1 ? "week in a row" : "weeks in a row")
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
@@ -195,7 +188,7 @@ struct IronWorkoutWidgetEntryView: View {
                 }
                 Text("\(entry.streak)")
                     .font(.system(size: 48, weight: .bold, design: .rounded))
-                Text(entry.streak == 1 ? "day" : "days in a row")
+                Text(entry.streak == 1 ? "week in a row" : "weeks in a row")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

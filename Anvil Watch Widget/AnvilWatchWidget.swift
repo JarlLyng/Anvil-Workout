@@ -89,12 +89,12 @@ struct AnvilWatchWidgetEntryView: View {
     private var cornerView: some View {
         Text("\(streak)")
             .font(.title2.bold())
-            .widgetLabel("\(streak) day streak")
+            .widgetLabel("\(streak) week streak")
     }
 
     private var inlineView: some View {
         Label {
-            Text(streak == 1 ? "1 day streak" : "\(streak) day streak")
+            Text(streak == 1 ? "1 week streak" : "\(streak) week streak")
         } icon: {
             Image(systemName: "flame.fill")
         }
@@ -105,7 +105,7 @@ struct AnvilWatchWidgetEntryView: View {
             HStack(spacing: 4) {
                 Image(systemName: "flame.fill")
                     .foregroundStyle(.orange)
-                Text(streak == 1 ? "1 day streak" : "\(streak) day streak")
+                Text(streak == 1 ? "1 week streak" : "\(streak) week streak")
                     .font(.headline)
             }
             if let name = entry.stats?.lastWorkoutName {

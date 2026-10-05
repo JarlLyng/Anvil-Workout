@@ -24,7 +24,7 @@ enum WatchStatsBroadcaster {
             let completed = sessions.filter { $0.completedSetCount > 0 }
             let last = completed.first
             let snapshot = WatchStatsSnapshot(
-                currentStreak: StreakCalculator.currentStreak(from: sessions),
+                currentStreak: StreakCalculator.weekStreak(from: sessions),
                 totalWorkouts: completed.count,
                 lastWorkoutName: last?.templateName,
                 lastWorkoutDate: last?.startedAt,

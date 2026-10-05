@@ -10,60 +10,35 @@ import Foundation
 
 enum StreakCalculator {
 
-    /// Returns the number of consecutive days with at least one completed workout, ending
-    /// at or just before the given reference date.
+    /// The number of calendar weeks in a row with at least one completed workout, ending
+    /// with this week.
     ///
-    /// A session counts as "completed" when `completedSetCount > 0`.
+    /// Weeks rather than days: a lifter on three days a week trains with rest days in
+    /// between, so a day streak sat at 0 or 1 and read as a failure. A week streak holds for
+    /// anyone who trains every week, however many days.
     ///
-    /// Logic:
-    /// - If the reference day itself has a completed session, the streak starts at that day
-    ///   and walks backward counting consecutive days.
-    /// - If the reference day has no completed session, the streak starts at the day before
-    ///   the reference day (so a user who hasn't trained yet today doesn't see 0 while
-    ///   yesterday's streak is still intact).
-    /// - The streak ends at the first day that has no completed session.
-    ///
-    /// - Parameters:
-    ///   - sessions: All known `WorkoutSession` values. Order does not matter.
-    ///   - referenceDate: The "now" anchor. Defaults to the current date.
-    ///   - calendar: Calendar used for day boundaries. Defaults to `.current`.
-    static func currentStreak(
+    /// - While this week has no workout yet, the streak runs to last week, so it is not
+    ///   broken on a Monday before the first workout.
+    /// - A session counts when `completedSetCount > 0`.
+    /// - Weeks start on the calendar's first weekday, which follows the user's region.
+    static func weekStreak(
         from sessions: [WorkoutSession],
         relativeTo referenceDate: Date = .now,
         calendar: Calendar = .current
     ) -> Int {
-        let completed = sessions.filter { $0.completedSetCount > 0 }
-        guard !completed.isEmpty else { return 0 }
-
-        let referenceDayStart = calendar.startOfDay(for: referenceDate)
-        let hasSessionOnReferenceDay = completed.contains {
-            calendar.isDate($0.startedAt, inSameDayAs: referenceDayStart)
-        }
-
-        var checkDate: Date
-        if hasSessionOnReferenceDay {
-            checkDate = referenceDayStart
-        } else {
-            guard let previousDay = calendar.date(byAdding: .day, value: -1, to: referenceDayStart) else {
-                return 0
-            }
-            checkDate = previousDay
-        }
+        let trainedWeeks = Set(sessions
+            .filter { $0.completedSetCount > 0 }
+            .compactMap { calendar.dateInterval(of: .weekOfYear, for: $0.startedAt)?.start })
+        guard let thisWeek = calendar.dateInterval(of: .weekOfYear, for: referenceDate)?.start,
+              var week = trainedWeeks.contains(thisWeek)
+                ? thisWeek
+                : calendar.date(byAdding: .weekOfYear, value: -1, to: thisWeek) else { return 0 }
 
         var streak = 0
-        while true {
-            let hasSession = completed.contains {
-                calendar.isDate($0.startedAt, inSameDayAs: checkDate)
-            }
-            if hasSession {
-                streak += 1
-                guard let previousDay = calendar.date(byAdding: .day, value: -1, to: checkDate) else {
-                    break
-                }
-                checkDate = previousDay
-            } else {
-                break
-            }
+        while trainedWeeks.contains(week) {
+            streak += 1
+            guard let previous = calendar.date(byAdding: .weekOfYear, value: -1, to: week) else { break }
+            week = previous
         }
         return streak
     }

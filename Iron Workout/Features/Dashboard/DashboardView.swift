@@ -304,7 +304,7 @@ struct DashboardView: View {
             WeekCard(
                 week: week,
                 lastWeekWorkouts: lastWeekWorkouts,
-                streak: StreakCalculator.currentStreak(from: sessions),
+                streak: StreakCalculator.weekStreak(from: sessions),
                 volumeText: WeightFormatter.volume(kg: week.volumeKg, in: weightUnit),
                 planned: planned,
                 onEditPlan: { showPlanEditor = true }
