@@ -1,0 +1,12 @@
+1.10.0 is a design pass over the whole app. What to try:
+
+- Run a workout. The current set is one large card with the only Done button, rest reads as a clock, and the top shows which exercise you are on.
+- Make a superset: in a program's editor, touch and hold an exercise to link it with the one below. In the workout the two alternate one set at a time, and rest comes after each round.
+- Home opens on the workout to do next. The streak now counts weeks in a row with a workout, here and in both widgets.
+- Stats: pick 4, 12 or 26 weeks, and switch the per-week chart between volume, workouts and sets.
+- Finish a workout: time, sets and volume compared with the last time you did the same program, any new records, then each exercise in one line.
+- History, from Home: grouped by week and month, and search finds exercises too.
+- Workouts tab: a library program's workouts sit together, A before B, with what is in each.
+- Try a larger text size, and an iPad if you have one.
+
+Onboarding is new as well, but it only appears on a fresh install. Do not delete the app to see it: that deletes your workouts.

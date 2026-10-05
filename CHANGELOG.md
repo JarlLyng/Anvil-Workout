@@ -3,7 +3,7 @@
 What changed in each version of Anvil Workout, newest first. Dates are when a version was tagged
 for release; it reaches the App Store after review.
 
-## Unreleased
+## 1.10.0 (unreleased)
 
 - The home screen opens on the workout to do next, with its exercises and a Start button at the
   top. The week is one strip of days, trained and planned, with the week's workouts, volume and
@@ -52,6 +52,9 @@ for release; it reaches the App Store after review.
 - At the largest text sizes, numbers stack instead of being cut short, and names and plans wrap.
 - On iPad, the home screen and Stats keep the button that shows the sidebar, and keep to a
   readable width.
+- The streak counts weeks in a row with a workout, on the home screen and in both widgets. A day
+  streak sat at 0 or 1 for anyone training three days a week, and read as a failure on every rest
+  day. While a week has no workout yet, the streak still runs to the week before.
 - The first launch after installing the app no longer crashes. The home-screen widget could create
   the app's database at the same moment the app opened it.
 
