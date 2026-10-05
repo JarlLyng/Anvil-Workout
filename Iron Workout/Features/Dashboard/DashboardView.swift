@@ -140,11 +140,12 @@ struct DashboardView: View {
                         .padding(.horizontal, DesignTokens.Spacing.xs)
                         .padding(.top, DesignTokens.Spacing.sm)
 
-                    upNextSection
+                    // The week first, then the workout to do next and its Start button.
                     // Nothing to show a new lifter yet: no workouts and no plan.
                     if !completedSessions.isEmpty || !weeklyPlanResolved.isEmpty {
                         thisWeekSection
                     }
+                    upNextSection
                     recentSection
                 }
                 .padding()

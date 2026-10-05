@@ -5,10 +5,10 @@ for release; it reaches the App Store after review.
 
 ## 1.10.0 (unreleased)
 
-- The home screen opens on the workout to do next, with its exercises and a Start button at the
-  top. The week is one strip of days, trained and planned, with the week's workouts, volume and
-  streak below it. Recent workouts show their length, sets and volume. A new lifter sees a way to
-  pick or build a first program instead of a page of zeros.
+- The home screen starts with the week: one strip of days, trained and planned, with the week's
+  workouts, volume and streak. Below it is the workout to do next, with its exercises and a Start
+  button. Recent workouts show their length, sets and volume. A new lifter sees a way to pick or
+  build a first program instead of a page of zeros.
 - The workout screen puts the numbers first. The current set is a card with its reps and weight as
   the largest thing on screen and the only Done button; the other sets are single lines, and
   tapping one makes it the current set. Rest reads as a clock, and the top shows which exercise you
