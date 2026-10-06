@@ -39,7 +39,7 @@ xcrun simctl launch <device> com.iamjarl.Iron-Workout -screenshots -screen <scre
 xcrun simctl io <device> screenshot appstore/raw/en/iphone-<screen>.png
 ```
 
-Screens: `workout`, `home`, `stats`, `completion`, `history`, `library`, `onboarding`. Use an
+Screens: `workout`, `home`, `stats`, `completion`, `history`, `library`, `onboarding`, `programs`, `exercises`. Use an
 iPhone 6.9" simulator (16 Pro Max) and a 13" iPad, with the simulator's region set to the
 locale (`defaults write -g AppleLocale da_DK` through `simctl spawn`) and the app reinstalled
 between locales so the demo history is rebuilt in the right unit.

@@ -61,7 +61,8 @@ struct ContentView: View {
         #if DEBUG
         switch ScreenshotMode.screen {
         case .stats: return .stats
-        case .library: return .workouts
+        case .library, .programs: return .workouts
+        case .exercises: return .exercises
         default: break
         }
         #endif

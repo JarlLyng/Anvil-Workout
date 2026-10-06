@@ -18,7 +18,7 @@ import Foundation
 
 enum ScreenshotMode {
     enum Screen: String {
-        case home, workout, stats, completion, history, library, onboarding
+        case home, workout, stats, completion, history, library, onboarding, programs, exercises
     }
 
     static var isOn: Bool { ProcessInfo.processInfo.arguments.contains("-screenshots") }
