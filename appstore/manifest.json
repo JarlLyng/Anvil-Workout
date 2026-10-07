@@ -131,6 +131,26 @@
       "out": "da/ipad-3.png",
       "caption_pos": "top",
       "bleed": true
+    },
+    {
+      "raw": "raw/en/watch-set.png",
+      "slot": "watch-s10",
+      "out": "en/watch-1.png"
+    },
+    {
+      "raw": "raw/en/watch-rest.png",
+      "slot": "watch-s10",
+      "out": "en/watch-2.png"
+    },
+    {
+      "raw": "raw/da/watch-set.png",
+      "slot": "watch-s10",
+      "out": "da/watch-1.png"
+    },
+    {
+      "raw": "raw/da/watch-rest.png",
+      "slot": "watch-s10",
+      "out": "da/watch-2.png"
     }
   ]
 }
