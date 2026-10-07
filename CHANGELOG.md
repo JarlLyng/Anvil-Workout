@@ -3,7 +3,7 @@
 What changed in each version of Anvil Workout, newest first. Dates are when a version was tagged
 for release; it reaches the App Store after review.
 
-## 1.10.0 (unreleased)
+## 1.10.0 (2026-10-07)
 
 - The home screen starts with the week: one strip of days, trained and planned, with the week's
   workouts, volume and streak. Below it is the workout to do next, with its exercises and a Start
