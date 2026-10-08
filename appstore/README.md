@@ -17,6 +17,14 @@ screens (Series 11, 46 mm, 416 × 496) per locale. Apple scales the 6.9" and 13"
 smaller slots, and wants the same watch size in every locale. Superseded sets are deleted; git
 history keeps them.
 
+## Order
+
+Apple's [asset best practices](https://developer.apple.com/app-store/asset-best-practices/) ask
+for screenshots in the order someone would use the app, and show up to three of them in search
+results. So the set runs: a set being logged, the home screen with the pay-once promise, the
+screen after a workout, Stats over the weeks, then History. The first two are the hub's two
+heaviest frames (the wedge, then the objection); the first three are what a searcher sees.
+
 ## Style
 
 The portfolio standard from `DESIGN.md` in the private strategy hub: dark ground, lime

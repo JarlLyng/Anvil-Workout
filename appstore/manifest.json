@@ -21,17 +21,17 @@
       "bleed": false
     },
     {
-      "raw": "raw/en/iphone-stats.png",
+      "raw": "raw/en/iphone-completion.png",
       "slot": "iphone-6.9",
-      "caption": "See your lifts\n*week by week*",
+      "caption": "Know if you beat\n*last time*",
       "out": "en/iphone-3.png",
       "caption_pos": "top",
       "bleed": true
     },
     {
-      "raw": "raw/en/iphone-completion.png",
+      "raw": "raw/en/iphone-stats.png",
       "slot": "iphone-6.9",
-      "caption": "Know if you beat\n*last time*",
+      "caption": "See your lifts\n*week by week*",
       "out": "en/iphone-4.png",
       "caption_pos": "bottom",
       "bleed": false
@@ -53,17 +53,17 @@
       "bleed": true
     },
     {
-      "raw": "raw/en/ipad-stats.png",
+      "raw": "raw/en/ipad-completion.png",
       "slot": "ipad-13",
-      "caption": "See your lifts\n*week by week*",
+      "caption": "Know if you beat\n*last time*",
       "out": "en/ipad-2.png",
       "caption_pos": "bottom",
       "bleed": false
     },
     {
-      "raw": "raw/en/ipad-completion.png",
+      "raw": "raw/en/ipad-stats.png",
       "slot": "ipad-13",
-      "caption": "Know if you beat\n*last time*",
+      "caption": "See your lifts\n*week by week*",
       "out": "en/ipad-3.png",
       "caption_pos": "top",
       "bleed": true
@@ -85,17 +85,17 @@
       "bleed": false
     },
     {
-      "raw": "raw/da/iphone-stats.png",
+      "raw": "raw/da/iphone-completion.png",
       "slot": "iphone-6.9",
-      "caption": "Se dine løft\n*uge for uge*",
+      "caption": "Se om du slog\n*sidste gang*",
       "out": "da/iphone-3.png",
       "caption_pos": "top",
       "bleed": true
     },
     {
-      "raw": "raw/da/iphone-completion.png",
+      "raw": "raw/da/iphone-stats.png",
       "slot": "iphone-6.9",
-      "caption": "Se om du slog\n*sidste gang*",
+      "caption": "Se dine løft\n*uge for uge*",
       "out": "da/iphone-4.png",
       "caption_pos": "bottom",
       "bleed": false
@@ -117,17 +117,17 @@
       "bleed": true
     },
     {
-      "raw": "raw/da/ipad-stats.png",
+      "raw": "raw/da/ipad-completion.png",
       "slot": "ipad-13",
-      "caption": "Se dine løft\n*uge for uge*",
+      "caption": "Se om du slog\n*sidste gang*",
       "out": "da/ipad-2.png",
       "caption_pos": "bottom",
       "bleed": false
     },
     {
-      "raw": "raw/da/ipad-completion.png",
+      "raw": "raw/da/ipad-stats.png",
       "slot": "ipad-13",
-      "caption": "Se om du slog\n*sidste gang*",
+      "caption": "Se dine løft\n*uge for uge*",
       "out": "da/ipad-3.png",
       "caption_pos": "top",
       "bleed": true
