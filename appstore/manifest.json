@@ -151,6 +151,86 @@
       "raw": "raw/da/watch-rest.png",
       "slot": "watch-s10",
       "out": "da/watch-2.png"
+    },
+    {
+      "raw": "raw/en/iphone-workout.png",
+      "slot": "iphone-6.3",
+      "caption": "Log every set\n*in one tap*",
+      "out": "en/en-iphone-6.3-1.png",
+      "caption_pos": "top",
+      "bleed": true
+    },
+    {
+      "raw": "raw/en/iphone-home.png",
+      "slot": "iphone-6.3",
+      "caption": "[Pay once.]\nNo subscription, no account",
+      "out": "en/en-iphone-6.3-2.png",
+      "caption_pos": "bottom",
+      "bleed": false
+    },
+    {
+      "raw": "raw/en/iphone-completion.png",
+      "slot": "iphone-6.3",
+      "caption": "Know if you beat\n*last time*",
+      "out": "en/en-iphone-6.3-3.png",
+      "caption_pos": "top",
+      "bleed": true
+    },
+    {
+      "raw": "raw/en/iphone-stats.png",
+      "slot": "iphone-6.3",
+      "caption": "See your lifts\n*week by week*",
+      "out": "en/en-iphone-6.3-4.png",
+      "caption_pos": "bottom",
+      "bleed": false
+    },
+    {
+      "raw": "raw/en/iphone-history.png",
+      "slot": "iphone-6.3",
+      "caption": "Your log stays\n*on your phone*",
+      "out": "en/en-iphone-6.3-5.png",
+      "caption_pos": "top",
+      "bleed": true
+    },
+    {
+      "raw": "raw/da/iphone-workout.png",
+      "slot": "iphone-6.3",
+      "caption": "Log hvert sæt\n*med ét tryk*",
+      "out": "da/da-iphone-6.3-1.png",
+      "caption_pos": "top",
+      "bleed": true
+    },
+    {
+      "raw": "raw/da/iphone-home.png",
+      "slot": "iphone-6.3",
+      "caption": "[Betal én gang.]\nSå er appen din.\nIngen konto.",
+      "out": "da/da-iphone-6.3-2.png",
+      "caption_pos": "bottom",
+      "bleed": false
+    },
+    {
+      "raw": "raw/da/iphone-completion.png",
+      "slot": "iphone-6.3",
+      "caption": "Se om du slog\n*sidste gang*",
+      "out": "da/da-iphone-6.3-3.png",
+      "caption_pos": "top",
+      "bleed": true
+    },
+    {
+      "raw": "raw/da/iphone-stats.png",
+      "slot": "iphone-6.3",
+      "caption": "Se dine løft\n*uge for uge*",
+      "out": "da/da-iphone-6.3-4.png",
+      "caption_pos": "bottom",
+      "bleed": false
+    },
+    {
+      "raw": "raw/da/iphone-history.png",
+      "slot": "iphone-6.3",
+      "caption": "Din log bliver\n*på din telefon*",
+      "out": "da/da-iphone-6.3-5.png",
+      "caption_pos": "top",
+      "bleed": true
     }
   ]
 }

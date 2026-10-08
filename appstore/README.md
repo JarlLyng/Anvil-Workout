@@ -12,8 +12,10 @@ appstore/
   <version>/en, da  the composed posters to upload
 ```
 
-Current: **`1.10.0/`**, five iPhone 6.9" posters, three iPad 13" posters and two Apple Watch
-screens (Series 11, 46 mm, 416 × 496) per locale. Apple scales the 6.9" and 13" sets down to the
+Current: **`1.10.0/`**, five iPhone 6.9" posters, the same five at 6.3" (`<locale>-iphone-6.3-*`,
+1206 × 2622, for the "iPhone with Dynamic Island (medium display)" slot App Store Connect puts
+first on the version page), three iPad 13" posters and two Apple Watch screens (Series 11, 46 mm,
+416 × 496) per locale. Apple scales the 6.9" and 13" sets down to the
 smaller slots, and wants the same watch size in every locale. Superseded sets are deleted; git
 history keeps them.
 
