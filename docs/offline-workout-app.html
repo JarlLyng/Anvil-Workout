@@ -119,7 +119,7 @@
     <div class="container content-page">
         <a href="index.html" class="back-link">&larr; Back to Anvil Workout</a>
         <h1>A Workout App That Works Offline</h1>
-        <p class="lead">Anvil Workout runs entirely on your device. No account to create, no server dependencies, no internet connection required. Your programs, workout history, and personal records stay on your iPhone, iPad, and Apple Watch companion—making spotty gym basement Wi-Fi irrelevant.</p>
+        <p class="lead">Anvil Workout runs entirely on your device. No account to create, no server dependencies, no internet connection required. Your programs, workout history, and personal records stay on your iPhone, iPad, and Apple Watch companion, so spotty gym basement Wi-Fi doesn't matter.</p>
 
         <h2>What "offline" actually means</h2>
         <p>A lot of fitness apps call themselves "offline-capable" but still need an internet connection to sign in, validate subscriptions, or back up data. Anvil Workout takes a stricter stance:</p>
@@ -127,13 +127,13 @@
             <li><strong>No account, ever.</strong> You install the app and start using it. No email, no password, no "create account" screen.</li>
             <li><strong>No cloud service.</strong> There is no Anvil Workout server. Nothing to go down, nothing to get breached, nothing to paywall later.</li>
             <li><strong>Your history stays on the phone.</strong> Your programs, sets, reps and personal records are never uploaded or synced. The iPhone and the Apple Watch companion talk to each other directly over local connectivity (WatchConnectivity), with no server in between. The only thing the app sends is a crash report to Sentry when something goes wrong, with no workout data in it, and you can turn it off in Settings.</li>
-            <li><strong>HealthKit integration is local.</strong> If you let the app write workouts to Apple Health, that happens on-device through Apple's HealthKit APIs. Apple decides where HealthKit data goes — not us.</li>
+            <li><strong>HealthKit integration is local.</strong> If you let the app write workouts to Apple Health, that happens on-device through Apple's HealthKit APIs. Apple decides where HealthKit data goes, not us.</li>
         </ul>
 
         <h2>When offline actually matters</h2>
 
         <h3>Gym basements with no signal</h3>
-        <p>The squat rack is usually in the back corner of the basement of the building, and that's exactly where cell service dies. An app that needs to phone home between sets is an app that freezes mid-workout. Anvil Workout doesn't care — your workout runs the same whether you're in airplane mode or on 5G.</p>
+        <p>The squat rack is usually in the back corner of the basement of the building, and that's exactly where cell service dies. An app that needs to phone home between sets is an app that freezes mid-workout. Anvil Workout doesn't care. Your workout runs the same whether you're in airplane mode or on 5G.</p>
 
         <h3>Travel, planes, and remote training</h3>
         <p>Hotel gyms, garage gyms, outdoor calisthenics, a cabin in the woods with no Wi-Fi. If you can open the app, you can train. Apple Health lives on the iPhone too, so a finished workout is saved there straight away, with nothing waiting to sync later.</p>
@@ -145,8 +145,8 @@
         <p>When a cloud fitness app shuts down or pivots, and many do, your data usually goes with it. On Anvil Workout, your data lives in your iPhone's local storage. If you use iCloud Backup or back up to a computer, it is included in that backup, so it is as durable as anything else on your phone.</p>
 
         <h2>How it works under the hood</h2>
-        <p>Anvil Workout is a native SwiftUI + SwiftData app. SwiftData is Apple's on-device persistence framework — think of it as a private, local database optimized for Apple hardware. Your programs, session history, and exercise library all live in SwiftData on your device.</p>
-        <p>There is no backend service because there's nothing for a backend to do. Your iPhone is the server, the client, and the database — all at once.</p>
+        <p>Anvil Workout is a native SwiftUI + SwiftData app. SwiftData is Apple's on-device persistence framework. Think of it as a private, local database optimized for Apple hardware. Your programs, session history, and exercise library all live in SwiftData on your device.</p>
+        <p>There is no backend service because there's nothing for a backend to do. Your iPhone is the server, the client, and the database, all at once.</p>
 
         <h2>Offline vs. cloud-based workout apps</h2>
         <p>Most popular fitness apps sit somewhere on the spectrum below. We're on the left end by design.</p>
@@ -189,7 +189,7 @@
             </div>
         </div>
 
-        <p>Offline isn't strictly better — it's a tradeoff. If you want a social feed, a leaderboard, or one-tap sync between your iPhone and iPad, a cloud-based app is the right choice. If you want a focused lifting app that never asks you to sign in, never disappears, and never sells your data, Anvil Workout is built for you.</p>
+        <p>Offline isn't strictly better. It's a tradeoff. If you want a social feed, a leaderboard, or one-tap sync between your iPhone and iPad, a cloud-based app is the right choice. If you want a focused lifting app that never asks you to sign in, never disappears, and never sells your data, Anvil Workout is built for you.</p>
 
         <h2>What you still get</h2>
         <p>Offline doesn't mean minimalist. Anvil Workout ships with:</p>

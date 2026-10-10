@@ -587,7 +587,7 @@ h1, h2, h3 { line-height: 1.2; }
     text-shadow: 0 2px 24px rgba(0, 0, 0, 0.6);
 }
 
-/* Inline rounded photo for long content/SEO pages — a visual break that
+/* Inline rounded photo for long content/SEO pages: a visual break that
    respects the container, unlike the full-bleed homepage mood band. */
 .content-photo {
     margin: 48px 0;
@@ -661,7 +661,7 @@ h1, h2, h3 { line-height: 1.2; }
 
 .footer-links a:hover { color: var(--text); }
 
-/* "More from IAMJARL" — reciprocal cross-link, anchored on maker-trust */
+/* "More from IAMJARL": reciprocal cross-link, anchored on maker-trust */
 .footer-more {
     flex-basis: 100%;
     padding-bottom: 20px;

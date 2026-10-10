@@ -27,7 +27,7 @@ Anvil Workout is a paid app with a one-time purchase price on the App Store. The
 - **Guided First Start** (1.10.0): choose kg or lb, decide on Apple Health, then pick a program from the library, import history from Strong or Hevy, or build a program. Library programs imported in pounds start on weights rounded to the nearest 5 lb
 - **Program Tags** to organize workout programs by goal or training block and filter the list
 - **RPE Tracking** per set (1–10, half steps) for intensity trends, included in CSV export/import
-- **Pre-Completion Set Entry** — tap a pending set to enter the actual weight and reps before marking it done
+- **Pre-Completion Set Entry**: tap a pending set to enter the actual weight and reps before marking it done
 - **Previous-Session Reference** on every pending set, showing the weight and reps from the matching set last time, with one tap to reuse them (imported history counts, so it works from the first workout after switching apps)
 - **Crash-Reporting Switch** in Settings, under Privacy, to turn crash reports off entirely (1.9.0). Reports never include workout, note or Health data
 - **Searchable Exercise Library** and workout history
@@ -48,7 +48,7 @@ Anvil Workout is a paid app with a one-time purchase price on the App Store. The
 - [Home](https://anvilworkout.iamjarl.com/): Product page with features
 - [Workout Programs](https://anvilworkout.iamjarl.com/programs.html): Catalogue of the six built-in strength programs (Starting Strength, StrongLifts 5×5, Greyskull LP, GZCLP, Upper/Lower, Push/Pull/Legs) with author, frequency, structure, and progression details
 - [Offline Workout App](https://anvilworkout.iamjarl.com/offline-workout-app.html): Explains how the app runs on-device with no cloud and no account, what it does and does not send, and a comparison table vs cloud-based apps
-- [Apple Health for Strength Training](https://anvilworkout.iamjarl.com/apple-health-strength-training.html): Details on the HealthKit integration — what gets written (workout sessions), what gets read (calories, heart rate), the Apple Watch companion app, and the permission model
+- [Apple Health for Strength Training](https://anvilworkout.iamjarl.com/apple-health-strength-training.html): Details on the HealthKit integration: what gets written (workout sessions), what gets read (calories, heart rate), the Apple Watch companion app, and the permission model
 - [No-Subscription Workout App](https://anvilworkout.iamjarl.com/no-subscription-workout-app.html): Explains the one-time purchase business model versus subscription workout trackers, with honest tradeoff comparison
 - [Support](https://anvilworkout.iamjarl.com/support.html): Help and contact information
 - [Privacy Policy](https://anvilworkout.iamjarl.com/privacy.html): Privacy policy and data practices
