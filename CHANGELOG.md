@@ -3,6 +3,12 @@
 What changed in each version of Anvil Workout, newest first. Dates are when a version was tagged
 for release; it reaches the App Store after review.
 
+## Unreleased
+
+- Settings has Send Feedback, next to the App Store review. It opens an email to
+  support@iamjarl.com in your mail app with the app and iOS version filled in, and you see all of
+  it before you send.
+
 ## 1.10.0 (2026-10-07)
 
 - The home screen starts with the week: one strip of days, trained and planned, with the week's

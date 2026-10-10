@@ -54,7 +54,7 @@ Anvil Workout/
 │   │   └── OnboardingView.swift       # First launch: unit, Apple Health, how to start (library, import, build)
 │   │
 │   └── Settings/
-│       ├── SettingsView.swift         # Units, CSV export/import (Strong/Hevy), Health, About
+│       ├── SettingsView.swift         # Units, CSV export/import (Strong/Hevy), Health, crash reports, feedback, About
 │       └── WorkoutImportFlow.swift    # Strong/Hevy import: picker, preview, result; used by Settings, onboarding, Home
 │
 └── Shared/
@@ -87,6 +87,7 @@ Anvil Workout/
     │   ├── DataMigrationService.swift     # Runtime data migrations (tracked via UserDefaults flags)
     │   ├── DemoHistory.swift              # Debug only: -AnvilDemoHistory seeds 24 weeks of training
     │   ├── ScreenshotMode.swift           # Debug only: -screenshots -screen <name> for App Store captures (see appstore/README.md)
+    │   ├── FeedbackMail.swift             # The Send Feedback mailto: link, with app and system version (pure, testable)
     │   ├── PersistenceLogger.swift        # Structured logging for SwiftData save/fetch failures
     │   └── SentryConfig.swift             # Reads DSN from Info.plist
     │

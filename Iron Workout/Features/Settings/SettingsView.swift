@@ -95,6 +95,18 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    if let feedbackURL {
+                        Link(destination: feedbackURL) {
+                            Label {
+                                Text("Send Feedback")
+                                    .foregroundStyle(.primary)
+                            } icon: {
+                                Ph.envelopeSimple.regular
+                                    .icon()
+                            }
+                        }
+                        .accessibilityHint("Opens an email to support, with the app version filled in")
+                    }
                     Link(destination: URL(string: "https://apps.apple.com/app/id6760627760?action=write-review")!) {
                         Label {
                             Text("Rate Anvil Workout")
@@ -109,7 +121,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Feedback")
                 } footer: {
-                    Text("Reviews help other lifters find the app and keep it improving.")
+                    Text("Feedback is an email to \(FeedbackMail.address) that you read before sending, with the app and system version filled in. Reviews help other lifters find the app.")
                 }
 
                 Section {
@@ -119,7 +131,7 @@ struct SettingsView: View {
                             .foregroundStyle(.secondary)
                         Text("Anvil Workout")
                         Spacer()
-                        Text("\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"))")
+                        Text("\(appVersion) (\(buildNumber))")
                             .foregroundStyle(.secondary)
                     }
                     HStack {
@@ -272,6 +284,14 @@ struct SettingsView: View {
         default:
             return "Anvil Workout saves workouts to Health and can show calories and heart rate when you use Apple Watch or other sources during a workout."
         }
+    }
+
+    private var appVersion: String { Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?" }
+    private var buildNumber: String { Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?" }
+
+    private var feedbackURL: URL? {
+        FeedbackMail.url(appVersion: appVersion, build: buildNumber,
+                         systemName: UIDevice.current.systemName, systemVersion: UIDevice.current.systemVersion)
     }
 
     private func refreshHealthAuthStatus() {

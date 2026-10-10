@@ -83,6 +83,7 @@ The repo is public, so anything written here is written for that audience.
 - Native iPad layout with multi-pane navigation and a two-column active workout screen
 - Apple Watch companion for logging sets, skipping sets and rest haptics; the workout screen fits on one screen and shows weight in the user's unit (1.9.1)
 - Settings switch to turn crash reporting off (1.9.0)
+- Send Feedback in Settings: an email to support@iamjarl.com in the user's mail app, with the app and system version filled in, which they read before sending. Nothing is sent from the app itself (unreleased)
 
 ### Features that do NOT exist (common hallucination targets)
 
