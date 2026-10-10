@@ -32,39 +32,6 @@ body {
 
 h1, h2, h3 { line-height: 1.2; }
 
-/* ===== Buttons ===== */
-.btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 28px;
-    border-radius: var(--radius-sm);
-    font-weight: 600;
-    font-size: 1rem;
-    text-decoration: none;
-    transition: transform 0.15s, box-shadow 0.15s;
-    cursor: pointer;
-    border: none;
-}
-
-.btn:hover { transform: translateY(-2px); }
-.btn:active { transform: translateY(0); }
-
-.btn-primary {
-    background: var(--accent);
-    color: #0a0a0a;
-    box-shadow: 0 4px 24px rgba(208, 255, 0, 0.25);
-}
-.btn-primary:hover {
-    box-shadow: 0 8px 32px rgba(208, 255, 0, 0.35);
-}
-
-.btn-lg {
-    padding: 18px 36px;
-    font-size: 1.1rem;
-    border-radius: var(--radius);
-}
-
 /* ===== Hero ===== */
 .hero {
     padding: 100px 0 80px;
@@ -142,6 +109,46 @@ h1, h2, h3 { line-height: 1.2; }
     gap: 16px;
     flex-wrap: wrap;
 }
+
+/* The App Store badge and facts line: the design system's store fragment (iamjarl-design
+   v1.20.0, #109). It carries the link, the store-click event and the facts; this places it.
+   The facts selector is doubled so a section's own `p` rule (.cta p, .page-cta p) can't win. */
+ij-store-cta { display: block; }
+
+.ij-store {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.ij-store-badge {
+    display: block;
+    line-height: 0;
+    border-radius: 10px;
+    transition: opacity 0.15s;
+}
+
+.ij-store-badge:hover { opacity: 0.85; }
+
+.ij-store-badge:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+}
+
+.ij-store-badge img {
+    display: block;
+    height: 52px;
+    width: auto;
+}
+
+.ij-store .ij-store-facts {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.hero .ij-store { align-items: flex-start; }
 
 /* Phone mockup */
 .phone-frame {
@@ -771,6 +778,7 @@ h1, h2, h3 { line-height: 1.2; }
     .hero .container { flex-direction: column; text-align: center; }
     .hero-sub { margin-left: auto; margin-right: auto; }
     .hero-actions { justify-content: center; }
+    .hero .ij-store { align-items: center; }
 }
 
 @media (max-width: 600px) {

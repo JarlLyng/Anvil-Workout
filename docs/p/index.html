@@ -12,6 +12,7 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
+    <!-- Smart App Banner for Anvil Workout: put in <head>. Generated, do not edit. -->
     <meta name="apple-itunes-app" content="app-id=6760627760">
     <meta name="theme-color" content="#0a0a0a">
 
@@ -26,6 +27,7 @@
     <link rel="stylesheet" href="/style.css">
 
     <script defer src="https://umami-iamjarl.vercel.app/script.js" data-website-id="56413ff8-71df-422f-93cd-1d072c8f6195"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/dist/components/ij-store-cta.js"></script>
 
     <style>
         .import-card {
@@ -83,9 +85,18 @@
         </div>
 
         <div class="cta">
-            <a href="https://apps.apple.com/app/id6760627760" class="btn btn-primary btn-lg" aria-label="Download Anvil Workout on the App Store">
-                Get Anvil Workout
-            </a>
+            <ij-store-cta placement="hero" tone="white">
+                <!-- IAMJARL store button for Anvil Workout (en) — generated from apps.json, v1.20.0. Do not edit. -->
+                <div class="ij-store" data-ij-store="anvil-workout" data-ij-store-locale="en">
+                  <a class="ij-store-badge" href="https://apps.apple.com/app/id6760627760?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="hero" data-umami-event-locale="en">
+                    <picture>
+                      <source srcset="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/badges/app-store-white-en-us.svg" media="(prefers-color-scheme: dark)">
+                      <img src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/badges/app-store-black-en-us.svg" alt="Download on the App Store" width="120" height="40">
+                    </picture>
+                  </a>
+                  <p class="ij-store-facts">$2.99 once · iOS 17 or later</p>
+                </div>
+            </ij-store-cta>
         </div>
 
         <p class="hint">
