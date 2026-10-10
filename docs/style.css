@@ -639,6 +639,7 @@ ij-store-cta { display: block; }
 
 /* Links in running text, which otherwise fall back to the browser's blue on a dark card. */
 .feature-card p a,
+.faq-item p a,
 .roadmap-col a { color: var(--accent); }
 
 @media (max-width: 900px) {
