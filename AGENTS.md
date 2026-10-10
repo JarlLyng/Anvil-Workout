@@ -17,7 +17,7 @@ account and no sync service.
 - **Website:** [anvilworkout.iamjarl.com](https://anvilworkout.iamjarl.com)
 - **App Store:** [id6760627760](https://apps.apple.com/app/id6760627760)
 - **Price:** $2.99 USD one-time. No subscription, no in-app purchases, no ads.
-- **Current version:** 1.9.1 (live 2026-10-03). 1.10.0 is created in App Store Connect and not yet live.
+- **Current version:** 1.10.0 (live 2026-10-09).
 - **License:** [MIT](LICENSE), like the sibling apps. It covers the code, not the Anvil name, brand or App Store listing.
 - **Repo status:** public since 2026-09-22. The Sentry token that leaked into git history was revoked beforehand and verified dead; the history is kept as is rather than rewritten (#63).
 - **Formerly:** Iron Workout. The Xcode project, targets, scheme, folder and bundle ID still carry the old name (#83). **Never change the bundle ID** `com.iamjarl.Iron-Workout` or the App Group `group.com.iamjarl.Iron-Workout`; both would orphan existing users.
