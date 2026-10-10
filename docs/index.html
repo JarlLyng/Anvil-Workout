@@ -61,7 +61,7 @@
       },
       "downloadUrl": "https://apps.apple.com/app/id6760627760",
       "installUrl": "https://apps.apple.com/app/id6760627760",
-      "softwareVersion": "1.9.1",
+      "softwareVersion": "1.10.0",
       "author": {
         "@type": "Organization",
         "name": "IAMJARL"
@@ -72,12 +72,12 @@
         "Native iPad layout with multi-pane navigation and two-column active workout screen",
         "Real-time workout tracking with a haptic rest countdown that keeps time while the phone is locked",
         "Automatic personal record detection for weight and reps",
-        "Volume charts, weekly frequency, and estimated 1RM progression",
+        "Stats over 4, 12 or 26 weeks: volume, workouts or sets per week, records, estimated 1RM per lift and sets per muscle group, with warm-ups left out",
         "Live Activity on Lock Screen and Dynamic Island with the workout clock, set progress and a rest countdown",
         "Apple Health and HealthKit integration for calories and heart rate",
-        "Smart dashboard with weekly overview and streak tracking",
+        "Home screen with the week's workouts, volume and next workout, and a streak counted in weeks in a row",
         "CSV export of workout history",
-        "CSV import of workout history from Strong or Hevy",
+        "CSV import of workout history from Strong or Hevy, with their exercise names matched to the built-in library",
         "Plate calculator for per-side barbell loading",
         "Program tags for organizing and filtering routines",
         "RPE tracking per set",
@@ -209,7 +209,7 @@
             <div class="hero-visual">
                 <div class="phone-frame">
                     <div class="phone-screen">
-                        <img src="screenshots/dashboard.png" alt="Anvil Workout dashboard showing weekly workout count, streak, weekly plan, and recommended next workout" loading="eager" width="256" height="536">
+                        <img src="screenshots/dashboard.png" alt="Anvil Workout home screen: this week's workouts, volume and streak, then the next workout with its exercises and a Start Workout button" loading="eager" width="256" height="556">
                     </div>
                 </div>
             </div>
@@ -240,7 +240,7 @@
                         <svg aria-hidden="true" viewBox="0 0 256 256" width="32" height="32" fill="currentColor"><path d="M232,208a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V48a8,8,0,0,1,16,0V156.69l50.34-50.35a8,8,0,0,1,11.32,0L128,132.69,180.69,80H160a8,8,0,0,1,0-16h48a8,8,0,0,1,8,8v48a8,8,0,0,1-16,0V99.31l-58.34,58.35a8,8,0,0,1-11.32,0L104,131.31,46.34,188.97l-.34.34V200H224A8,8,0,0,1,232,208Z"/></svg>
                     </div>
                     <h3>Track Progress</h3>
-                    <p>Automatic personal record detection for weight and reps. Volume charts, weekly frequency, estimated 1RM progression, and muscle group distribution.</p>
+                    <p>Automatic personal record detection for weight and reps. Look back over 4, 12 or 26 weeks against the weeks before: volume per week, your records, estimated 1RM per lift and sets per muscle group. Warm-ups never count.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -268,7 +268,7 @@
                         <svg aria-hidden="true" viewBox="0 0 256 256" width="32" height="32" fill="currentColor"><path d="M224,152v56a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V152a8,8,0,0,1,16,0v48H208V152a8,8,0,0,1,16,0ZM122.34,141.66a8,8,0,0,0,11.32,0l40-40a8,8,0,0,0-11.32-11.32L136,116.69V32a8,8,0,0,0-16,0v84.69L93.66,90.34a8,8,0,0,0-11.32,11.32Z"/></svg>
                     </div>
                     <h3>Import from Strong &amp; Hevy</h3>
-                    <p>Switching apps? Bring your full training history with you. Import a CSV export from Strong or Hevy in a single step and pick up right where you left off.</p>
+                    <p>Switching apps? Bring your full training history with you. Import a CSV export from Strong or Hevy in a single step and pick up right where you left off. Exercise names are matched to Anvil's own, so your old bench press and your new one share one history.</p>
                 </div>
             </div>
         </div>
@@ -281,20 +281,20 @@
             <p class="section-sub">Clean, focused, and fast. No clutter, no upsells, no distractions between you and your next set.</p>
             <div class="screenshots-grid">
                 <figure>
-                    <img src="screenshots/programs.png" alt="Workout programs list with Upper Body marked as favorite, plus Leg Day, Pull Day, and Push Day" loading="lazy" width="301" height="620">
-                    <figcaption><strong>Programs</strong><span>Build and favorite your routines. Duplicate and tweak as you progress.</span></figcaption>
+                    <img src="screenshots/programs.png" alt="Workouts tab with the Program Library and two programs, each listing its exercises and when it was last done" loading="lazy" width="301" height="654">
+                    <figcaption><strong>Programs</strong><span>Start from the library or build your own. Each program shows what is in it and when you last did it.</span></figcaption>
                 </figure>
                 <figure>
-                    <img src="screenshots/history.png" alt="Workout history showing recent sessions with duration, calories, and heart rate" loading="lazy" width="301" height="620">
-                    <figcaption><strong>History</strong><span>Every session with duration, calories, and heart rate from Apple Health.</span></figcaption>
+                    <img src="screenshots/history.png" alt="Workout history grouped by this week, last week and month, each workout with its time, sets and volume" loading="lazy" width="301" height="654">
+                    <figcaption><strong>History</strong><span>Every workout by week and month, with its time, sets and volume. Search finds exercises too.</span></figcaption>
                 </figure>
                 <figure>
-                    <img src="screenshots/exercises.png" alt="Exercise library showing built-in exercises by name, muscle group, and equipment" loading="lazy" width="301" height="620">
-                    <figcaption><strong>Exercise library</strong><span>25+ built-in exercises. Add your own. Filter by muscle group.</span></figcaption>
+                    <img src="screenshots/exercises.png" alt="Exercise library showing built-in exercises by name, muscle group, and equipment" loading="lazy" width="301" height="654">
+                    <figcaption><strong>Exercise library</strong><span>70 built-in exercises. Add your own. Filter by muscle group.</span></figcaption>
                 </figure>
                 <figure>
-                    <img src="screenshots/stats.png" alt="Stats showing training volume and frequency charts plus 1RM estimate" loading="lazy" width="301" height="620">
-                    <figcaption><strong>Stats that matter</strong><span>Training volume, weekly frequency, and estimated 1RM progression.</span></figcaption>
+                    <img src="screenshots/stats.png" alt="Stats over 12 weeks: workouts, sets and volume against the 12 weeks before, volume per week, and personal records" loading="lazy" width="301" height="654">
+                    <figcaption><strong>Stats that matter</strong><span>4, 12 or 26 weeks against the weeks before: volume per week, your records and estimated 1RM.</span></figcaption>
                 </figure>
             </div>
         </div>
@@ -400,21 +400,19 @@
             <p class="section-sub">One-time purchase doesn't mean development stops. Here is what recently shipped and what is being built right now. No dates, no promises we can't keep.</p>
             <div class="roadmap-grid">
                 <div class="roadmap-col">
-                    <h3>Recently shipped <span class="roadmap-tag">v1.9.1</span></h3>
-                    <ul>
-                        <li>The rest timer keeps time while your phone is locked, and the Apple Watch counts rest down on its own</li>
-                        <li>Your workout clock and rest countdown on the Lock Screen and in the Dynamic Island</li>
-                        <li>The Apple Watch workout screen fits on one screen, with weights in your unit</li>
-                        <li>v1.9.0: turn crash reports off in Settings, and reports carry no details of your workouts</li>
-                    </ul>
-                </div>
-                <div class="roadmap-col">
-                    <h3>Coming next <span class="roadmap-tag">v1.10.0</span></h3>
+                    <h3>Recently shipped <span class="roadmap-tag">v1.10.0</span></h3>
                     <ul>
                         <li>A redesigned workout screen, home screen and Stats, with the numbers first</li>
                         <li>A first start that sets your unit and gets you to a first workout, from the program library, your history from another app, or a program of your own</li>
                         <li>Supersets that alternate one set at a time, with rest after each round</li>
                         <li>A streak counted in weeks in a row with a workout</li>
+                        <li>v1.9.1: the rest timer keeps time while your phone is locked, and your workout clock and rest countdown show on the Lock Screen</li>
+                    </ul>
+                </div>
+                <div class="roadmap-col">
+                    <h3>Coming next</h3>
+                    <ul>
+                        <li>The full inner display on iPhone Duo, once Apple's tools for it are out of beta</li>
                         <li>Have a request? <a href="support.html">Tell us what you need</a></li>
                     </ul>
                 </div>
