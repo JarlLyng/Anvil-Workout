@@ -38,51 +38,62 @@ struct StatsView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
-                    if hasTraining {
-                        Picker("Period", selection: $period) {
-                            ForEach(StatsPeriod.allCases) { Text($0.label).tag($0) }
-                        }
-                        .pickerStyle(.segmented)
-                        .padding(.top, DesignTokens.Spacing.sm)
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
+                        if hasTraining {
+                            Picker("Period", selection: $period) {
+                                ForEach(StatsPeriod.allCases) { Text($0.label).tag($0) }
+                            }
+                            .pickerStyle(.segmented)
+                            .padding(.top, DesignTokens.Spacing.sm)
 
-                        let volume = buckets.reduce(0) { $0 + $1.volumeKg }
-                        StatsSummaryCard(
-                            period: period,
-                            workouts: buckets.reduce(0) { $0 + $1.workouts },
-                            sets: buckets.reduce(0) { $0 + $1.sets },
-                            volumeText: WeightFormatter.volume(kg: volume, in: weightUnit),
-                            comparison: volumeComparisonText(current: volume, previous: previousVolumeKg, period: period)
-                        )
-                        PerWeekChartCard(buckets: buckets, metric: $metric, weightUnit: weightUnit)
-                        RecordsCard(records: records, period: period)
-                        StrengthCard(
-                            history: strengthHistory,
-                            exercises: strengthExercises,
-                            selected: $selectedExercise,
-                            weightUnit: weightUnit,
-                            period: period
-                        )
-                        MuscleGroupCard(data: muscleGroups, period: period)
-                    } else {
-                        emptyState
+                            let volume = buckets.reduce(0) { $0 + $1.volumeKg }
+                            StatsSummaryCard(
+                                period: period,
+                                workouts: buckets.reduce(0) { $0 + $1.workouts },
+                                sets: buckets.reduce(0) { $0 + $1.sets },
+                                volumeText: WeightFormatter.volume(kg: volume, in: weightUnit),
+                                comparison: volumeComparisonText(current: volume, previous: previousVolumeKg, period: period)
+                            )
+                            PerWeekChartCard(buckets: buckets, metric: $metric, weightUnit: weightUnit)
+                            RecordsCard(records: records, period: period)
+                                .id(StatsAnchor.records)
+                            StrengthCard(
+                                history: strengthHistory,
+                                exercises: strengthExercises,
+                                selected: $selectedExercise,
+                                weightUnit: weightUnit,
+                                period: period
+                            )
+                            MuscleGroupCard(data: muscleGroups, period: period)
+                        } else {
+                            emptyState
+                        }
                     }
+                    .padding()
+                    .frame(maxWidth: 640)
+                    .frame(maxWidth: .infinity)
                 }
-                .padding()
-                .frame(maxWidth: 640)
-                .frame(maxWidth: .infinity)
+                .background(Color(uiColor: .systemGroupedBackground))
+                .safeAreaInset(edge: .top, spacing: 0) {
+                    Color.clear.frame(height: 0).background(Color(uiColor: .systemGroupedBackground))
+                }
+                // Hidden on iPhone only: on iPad the bar holds the button that shows the sidebar.
+                .toolbar(horizontalSizeClass == .compact ? .hidden : .automatic, for: .navigationBar)
+                .task { recomputeAll() }
+                .onChange(of: sessions.count) { _, _ in recomputeAll() }
+                .onChange(of: period) { _, _ in recomputeAll() }
+                .onChange(of: selectedExercise) { _, _ in recomputeStrength() }
+                #if DEBUG
+                // `-siteScroll records` (#110): the site's tour shows records and the 1RM curve.
+                .task(id: records.count) {
+                    guard ScreenshotMode.scrollTarget == "records", !records.isEmpty else { return }
+                    try? await Task.sleep(for: .milliseconds(400))
+                    proxy.scrollTo(StatsAnchor.records, anchor: .top)
+                }
+                #endif
             }
-            .background(Color(uiColor: .systemGroupedBackground))
-            .safeAreaInset(edge: .top, spacing: 0) {
-                Color.clear.frame(height: 0).background(Color(uiColor: .systemGroupedBackground))
-            }
-            // Hidden on iPhone only: on iPad the bar holds the button that shows the sidebar.
-            .toolbar(horizontalSizeClass == .compact ? .hidden : .automatic, for: .navigationBar)
-            .task { recomputeAll() }
-            .onChange(of: sessions.count) { _, _ in recomputeAll() }
-            .onChange(of: period) { _, _ in recomputeAll() }
-            .onChange(of: selectedExercise) { _, _ in recomputeStrength() }
         }
     }
 
@@ -194,4 +205,9 @@ struct StatsView: View {
 #Preview {
     StatsView()
         .modelContainer(for: [WorkoutSession.self, Exercise.self], inMemory: true)
+}
+
+/// Scroll targets in Stats.
+private enum StatsAnchor: Hashable {
+    case records
 }

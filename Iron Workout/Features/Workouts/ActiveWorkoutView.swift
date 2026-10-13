@@ -125,6 +125,9 @@ struct ActiveWorkoutView: View {
                 startHealthKitIfAvailable()
                 startLiveActivity(state: state)
                 WatchConnectivityService.shared.sendSnapshot(state.makeWatchSnapshot())
+                #if DEBUG
+                scheduleSiteAutoDone(state: state)
+                #endif
             }
             .onDisappear {
                 state.stopRestTimer()
@@ -216,6 +219,24 @@ struct ActiveWorkoutView: View {
             do { try await health.startWorkout(startDate: session.startedAt) } catch { SentrySDK.capture(error: error) }
         }
     }
+
+    #if DEBUG
+    /// `-siteAutoDone`: the current set marked done after a pause, with the same animation as
+    /// the Done button, for recording the site's hero loop (see `ScreenshotMode`).
+    private func scheduleSiteAutoDone(state: ActiveWorkoutState) {
+        guard let delay = ScreenshotMode.autoDoneDelay else { return }
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(delay))
+            guard let exercise = state.currentExercise,
+                  let set = exercise.performedSets.sorted(by: { $0.setIndex < $1.setIndex }).first(where: { !$0.isCompleted })
+            else { return }
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
+                focusedSetID = nil
+                state.markSetDone(set, exercise: exercise)
+            }
+        }
+    }
+    #endif
 
     // MARK: - Live Activity
 
