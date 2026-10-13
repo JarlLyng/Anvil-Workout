@@ -1,0 +1,90 @@
+/* The home page (#110): the few things the design system's kit doesn't carry.
+   Everything else comes from kit.css and Anvil Workout's identity sheet. */
+
+/* Read by screen readers, not shown: the captions of the pieces' tables. */
+.home-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The hero's headline is three sentences, longer than the display scale is drawn for: at its
+   96 px it wrapped to six lines and pushed the store button below a 1440 × 900 window. On a wide
+   screen each sentence takes one line, at a step between the kit's headline and display sizes,
+   64 px at 1440 where "Track your progress." fits the column. A phone keeps the display size. */
+.ij-hero .home-hero-title { font-size: clamp(var(--ij-mkt-headline-size), 4.45vw, 4rem); }
+@media (min-width: 768px) {
+  .home-hero-title span { display: block; }
+}
+@media (max-width: 767px) {
+  .ij-hero .home-hero-title { font-size: var(--ij-mkt-display-size); }
+}
+
+/* The week of sets fills its card. */
+.home-week { width: 100%; }
+
+/* The new record: label, number and what it beat, stacked. */
+.home-record { flex-direction: column; gap: var(--ij-spacing-xs); }
+.home-record > p { margin: 0; }
+.home-record .ij-numeral { font-size: var(--ij-mkt-headline-size); }
+
+/* Numbers inside the pieces' SVGs, in the numeral face like every other number. */
+.home-svg-num {
+  font: 400 13px var(--ij-font-numeral);
+  font-variant-numeric: tabular-nums;
+  fill: var(--ij-color-text-primary);
+}
+.home-svg-num--quiet { fill: var(--ij-color-text-tertiary); }
+
+/* The one big number. It doesn't count up. The magenta as text is the deep one,
+   which reads on the card; the bright one is only ever a fill. */
+.ij-trait--number .home-seventy {
+  font-size: var(--ij-mkt-wordmark-size);
+  line-height: 1;
+  margin: 0;
+  color: var(--ij-color-accent-text);
+}
+
+/* Version numbers in the changelog table, in the numeral face. */
+.home-version { font-family: var(--ij-font-numeral); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* The import's name table sits on a card beside the text. */
+.home-import { padding: var(--ij-spacing-lg); }
+
+/* The honest split: two cards side by side on a wide screen. */
+.home-fit { display: grid; gap: var(--ij-spacing-lg); }
+@media (min-width: 768px) {
+  .home-fit { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.home-fit .ij-card { padding: var(--ij-spacing-lg); }
+.home-fit ul { margin: var(--ij-spacing-md) 0 0; padding-left: 1.2em; color: var(--ij-color-text-secondary); }
+.home-fit li + li { margin-top: var(--ij-spacing-xs); }
+
+/* The App Store's privacy label, in Apple's words. */
+.home-label-intro { color: var(--ij-color-text-secondary); }
+.home-label-types { color: var(--ij-color-text-primary); font-weight: 600; }
+.home-label-source { display: block; margin-top: 0.25rem; font-size: 0.85em; color: var(--ij-color-text-tertiary); }
+
+/* FAQ: native details, styled. */
+.home-faq { display: grid; gap: var(--ij-spacing-sm); }
+.home-faq details {
+  border: 1px solid var(--ij-color-border-subtle);
+  border-radius: var(--ij-radius-md, 12px);
+  background: var(--ij-color-bg-app);
+  padding: 0 1.1rem;
+}
+.home-faq summary {
+  cursor: pointer;
+  padding: 1rem 0;
+  font-weight: 600;
+  color: var(--ij-color-text-primary);
+  list-style-position: inside;
+}
+.home-faq details[open] summary { padding-bottom: 0.5rem; }
+.home-faq details p { margin: 0 0 1rem; color: var(--ij-color-text-secondary); }
+
+/* The closing line under the wordmark. */
+.ij-closing .ij-lede { margin: 0; }

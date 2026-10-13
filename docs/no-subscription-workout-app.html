@@ -12,7 +12,7 @@
 
     <!-- Smart App Banner for Anvil Workout: put in <head>. Generated, do not edit. -->
     <meta name="apple-itunes-app" content="app-id=6760627760">
-    <meta name="theme-color" content="#0a0a0a">
+    <meta name="theme-color" content="#F3F3EF">
 
     <link rel="icon" href="favicon.ico" sizes="any">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -61,9 +61,11 @@
     }
     </script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/dist/css/tokens.css" integrity="sha384-Q+9lzjWZUa4pUBlVp8zFClI24th8xb8+CGJWvNlxpoY5R2hzPfD5JaaGKwgokmng" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/dist/identity/anvil-workout.css" integrity="sha384-0CX3dBUjKWS0ZFGkbPBB50/Wf0+7USOyhEs07WrEWljAoqyzU5Ipkr7KteV7Jt61" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/dist/fonts/outfit.css" integrity="sha384-UcrYI5CF56eczr/KQ5MNz7JToFBBpcweMbl/Jd5WjvL357F4Wq2lmcq3y8OzbTkN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/dist/fonts/jetbrains-mono.css" integrity="sha384-WzFMEAYd5UbKSkcfXBEKdjJg22SanUxIvzISBXjg8m5G59muepM0lGJvNKOKOTR+" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/dist/kit/kit.css" integrity="sha384-UzmOHSjKYee93OtxDnxX+nHqWN4bVFhU1VF0UHoXzvPZRhnQ1eWPN92Ag8tPDl35" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
     <style>
         .content-page { padding-top: 60px; padding-bottom: 80px; max-width: 760px; margin: 0 auto; }
@@ -81,7 +83,7 @@
         .back-link:hover { text-decoration: underline; }
 
         .comparison-table {
-            border: 1px solid #222;
+            border: 1px solid var(--border);
             border-radius: var(--radius, 16px);
             overflow: hidden;
             margin: 24px 0 32px;
@@ -89,7 +91,7 @@
         .comparison-row {
             display: grid;
             grid-template-columns: 1.5fr 1fr 1fr;
-            border-bottom: 1px solid #222;
+            border-bottom: 1px solid var(--border);
         }
         .comparison-row:last-child { border-bottom: none; }
         .comparison-row.header {
@@ -97,9 +99,9 @@
             font-weight: 600;
             color: var(--text-primary);
         }
-        .comparison-cell { padding: 14px 16px; font-size: 0.95rem; color: var(--text-secondary); border-right: 1px solid #222; }
+        .comparison-cell { padding: 14px 16px; font-size: 0.95rem; color: var(--text-secondary); border-right: 1px solid var(--border); }
         .comparison-cell:last-child { border-right: none; }
-        .comparison-cell.good { color: #4ade80; }
+        .comparison-cell.good { color: var(--good); }
         .comparison-cell.neutral { color: var(--text-secondary); }
 
         .page-cta { margin-top: 48px; text-align: center; }
@@ -112,11 +114,22 @@
         }
     </style>
     <script defer src="https://umami-iamjarl.vercel.app/script.js" data-website-id="56413ff8-71df-422f-93cd-1d072c8f6195"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/dist/components/ij-store-cta.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/dist/components/ij-nav.js" integrity="sha384-zuvdJ2mPznocsx2Y++uFAEfK2VRnY+Udqz/k84Hfk1Wlu6TAX9mW3JhEOvCgwUTI" crossorigin="anonymous"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/dist/components/ij-footer.js" integrity="sha384-G0of8xb2B6KgvVqWziEHX+xJsGNDeLSH97PP60vdTkH+zqss/TSYFZacRRySm18C" crossorigin="anonymous"></script>
 </head>
-<body>
+<body class="ij-page">
+<a class="ij-skip" href="#main">Skip to content</a>
+<ij-nav>
+  <a slot="brand" href="index.html">Anvil</a>
+  <a slot="links" href="index.html#log">The log</a>
+  <a slot="links" href="switch-from-strong-hevy.html">Switching</a>
+  <a slot="links" href="index.html#privacy">Privacy</a>
+  <a slot="links" href="index.html#faq">FAQ</a>
+<!-- IAMJARL nav call to action for Anvil Workout (en). Generated from apps.json, v1.30.0. Do not edit. -->
+<a slot="cta" href="https://apps.apple.com/app/id6760627760?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="nav" data-umami-event-locale="en">Download</a>
+</ij-nav>
+<main id="main">
     <div class="container content-page">
-        <a href="index.html" class="back-link">&larr; Back to Anvil Workout</a>
         <h1>Pay Once. Own It Forever.</h1>
         <p class="lead">Most workout apps on the App Store are subscription-based. That leaves lifters paying recurring annual fees to track data they could easily save locally. Anvil Workout is a premium, subscription-free alternative. A single one-time purchase gets you full, permanent access on iPhone, iPad, and Apple Watch.</p>
 
@@ -153,14 +166,11 @@
             <li><strong>Local-first storage.</strong> Your workouts <a href="offline-workout-app.html">live in SwiftData on your device</a>, not on a server we control. Sync to your Apple Watch happens locally.</li>
             <li><strong>No account required.</strong> Install the app and start training. No email, no password, no OAuth dance.</li>
             <li><strong>Export your full history as CSV</strong> any time from Settings, not as a retention tactic but as a default capability.</li>
-            <li><strong>Import your history from Strong or Hevy</strong> via CSV, so leaving a subscription tracker doesn't mean leaving years of training behind.</li>
+            <li><strong><a href="switch-from-strong-hevy.html">Import your history from Strong or Hevy</a></strong> via CSV, so leaving a subscription tracker doesn't mean leaving years of training behind.</li>
             <li><strong>Your device backup covers it.</strong> If you use iCloud Backup or back up to a computer, your Anvil Workout data is included, so restoring to a new iPhone brings it back like any other app. Without a backup, it stays on the old phone.</li>
             <li><strong>If we ever stop shipping updates</strong>, the app on your device keeps working until iOS breaks compatibility, which typically takes many years.</li>
         </ul>
 
-        <figure class="content-photo">
-            <img src="images/arthur-edelmans-qfjuh4OLdxw-unsplash.jpg" alt="A lifter pressing a barbell overhead at a squat rack in a dimly lit gym" loading="lazy" width="1920" height="1280">
-        </figure>
 
         <h2>Honest comparison</h2>
         <p>One-time purchase isn't strictly better than subscription. It's a different tradeoff. Here's where each model wins:</p>
@@ -225,43 +235,38 @@
         <div class="page-cta">
             <h2>One purchase. Yours to keep.</h2>
             <p>No subscription, no account, no ads. Permanent access on iPhone, iPad, and Apple Watch companion app. Works fully offline.</p>
-            <ij-store-cta placement="footer" tone="white">
-                <!-- IAMJARL store button for Anvil Workout (en) — generated from apps.json, v1.20.0. Do not edit. -->
-                <div class="ij-store" data-ij-store="anvil-workout" data-ij-store-locale="en">
-                  <a class="ij-store-badge" href="https://apps.apple.com/app/id6760627760?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="hero" data-umami-event-locale="en">
-                    <picture>
-                      <source srcset="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/badges/app-store-white-en-us.svg" media="(prefers-color-scheme: dark)">
-                      <img src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/badges/app-store-black-en-us.svg" alt="Download on the App Store" width="120" height="40">
-                    </picture>
-                  </a>
-                  <p class="ij-store-facts">$2.99 once · iOS 17 or later</p>
-                </div>
-            </ij-store-cta>
+            <!-- IAMJARL store button for Anvil Workout (en, footer, black). Generated from apps.json, v1.30.0. Do not edit. -->
+            <div class="ij-store" data-ij-store="anvil-workout" data-ij-store-locale="en">
+              <a class="ij-store-badge" href="https://apps.apple.com/app/id6760627760?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="footer" data-umami-event-locale="en">
+                <img src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/badges/app-store-black-en-us.svg" alt="Download on the App Store" width="120" height="40">
+              </a>
+              <p class="ij-store-facts">$2.99 once · iOS 17 or later</p>
+            </div>
         </div>
     </div>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <span class="footer-brand">Anvil Workout</span>
-                <span class="footer-sep">&middot;</span>
-                <span>Made by <strong>IAMJARL</strong></span>
-            </div>
-            <div class="footer-links">
-                <a href="index.html">Home</a>
-                <a href="programs.html">Programs</a>
-                <a href="offline-workout-app.html">Works offline</a>
-                <a href="apple-health-strength-training.html">Apple Health</a>
-                <a href="no-subscription-workout-app.html">No subscription</a>
-                <a href="support.html">Support</a>
-                <a href="privacy.html">Privacy Policy</a>
-                <span class="footer-sep">&middot;</span>
-                <a href="https://iamjarl.com" target="_blank" rel="noopener">iamjarl.com</a>
-                <a href="https://wodrounds.iamjarl.com" target="_blank" rel="noopener">WODrounds</a>
-                <a href="https://weannicotine.iamjarl.com" target="_blank" rel="noopener">Wean Nicotine</a>
-                <a href="https://madebyhuman.iamjarl.com" target="_blank" rel="noopener">Made by Human</a>
-            </div>
-        </div>
-    </footer>
+</main>
+
+<ij-footer app="anvil-workout" links-label="Anvil Workout">
+<a slot="links" href="index.html">Home</a>
+<a slot="links" href="programs.html">Programs</a>
+<a slot="links" href="switch-from-strong-hevy.html">Switching from Strong or Hevy</a>
+<a slot="links" href="offline-workout-app.html">Works offline</a>
+<a slot="links" href="apple-health-strength-training.html">Apple Health</a>
+<a slot="links" href="no-subscription-workout-app.html">No subscription</a>
+<a slot="links" href="support.html">Support</a>
+<a slot="links" href="privacy.html">Privacy Policy</a>
+<!-- IAMJARL cross-links for Anvil Workout: generated, do not edit -->
+<!-- design system v1.30.0, registry updated 2026-10-13 -->
+<!-- Paste inside <ij-footer app="anvil-workout">. Rebuild to refresh. -->
+<a slot="cross-links" href="https://walkful.iamjarl.com">Walkful</a>
+<a slot="cross-links" href="https://weannicotine.iamjarl.com">Wean Nicotine</a>
+<a slot="cross-links" href="https://wodrounds.iamjarl.com">WODrounds</a>
+<a slot="cross-links" href="https://madebyhuman.iamjarl.com">Made by Human</a>
+<a slot="cross-links" href="https://iamjarl.com">All projects</a>
+<p slot="fineprint">© 2026 IAMJARL.</p>
+<!-- No slot attribute on purpose: the fallback, shown only if the component never loads. -->
+<p><a href="index.html">Home</a> &middot; <a href="programs.html">Programs</a> &middot; <a href="switch-from-strong-hevy.html">Switching from Strong or Hevy</a> &middot; <a href="offline-workout-app.html">Works offline</a> &middot; <a href="apple-health-strength-training.html">Apple Health</a> &middot; <a href="no-subscription-workout-app.html">No subscription</a> &middot; <a href="support.html">Support</a> &middot; <a href="privacy.html">Privacy Policy</a> &middot; © 2026 IAMJARL.</p>
+</ij-footer>
 </body>
 </html>

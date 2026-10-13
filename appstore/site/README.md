@@ -92,3 +92,18 @@ recording draws and a screenshot doesn't. The loop comes out at about 280 KB.
 The poster is the frame at 4.3 s: rest counting, set 4 up next with last session's weight and
 reps. The page reads the same before the video plays, without the script and under reduce
 motion.
+
+## The social card
+
+`docs/og-image.png`, the site's `og:image` and the repo's GitHub social preview, comes from
+`social-card.html` in this folder: the name, the headline, one line of outcome and the workout
+screen from the tour, on the site's own identity. Render it at twice the size and scale it down,
+so the type is sharp:
+
+```bash
+python3 -m http.server 8766 --bind 127.0.0.1    # from the repo root, so the page finds the tour screen
+# then a headless Chrome at 1200 × 630 and a device scale factor of 2, scaled to 1200 × 630
+```
+
+It comes out at about 180 KB, under the 1 MB the platforms allow. The GitHub half is a manual
+upload by the owner: Settings, then Social preview.

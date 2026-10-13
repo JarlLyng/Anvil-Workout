@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Anvil Workout social card</title>
+<!-- The source of docs/og-image.png (#110), on the site's own identity: the notebook ground,
+     charcoal text, Outfit for the name, JetBrains Mono for the facts, the magenta as a fill only,
+     and a real screen from the app. See README.md for how to render it at 1200 × 630. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/dist/css/tokens.css"
+  integrity="sha384-Q+9lzjWZUa4pUBlVp8zFClI24th8xb8+CGJWvNlxpoY5R2hzPfD5JaaGKwgokmng" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/dist/identity/anvil-workout.css"
+  integrity="sha384-0CX3dBUjKWS0ZFGkbPBB50/Wf0+7USOyhEs07WrEWljAoqyzU5Ipkr7KteV7Jt61" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/dist/fonts/outfit.css"
+  integrity="sha384-UcrYI5CF56eczr/KQ5MNz7JToFBBpcweMbl/Jd5WjvL357F4Wq2lmcq3y8OzbTkN" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/dist/fonts/jetbrains-mono.css"
+  integrity="sha384-WzFMEAYd5UbKSkcfXBEKdjJg22SanUxIvzISBXjg8m5G59muepM0lGJvNKOKOTR+" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/dist/kit/kit.css"
+  integrity="sha384-UzmOHSjKYee93OtxDnxX+nHqWN4bVFhU1VF0UHoXzvPZRhnQ1eWPN92Ag8tPDl35" crossorigin="anonymous">
+<style>
+  html, body { margin: 0; }
+  body.ij-page { width: 1200px; height: 630px; overflow: hidden; position: relative; }
+  .card-text { position: absolute; left: 80px; top: 112px; width: 640px; }
+  .card-brand { display: flex; align-items: center; gap: 14px; margin: 0 0 28px; font-family: var(--ij-font-display); font-size: 30px; color: var(--ij-color-text-primary); }
+  .card-brand::before { content: ""; width: 16px; height: 16px; border-radius: 50%; background: var(--ij-color-accent); }
+  .card-title { font-family: var(--ij-font-display); font-weight: 400; font-size: 66px; line-height: 1.04; letter-spacing: -0.02em; margin: 0; color: var(--ij-color-text-primary); }
+  .card-line { font-size: 27px; line-height: 1.4; color: var(--ij-color-text-secondary); margin: 30px 0 0; max-width: 560px; }
+  .card-facts { position: absolute; left: 80px; bottom: 64px; margin: 0; display: flex; gap: 14px; align-items: center;
+    font-family: var(--ij-font-numeral); font-variant-numeric: tabular-nums; font-size: 21px; color: var(--ij-color-text-primary); }
+  .card-facts mark { padding: 0.12em 0.4em; }
+  .card-url { color: var(--ij-color-text-secondary); }
+  .card-phone { position: absolute; left: 812px; top: 64px; width: 316px; }
+</style>
+</head>
+<body class="ij-page">
+  <div class="card-text">
+    <p class="card-brand">Anvil Workout</p>
+    <h1 class="card-title">Plan your workout.<br>Follow the flow.<br>Track your progress.</h1>
+    <p class="card-line">A strength log for iPhone, iPad and Apple Watch, paid for once.</p>
+  </div>
+  <p class="card-facts"><mark>No subscription</mark><mark>No account</mark><span class="card-url">anvilworkout.iamjarl.com</span></p>
+  <div class="card-phone">
+    <div class="ij-phone" style="--ij-phone-width: 316px">
+      <div class="ij-phone__screen"><img src="../../docs/assets/site/tour-workout.jpg" alt="" width="602" height="1308"></div>
+    </div>
+  </div>
+</body>
+</html>
