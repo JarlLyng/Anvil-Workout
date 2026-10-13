@@ -1,505 +1,488 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anvil Workout: Subscription-Free Strength App &amp; Log | iOS</title>
+<meta name="description" content="A strength log for iPhone, iPad and Apple Watch. Plan your workout, follow it set by set, and track your progress. One-time purchase, works offline, no account.">
+<meta name="robots" content="index, follow">
+<meta name="author" content="IAMJARL">
+<link rel="canonical" href="https://anvilworkout.iamjarl.com/">
+<!-- Smart App Banner for Anvil Workout: put in <head>. Generated, do not edit. -->
+<meta name="apple-itunes-app" content="app-id=6760627760">
+<meta name="theme-color" content="#F3F3EF">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 
-    <!-- Primary Meta -->
-    <title>Anvil Workout: Subscription-Free Strength App & Log | iOS</title>
-    <meta name="description" content="Anvil Workout is a strength training app for iPhone, iPad, and Apple Watch. Plan workouts, track sets and reps, and review progress. One-time purchase, works offline.">
-    <meta name="robots" content="index, follow">
-    <meta name="author" content="IAMJARL">
-    <link rel="canonical" href="https://anvilworkout.iamjarl.com/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://anvilworkout.iamjarl.com/">
+<meta property="og:title" content="Anvil Workout: Subscription-Free Strength App &amp; Log | iOS">
+<meta property="og:description" content="A strength log for iPhone, iPad and Apple Watch. Plan your workout, follow it set by set, and track your progress. Paid for once, with your data on your devices.">
+<meta property="og:image" content="https://anvilworkout.iamjarl.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Anvil Workout on iPhone">
+<meta property="og:site_name" content="Anvil Workout">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Anvil Workout: Subscription-Free Strength App &amp; Log | iOS">
+<meta name="twitter:description" content="A strength log for iPhone, iPad and Apple Watch. Plan your workout, follow it set by set, and track your progress. Paid for once, with your data on your devices.">
+<meta name="twitter:image" content="https://anvilworkout.iamjarl.com/og-image.png">
+<meta name="twitter:image:alt" content="Anvil Workout on iPhone">
 
-    <!-- Smart App Banner (iOS Safari) -->
-    <!-- Smart App Banner for Anvil Workout: put in <head>. Generated, do not edit. -->
-    <meta name="apple-itunes-app" content="app-id=6760627760">
+<!-- The design system's marketing kit and Anvil Workout's light identity, all from v1.30.0 (#110). -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/dist/css/tokens.css"
+  integrity="sha384-Q+9lzjWZUa4pUBlVp8zFClI24th8xb8+CGJWvNlxpoY5R2hzPfD5JaaGKwgokmng" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/dist/identity/anvil-workout.css"
+  integrity="sha384-0CX3dBUjKWS0ZFGkbPBB50/Wf0+7USOyhEs07WrEWljAoqyzU5Ipkr7KteV7Jt61" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/dist/fonts/outfit.css"
+  integrity="sha384-UcrYI5CF56eczr/KQ5MNz7JToFBBpcweMbl/Jd5WjvL357F4Wq2lmcq3y8OzbTkN" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/dist/fonts/jetbrains-mono.css"
+  integrity="sha384-WzFMEAYd5UbKSkcfXBEKdjJg22SanUxIvzISBXjg8m5G59muepM0lGJvNKOKOTR+" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/dist/kit/kit.css"
+  integrity="sha384-UzmOHSjKYee93OtxDnxX+nHqWN4bVFhU1VF0UHoXzvPZRhnQ1eWPN92Ag8tPDl35" crossorigin="anonymous">
+<link rel="stylesheet" href="home.css">
+<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/dist/kit/kit.js"
+  integrity="sha384-QeKNMfbL6hd3+jJpAO/EXzOP4wOtfXmYx/LtZ+HjeiQ/isGKhL/pVXIxbTf8ZDKl" crossorigin="anonymous"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/dist/components/ij-nav.js"
+  integrity="sha384-zuvdJ2mPznocsx2Y++uFAEfK2VRnY+Udqz/k84Hfk1Wlu6TAX9mW3JhEOvCgwUTI" crossorigin="anonymous"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/dist/components/ij-footer.js"
+  integrity="sha384-G0of8xb2B6KgvVqWziEHX+xJsGNDeLSH97PP60vdTkH+zqss/TSYFZacRRySm18C" crossorigin="anonymous"></script>
+<script defer src="https://umami-iamjarl.vercel.app/script.js" data-website-id="56413ff8-71df-422f-93cd-1d072c8f6195"></script>
 
-    <!-- Theme -->
-    <meta name="theme-color" content="#0a0a0a">
-
-    <!-- Favicon -->
-    <link rel="icon" href="favicon.ico" sizes="any">
-    <link rel="icon" href="favicon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://anvilworkout.iamjarl.com/">
-    <meta property="og:title" content="Anvil Workout: Subscription-Free Strength App & Log | iOS">
-    <meta property="og:description" content="Strength training app for iPhone, iPad, and Apple Watch. Plan workouts, track sets and reps, and review progress. One-time purchase. 100% offline, no account required.">
-    <meta property="og:image" content="https://anvilworkout.iamjarl.com/og-image.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="Anvil Workout app showing workout tracking interface">
-    <meta property="og:site_name" content="Anvil Workout">
-    <meta property="og:locale" content="en_US">
-
-    <!-- Twitter / X Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Anvil Workout: Subscription-Free Strength App & Log | iOS">
-    <meta name="twitter:description" content="Strength training app for iPhone, iPad, and Apple Watch. Plan workouts, track sets and reps, and review progress. One-time purchase. 100% offline, no account required.">
-    <meta name="twitter:image" content="https://anvilworkout.iamjarl.com/og-image.png">
-    <meta name="twitter:image:alt" content="Anvil Workout app showing workout tracking interface">
-
-    <!-- Structured Data: MobileApplication -->
-    <script type="application/ld+json">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MobileApplication",
+  "name": "Anvil Workout",
+  "operatingSystem": "iOS, iPadOS, watchOS",
+  "applicationCategory": "HealthApplication",
+  "description": "A strength log for iPhone, iPad and Apple Watch. Plan your workout, follow it set by set in the gym, and track your progress. Paid for once, with your data on your devices.",
+  "offers": {
+    "@type": "Offer",
+    "price": "2.99",
+    "priceCurrency": "USD",
+    "url": "https://apps.apple.com/app/id6760627760"
+  },
+  "downloadUrl": "https://apps.apple.com/app/id6760627760",
+  "installUrl": "https://apps.apple.com/app/id6760627760",
+  "softwareVersion": "1.10.0",
+  "author": {
+    "@type": "Organization",
+    "name": "IAMJARL"
+  },
+  "featureList": [
+    "Program builder with exercises, sets, reps, weight, rest and supersets",
+    "Program library with StrongLifts 5×5, Starting Strength, Greyskull LP, GZCLP, Upper/Lower and Push/Pull/Legs",
+    "70 built-in exercises, custom exercises and a muscle-group filter",
+    "Set tracking with a rest timer, last session's weight and reps beside each set, and a plate calculator",
+    "Live Activity on the Lock Screen and in the Dynamic Island with the workout clock and the rest countdown",
+    "Apple Watch companion that follows a workout started on the iPhone",
+    "Stats over 4, 12 or 26 weeks: volume, workouts or sets per week, records, estimated 1RM per lift and sets per muscle group",
+    "Automatic personal records for weight and reps",
+    "Apple Health: finished workouts saved, calories and heart rate read back",
+    "CSV export, and CSV import from Strong or Hevy with a preview of what can't come across",
+    "One-time purchase with Family Sharing, no subscription, no account, no ads and no in-app analytics"
+  ],
+  "url": "https://anvilworkout.iamjarl.com/"
+}
+</script>
+<!-- The FAQ section mirrors this word for word. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
     {
-      "@context": "https://schema.org",
-      "@type": "MobileApplication",
+      "@type": "Question",
+      "name": "Does Anvil Workout need a subscription?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. It's a one-time purchase, with no subscription and no in-app purchases. Every feature is included on iPhone, iPad and Apple Watch, and updates come with it."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it work without a signal?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Planning, running and reviewing a workout need no internet connection. Your programs and history are stored on your device and never uploaded. The only thing the app can send is a report if it crashes, hangs or hits an error. Reports never include your workouts, notes or Health data, and you can turn them off in Settings."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it work with Apple Health?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, if you allow it. Each finished workout is saved to Apple Health, and Anvil reads back the calories and average heart rate Health recorded during it. Those numbers come from another source, usually an Apple Watch, so without one they are often empty."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does the Apple Watch app work on its own?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Start the workout on your iPhone and the Watch follows it, so you can log and skip sets from your wrist. It needs no internet, but it does need your iPhone nearby."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does my data sync between iPhone and iPad?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Each device keeps its own programs and history, and nothing syncs between them."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens to my data on a new iPhone?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It moves with your device backup. If you use iCloud Backup or back up to a computer, your Anvil data comes back when you restore to the new phone. Without a backup it stays on the old one."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I bring my history from Strong or Hevy?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Export a CSV from either app and import it in Settings, or the first time you open Anvil. The preview lists anything that can't come across, such as timed or distance sets, before anything is saved. Anvil can't import its own CSV export, so the export is a copy of your history to keep, not a backup to restore from."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can my family use it?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Anvil Workout supports Family Sharing, so up to six family members can use it with Family Sharing turned on."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What can I log?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Programs with exercises, sets, reps, weight, rest and supersets. In the gym, each set's weight and reps, its type (working, warm-up, drop or failure) and an RPE if you want one. Afterwards, your history, personal records for weight and reps, an estimated one-rep max per lift, and volume, workouts and sets per week. Runs, planks and carries can't be logged, because a set is reps and weight."
+      }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
       "name": "Anvil Workout",
-      "operatingSystem": "iOS, watchOS, iPadOS",
-      "applicationCategory": "HealthApplication",
-      "applicationSubCategory": "Fitness",
-      "description": "A strength training app for iPhone, iPad, and Apple Watch for planning workouts, tracking sets and reps, and reviewing progress. One-time purchase, no subscription. Works fully offline with no account required.",
-      "offers": {
-        "@type": "Offer",
-        "price": "2.99",
-        "priceCurrency": "USD",
-        "availability": "https://schema.org/InStock",
-        "url": "https://apps.apple.com/app/id6760627760",
-        "description": "One-time purchase, no subscription, no in-app purchases"
-      },
-      "downloadUrl": "https://apps.apple.com/app/id6760627760",
-      "installUrl": "https://apps.apple.com/app/id6760627760",
-      "softwareVersion": "1.10.0",
-      "author": {
-        "@type": "Organization",
-        "name": "IAMJARL"
-      },
-      "featureList": [
-        "Workout program builder with exercises, sets, reps, weight targets, rest timers, and supersets",
-        "Apple Watch companion app for logging sets, skipping sets, and wrist-vibration rest timers",
-        "Native iPad layout with multi-pane navigation and two-column active workout screen",
-        "Real-time workout tracking with a haptic rest countdown that keeps time while the phone is locked",
-        "Automatic personal record detection for weight and reps",
-        "Stats over 4, 12 or 26 weeks: volume, workouts or sets per week, records, estimated 1RM per lift and sets per muscle group, with warm-ups left out",
-        "Live Activity on Lock Screen and Dynamic Island with the workout clock, set progress and a rest countdown",
-        "Apple Health and HealthKit integration for calories and heart rate",
-        "Home screen with the week's workouts, volume and next workout, and a streak counted in weeks in a row",
-        "CSV export of workout history",
-        "CSV import of workout history from Strong or Hevy, with their exercise names matched to the built-in library",
-        "Plate calculator for per-side barbell loading",
-        "Program tags for organizing and filtering routines",
-        "RPE tracking per set",
-        "Enter actual weight and reps before completing a set",
-        "Previous session's weight and reps shown beside each set, with one tap to reuse them",
-        "Import preview that lists exactly which rows will not be imported before anything is saved",
-        "Settings switch to turn crash reporting off; reports never include workout data",
-        "One-time purchase, no subscription, no account, no ads, no in-app analytics, workout history stored only on the device",
-        "100% offline with on-device storage"
-      ],
-      "url": "https://anvilworkout.iamjarl.com/"
+      "item": "https://anvilworkout.iamjarl.com/"
     }
-    </script>
-
-    <!-- Structured Data: FAQPage -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "Does Anvil Workout require a subscription?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "No. Anvil Workout is a one-time purchase with no subscription, no in-app purchases, and no hidden costs. You pay once and get all features forever, including future updates."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Does Anvil Workout work offline?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes. Anvil Workout needs no internet connection to plan, run or review a workout. Your programs, sets and history are stored only on your iPhone, using Apple's SwiftData framework, and are never uploaded or synced. There is no account and no cloud dependency. The only thing the app sends is a report to Sentry if it crashes, hangs or hits an error, and you can turn that off in Settings. Reports never include your workouts, notes or Health data."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Does Anvil Workout sync with Apple Health?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes, if you allow it. Each completed workout is saved to Apple Health. Anvil then reads back the calories and average heart rate that Health recorded during the workout and shows them in your history. Those numbers come from another source, usually an Apple Watch, so without one they are often empty."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Does the Apple Watch app work on its own?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "No. Start the workout on your iPhone and the watch follows it, so you can log and skip sets from your wrist. It needs no internet, but it does need your iPhone nearby."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Does my data sync between iPhone and iPad?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "No. Each device keeps its own programs and history, and nothing syncs between them. The Apple Watch is different because it shows the workout running on your iPhone instead of keeping its own."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What happens to my data if I get a new iPhone?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "It moves with your device backup. If you use iCloud Backup or back up to a computer, your Anvil data is included and comes back when you restore to the new phone. Without a backup it stays on the old one. You can also export your workout history as a CSV file from Settings at any time."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What features does Anvil Workout have?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Anvil Workout includes workout program creation with sets, reps, weight targets, rest timers, and supersets. During workouts, you get real-time set tracking with a haptic rest countdown, automatic personal record detection, and a Live Activity on the Lock Screen. After workouts, you can review volume charts, weekly frequency, estimated 1RM progression, and muscle group distribution."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "How does Anvil Workout compare to other workout apps?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Anvil Workout is built for lifters who want a focused, distraction-free gym experience. Unlike apps that require monthly subscriptions and cloud accounts, Anvil Workout is a one-time purchase with no recurring fees, works offline, and keeps your workouts on your device. It also supports Live Activity on the Lock Screen and Dynamic Island, automatic personal records, and Apple Health integration."
-          }
-        }
-      ]
-    }
-    </script>
-
-    <!-- Structured Data: BreadcrumbList -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Anvil Workout",
-          "item": "https://anvilworkout.iamjarl.com/"
-        }
-      ]
-    }
-    </script>
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <script defer src="https://umami-iamjarl.vercel.app/script.js" data-website-id="56413ff8-71df-422f-93cd-1d072c8f6195"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/dist/components/ij-store-cta.js"></script>
+  ]
+}
+</script>
 </head>
-<body>
+<body class="ij-page">
+<a class="ij-skip" href="#main">Skip to content</a>
+<ij-nav>
+  <a slot="brand" href="index.html">Anvil</a>
+  <a slot="links" href="#log">The log</a>
+  <a slot="links" href="#switching">Switching</a>
+  <a slot="links" href="#privacy">Privacy</a>
+  <a slot="links" href="#faq">FAQ</a>
+  <!-- IAMJARL nav call to action for Anvil Workout (en). Generated from apps.json, v1.30.0. Do not edit. -->
+  <a slot="cta" href="https://apps.apple.com/app/id6760627760?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="nav" data-umami-event-locale="en">Download</a>
+</ij-nav>
 
-    <!-- Hero -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-badge">Now on the App Store</div>
-                <h1>Anvil Workout</h1>
-                <p class="hero-tagline">Plan your workout. Follow the flow.<br>Track your progress.</p>
-                <p class="hero-sub">Anvil Workout is a strength training app for iPhone, iPad, and Apple Watch. Plan workouts, track sets and reps in the gym, and review progress over time. One-time purchase. No subscription, no account required, no ads, no in-app analytics. Your workouts stay on your device.</p>
-                <div class="hero-actions">
-                    <ij-store-cta placement="hero" tone="white">
-                        <!-- IAMJARL store button for Anvil Workout (en) — generated from apps.json, v1.20.0. Do not edit. -->
-                        <div class="ij-store" data-ij-store="anvil-workout" data-ij-store-locale="en">
-                          <a class="ij-store-badge" href="https://apps.apple.com/app/id6760627760?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="hero" data-umami-event-locale="en">
-                            <picture>
-                              <source srcset="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/badges/app-store-white-en-us.svg" media="(prefers-color-scheme: dark)">
-                              <img src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/badges/app-store-black-en-us.svg" alt="Download on the App Store" width="120" height="40">
-                            </picture>
-                          </a>
-                          <p class="ij-store-facts">$2.99 once · iOS 17 or later</p>
-                        </div>
-                    </ij-store-cta>
-                </div>
-            </div>
-            <div class="hero-visual">
-                <div class="phone-frame">
-                    <div class="phone-screen">
-                        <img src="screenshots/dashboard.png" alt="Anvil Workout home screen: this week's workouts, volume and streak, then the next workout with its exercises and a Start Workout button" loading="eager" width="256" height="556">
-                    </div>
-                </div>
-            </div>
+<main id="main">
+
+  <!-- 1. Hero. On a phone the words and the store button come before the device. -->
+  <section class="ij-hero ij-hero--split" id="hero">
+    <div class="ij-container ij-hero__inner">
+      <div class="ij-hero__text">
+        <h1 class="ij-display">Plan your workout. Follow the flow. Track your progress.</h1>
+        <p class="ij-lede">A strength log for iPhone, iPad and Apple Watch. You pay for it once, and your training stays on your devices.</p>
+        <!-- IAMJARL store button for Anvil Workout (en, hero, black). Generated from apps.json, v1.30.0. Do not edit. -->
+        <div class="ij-store" data-ij-store="anvil-workout" data-ij-store-locale="en">
+          <a class="ij-store-badge" href="https://apps.apple.com/app/id6760627760?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="hero" data-umami-event-locale="en">
+            <img src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/badges/app-store-black-en-us.svg" alt="Download on the App Store" width="120" height="40">
+          </a>
+          <p class="ij-store-facts">$2.99 once · iOS 17 or later</p>
         </div>
-    </section>
-
-    <!-- Features -->
-    <section class="features" id="features">
-        <div class="container">
-            <h2>All of it comes with the one purchase.</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg aria-hidden="true" viewBox="0 0 256 256" width="32" height="32" fill="currentColor"><path d="M248,120h-8V88a16,16,0,0,0-16-16H208V64a16,16,0,0,0-16-16H64A16,16,0,0,0,48,64v8H32A16,16,0,0,0,16,88v32a16,16,0,0,0,16,16H48v8a16,16,0,0,0,16,16H80.69l-8.35,8.34a8,8,0,0,0,11.32,11.32l14.83-14.83A8,8,0,0,0,100.83,160H155.17a8,8,0,0,0,2.34,5.17l14.83,14.83a8,8,0,0,0,11.32-11.32L175.31,160H192a16,16,0,0,0,16-16v-8h16a16,16,0,0,0,16-16V136A16,16,0,0,0,248,120Z"/></svg>
-                    </div>
-                    <h3>Build Programs</h3>
-                    <p>Start with a <a href="programs.html">proven program</a> like Starting Strength or Push/Pull/Legs, or build your own with exercises, sets, reps, weight targets, rest timers, and supersets. Organize everything with tags.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg aria-hidden="true" viewBox="0 0 256 256" width="32" height="32" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm56,112H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48a8,8,0,0,1,0,16Z"/></svg>
-                    </div>
-                    <h3>Train with Flow</h3>
-                    <p>Workout timer, set-by-set tracking, rest countdown with haptic feedback, pause and resume. The clock and your rest keep counting on the Lock Screen with the phone in your pocket. Add notes per exercise, or tap the barbell for a built-in plate calculator. Just follow the screen.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg aria-hidden="true" viewBox="0 0 256 256" width="32" height="32" fill="currentColor"><path d="M232,208a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V48a8,8,0,0,1,16,0V156.69l50.34-50.35a8,8,0,0,1,11.32,0L128,132.69,180.69,80H160a8,8,0,0,1,0-16h48a8,8,0,0,1,8,8v48a8,8,0,0,1-16,0V99.31l-58.34,58.35a8,8,0,0,1-11.32,0L104,131.31,46.34,188.97l-.34.34V200H224A8,8,0,0,1,232,208Z"/></svg>
-                    </div>
-                    <h3>Track Progress</h3>
-                    <p>Automatic personal record detection for weight and reps. Look back over 4, 12 or 26 weeks against the weeks before: volume per week, your records, estimated 1RM per lift and sets per muscle group. Warm-ups never count.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg aria-hidden="true" viewBox="0 0 256 256" width="32" height="32" fill="currentColor"><path d="M176,80v96a48.05,48.05,0,0,1-40,47.33V240a8,8,0,0,1-16,0V223.33A48.05,48.05,0,0,1,80,176V80A48.05,48.05,0,0,1,120,32.67V16a8,8,0,0,1,16,0V32.67A48.05,48.05,0,0,1,176,80ZM96,80v96a32,32,0,0,0,32,32h0a32,32,0,0,0,32-32V80a32,32,0,0,0-32-32h0A32,32,0,0,0,96,80Z"/></svg>
-                    </div>
-                    <h3>Apple Watch App</h3>
-                    <p>Log sets, skip exercises, and feel a tap on your wrist when your rest timer finishes. The watch follows the workout running on your iPhone, with no internet needed. Includes a watch widget.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg aria-hidden="true" viewBox="0 0 256 256" width="32" height="32" fill="currentColor"><path d="M192,24H64A24,24,0,0,0,40,48V208a24,24,0,0,0,24,24H192a24,24,0,0,0,24-24V48A24,24,0,0,0,192,24ZM56,48a8,8,0,0,1,8-8H192a8,8,0,0,1,8,8V184H56Zm136,160a8,8,0,0,1-8,8H64a8,8,0,0,1-8-8V200H200Zm-64,8a8,8,0,1,1-8-8A8,8,0,0,1,136,216Z"/></svg>
-                    </div>
-                    <h3>Designed for iPad</h3>
-                    <p>Plan routines on a spacious split layout. In the gym, use the two-column active workout screen to see current logging and upcoming sets side-by-side.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg aria-hidden="true" viewBox="0 0 256 256" width="32" height="32" fill="currentColor"><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM128,160a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z"/></svg>
-                    </div>
-                    <h3>Apple Health</h3>
-                    <p>With your permission, finished workouts are saved to Apple Health, and the calories and heart rate your Apple Watch recorded show up in your workout history.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg aria-hidden="true" viewBox="0 0 256 256" width="32" height="32" fill="currentColor"><path d="M224,152v56a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V152a8,8,0,0,1,16,0v48H208V152a8,8,0,0,1,16,0ZM122.34,141.66a8,8,0,0,0,11.32,0l40-40a8,8,0,0,0-11.32-11.32L136,116.69V32a8,8,0,0,0-16,0v84.69L93.66,90.34a8,8,0,0,0-11.32,11.32Z"/></svg>
-                    </div>
-                    <h3>Import from Strong &amp; Hevy</h3>
-                    <p>Switching apps? Bring your full training history with you. <a href="switch-from-strong-hevy.html">Import a CSV export from Strong or Hevy</a> in a single step and pick up right where you left off. Exercise names are matched to Anvil's own, so your old bench press and your new one share one history.</p>
-                </div>
-            </div>
+      </div>
+      <div class="ij-hero__media">
+        <div class="ij-phone" style="--ij-phone-width: 320px">
+          <div class="ij-phone__screen">
+            <video class="ij-loop" muted loop playsinline preload="none" poster="assets/site/workout-loop-poster.jpg"
+              width="602" height="1308" aria-label="Back squat, set 3 of 5 at 5 × 305 lb, is marked done. Rest counts down from 3:00, and set 4 comes up with last session's 300 lb × 5 beside it."><source src="assets/site/workout-loop.mp4" type="video/mp4"></video>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- Screenshots -->
-    <section class="screenshots" id="screenshots">
-        <div class="container">
-            <h2>Built for lifters who just want to train</h2>
-            <p class="section-sub">Clean, focused, and fast. No clutter, no upsells, no distractions between you and your next set.</p>
-            <div class="screenshots-grid">
-                <figure>
-                    <img src="screenshots/programs.png" alt="Workouts tab with the Program Library and two programs, each listing its exercises and when it was last done" loading="lazy" width="301" height="654">
-                    <figcaption><strong>Programs</strong><span>Start from the library or build your own. Each program shows what is in it and when you last did it.</span></figcaption>
-                </figure>
-                <figure>
-                    <img src="screenshots/history.png" alt="Workout history grouped by this week, last week and month, each workout with its time, sets and volume" loading="lazy" width="301" height="654">
-                    <figcaption><strong>History</strong><span>Every workout by week and month, with its time, sets and volume. Search finds exercises too.</span></figcaption>
-                </figure>
-                <figure>
-                    <img src="screenshots/exercises.png" alt="Exercise library showing built-in exercises by name, muscle group, and equipment" loading="lazy" width="301" height="654">
-                    <figcaption><strong>Exercise library</strong><span>70 built-in exercises. Add your own. Filter by muscle group.</span></figcaption>
-                </figure>
-                <figure>
-                    <img src="screenshots/stats.png" alt="Stats over 12 weeks: workouts, sets and volume against the 12 weeks before, volume per week, and personal records" loading="lazy" width="301" height="654">
-                    <figcaption><strong>Stats that matter</strong><span>4, 12 or 26 weeks against the weeks before: volume per week, your records and estimated 1RM.</span></figcaption>
-                </figure>
-            </div>
-            <div class="screenshots-devices">
-                <figure class="device-ipad">
-                    <img src="screenshots/ipad-workout.png" alt="Active workout on iPad in two columns: the current set of Back Squat with its weight and a Done button on the left, the exercises coming up on the right" loading="lazy" width="560" height="350">
-                    <figcaption><strong>On iPad</strong><span>The set you are on, with the exercises coming up beside it.</span></figcaption>
-                </figure>
-                <figure class="device-watch">
-                    <div class="watch-pair">
-                        <img src="screenshots/watch-set.png" alt="Apple Watch showing Back Squat, set 3 of 5, 5 × 225 lb, with Skip and Done buttons" loading="lazy" width="160" height="191">
-                        <img src="screenshots/watch-rest.png" alt="Apple Watch counting down rest in a ring, with the next set below it" loading="lazy" width="160" height="191">
-                    </div>
-                    <figcaption><strong>On Apple Watch</strong><span>Mark a set done on your wrist and feel when rest is over. The watch follows the workout on your iPhone.</span></figcaption>
-                </figure>
-            </div>
+  <!-- 2. Frameless pieces, from the sample history: the numbers are the picture -->
+  <section class="ij-section ij-section--band" id="log" aria-labelledby="log-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="log-h">The log, not a feed.</h2>
+      <div class="ij-bento">
+        <div class="ij-card ij-card--half">
+          <div class="ij-card__piece">
+            <table class="ij-data home-week">
+              <caption class="home-visually-hidden">Working sets in the week of 4 October, from the sample history</caption>
+              <tbody><tr><th scope="rowgroup" rowspan="3">Sun</th><td>Back squat</td><td class="ij-num">5 × 5</td><td class="ij-num">295 lb</td></tr><tr><td>Bench press</td><td class="ij-num">5 × 5</td><td class="ij-num">170 lb</td></tr><tr><td>Barbell row</td><td class="ij-num">5 × 5</td><td class="ij-num">170 lb</td></tr></tbody>
+              <tbody><tr><th scope="rowgroup" rowspan="3">Tue</th><td>Back squat</td><td class="ij-num">5 × 5</td><td class="ij-num">300 lb</td></tr><tr><td>Overhead press</td><td class="ij-num">5 × 5</td><td class="ij-num">150 lb</td></tr><tr><td>Deadlift</td><td class="ij-num">1 × 5</td><td class="ij-num">340 lb</td></tr></tbody>
+              <tbody><tr><th scope="rowgroup" rowspan="3">Thu</th><td>Back squat</td><td class="ij-num">5 × 5</td><td class="ij-num">300 lb</td></tr><tr><td>Bench press</td><td class="ij-num">5 × 5</td><td class="ij-num">175 lb</td></tr><tr><td>Barbell row</td><td class="ij-num">5 × 5</td><td class="ij-num">175 lb</td></tr></tbody>
+            </table>
+          </div>
+          <h3 class="ij-title">A week of sets.</h3>
+          <p>Every working set of the week, with its reps and weight. Warm-ups are logged too, and never counted.</p>
         </div>
-    </section>
-
-    <!-- Highlights -->
-    <section class="highlights">
-        <div class="container">
-            <div class="highlights-grid">
-                <div class="highlight">
-                    <span class="highlight-number">0</span>
-                    <span class="highlight-label">Accounts needed</span>
-                </div>
-                <div class="highlight">
-                    <span class="highlight-number">0</span>
-                    <span class="highlight-label">Subscriptions</span>
-                </div>
-                <div class="highlight">
-                    <span class="highlight-number">0</span>
-                    <span class="highlight-label">In-app analytics</span>
-                </div>
-                <div class="highlight">
-                    <span class="highlight-number">100%</span>
-                    <span class="highlight-label">Offline</span>
-                </div>
-            </div>
+        <div class="ij-card ij-card--half">
+          <div class="ij-card__piece home-record">
+            <p class="ij-label"><mark>New record</mark></p>
+            <p class="ij-numeral">175 lb</p>
+            <p class="ij-small">Bench press, before 170 lb</p>
+          </div>
+          <h3 class="ij-title">A new record.</h3>
+          <p>When a workout ends, Anvil checks every set against your history and shows which lifts beat your old best, in weight or in reps.</p>
         </div>
-    </section>
-
-    <!-- Who it's for -->
-    <section class="audience">
-        <div class="container">
-            <h2>Made for lifters who run their own show</h2>
-            <p class="section-sub">Anvil is deliberately focused, which makes it a great fit for some lifters and the wrong call for others. Here is the honest split.</p>
-            <div class="audience-grid">
-                <div class="audience-col fit">
-                    <h3>Anvil is for you if</h3>
-                    <ul>
-                        <li>You already know how to train and follow your own program</li>
-                        <li>You just want to log fast and see whether you are progressing</li>
-                        <li>You would rather buy once and own it than rent another subscription</li>
-                        <li>You want your training history private and on your own device</li>
-                        <li>You are in the Apple ecosystem (iPhone, iPad, Apple Watch)</li>
-                    </ul>
-                </div>
-                <div class="audience-col unfit">
-                    <h3>Look elsewhere if</h3>
-                    <ul>
-                        <li>You want a coach or AI to write your workouts for you</li>
-                        <li>You are here for a social feed, friends, and challenges</li>
-                        <li>You need an Android or web version</li>
-                    </ul>
-                </div>
-            </div>
+        <div class="ij-card">
+          <div class="ij-card__piece">
+            <svg viewBox="0 0 220 120" width="220" height="120" role="img" aria-label="Back squat, estimated one-rep max over 12 weeks: from 281.3 lb to 337.5 lb">
+              <path d="M10 108H210" style="stroke: var(--ij-color-border-default)" stroke-width="1" fill="none"/>
+              <path d="M14.0 96.8L18.7 90.4L23.5 90.4L30.5 90.4L35.3 84.0L40.0 84.0L47.1 84.0L51.8 77.6L56.5 77.6L63.6 77.6L68.4 71.1L73.1 71.1L96.7 71.1L101.5 64.7L106.2 64.7L113.3 64.7L118.0 58.3L122.7 58.3L129.8 58.3L134.5 51.9L139.3 51.9L146.4 51.9L151.1 45.4L155.8 45.4L162.9 45.4L167.6 39.0L172.4 39.0L179.5 39.0L184.2 32.6L188.9 32.6L196.0 32.6" style="stroke: var(--ij-color-accent)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="196.0" cy="32.6" r="5" style="fill: var(--ij-color-accent)"/>
+              <text x="196.0" y="22.6" text-anchor="end" class="home-svg-num">337.5 lb</text>
+              <text x="14" y="116.8" class="home-svg-num home-svg-num--quiet">281.3 lb</text>
+            </svg>
+          </div>
+          <h3 class="ij-title">Strength, per lift.</h3>
+          <p>An estimated one-rep max for each lift, worked out from sets of 1 to 12 reps, so you can watch your squat climb without testing it.</p>
         </div>
-    </section>
-
-    <!-- FAQ -->
-    <section class="faq" id="faq">
-        <div class="container">
-            <h2>Frequently Asked Questions</h2>
-            <div class="faq-list">
-                <details class="faq-item" open>
-                    <summary>Does Anvil Workout require a subscription?</summary>
-                    <p>No. Anvil Workout is a <a href="no-subscription-workout-app.html">one-time purchase</a> with no subscription, no in-app purchases, and no hidden costs. You pay once and get all features forever, including future updates.</p>
-                </details>
-                <details class="faq-item">
-                    <summary>Does Anvil Workout work offline?</summary>
-                    <p>Yes. Anvil Workout <a href="offline-workout-app.html">needs no internet connection</a> to plan, run or review a workout. Your programs, sets and history are stored only on your iPhone and are never uploaded or synced. There is no account and no cloud dependency. The only thing the app sends is a report to Sentry if it crashes, hangs or hits an error, and you can turn that off in Settings. Reports never include your workouts, notes or Health data.</p>
-                </details>
-                <details class="faq-item">
-                    <summary>Does it sync with Apple Health?</summary>
-                    <p>Yes, if you allow it. Each completed workout is saved to <a href="apple-health-strength-training.html">Apple Health</a>. Anvil then reads back the calories and average heart rate that Health recorded during the workout and shows them in your history. Those numbers come from another source, usually an Apple Watch, so without one they are often empty.</p>
-                </details>
-                <details class="faq-item">
-                    <summary>Does the Apple Watch app work on its own?</summary>
-                    <p>No. Start the workout on your iPhone and the watch follows it, so you can log and skip sets from your wrist. It needs no internet, but it does need your iPhone nearby.</p>
-                </details>
-                <details class="faq-item">
-                    <summary>Does my data sync between iPhone and iPad?</summary>
-                    <p>No. Each device keeps its own programs and history, and nothing syncs between them. The Apple Watch is different because it shows the workout running on your iPhone instead of keeping its own.</p>
-                </details>
-                <details class="faq-item">
-                    <summary>What happens to my data if I get a new iPhone?</summary>
-                    <p>It moves with your device backup. If you use iCloud Backup or back up to a computer, your Anvil data is included and comes back when you restore to the new phone. Without a backup it stays on the old one. You can also export your workout history as a CSV file from Settings at any time.</p>
-                </details>
-                <details class="faq-item">
-                    <summary>What can I track?</summary>
-                    <p>You can create full workout programs with exercises, sets, reps, weight targets, rest timers, and supersets. During workouts, sets are tracked in real time on your iPhone (with Live Activity) or on your wrist using our native Apple Watch companion app, which features haptic rest alerts. After workouts, you can review volume charts, weekly frequency, estimated 1RM progression, muscle group distribution, and automatically detected personal records.</p>
-                </details>
-                <details class="faq-item">
-                    <summary>How is Anvil Workout different from other gym apps?</summary>
-                    <p>Anvil Workout is built for lifters who want a focused, distraction-free gym experience. Unlike apps that require monthly subscriptions and cloud accounts, Anvil Workout is a one-time purchase that works offline and keeps your workouts on your device. It includes native support for iPad (ideal for gym stands) and an Apple Watch companion that follows the workout on your iPhone so you can log sets from your wrist, alongside Live Activity and Apple Health integration.</p>
-                </details>
-            </div>
+        <div class="ij-card">
+          <div class="ij-card__piece">
+            <svg viewBox="0 0 220 124" width="220" height="124" role="img" aria-label="305 lb on a 45 lb bar: 45, 45, 35 and 5 lb on each side">
+              <rect x="8" y="57" width="204" height="6" rx="3" style="fill: var(--ij-color-text-primary)"/>
+              <g style="fill: var(--ij-color-accent); stroke: var(--ij-color-text-primary)" stroke-width="1.5">
+                <rect x="52" y="14" width="16" height="92" rx="3"/><rect x="78" y="14" width="16" height="92" rx="3"/><rect x="104" y="20" width="16" height="80" rx="3"/><rect x="130" y="38" width="10" height="44" rx="3"/>
+              </g>
+              <text x="60" y="118" text-anchor="middle" class="home-svg-num">45</text><text x="86" y="118" text-anchor="middle" class="home-svg-num">45</text><text x="112" y="118" text-anchor="middle" class="home-svg-num">35</text><text x="135" y="118" text-anchor="middle" class="home-svg-num">5</text>
+            </svg>
+          </div>
+          <h3 class="ij-title">Plates per side.</h3>
+          <p>Enter the weight on the bar and see which plates go on each side.</p>
         </div>
-    </section>
-
-    <!-- Roadmap -->
-    <section class="roadmap" id="roadmap">
-        <div class="container">
-            <h2>Actively developed, honestly roadmapped</h2>
-            <p class="section-sub">One-time purchase doesn't mean development stops. Here is what recently shipped and what is being built right now. No dates, no promises we can't keep.</p>
-            <div class="roadmap-grid">
-                <div class="roadmap-col">
-                    <h3>Recently shipped <span class="roadmap-tag">v1.10.0</span></h3>
-                    <ul>
-                        <li>A redesigned workout screen, home screen and Stats, with the numbers first</li>
-                        <li>A first start that sets your unit and gets you to a first workout, from the program library, your history from another app, or a program of your own</li>
-                        <li>Supersets that alternate one set at a time, with rest after each round</li>
-                        <li>A streak counted in weeks in a row with a workout</li>
-                        <li>v1.9.1: the rest timer keeps time while your phone is locked, and your workout clock and rest countdown show on the Lock Screen</li>
-                    </ul>
-                </div>
-                <div class="roadmap-col">
-                    <h3>Coming next</h3>
-                    <ul>
-                        <li>The full inner display on iPhone Duo, once Apple's tools for it are out of beta</li>
-                        <li>Have a request? <a href="support.html">Tell us what you need</a></li>
-                    </ul>
-                </div>
-            </div>
+        <div class="ij-card">
+          <div class="ij-card__piece">
+            <div class="ij-watch" style="--ij-watch-width: 110px"><div class="ij-watch__screen"><img src="assets/site/watch-rest.png" alt="Apple Watch counting down rest in a ring, with the next set, 5 × 225 lb, below it" width="416" height="496" loading="lazy" decoding="async"></div></div>
+          </div>
+          <h3 class="ij-title">Rest on your wrist.</h3>
+          <p>When rest is over, your Apple Watch taps your wrist, with the next set already on its screen.</p>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- Mood band -->
-    <section class="mood-band">
-        <p>Nothing between you and the next set.</p>
-    </section>
-
-    <!-- CTA -->
-    <section class="cta">
-        <div class="container">
-            <h2>Start training smarter.</h2>
-            <p>One-time purchase on the App Store. No subscription, no account required.</p>
-            <ij-store-cta placement="footer" tone="white">
-                <!-- IAMJARL store button for Anvil Workout (en) — generated from apps.json, v1.20.0. Do not edit. -->
-                <div class="ij-store" data-ij-store="anvil-workout" data-ij-store-locale="en">
-                  <a class="ij-store-badge" href="https://apps.apple.com/app/id6760627760?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="hero" data-umami-event-locale="en">
-                    <picture>
-                      <source srcset="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/badges/app-store-white-en-us.svg" media="(prefers-color-scheme: dark)">
-                      <img src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/badges/app-store-black-en-us.svg" alt="Download on the App Store" width="120" height="40">
-                    </picture>
-                  </a>
-                  <p class="ij-store-facts">$2.99 once · iOS 17 or later</p>
-                </div>
-            </ij-store-cta>
+  <!-- 3. The phone that stays -->
+  <section class="ij-section" aria-labelledby="tour-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="tour-h">From the plan to the numbers.</h2>
+      <div class="ij-tour">
+        <div class="ij-tour__screens">
+          <div class="ij-phone" data-step="1"><div class="ij-phone__screen"><img src="assets/site/tour-library.jpg" alt="The Program Library: Greyskull LP, Starting Strength and StrongLifts 5×5 for beginners, then GZCLP and Upper / Lower" width="602" height="1308" loading="lazy" decoding="async"></div></div>
+          <div class="ij-phone" data-step="2"><div class="ij-phone__screen"><img src="assets/site/tour-workout.jpg" alt="A workout in progress: back squat, two sets of 5 × 305 lb done, set 3 of 5 on screen with last session's 300 lb × 5 beside it" width="602" height="1308" loading="lazy" decoding="async"></div></div>
+          <div class="ij-phone" data-step="3"><div class="ij-phone__screen"><img src="assets/site/tour-stats.jpg" alt="Stats over 12 weeks: personal records for five lifts, and the back squat's best estimated one-rep max of 337.5 lb, up 56.3 lb" width="602" height="1308" loading="lazy" decoding="async"></div></div>
         </div>
-    </section>
+        <ol class="ij-tour__steps">
+          <li class="ij-tour__step" data-step="1"><h3 class="ij-title">Start from a classic program.</h3><p>StrongLifts 5×5, Starting Strength, Greyskull LP, GZCLP, Upper/Lower and Push/Pull/Legs are built in. Import one and change anything in it, or build your own from scratch.</p></li>
+          <li class="ij-tour__step" data-step="2"><h3 class="ij-title">The set you're on comes first.</h3><p>Its weight and reps are the biggest thing on the screen, last session's numbers sit beside them, and rest counts down as a clock, on the Lock Screen too.</p></li>
+          <li class="ij-tour__step" data-step="3"><h3 class="ij-title">See whether you're getting stronger.</h3><p>Look back over 4, 12 or 26 weeks against the weeks before, with your latest record on each lift and its estimated one-rep max. Warm-up sets never count.</p></li>
+        </ol>
+      </div>
+    </div>
+  </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-more">
-                <span class="footer-more-label">More from IAMJARL</span>
-                <p><a href="https://wodrounds.iamjarl.com" target="_blank" rel="noopener"><strong>WODrounds</strong></a> is our interval and WOD timer, from the same maker and built on the same promise: pay once, no account, no tracking, native to iPhone, iPad, and Apple Watch. If Anvil logs your lifting, WODrounds times your conditioning.</p>
-                <p><a href="https://walkful.iamjarl.com" target="_blank" rel="noopener"><strong>Walkful</strong></a> is our calm daily walking app, built on the same promise: pay once for Pro, no account, and your steps stay on your device.</p>
-            </div>
-            <div class="footer-content">
-                <span class="footer-brand">Anvil Workout</span>
-                <span class="footer-sep">&middot;</span>
-                <span>Made by <strong>IAMJARL</strong></span>
-                <span class="footer-sep">&middot;</span>
-                <span class="footer-updated">Updated July 2026</span>
-            </div>
-            <div class="footer-links">
-                <a href="programs.html">Programs</a>
-                <a href="switch-from-strong-hevy.html">Switching from Strong or Hevy</a>
-                <a href="offline-workout-app.html">Works offline</a>
-                <a href="apple-health-strength-training.html">Apple Health</a>
-                <a href="no-subscription-workout-app.html">No subscription</a>
-                <a href="support.html">Support</a>
-                <a href="privacy.html">Privacy Policy</a>
-                <span class="footer-sep">&middot;</span>
-                <a href="https://iamjarl.com" target="_blank" rel="noopener">iamjarl.com</a>
-                <a href="https://wodrounds.iamjarl.com" target="_blank" rel="noopener">WODrounds</a>
-                <a href="https://walkful.iamjarl.com" target="_blank" rel="noopener">Walkful</a>
-                <a href="https://weannicotine.iamjarl.com" target="_blank" rel="noopener">Wean Nicotine</a>
-                <a href="https://madebyhuman.iamjarl.com" target="_blank" rel="noopener">Made by Human</a>
-            </div>
+  <!-- 4. Where it works: one big number, then the rest. The 70 doesn't count up. -->
+  <section class="ij-section ij-section--band" id="where" aria-labelledby="where-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="where-h">Where it works.</h2>
+      <div class="ij-traits">
+        <div class="ij-trait ij-trait--number"><p class="ij-numeral home-seventy">70</p><p>Exercises built in, across every major muscle group.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Your own exercises</h3><p>Add any lift the library doesn't have, and filter by muscle group.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">iPhone and iPad</h3><p>Each keeps its own programs and history, and nothing syncs between them.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Apple Watch</h3><p>Start a workout on your iPhone and the Watch follows it, so you can log a set or skip one from your wrist. It needs the iPhone nearby, not the internet.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Apple Health</h3><p>If you allow it, every finished workout is saved to Health, and the calories and heart rate your Watch recorded show up in your history.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">CSV, Strong and Hevy</h3><p>Export your history as a CSV file whenever you want, or bring it over from Strong or Hevy in one step.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Switching from Strong or Hevy -->
+  <section class="ij-section" id="switching" aria-labelledby="switching-h">
+    <div class="ij-container">
+      <div class="ij-rows">
+        <div class="ij-row">
+          <div class="ij-row__text">
+            <h2 class="ij-headline" id="switching-h">Bring your history with you.</h2>
+            <p>Export a CSV from Strong or Hevy and import it in one step, in Settings or the first time you open Anvil. Before anything is saved, a preview lists what can't come across, such as timed or distance sets. Names like "Bench Press (Barbell)" join the library's own exercise when the equipment matches, so your old bench press and your new one share one history and one record.</p>
+            <p><a href="switch-from-strong-hevy.html">How the import works</a></p>
+          </div>
+          <div class="ij-card home-import">
+            <table class="ij-data">
+              <caption class="home-visually-hidden">How exercise names from Strong and Hevy come into Anvil</caption>
+              <thead><tr><th scope="col">From Strong or Hevy</th><th scope="col">In Anvil</th></tr></thead>
+              <tbody>
+                <tr><td>Bench Press (Barbell)</td><td>Bench Press</td></tr>
+                <tr><td>Squat (Barbell)</td><td>Back Squat</td></tr>
+                <tr><td>Bent Over Row (Barbell)</td><td>Barbell Row</td></tr>
+                <tr><td>Squat (Dumbbell)</td><td>Its own exercise, under Legs</td></tr>
+                <tr><td>Plank, timed</td><td>Left out, and listed in the preview</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-    </footer>
+      </div>
+    </div>
+  </section>
 
+  <!-- 6. The honest split, kept from the old site -->
+  <section class="ij-section ij-section--band" aria-labelledby="fit-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="fit-h">Who it's for.</h2>
+      <div class="home-fit">
+        <div class="ij-card">
+          <h3 class="ij-title">Anvil is for you if</h3>
+          <ul>
+            <li>You already know how to train and follow your own program</li>
+            <li>You just want to log fast and see whether you are progressing</li>
+            <li>You would rather buy once and own it than rent another subscription</li>
+            <li>You want your training history private and on your own device</li>
+            <li>You are in the Apple ecosystem (iPhone, iPad, Apple Watch)</li>
+          </ul>
+        </div>
+        <div class="ij-card">
+          <h3 class="ij-title">Look elsewhere if</h3>
+          <ul>
+            <li>You want a coach or AI to write your workouts for you</li>
+            <li>You are here for a social feed, friends, and challenges</li>
+            <li>You need an Android or web version</li>
+            <li>You want to log runs, planks or carries, since sets are reps and weight</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Privacy and price -->
+  <section class="ij-section" id="privacy" aria-labelledby="privacy-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="privacy-h">No account, and nothing to rent.</h2>
+      <p class="ij-measure">There's nothing to sign up for and nothing to sign in to. No ads, and no analytics inside the app. Your workouts are stored on your devices and never uploaded. If the app crashes, hangs or hits an error, it sends a report so the problem can be fixed. Reports carry no workout data, and you can turn them off in Settings. You pay once, with no subscription and nothing to unlock later.</p>
+      <div class="ij-assurances">
+        <div class="ij-assurance"><h3 class="ij-title">No account, no ads</h3><p>And no analytics inside the app.</p></div>
+        <div class="ij-assurance"><h3 class="ij-title">Paid for once</h3><p>No subscription and no in-app purchases, with Family Sharing.</p></div>
+        <div class="ij-assurance ij-assurance--label"><h3 class="ij-title">Data Not Linked to You</h3><p><span class="home-label-intro">The following data may be collected but it is not linked to your identity:</span> <span class="home-label-types">Diagnostics</span><span class="home-label-source">The App Store privacy label for Anvil Workout.</span></p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. A note from the maker, approved by the owner on 2026-10-13 -->
+  <section class="ij-section ij-section--band" aria-label="A note from the maker">
+    <div class="ij-container">
+      <div class="ij-maker">
+        <p>I built Anvil for my own training. The apps I tried wanted a subscription, an account or a feed, and I just wanted to log my sets and see whether I was getting stronger. So Anvil keeps everything on your devices, works in the gym without a signal, and asks for one payment.</p>
+        <p class="ij-maker__sign">Jarl</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Still being built: the changelog as a trust signal -->
+  <section class="ij-section" id="changes" aria-labelledby="changes-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="changes-h">Still being built.</h2>
+      <div class="ij-measure">
+        <table class="ij-data">
+          <caption class="home-visually-hidden">Recent versions and what is next</caption>
+          <tbody>
+            <tr><th scope="row" class="home-version">1.10.0</th><td>A redesigned workout screen, home screen and Stats, with the numbers first. A first start that gets you to a first workout. Supersets one set at a time, and a streak counted in weeks.</td></tr>
+            <tr><th scope="row" class="home-version">1.9.1</th><td>The rest timer keeps time with the phone locked, and the workout clock and rest show on the Lock Screen.</td></tr>
+            <tr><th scope="row" class="home-version">1.9.0</th><td>Crash reports can be turned off in Settings, and carry no details of your workouts.</td></tr>
+            <tr><th scope="row" class="home-version">Next</th><td>The full inner display on iPhone Duo, once Apple's tools for it are out of beta.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="ij-small">Every version, in the <a href="https://github.com/JarlLyng/Anvil-Workout/blob/main/CHANGELOG.md">changelog</a>. Have a request? <a href="support.html">Tell me what you need</a>.</p>
+    </div>
+  </section>
+
+  <!-- 9. FAQ. The FAQPage JSON-LD in the head mirrors this word for word. -->
+  <section class="ij-section ij-section--band" id="faq" aria-labelledby="faq-h">
+    <div class="ij-container">
+      <div class="ij-stack ij-measure">
+        <h2 class="ij-headline" id="faq-h">Questions.</h2>
+        <div class="home-faq">
+          <details><summary>Does Anvil Workout need a subscription?</summary>
+            <p>No. It's a one-time purchase, with no subscription and no in-app purchases. Every feature is included on iPhone, iPad and Apple Watch, and updates come with it.</p></details>
+          <details><summary>Does it work without a signal?</summary>
+            <p>Yes. Planning, running and reviewing a workout need no internet connection. Your programs and history are stored on your device and never uploaded. The only thing the app can send is a report if it crashes, hangs or hits an error. Reports never include your workouts, notes or Health data, and you can turn them off in Settings.</p></details>
+          <details><summary>Does it work with Apple Health?</summary>
+            <p>Yes, if you allow it. Each finished workout is saved to Apple Health, and Anvil reads back the calories and average heart rate Health recorded during it. Those numbers come from another source, usually an Apple Watch, so without one they are often empty.</p></details>
+          <details><summary>Does the Apple Watch app work on its own?</summary>
+            <p>No. Start the workout on your iPhone and the Watch follows it, so you can log and skip sets from your wrist. It needs no internet, but it does need your iPhone nearby.</p></details>
+          <details><summary>Does my data sync between iPhone and iPad?</summary>
+            <p>No. Each device keeps its own programs and history, and nothing syncs between them.</p></details>
+          <details><summary>What happens to my data on a new iPhone?</summary>
+            <p>It moves with your device backup. If you use iCloud Backup or back up to a computer, your Anvil data comes back when you restore to the new phone. Without a backup it stays on the old one.</p></details>
+          <details><summary>Can I bring my history from Strong or Hevy?</summary>
+            <p>Yes. Export a CSV from either app and import it in Settings, or the first time you open Anvil. The preview lists anything that can't come across, such as timed or distance sets, before anything is saved. Anvil can't import its own CSV export, so the export is a copy of your history to keep, not a backup to restore from.</p></details>
+          <details><summary>Can my family use it?</summary>
+            <p>Yes. Anvil Workout supports Family Sharing, so up to six family members can use it with Family Sharing turned on.</p></details>
+          <details><summary>What can I log?</summary>
+            <p>Programs with exercises, sets, reps, weight, rest and supersets. In the gym, each set's weight and reps, its type (working, warm-up, drop or failure) and an RPE if you want one. Afterwards, your history, personal records for weight and reps, an estimated one-rep max per lift, and volume, workouts and sets per week. Runs, planks and carries can't be logged, because a set is reps and weight.</p></details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. Closing -->
+  <section class="ij-section" aria-label="Download Anvil Workout">
+    <div class="ij-container ij-closing">
+      <p class="ij-wordmark">Anvil</p>
+      <p class="ij-lede">One payment. Every set, on your devices.</p>
+      <!-- IAMJARL store button for Anvil Workout (en, footer, black). Generated from apps.json, v1.30.0. Do not edit. -->
+      <div class="ij-store" data-ij-store="anvil-workout" data-ij-store-locale="en">
+        <a class="ij-store-badge" href="https://apps.apple.com/app/id6760627760?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="footer" data-umami-event-locale="en">
+          <img src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0/badges/app-store-black-en-us.svg" alt="Download on the App Store" width="120" height="40">
+        </a>
+        <p class="ij-store-facts">$2.99 once · iOS 17 or later</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<ij-footer app="anvil-workout" links-label="Anvil Workout">
+<a slot="links" href="programs.html">Programs</a>
+<a slot="links" href="switch-from-strong-hevy.html">Switching from Strong or Hevy</a>
+<a slot="links" href="offline-workout-app.html">Works offline</a>
+<a slot="links" href="apple-health-strength-training.html">Apple Health</a>
+<a slot="links" href="no-subscription-workout-app.html">No subscription</a>
+<a slot="links" href="support.html">Support</a>
+<a slot="links" href="privacy.html">Privacy Policy</a>
+<!-- IAMJARL cross-links for Anvil Workout: generated, do not edit -->
+<!-- design system v1.30.0, registry updated 2026-10-13 -->
+<!-- Paste inside <ij-footer app="anvil-workout">. Rebuild to refresh. -->
+<a slot="cross-links" href="https://walkful.iamjarl.com">Walkful</a>
+<a slot="cross-links" href="https://weannicotine.iamjarl.com">Wean Nicotine</a>
+<a slot="cross-links" href="https://wodrounds.iamjarl.com">WODrounds</a>
+<a slot="cross-links" href="https://madebyhuman.iamjarl.com">Made by Human</a>
+<a slot="cross-links" href="https://iamjarl.com">All projects</a>
+<p slot="fineprint">© 2026 IAMJARL.</p>
+<!-- No slot attribute on purpose: the fallback, shown only if the component never loads. -->
+<p><a href="programs.html">Programs</a> &middot; <a href="switch-from-strong-hevy.html">Switching from Strong or Hevy</a> &middot; <a href="offline-workout-app.html">Works offline</a> &middot; <a href="apple-health-strength-training.html">Apple Health</a> &middot; <a href="no-subscription-workout-app.html">No subscription</a> &middot; <a href="support.html">Support</a> &middot; <a href="privacy.html">Privacy Policy</a> &middot; © 2026 IAMJARL.</p>
+</ij-footer>
 </body>
 </html>
