@@ -17,6 +17,7 @@ account and no sync service.
 - **Website:** [anvilworkout.iamjarl.com](https://anvilworkout.iamjarl.com)
 - **App Store:** [id6760627760](https://apps.apple.com/app/id6760627760)
 - **Price:** $2.99 USD one-time. No subscription, no in-app purchases, no ads.
+- **Family Sharing:** supported. Apple's listing says "Supports Family Sharing. Up to six family members can use this app with Family Sharing enabled." App Store Connect has no toggle for it on a paid app any more (#60), but a paid app's purchase is still shared with the family. Say it the way Apple does.
 - **Current version:** 1.10.0 (live 2026-10-09).
 - **License:** [MIT](LICENSE), like the sibling apps. It covers the code, not the Anvil name, brand or App Store listing.
 - **Repo status:** public since 2026-09-22. The Sentry token that leaked into git history was revoked beforehand and verified dead; the history is kept as is rather than rewritten (#63).
@@ -135,7 +136,6 @@ The repo is public, so anything written here is written for that audience.
 - **Import reads Strong and Hevy only**, and it does **not** read Anvil's own CSV export. Export and import are not a round trip.
 - **Export covers sessions, exercises and sets only.** Not programs, not the weekly plan, not custom exercise definitions.
 - **No timed or distance sets.** Planks, carries and cardio cannot be represented; `PerformedSet` stores reps and weight. The importer reports these as skipped rather than inventing values.
-- **No Family Sharing.** Apple removed the toggle for paid apps; see #60. Not a decision of ours.
 - **No in-app analytics, no ads, no tracking.** From 1.9.0 the only outbound traffic is Sentry crash, hang and error reports, with no session tracking and no workout names or numbers in breadcrumbs, all defined in `DiagnosticsService`. 1.8.0 and earlier also sent a session record on every launch and workout breadcrumbs carrying program and exercise names. Never call any of it "anonymous": reports carry a per-installation identifier.
 - **Crash reporting is opt-out, not opt-in.** On by default; from 1.9.0 it can be switched off in Settings. Say it "can be turned off", never that it is "optional" or "anonymous".
 - **No subscription and no in-app purchases.** Never describe the app as "free".
