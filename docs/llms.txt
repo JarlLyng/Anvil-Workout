@@ -50,6 +50,7 @@ Anvil Workout is a paid app with a one-time purchase price on the App Store. The
 - [Offline Workout App](https://anvilworkout.iamjarl.com/offline-workout-app.html): Explains how the app runs on-device with no cloud and no account, what it does and does not send, and a comparison table vs cloud-based apps
 - [Apple Health for Strength Training](https://anvilworkout.iamjarl.com/apple-health-strength-training.html): Details on the HealthKit integration: what gets written (workout sessions), what gets read (calories, heart rate), the Apple Watch companion app, and the permission model
 - [No-Subscription Workout App](https://anvilworkout.iamjarl.com/no-subscription-workout-app.html): Explains the one-time purchase business model versus subscription workout trackers, with honest tradeoff comparison
+- [Switching from Strong or Hevy](https://anvilworkout.iamjarl.com/switch-from-strong-hevy.html): How the CSV import brings a Strong or Hevy history into Anvil Workout, what comes across (workouts, sets, weights, RPE, exercise notes; Hevy's set types and supersets), how exercise names are matched to the library, what is left out and listed in the preview first (timed or distance sets, workout-level notes), and that routines and Anvil's own export are not imported
 - [Support](https://anvilworkout.iamjarl.com/support.html): Help and contact information
 - [Privacy Policy](https://anvilworkout.iamjarl.com/privacy.html): Privacy policy and data practices
 
