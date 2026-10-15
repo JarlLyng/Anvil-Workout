@@ -170,6 +170,7 @@ The repo is public, so anything written here is written for that audience.
 
 - **Task tracking**: [GitHub Issues](https://github.com/JarlLyng/Anvil-Workout/issues). Do not create task-tracking markdown files.
 - **Marketing website**: static site in `docs/`, served by GitHub Pages. Developer docs in `docs/dev/`.
+- **The site serves the design system from its own origin** (#112): a hash-checked copy of the files it loads in `docs/assets/iamjarl-design@vX.Y.Z/`, never jsDelivr. A bump is a new folder, copied from the tag and checked against the tag's `dist/sri.json`, and every page's links and `integrity` changed to it; never a file edited in place.
 - **Business model rule**: paid one-time purchase. Never "free" in any copy, metadata or structured data. "Subscription-free" and "distraction-free" are fine.
 
 ## Build and run
