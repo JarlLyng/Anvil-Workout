@@ -88,6 +88,7 @@ Anvil Workout/
     │   ├── DemoHistory.swift              # Debug only: -AnvilDemoHistory seeds 24 weeks of training
     │   ├── ScreenshotMode.swift           # Debug only: -screenshots -screen <name> for App Store captures (see appstore/README.md)
     │   ├── FeedbackMail.swift             # The Send Feedback mailto: link, with app and system version (pure, testable)
+    │   ├── ReviewPrompt.swift             # When the completion screen asks for a review: each threshold once (pure, testable)
     │   ├── PersistenceLogger.swift        # Structured logging for SwiftData save/fetch failures
     │   └── SentryConfig.swift             # Reads DSN from Info.plist
     │

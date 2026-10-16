@@ -19,6 +19,7 @@ struct WorkoutCompletionView: View {
     @Environment(\.requestReview) private var requestReview
     @Query(sort: \WorkoutSession.startedAt, order: .reverse) private var allSessions: [WorkoutSession]
     @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
+    @AppStorage(ReviewPrompt.storageKey) private var lastReviewThreshold = 0
     private var weightUnit: WeightUnit { WeightUnit(rawValue: weightUnitRaw) ?? .kg }
 
     var session: WorkoutSession
@@ -125,9 +126,18 @@ struct WorkoutCompletionView: View {
         if !records.isEmpty {
             UINotificationFeedbackGenerator().notificationOccurred(.success)
         }
-        // Ask for a review after the 5th, 15th and 50th completed workout.
+        // Ask for a review once each threshold is passed, imported history included (#113).
+        #if DEBUG
+        // The demo completion screen is for designing and capturing, not for a review prompt.
+        if ScreenshotMode.isOn || ProcessInfo.processInfo.arguments.contains("-AnvilDemoCompletion") { return }
+        #endif
         let completedCount = allSessions.filter { $0.completedSetCount > 0 }.count
-        if completedCount == 5 || completedCount == 15 || completedCount == 50 {
+        if let threshold = ReviewPrompt.thresholdToAsk(
+            after: .workoutCompleted(completedSets: session.completedSetCount),
+            completedWorkouts: completedCount,
+            lastAsked: lastReviewThreshold
+        ) {
+            lastReviewThreshold = threshold
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 requestReview()
             }

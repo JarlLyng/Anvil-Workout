@@ -8,6 +8,10 @@ for release; it reaches the App Store after review.
 - Settings has Send Feedback, next to the App Store review. It opens an email to
   support@iamjarl.com in your mail app with the app and iOS version filled in, and you see all of
   it before you send.
+- The request for an App Store review comes once you've finished your 5th, 15th or 50th workout,
+  even if imported history took you past that number. It used to ask only at exactly those
+  counts, so anyone who imported from Strong or Hevy was never asked. It asks at most once for
+  each, only after a workout you finished, never after an import.
 
 ## 1.10.0 (2026-10-07)
 
