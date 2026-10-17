@@ -3,9 +3,10 @@
 //  Anvil Workout
 //
 //  Debug builds only. The portfolio's capture pattern for App Store screenshots (DESIGN.md
-//  in the strategy hub): `-screenshots` fills an empty store with demo history, skips
-//  onboarding and every permission prompt, and `-screen <name>` opens one screen, so each
-//  capture comes out the same every time:
+//  in the strategy hub): `-screenshots` opens an in-memory store filled with demo history,
+//  so a capture never touches the install's real data, skips onboarding and every
+//  permission prompt, and `-screen <name>` opens one screen, so each capture comes out the
+//  same every time:
 //
 //    xcrun simctl launch <device> com.iamjarl.Iron-Workout -screenshots -screen stats
 //
@@ -19,6 +20,8 @@ import Foundation
 enum ScreenshotMode {
     enum Screen: String {
         case home, workout, stats, completion, history, library, onboarding, programs, exercises
+        /// The workout at a superset, and with the plate calculator open; Settings.
+        case superset, plates, settings
     }
 
     static var isOn: Bool { ProcessInfo.processInfo.arguments.contains("-screenshots") }
@@ -47,10 +50,20 @@ enum ScreenshotMode {
         return arguments[index + 1]
     }
 
+    /// Whether the Home-side screen has been opened this launch. Home is rebuilt when the
+    /// layout swaps (a fold, an iPad window resized), and each rebuild used to start another
+    /// demo workout.
+    @MainActor static var screenOpened = false
+
     /// Settles what the views read at launch. Called from the app's `init`, before any view.
     static func prepare() {
         guard isOn else { return }
-        UserDefaults.standard.set(screen != .onboarding, forKey: "hasSeenOnboarding")
+        // In the launch arguments' volatile domain, which is read first and never saved, so a
+        // capture doesn't turn onboarding on or off for the install it runs on.
+        let defaults = UserDefaults.standard
+        var arguments = defaults.volatileDomain(forName: UserDefaults.argumentDomain)
+        arguments["hasSeenOnboarding"] = screen != .onboarding
+        defaults.setVolatileDomain(arguments, forName: UserDefaults.argumentDomain)
     }
 }
 #endif

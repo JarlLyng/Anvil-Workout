@@ -67,6 +67,7 @@ struct ContentView: View {
         case .stats: return .stats
         case .library, .programs: return .workouts
         case .exercises: return .exercises
+        case .settings: return .settings
         default: break
         }
         #endif

@@ -15,6 +15,8 @@ for release; it reaches the App Store after review.
 - A workout stays on screen when the layout changes under it: folding or unfolding iPhone Duo, or
   making an iPad window narrower or wider. Until now the workout disappeared, still open, and Home
   showed it as a finished workout. Only End finishes a workout.
+- The plate calculator opens on the set's weight the first time too. It used to open empty, and
+  only filled in from the second time.
 - Built for iPhone Duo: on the inner display the app uses the whole screen, with the sidebar and
   the two-column workout from iPad, and the tab bar and toolbar sit in the column below the status
   bar.
