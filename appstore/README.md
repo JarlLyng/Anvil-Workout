@@ -10,6 +10,7 @@ appstore/
   manifest.json     the set: raw capture, slot, caption, position per poster
   raw/en, raw/da    the captures, so a set can be re-composed without re-shooting
   <version>/en, da  the composed posters to upload
+  <version>/whats-new.md  the release notes, as approved (from 1.10.1)
 ```
 
 Current: **`1.10.0/`**, five iPhone 6.9" posters, the same five at 6.3" (`<locale>-iphone-6.3-*`,
