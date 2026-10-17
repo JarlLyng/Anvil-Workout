@@ -3,7 +3,7 @@
 What changed in each version of Anvil Workout, newest first. Dates are when a version was tagged
 for release; it reaches the App Store after review.
 
-## 1.10.1 (unreleased)
+## 1.10.1 (2026-10-17)
 
 - Settings has Send Feedback, next to the App Store review. It opens an email to
   support@iamjarl.com in your mail app with the app and iOS version filled in, and you see all of
