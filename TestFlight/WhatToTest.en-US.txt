@@ -1,12 +1,8 @@
-1.10.0 is a design pass over the whole app. What to try:
+1.10.1 keeps a workout on screen when the layout changes under it, and is built for iPhone Duo. What to try:
 
-- Run a workout. The current set is one large card with the only Done button, rest reads as a clock, and the top shows which exercise you are on.
-- Make a superset: in a program's editor, touch and hold an exercise to link it with the one below. In the workout the two alternate one set at a time, and rest comes after each round.
-- Home starts with your week, with the workout to do next and its Start button below it. The streak now counts weeks in a row with a workout, here and in both widgets.
-- Stats: pick 4, 12 or 26 weeks, and switch the per-week chart between volume, workouts and sets.
-- Finish a workout: time, sets and volume compared with the last time you did the same program, any new records, then each exercise in one line.
-- History, from Home: grouped by week and month, and search finds exercises too.
-- Workouts tab: a library program's workouts sit together, A before B, with what is in each.
-- Try a larger text size, and an iPad if you have one.
+- On iPad: start a workout, then make the window narrow in Split View or Stage Manager, and wide again. The workout should stay on screen with its rest timer running, and the watch should keep following it.
+- On iPhone Duo: unfolded, the app fills the inner display with the sidebar and the two-column workout. Fold and unfold during a workout; it should carry on the same way.
+- Settings, Send Feedback: an email to support in your mail app, with the app and iOS version filled in. Nothing is sent until you send it yourself.
+- In a workout, tap Plates on a set with a weight. The calculator should open on that weight the first time, too.
 
-Onboarding is new as well, but it only appears on a fresh install. Do not delete the app to see it: that deletes your workouts.
+The App Store review request never appears in TestFlight builds, so there is nothing to test there.

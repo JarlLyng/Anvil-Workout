@@ -50,10 +50,12 @@ xcrun simctl launch <device> com.iamjarl.Iron-Workout -screenshots -screen <scre
 xcrun simctl io <device> screenshot appstore/raw/en/iphone-<screen>.png
 ```
 
-Screens: `workout`, `home`, `stats`, `completion`, `history`, `library`, `onboarding`, `programs`, `exercises`. Use an
+Screens: `workout`, `home`, `stats`, `completion`, `history`, `library`, `onboarding`, `programs`, `exercises`, `superset`, `plates`, `settings`. Use an
 iPhone 6.9" simulator (16 Pro Max) and a 13" iPad, with the simulator's region set to the
-locale (`defaults write -g AppleLocale da_DK` through `simctl spawn`) and the app reinstalled
-between locales so the demo history is rebuilt in the right unit.
+locale (`defaults write -g AppleLocale da_DK` through `simctl spawn`). The demo history lives in
+memory and is built again on every launch, so changing locale needs no reinstall; pass
+`-weightUnit kg` or `-weightUnit lbs` so the unit doesn't depend on the install's own setting.
+Relaunch the app without arguments when you are done, so the simulator isn't left on demo data.
 
 The watch screens come from the watch app's own Debug demo, on an Apple Watch Series 11 (46 mm)
 simulator:
