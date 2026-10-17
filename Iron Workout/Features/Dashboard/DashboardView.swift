@@ -23,7 +23,7 @@ struct DashboardView: View {
     @AppStorage("weeklyPlan") private var weeklyPlanJSON: String = "{}"
     @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
     @State private var showPlanEditor = false
-    @State private var activeSession: WorkoutSession?
+    @Environment(ActiveWorkoutPresenter.self) private var activeWorkout
     @State private var showProgramLibrary = false
     @State private var showImporter = false
     @State private var path = NavigationPath()
@@ -182,13 +182,6 @@ struct DashboardView: View {
             .sheet(item: $templateToCreate) { template in
                 NavigationStack {
                     CreateEditTemplateView(template: template, isNew: true)
-                }
-            }
-            .fullScreenCover(item: $activeSession) { session in
-                ActiveWorkoutView(session: session) {
-                    // completion inside ActiveWorkoutView handles save
-                } onEndWorkout: {
-                    activeSession = nil
                 }
             }
             .navigationDestination(for: DashboardDestination.self) { destination in
@@ -375,7 +368,7 @@ struct DashboardView: View {
                 set.completedAt = .now
             }
             session.completedSetCount = 2
-            activeSession = session
+            activeWorkout.session = session
         }
     }
     #endif
@@ -396,7 +389,7 @@ struct DashboardView: View {
     private func startSession(from template: WorkoutTemplate) {
         do {
             let s = try WorkoutSessionService.createSession(from: template, modelContext: modelContext)
-            activeSession = s
+            activeWorkout.session = s
         } catch {
             SentrySDK.capture(error: error)
             errorMessage = "Could not start the workout: \(error.localizedDescription)"
@@ -418,5 +411,6 @@ private extension String {
 
 #Preview {
     DashboardView()
+        .environment(ActiveWorkoutPresenter())
         .modelContainer(for: [WorkoutSession.self, WorkoutTemplate.self], inMemory: true)
 }

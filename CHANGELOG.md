@@ -12,6 +12,12 @@ for release; it reaches the App Store after review.
   even if imported history took you past that number. It used to ask only at exactly those
   counts, so anyone who imported from Strong or Hevy was never asked. It asks at most once for
   each, only after a workout you finished, never after an import.
+- A workout stays on screen when the layout changes under it: folding or unfolding iPhone Duo, or
+  making an iPad window narrower or wider. Until now the workout disappeared, still open, and Home
+  showed it as a finished workout. Only End finishes a workout.
+- Built for iPhone Duo: on the inner display the app uses the whole screen, with the sidebar and
+  the two-column workout from iPad, and the tab bar and toolbar sit in the column below the status
+  bar.
 
 ## 1.10.0 (2026-10-07)
 
