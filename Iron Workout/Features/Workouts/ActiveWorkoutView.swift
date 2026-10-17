@@ -25,8 +25,9 @@ struct ActiveWorkoutView: View {
     @State private var showEndConfirm = false
     @State private var showSetEditor: PerformedSet?
     @State private var showCompletionSummary = false
-    @State private var showPlateCalculator = false
-    @State private var plateCalcPrefillKg: Double?
+    /// The plate calculator, with the weight it opens on. A sheet built from `isPresented`
+    /// read the weight from before the tap, so it opened empty the first time.
+    @State private var plateCalculator: PlateCalculatorRequest?
     /// The pending set the lifter tapped to do next, out of order. Nil means each exercise's
     /// first pending set is the current one.
     @State private var focusedSetID: UUID?
@@ -118,8 +119,8 @@ struct ActiveWorkoutView: View {
                     showSetEditor = nil
                 }
             }
-            .sheet(isPresented: $showPlateCalculator) {
-                PlateCalculatorSheet(prefillKg: plateCalcPrefillKg)
+            .sheet(item: $plateCalculator) { request in
+                PlateCalculatorSheet(prefillKg: request.prefillKg)
             }
             .onAppear {
                 startHealthKitIfAvailable()
@@ -127,6 +128,12 @@ struct ActiveWorkoutView: View {
                 WatchConnectivityService.shared.sendSnapshot(state.makeWatchSnapshot())
                 #if DEBUG
                 scheduleSiteAutoDone(state: state)
+                if ScreenshotMode.screen == .plates, let exercise = state.currentExercise {
+                    Task { @MainActor in
+                        try? await Task.sleep(for: .seconds(1))
+                        plateCalculator = PlateCalculatorRequest(prefillKg: workingTargetWeight(for: exercise))
+                    }
+                }
                 #endif
             }
             .onDisappear {
@@ -303,8 +310,7 @@ struct ActiveWorkoutView: View {
                                     .lineLimit(2)
                                 Spacer()
                                 Button {
-                                    plateCalcPrefillKg = workingTargetWeight(for: exercise)
-                                    showPlateCalculator = true
+                                    plateCalculator = PlateCalculatorRequest(prefillKg: workingTargetWeight(for: exercise))
                                 } label: {
                                     Label {
                                         Text("Plates")
@@ -562,4 +568,10 @@ struct ActiveWorkoutView: View {
             }
         }
     }
+}
+
+/// Opens the plate calculator on a weight, in kilograms.
+private struct PlateCalculatorRequest: Identifiable {
+    let id = UUID()
+    let prefillKg: Double?
 }

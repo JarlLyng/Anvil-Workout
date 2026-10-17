@@ -23,7 +23,7 @@ struct DashboardView: View {
     @AppStorage("weeklyPlan") private var weeklyPlanJSON: String = "{}"
     @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
     @State private var showPlanEditor = false
-    @State private var activeSession: WorkoutSession?
+    @Environment(ActiveWorkoutPresenter.self) private var activeWorkout
     @State private var showProgramLibrary = false
     @State private var showImporter = false
     @State private var path = NavigationPath()
@@ -182,13 +182,6 @@ struct DashboardView: View {
             .sheet(item: $templateToCreate) { template in
                 NavigationStack {
                     CreateEditTemplateView(template: template, isNew: true)
-                }
-            }
-            .fullScreenCover(item: $activeSession) { session in
-                ActiveWorkoutView(session: session) {
-                    // completion inside ActiveWorkoutView handles save
-                } onEndWorkout: {
-                    activeSession = nil
                 }
             }
             .navigationDestination(for: DashboardDestination.self) { destination in
@@ -353,6 +346,8 @@ struct DashboardView: View {
     /// The Home-side screens of a screenshot capture: the completion screen, History, or a
     /// workout under way, two sets into its first exercise.
     private func openScreenshotScreen() {
+        guard ScreenshotMode.isOn, !ScreenshotMode.screenOpened else { return }
+        ScreenshotMode.screenOpened = true
         let screen = ScreenshotMode.screen
         if ProcessInfo.processInfo.arguments.contains("-AnvilDemoCompletion") || screen == .completion {
             // The latest full workout that set a record, so the capture shows the records card.
@@ -365,17 +360,29 @@ struct DashboardView: View {
             demoCompletion = withRecords.map { completed[$0] } ?? completed.first { TrainingSummary.workSetCount(of: $0) > 5 }
         } else if screen == .history {
             path.append(DashboardDestination.history)
-        } else if screen == .workout, let template = todaysPlannedPrograms.first ?? fallbackRecommendation,
-                  let session = try? WorkoutSessionService.createSession(from: template, modelContext: modelContext) {
-            let first = session.exercises.sorted { $0.sortOrder < $1.sortOrder }.first
-            for set in (first?.performedSets.sorted { $0.setIndex < $1.setIndex } ?? []).prefix(2) {
+        } else if screen == .workout || screen == .plates || screen == .superset,
+                  let template = todaysPlannedPrograms.first ?? fallbackRecommendation {
+            // The superset screen pairs the program's first two exercises (squat and bench)
+            // and does the squat's first set, so the bench is up next in the round. The store
+            // is in memory.
+            let ordered = template.exercises.sorted { $0.sortOrder < $1.sortOrder }
+            if screen == .superset, ordered.count >= 2 {
+                let pair = UUID()
+                ordered[0].supersetID = pair
+                ordered[1].supersetID = pair
+            }
+            guard let session = try? WorkoutSessionService.createSession(from: template, modelContext: modelContext) else { return }
+            let exercises = session.exercises.sorted { $0.sortOrder < $1.sortOrder }
+            let done = Array((exercises.first?.performedSets.sorted { $0.setIndex < $1.setIndex } ?? [])
+                .prefix(screen == .superset ? 1 : 2))
+            for set in done {
                 set.actualReps = set.targetReps
                 set.actualWeight = WorkoutSessionService.pendingWeight(for: set)
                 set.isCompleted = true
                 set.completedAt = .now
             }
-            session.completedSetCount = 2
-            activeSession = session
+            session.completedSetCount = done.count
+            activeWorkout.session = session
         }
     }
     #endif
@@ -396,7 +403,7 @@ struct DashboardView: View {
     private func startSession(from template: WorkoutTemplate) {
         do {
             let s = try WorkoutSessionService.createSession(from: template, modelContext: modelContext)
-            activeSession = s
+            activeWorkout.session = s
         } catch {
             SentrySDK.capture(error: error)
             errorMessage = "Could not start the workout: \(error.localizedDescription)"
@@ -418,5 +425,6 @@ private extension String {
 
 #Preview {
     DashboardView()
+        .environment(ActiveWorkoutPresenter())
         .modelContainer(for: [WorkoutSession.self, WorkoutTemplate.self], inMemory: true)
 }

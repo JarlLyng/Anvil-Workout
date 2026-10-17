@@ -37,6 +37,15 @@ struct Iron_WorkoutApp: App {
             WorkoutSessionExercise.self,
             PerformedSet.self,
         ])
+        #if DEBUG
+        // A capture's demo history lives in memory only, so screenshot mode never writes
+        // into the store a real install keeps, on a shared simulator or anywhere else.
+        if ScreenshotMode.isOn, let memory = try? ModelContainer(
+            for: schema, configurations: [ModelConfiguration(isStoredInMemoryOnly: true)]
+        ) {
+            return memory
+        }
+        #endif
         let config = ModelConfiguration(
             isStoredInMemoryOnly: false,
             groupContainer: .identifier("group.com.iamjarl.Iron-Workout")
@@ -66,6 +75,9 @@ struct Iron_WorkoutApp: App {
                 .modelContainer(sharedModelContainer)
                 .onAppear {
                     seedExerciseLibraryIfNeeded()
+                    #if DEBUG
+                    if ScreenshotMode.isOn { return }
+                    #endif
                     WatchStatsBroadcaster.broadcast(from: sharedModelContainer.mainContext)
                 }
         }

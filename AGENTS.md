@@ -120,10 +120,10 @@ The repo is public, so anything written here is written for that audience.
 - Apple Health: writes completed workouts, reads calories and heart rate when authorised
 
 **Other surfaces**
-- Native iPad layout with multi-pane navigation and a two-column active workout screen
+- Native iPad layout with multi-pane navigation and a two-column active workout screen. The same layout fills iPhone Duo's inner display when it is unfolded; folded, it is the iPhone layout. A workout stays on screen when the layout swaps under it (1.10.1, unreleased)
 - Apple Watch companion for logging sets, skipping sets and rest haptics; the workout screen fits on one screen and shows weight in the user's unit (1.9.1)
 - Settings switch to turn crash reporting off (1.9.0)
-- Send Feedback in Settings: an email to support@iamjarl.com in the user's mail app, with the app and system version filled in, which they read before sending. Nothing is sent from the app itself (unreleased)
+- Send Feedback in Settings: an email to support@iamjarl.com in the user's mail app, with the app and system version filled in, which they read before sending. Nothing is sent from the app itself (1.10.1, unreleased)
 
 ### Features that do NOT exist (common hallucination targets)
 

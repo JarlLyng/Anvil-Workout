@@ -47,6 +47,10 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
+    /// The workout on screen, presented from here so it outlives the switch between the
+    /// tab bar and the sidebar (#104).
+    @State private var activeWorkout = ActiveWorkoutPresenter()
+
     /// A workout that was started but never finalized. Detected on launch — see #48.
     @State private var staleSession: WorkoutSession?
     @State private var staleSessionError: String?
@@ -63,6 +67,7 @@ struct ContentView: View {
         case .stats: return .stats
         case .library, .programs: return .workouts
         case .exercises: return .exercises
+        case .settings: return .settings
         default: break
         }
         #endif
@@ -76,6 +81,14 @@ struct ContentView: View {
             } else {
                 iPhoneLayout
             }
+        }
+        .environment(activeWorkout)
+        .fullScreenCover(item: $activeWorkout.session) { session in
+            ActiveWorkoutView(
+                session: session,
+                onComplete: { },
+                onEndWorkout: { activeWorkout.session = nil }
+            )
         }
         .tint(DesignTokens.Common.primary(colorScheme))
         .task { checkForStaleSession() }

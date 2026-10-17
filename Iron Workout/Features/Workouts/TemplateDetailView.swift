@@ -19,7 +19,7 @@ struct TemplateDetailView: View {
     @Query(sort: \Exercise.name) private var allExercises: [Exercise]
     @AppStorage(WeightFormatter.appStorageKey) private var weightUnitRaw: String = WeightUnit.kg.rawValue
     private var weightUnit: WeightUnit { WeightUnit(rawValue: weightUnitRaw) ?? .kg }
-    @State private var activeSession: WorkoutSession?
+    @Environment(ActiveWorkoutPresenter.self) private var activeWorkout
     @State private var errorMessage: String?
     @State private var showDeleteConfirm = false
     @State private var shareURL: ShareItem?
@@ -158,13 +158,6 @@ struct TemplateDetailView: View {
         } message: {
             Text(errorMessage ?? "")
         }
-        .fullScreenCover(item: $activeSession) { session in
-            ActiveWorkoutView(
-                session: session,
-                onComplete: { },
-                onEndWorkout: { activeSession = nil }
-            )
-        }
         .sheet(isPresented: $showEditor) {
             NavigationStack {
                 CreateEditTemplateView(template: template)
@@ -227,7 +220,7 @@ struct TemplateDetailView: View {
     private func startWorkout() {
         do {
             let session = try WorkoutSessionService.createSession(from: template, modelContext: modelContext)
-            activeSession = session
+            activeWorkout.session = session
         } catch {
             SentrySDK.capture(error: error)
             errorMessage = "Could not start workout: \(error.localizedDescription)"

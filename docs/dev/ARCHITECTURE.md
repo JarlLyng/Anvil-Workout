@@ -5,7 +5,7 @@
 ```
 Anvil Workout/
 ├── Iron_WorkoutApp.swift              # App entry, SwiftData container, Sentry init, onboarding gate
-├── ContentView.swift                  # Tab bar (Home, Workouts, History, Exercises, Stats, Settings)
+├── ContentView.swift                  # Tab bar or sidebar by width class; presents the active workout above both
 ├── Info.plist                         # Merges with auto-generated plist, SENTRY_DSN
 ├── Anvil Workout.entitlements          # HealthKit + App Group
 ├── PrivacyInfo.xcprivacy              # Privacy manifest
@@ -26,6 +26,7 @@ Anvil Workout/
 │   │   ├── ExercisePickerView.swift   # Pick exercise from library
 │   │   ├── EditTemplateExerciseSheet.swift
 │   │   ├── ActiveWorkoutView.swift    # Active workout: timer, sets, rest, pause, Live Activity, plate calc
+│   │   ├── ActiveWorkoutPresenter.swift # The workout on screen, presented from ContentView above the layout switch
 │   │   ├── ActiveWorkoutSubviews.swift# WorkoutTimerBar, PauseOverlay, RestBar, SetRow
 │   │   ├── PlateCalculatorSheet.swift # Per-side plate breakdown for a target weight
 │   │   ├── WorkoutCompletionView.swift# Summary, records, exercises; share, review prompt
@@ -88,6 +89,7 @@ Anvil Workout/
     │   ├── DemoHistory.swift              # Debug only: -AnvilDemoHistory seeds 24 weeks of training
     │   ├── ScreenshotMode.swift           # Debug only: -screenshots -screen <name> for App Store captures (see appstore/README.md)
     │   ├── FeedbackMail.swift             # The Send Feedback mailto: link, with app and system version (pure, testable)
+    │   ├── ReviewPrompt.swift             # When the completion screen asks for a review: each threshold once (pure, testable)
     │   ├── PersistenceLogger.swift        # Structured logging for SwiftData save/fetch failures
     │   └── SentryConfig.swift             # Reads DSN from Info.plist
     │
