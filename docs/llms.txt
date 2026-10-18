@@ -14,6 +14,7 @@ Anvil Workout is a paid app with a one-time purchase price on the App Store. The
 - **Real-Time Workout Tracking** with the current set's reps and weight as the largest thing on screen, and a haptic rest countdown on phone and watch. The countdown keeps time while the phone is locked, and the watch counts rest down on its own clock (1.9.1)
 - **Apple Watch Companion App** for wrist-based logging: the active set with its reps and weight in the user's unit on one screen (1.9.1), mark sets done or skipped, rest countdown and wrist haptics, and watch Smart Stack widget (needs no internet; it follows and controls the workout running on the iPhone over local WatchConnectivity, so it needs the iPhone nearby and does not work on its own)
 - **iPad Support** with a multi-pane layout (NavigationSplitView) and a two-column active workout screen (displays current set logger on the left, upcoming exercises/sets sidebar on the right)
+- **iPhone Duo Support** (1.10.1): unfolded, the inner display uses the iPad layout with the sidebar and the two-column workout; folded, the outer display uses the iPhone layout. A workout stays on screen through a fold, as it does when an iPad window is resized
 - **Automatic Personal Record Detection** for weight and reps
 - **Stats** over 4, 12 or 26 weeks (1.10.0): totals compared with the period before, volume, workouts or sets per week, the latest record per exercise, estimated 1RM per lift (from sets of 1 to 12 reps) and sets per muscle group. Warm-up sets never count towards volume or sets
 - **Live Activity** on Lock Screen and Dynamic Island during workouts: current exercise, the workout clock, set progress and a rest countdown, all counting without the app open (1.9.1; earlier versions never displayed it)
@@ -30,6 +31,7 @@ Anvil Workout is a paid app with a one-time purchase price on the App Store. The
 - **Pre-Completion Set Entry**: tap a pending set to enter the actual weight and reps before marking it done
 - **Previous-Session Reference** on every pending set, showing the weight and reps from the matching set last time, with one tap to reuse them (imported history counts, so it works from the first workout after switching apps)
 - **Crash-Reporting Switch** in Settings, under Privacy, to turn crash reports off entirely (1.9.0). Reports never include workout, note or Health data
+- **Send Feedback** in Settings (1.10.1): opens an email to support@iamjarl.com in the user's mail app with the app and system version filled in, for the user to read and send. Nothing is sent from the app itself
 - **Searchable Exercise Library** and workout history
 - **Works offline**: no account, no internet connection needed, no ads, no in-app analytics. Workout history is never uploaded or synced. The only outbound traffic is a crash, hang or error report to Sentry, which carries no workout or Health data and can be turned off in Settings
 
