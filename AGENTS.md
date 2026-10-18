@@ -18,7 +18,7 @@ account and no sync service.
 - **App Store:** [id6760627760](https://apps.apple.com/app/id6760627760)
 - **Price:** $2.99 USD one-time. No subscription, no in-app purchases, no ads.
 - **Family Sharing:** supported. Apple's listing says "Supports Family Sharing. Up to six family members can use this app with Family Sharing enabled." App Store Connect has no toggle for it on a paid app any more (#60), but a paid app's purchase is still shared with the family. Say it the way Apple does.
-- **Current version:** 1.10.0 (live 2026-10-09).
+- **Current version:** 1.10.1 (live 2026-10-18).
 - **License:** [MIT](LICENSE), like the sibling apps. It covers the code, not the Anvil name, brand or App Store listing.
 - **Repo status:** public since 2026-09-22. The Sentry token that leaked into git history was revoked beforehand and verified dead; the history is kept as is rather than rewritten (#63).
 - **Formerly:** Iron Workout. The Xcode project, targets, scheme, folder and bundle ID still carry the old name (#83). **Never change the bundle ID** `com.iamjarl.Iron-Workout` or the App Group `group.com.iamjarl.Iron-Workout`; both would orphan existing users.
@@ -120,10 +120,10 @@ The repo is public, so anything written here is written for that audience.
 - Apple Health: writes completed workouts, reads calories and heart rate when authorised
 
 **Other surfaces**
-- Native iPad layout with multi-pane navigation and a two-column active workout screen. The same layout fills iPhone Duo's inner display when it is unfolded; folded, it is the iPhone layout. A workout stays on screen when the layout swaps under it (1.10.1, unreleased)
+- Native iPad layout with multi-pane navigation and a two-column active workout screen. The same layout fills iPhone Duo's inner display when it is unfolded; folded, it is the iPhone layout. A workout stays on screen when the layout swaps under it (1.10.1)
 - Apple Watch companion for logging sets, skipping sets and rest haptics; the workout screen fits on one screen and shows weight in the user's unit (1.9.1)
 - Settings switch to turn crash reporting off (1.9.0)
-- Send Feedback in Settings: an email to support@iamjarl.com in the user's mail app, with the app and system version filled in, which they read before sending. Nothing is sent from the app itself (1.10.1, unreleased)
+- Send Feedback in Settings: an email to support@iamjarl.com in the user's mail app, with the app and system version filled in, which they read before sending. Nothing is sent from the app itself (1.10.1)
 
 ### Features that do NOT exist (common hallucination targets)
 
