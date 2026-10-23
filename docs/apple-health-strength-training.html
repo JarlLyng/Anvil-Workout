@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Apple Health Strength Training App with Watch Companion | Anvil Workout</title>
-    <meta name="description" content="Anvil Workout Apple Health strength training integration: writes workouts, reads active calories and heart rate from Apple Watch, and logs sets on the watch companion app.">
+    <title>Apple Health Strength Training: What's Saved | Anvil Workout</title>
+    <meta name="description" content="What Anvil Workout saves to Apple Health when a workout ends, what it reads back from your Apple Watch, and why your sets and weights stay in the app.">
     <meta name="robots" content="index, follow">
     <meta name="author" content="IAMJARL">
     <link rel="canonical" href="https://anvilworkout.iamjarl.com/apple-health-strength-training.html">
@@ -20,8 +20,8 @@
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://anvilworkout.iamjarl.com/apple-health-strength-training.html">
-    <meta property="og:title" content="Apple Health Strength Training App with Watch Companion | Anvil Workout">
-    <meta property="og:description" content="How Anvil Workout integrates with Apple Health: logs sets on Watch app, writes strength workouts, reads calories and heart rate.">
+    <meta property="og:title" content="Apple Health Strength Training: What's Saved | Anvil Workout">
+    <meta property="og:description" content="What Anvil Workout saves to Apple Health when a workout ends, what it reads back from your Apple Watch, and why your sets and weights stay in the app.">
     <meta property="og:image" content="https://anvilworkout.iamjarl.com/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -29,8 +29,8 @@
     <meta property="og:locale" content="en_US">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Apple Health Strength Training App with Watch Companion | Anvil Workout">
-    <meta name="twitter:description" content="How Anvil Workout integrates with Apple Health: logs sets on Watch app, writes strength workouts, reads calories and heart rate.">
+    <meta name="twitter:title" content="Apple Health Strength Training: What's Saved | Anvil Workout">
+    <meta name="twitter:description" content="What Anvil Workout saves to Apple Health when a workout ends, what it reads back from your Apple Watch, and why your sets and weights stay in the app.">
     <meta name="twitter:image" content="https://anvilworkout.iamjarl.com/og-image.png">
 
     <script type="application/ld+json">
@@ -48,8 +48,8 @@
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
-      "name": "Apple Health Strength Training with Watch Companion",
-      "description": "Anvil Workout Apple Health strength training integration with Watch companion app: writes workouts, reads active calories and heart rate.",
+      "name": "Apple Health Strength Training: What's Saved",
+      "description": "What Anvil Workout saves to Apple Health when a workout ends, what it reads back from your Apple Watch, and why your sets and weights stay in the app.",
       "url": "https://anvilworkout.iamjarl.com/apple-health-strength-training.html",
       "inLanguage": "en",
       "isPartOf": {
@@ -94,6 +94,9 @@
         .page-cta { margin-top: 48px; text-align: center; }
         .page-cta h2 { font-size: 1.6rem; margin-bottom: 12px; }
         .page-cta p { color: var(--text-secondary); margin-bottom: 24px; }
+
+        .answers { margin: 16px 0 24px; }
+        .answers tbody th { color: var(--text-primary); min-width: 11em; }
     </style>
     <script defer src="https://umami-iamjarl.vercel.app/script.js" data-website-id="56413ff8-71df-422f-93cd-1d072c8f6195"></script>
     <script type="module" src="/assets/iamjarl-design@v1.32.2/dist/components/ij-nav.js" integrity="sha384-nrRZUeV8FYi85YK32IWY8rositsZBa8xKGXomSkUW6u6zVb4LtLrjZXnk/gW4ynA"></script>
@@ -116,13 +119,21 @@
         <p class="lead">Anvil Workout saves each finished workout to Apple Health as a Traditional Strength Training session, and reads back the calories and heart rate your Apple Watch recorded during it. You log the sets on your iPhone or your wrist, and your data stays on your devices.</p>
 
         <h2>What gets written to Apple Health</h2>
-        <p>When you finish a workout, Anvil Workout writes a <strong>Traditional Strength Training</strong> workout session to Apple Health. The session includes:</p>
-        <ul>
-            <li><strong>Start and end time</strong> of the workout</li>
-            <li><strong>Length</strong>, from the start to the end of the workout</li>
-            <li><strong>Workout type</strong>: strength training, marked as indoor</li>
-        </ul>
-        <p>The session shows up in the Health app alongside your runs, cycles, and any other logged activity. If you have third-party tools that read Health (trainer dashboards, nutrition apps, research studies), your lifting activity is now visible to them like any other workout.</p>
+        <p>When you finish a workout, Anvil Workout writes one <strong>Traditional Strength Training</strong> workout to Apple Health, marked as indoor, with the time it started and the time it ended. It shows up in the Health app alongside your runs, rides and any other logged activity, and any app you let read your workouts, such as a nutrition app or a coach's dashboard, sees it like any other workout.</p>
+        <p>That workout carries its type and its times, and nothing more. Anvil adds no calories or heart rate of its own, so the ones in Health are what your Apple Watch, or another device, recorded. Your sets, reps and weights aren't sent to Health at all. They stay in Anvil, with the records and Stats worked out from them.</p>
+
+        <h2>Where each number lives</h2>
+        <table class="ij-data answers">
+            <thead><tr><th scope="col">What</th><th scope="col">Where it lives</th></tr></thead>
+            <tbody>
+                <tr><th scope="row">The workout, with its type, start and end</th><td>Apple Health, written by Anvil when you finish.</td></tr>
+                <tr><th scope="row">Sets, reps, weight, RPE and set types</th><td>Anvil only. None of it goes to Health.</td></tr>
+                <tr><th scope="row">Personal records, estimated 1RM and volume</th><td>Anvil only, worked out on your device from your sets.</td></tr>
+                <tr><th scope="row">Active calories</th><td>Recorded in Health, usually by your Apple Watch. Anvil shows the total for the workout's time in your history.</td></tr>
+                <tr><th scope="row">Heart rate</th><td>Recorded in Health, usually by your Apple Watch. Anvil shows the average of the readings taken during the workout.</td></tr>
+                <tr><th scope="row">Workouts from other apps</th><td>They stay in Health. Anvil doesn't bring them into its history.</td></tr>
+            </tbody>
+        </table>
 
         <h2>What gets read from Apple Health</h2>
         <p>During a workout, if your Apple Watch is logging heart rate and active energy for the same time window, Anvil Workout can surface those metrics on your session summary:</p>
@@ -133,13 +144,13 @@
         <p>Both numbers are pulled from Apple Health <em>after</em> the workout ends, and only for the exact time window of your session. They appear in your Anvil Workout history view next to the workout you completed.</p>
 
         <h2>How Apple Watch fits in</h2>
-        <p>Anvil Workout includes a native watchOS companion app that integrates with the active workout on your iPhone. You can mark a set done or skip it from your wrist, so you don't have to keep picking up your phone. When a rest timer starts, a circular progress view and live countdown appear on your Watch, complete with a haptic wrist-tap alert when the timer hits zero.</p>
+        <p>Anvil Workout includes a watchOS companion app that follows the workout running on your iPhone. You can mark a set done or skip it from your wrist, so you don't have to keep picking up your phone. When rest starts, the Watch counts it down in a ring and taps your wrist when it ends while the app is on screen. watchOS pauses an app when you lower your wrist, so a tap can be missed then.</p>
         <p>Practical setup:</p>
         <ol>
-            <li>Launch a workout on your iPhone. The Apple Watch companion app automatically synchronizes and displays your active set.</li>
-            <li>Perform your exercises and log sets from either device. Changes sync instantly over local connectivity.</li>
-            <li>While you lift, your Apple Watch continues to track active energy (calories) and heart rate in the background.</li>
-            <li>When you complete your workout, Anvil Workout queries HealthKit for the heart rate and active calories recorded during your session and links them to your history.</li>
+            <li>Start the workout on your iPhone, then open Anvil on your Watch. It shows the set you're on, and during rest, the one coming next.</li>
+            <li>Log sets from either device. A set marked done on one shows on the other, with no internet in between.</li>
+            <li>While you lift, your Apple Watch records heart rate and active energy on its own. Anvil's Watch app doesn't start a workout on the Watch, so the heart rate readings are less frequent than in a workout started in Apple's Workout app.</li>
+            <li>When you finish on your iPhone, Anvil saves the workout to Health and reads back the heart rate and calories recorded during it.</li>
         </ol>
         <p>If you don't wear a Watch, Anvil Workout still saves the workout. Heart rate and calories just won't appear on that session.</p>
 

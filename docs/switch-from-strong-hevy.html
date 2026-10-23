@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Switch from Strong or Hevy: Import Your Workout History | Anvil Workout</title>
-    <meta name="description" content="Bring your workout history from Strong or Hevy to Anvil Workout in one step. A preview shows what comes across before anything is saved. One-time purchase, no subscription.">
+    <title>Import Your Strong or Hevy History | Anvil Workout</title>
+    <meta name="description" content="How to move your workout history from Strong or Hevy to Anvil Workout, where to find the export, what each column becomes and what gets left out.">
     <meta name="robots" content="index, follow">
     <meta name="author" content="IAMJARL">
     <link rel="canonical" href="https://anvilworkout.iamjarl.com/switch-from-strong-hevy.html">
@@ -20,8 +20,8 @@
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://anvilworkout.iamjarl.com/switch-from-strong-hevy.html">
-    <meta property="og:title" content="Switch from Strong or Hevy: Import Your Workout History | Anvil Workout">
-    <meta property="og:description" content="Bring your Strong or Hevy history to Anvil Workout in one step, and see what comes across before anything is saved. One-time purchase, no subscription.">
+    <meta property="og:title" content="Import Your Strong or Hevy History | Anvil Workout">
+    <meta property="og:description" content="Where to export your Strong or Hevy history, what each column becomes in Anvil Workout, and what the preview lists before anything is saved.">
     <meta property="og:image" content="https://anvilworkout.iamjarl.com/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -29,8 +29,8 @@
     <meta property="og:locale" content="en_US">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Switch from Strong or Hevy: Import Your Workout History | Anvil Workout">
-    <meta name="twitter:description" content="Bring your Strong or Hevy history to Anvil Workout in one step, and see what comes across before anything is saved. One-time purchase, no subscription.">
+    <meta name="twitter:title" content="Import Your Strong or Hevy History | Anvil Workout">
+    <meta name="twitter:description" content="Where to export your Strong or Hevy history, what each column becomes in Anvil Workout, and what the preview lists before anything is saved.">
     <meta name="twitter:image" content="https://anvilworkout.iamjarl.com/og-image.png">
 
     <script type="application/ld+json">
@@ -48,8 +48,8 @@
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
-      "name": "Switch from Strong or Hevy: Import Your Workout History",
-      "description": "Bring your workout history from Strong or Hevy to Anvil Workout in one step. A preview shows what comes across before anything is saved. One-time purchase, no subscription.",
+      "name": "Import Your Strong or Hevy History",
+      "description": "How to move your workout history from Strong or Hevy to Anvil Workout, where to find the export, what each column becomes and what gets left out.",
       "url": "https://anvilworkout.iamjarl.com/switch-from-strong-hevy.html",
       "inLanguage": "en",
       "isPartOf": {
@@ -81,6 +81,10 @@
         .back-link:hover { text-decoration: underline; }
         .disclaimer { font-size: 0.9rem; margin-top: 40px; }
 
+        .answers { margin: 16px 0 24px; }
+        .answers tbody th { color: var(--text-primary); }
+        .content-page code { font-family: var(--ij-font-numeral); font-size: 0.85em; }
+
         .page-cta { margin-top: 48px; text-align: center; }
         .page-cta h2 { font-size: 1.6rem; margin-bottom: 12px; }
         .page-cta p { color: var(--text-secondary); margin-bottom: 24px; }
@@ -108,15 +112,35 @@
         <h2>How the import works</h2>
         <p>It takes three steps, and nothing is saved until you have seen what will come across.</p>
         <ol>
-            <li><strong>Export from Strong or Hevy.</strong> Both apps can export your workouts as a CSV file from their settings. Save it somewhere your iPhone can open, such as the Files app.</li>
+            <li><strong>Export from Strong or Hevy.</strong> In Strong, open Settings from your profile and choose Export Strong Data. In Hevy, go to Profile, then Settings, then Export &amp; Import Data, and export your workouts. Save the CSV file somewhere your iPhone can open, such as the Files app.</li>
             <li><strong>Open the import in Anvil.</strong> It is under Import Workout Data in Settings. A new install also offers it when you first open the app, and on the home screen until you have a program.</li>
             <li><strong>Pick the file and read the preview.</strong> Anvil recognises which app the file came from, counts its workouts, sets and exercises, and lists anything it can't bring across. Import it, or cancel and keep the file as it was.</li>
         </ol>
+        <p>If Anvil says it doesn't recognise a Strong file, export it again with Strong set to English. Anvil reads the column names Strong writes in English.</p>
 
         <h2>What comes across</h2>
         <p>Every workout you logged, with its name, date and length. Each exercise, set, rep and weight, in kilograms or pounds, shown in whichever unit you lift in. Your RPE, and the notes you wrote on an exercise. From Hevy, warm-up, drop and failure sets keep their type, and supersets stay together. Sets from Strong come in as working sets.</p>
         <p>Exercise names are matched to Anvil's own. Strong and Hevy put the equipment in brackets, so "Bench Press (Barbell)" joins Anvil's bench press when the equipment matches, while a dumbbell bench press stays its own exercise. A name with no match becomes a custom exercise, filed under its muscle group.</p>
         <p>Because your old sets and your new ones share exercises, the history works from your first workout in Anvil. Each set shows what you lifted in the matching set last time, your personal records carry on, and Stats and the estimated one-rep max include everything you bring.</p>
+
+        <h2>Your file, column by column</h2>
+        <p>Both exports are one row per set. Anvil finds each column by its name, so a file with its columns in another order, or with columns Anvil doesn't use, reads the same.</p>
+        <table class="ij-data answers">
+            <thead><tr><th scope="col">In Anvil</th><th scope="col">Strong's column</th><th scope="col">Hevy's column</th></tr></thead>
+            <tbody>
+                <tr><th scope="row">The workout's date, name and length</th><td><code>Date</code>, <code>Workout Name</code>, <code>Duration</code></td><td><code>start_<wbr>time</code>, <code>title</code>, <code>end_<wbr>time</code></td></tr>
+                <tr><th scope="row">The exercise</th><td><code>Exercise Name</code></td><td><code>exercise_<wbr>title</code></td></tr>
+                <tr><th scope="row">Each set, in order, with its reps</th><td><code>Set Order</code>, <code>Reps</code></td><td><code>set_<wbr>index</code>, <code>reps</code></td></tr>
+                <tr><th scope="row">The weight, shown in your unit</th><td><code>Weight</code>, <code>Weight Unit</code></td><td><code>weight_<wbr>kg</code> or <code>weight_<wbr>lbs</code></td></tr>
+                <tr><th scope="row">The set's type</th><td>No column, so every set is a working set</td><td><code>set_<wbr>type</code></td></tr>
+                <tr><th scope="row">RPE, from 1 to 10</th><td><code>RPE</code></td><td><code>rpe</code></td></tr>
+                <tr><th scope="row">Supersets, kept together</th><td>No column</td><td><code>superset_<wbr>id</code></td></tr>
+                <tr><th scope="row">The note on an exercise</th><td><code>Notes</code></td><td><code>exercise_<wbr>notes</code></td></tr>
+                <tr><th scope="row">Left out: the note on a whole workout</th><td><code>Workout Notes</code></td><td><code>description</code></td></tr>
+                <tr><th scope="row">Left out: a set with only a time or a distance</th><td><code>Seconds</code>, <code>Distance</code></td><td><code>duration_<wbr>seconds</code>, <code>distance_<wbr>km</code>, <code>distance_<wbr>miles</code></td></tr>
+            </tbody>
+        </table>
+        <p>If your Strong file has no <code>Weight Unit</code> column, Anvil reads its weights in the unit chosen in Anvil's Settings, so set kilograms or pounds there before you import.</p>
 
         <h2>What can't come across, and how you'll know</h2>
         <p>Anvil records a set as reps and weight. Sets logged only as a time or a distance, such as planks, carries and cardio, have nowhere to go, so they are left out. So are notes written on a whole workout (notes on an exercise are kept), and rows with an unreadable date or no exercise name. The preview lists each of these, and how many, before you decide.</p>
