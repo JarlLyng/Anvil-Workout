@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "docs/**"
+      - "Scripts/date_sitemap.py"
       - ".github/workflows/pages.yml"
   # Manual redeploy without touching the site. Without this, the only way to
   # recover from a failed deployment was to change something under docs/.
@@ -27,6 +28,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history: the sitemap step dates each page by its last commit.
+          fetch-depth: 0
+      # Each page's <lastmod> is the day its file last changed on main (#117). The committed
+      # sitemap has none, so a date is never hand-written or the build date.
+      - name: Date the sitemap from git
+        run: python3 Scripts/date_sitemap.py
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

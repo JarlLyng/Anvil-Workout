@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  No lastmod here, on purpose. The deploy writes each page's from git, the day its file last
+  changed on main (Scripts/date_sitemap.py, #117). Never hand-write it: the hand-written dates
+  went stale (#106), and Google stops trusting a date that is always the same or always today.
+-->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://anvilworkout.iamjarl.com/</loc>
