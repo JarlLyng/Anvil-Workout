@@ -3,11 +3,11 @@
 ## Project structure
 
 ```
-Anvil Workout/
+Iron Workout/
 ├── Iron_WorkoutApp.swift              # App entry, SwiftData container, Sentry init, onboarding gate
 ├── ContentView.swift                  # Tab bar or sidebar by width class; presents the active workout above both
 ├── Info.plist                         # Merges with auto-generated plist, SENTRY_DSN
-├── Anvil Workout.entitlements          # HealthKit + App Group
+├── Iron Workout.entitlements           # HealthKit + App Group
 ├── PrivacyInfo.xcprivacy              # Privacy manifest
 ├── Config/
 │   ├── DeveloperSettings.xcconfig     # Base config (includes Secrets.xcconfig)
@@ -130,7 +130,7 @@ Anvil Watch Widget/                          # watchOS widget / Smart Stack tile
 - **No ViewModel layer** — logic lives in services or directly in views where simple enough. SwiftData's `@Query` and `@Bindable` replace much of what a ViewModel normally does.
 - **Single source of truth** — all domain models in `Shared/Models/`, used by both UI and services.
 - **Services for side effects** — `WorkoutSessionService`, `ExerciseLibraryService`, `ProgramLibraryService`, `HealthKitService`, and `LiveActivityService` handle business logic without being bound to UI.
-- **Pure services for pure logic** — `PersonalRecordService`, `StreakCalculator`, `PlateCalculator`, and `WorkoutCSVImporter` are side-effect-free and covered by unit tests in `Anvil WorkoutTests`.
+- **Pure services for pure logic** — `PersonalRecordService`, `StreakCalculator`, `PlateCalculator`, and `WorkoutCSVImporter` are side-effect-free and covered by unit tests in `Iron WorkoutTests`.
 - **View splitting for compilation** — heavy views are split into subview files (e.g. `ActiveWorkoutSubviews.swift`, `StatsChartViews.swift`, `DashboardSubviews.swift`) to avoid Swift type-checker bottlenecks.
 
 ---

@@ -25,15 +25,15 @@ history keeps them.
 Apple's [asset best practices](https://developer.apple.com/app-store/asset-best-practices/) ask
 for screenshots in the order someone would use the app, and show up to three of them in search
 results. So the set runs: a set being logged, the home screen with the pay-once promise, the
-screen after a workout, Stats over the weeks, then History. The first two are the hub's two
-heaviest frames (the wedge, then the objection); the first three are what a searcher sees.
+screen after a workout, Stats over the weeks, then History. The first two answer what a buyer
+weighs first, how a set is logged and what the app costs; the first three are what a searcher
+sees.
 
 ## Style
 
-The portfolio standard from `DESIGN.md` in the private strategy hub: dark ground, lime
-`#D0FF00` accent, a drawn device bezel, captions alternating top and bottom with bleed on the
-top ones. Captions follow `VOICE.md` and the app's overlay: concrete, no hype, no em-dashes,
-pay-once framing, no third-party names. The demo program is the library's 5×5 under the
+The style IAMJARL's apps share: dark ground, lime `#D0FF00` accent, a drawn device bezel,
+captions alternating top and bottom with bleed on the top ones. Captions are concrete, with no
+hype, no em-dashes, pay-once framing and no third-party names. The demo program is the library's 5×5 under the
 plain name Full Body A and B for that reason.
 
 The English set is in pounds and the Danish set in kilograms, each in its own region's date
@@ -69,8 +69,6 @@ States: `set`, `rest`, `paused`, `done`; the set uses `set` and `rest`. `simctl 
 cannot write into this folder (macOS refuses the simulator access to it), so capture to a
 temporary folder and copy the files into `raw/`.
 
-Then compose with the hub's tool:
-
-```sh
-python3 <hub>/tools/appstore_screenshots.py batch appstore/manifest.json
-```
+The posters are then composed from `manifest.json` by a script that isn't in this repo. The
+manifest records each poster's raw capture, slot, caption and caption position, so a set can be
+rebuilt from it with any compositing tool.

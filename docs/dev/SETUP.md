@@ -2,14 +2,14 @@
 
 ## Requirements
 
-- **Xcode 16+** with Swift 5
+- **Xcode 27.1** or later, with the Swift 5 language mode. Releases are built with it on Xcode Cloud, and its iOS 27.1 SDK is what gives the app the whole inner display on iPhone Duo. Older versions of Xcode aren't tested.
 - macOS with Xcode Command Line Tools
 - Deployment target: iOS 17.0+
 
 ## Run the app
 
-1. Clone the repo and open `Anvil Workout.xcodeproj` in Xcode.
-2. Select scheme **Anvil Workout** and a simulator (e.g. iPhone 17) or a physical device.
+1. Clone the repo and open `Iron Workout.xcodeproj` in Xcode. The project, scheme, targets and folders still carry the app's former name, Iron Workout (#83).
+2. Select scheme **Iron Workout** and a simulator (e.g. iPhone 17) or a physical device.
 3. Run (Cmd+R).
 
 The app runs immediately. SPM packages resolve automatically on first open.
@@ -24,8 +24,8 @@ The project includes a WidgetKit extension (`IronWorkoutWidgetExtension`) provid
 
 ### Shared file: LiveActivityAttributes.swift
 
-`Anvil Workout/Shared/Models/LiveActivityAttributes.swift` defines `IronWorkoutWidgetAttributes` used by both the main app and the widget extension. This file **must have Target Membership** on both:
-- Anvil Workout (main app)
+`Iron Workout/Shared/Models/LiveActivityAttributes.swift` defines `IronWorkoutWidgetAttributes` used by both the main app and the widget extension. This file **must have Target Membership** on both:
+- Iron Workout (main app)
 - IronWorkoutWidgetExtension
 
 To verify: select the file in Xcode -> File Inspector (right panel) -> Target Membership -> check both targets.
@@ -39,7 +39,7 @@ The widget extension's `CURRENT_PROJECT_VERSION` (CFBundleVersion) **must match*
 ## App Groups
 
 Both the main app and widget extension use App Group `group.com.iamjarl.Iron-Workout` to share the SwiftData store. This is configured in:
-- `Anvil Workout.entitlements`
+- `Iron Workout/Iron Workout.entitlements`
 - `IronWorkoutWidgetExtension.entitlements`
 
 Both files should contain:
@@ -65,9 +65,9 @@ Sentry DSN is **not hardcoded**. It's read from a `.xcconfig` file via build set
 
 1. Copy the example file:
    ```bash
-   cp "Anvil Workout/Config/Secrets.xcconfig.example" "Anvil Workout/Config/Secrets.xcconfig"
+   cp "Iron Workout/Config/Secrets.xcconfig.example" "Iron Workout/Config/Secrets.xcconfig"
    ```
-2. Open `Anvil Workout/Config/Secrets.xcconfig` and insert your DSN:
+2. Open `Iron Workout/Config/Secrets.xcconfig` and insert your DSN:
    ```
    SENTRY_DSN = https://<your-key>@<host>.ingest.sentry.io/<project-id>
    ```
@@ -79,7 +79,7 @@ Sentry DSN is **not hardcoded**. It's read from a `.xcconfig` file via build set
 DeveloperSettings.xcconfig -> (#include? Secrets.xcconfig) -> Build Settings -> Info.plist -> SentryConfig.swift
 ```
 
-- Target **Anvil Workout** uses `Anvil Workout/Config/DeveloperSettings.xcconfig` as base configuration. It optionally includes `Secrets.xcconfig` (same folder), which is gitignored.
+- Target **Iron Workout** uses `Iron Workout/Config/DeveloperSettings.xcconfig` as base configuration. It optionally includes `Secrets.xcconfig` (same folder), which is gitignored.
 - `Info.plist` contains `$(SENTRY_DSN)` which Xcode expands from build settings.
 - `SentryConfig.swift` reads DSN from `Bundle.main.infoDictionary`.
 - If DSN is empty or missing, Sentry is not started — the app runs normally.
@@ -112,7 +112,7 @@ HealthKit is used to save workouts and retrieve calories/heart rate from Apple W
 ### Requirements
 
 - **Physical device required** — simulators do not support Health data.
-- Entitlement `com.apple.developer.healthkit` is set in `Anvil Workout.entitlements`.
+- Entitlement `com.apple.developer.healthkit` is set in `Iron Workout/Iron Workout.entitlements`.
 - Info.plist keys for Health (read/write) are set in the project's build settings.
 
 ### Permissions
