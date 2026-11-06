@@ -3,6 +3,13 @@
 What changed in each version of Anvil Workout, newest first. Dates are when a version was tagged
 for release; it reaches the App Store after review.
 
+## Unreleased
+
+- In light mode, onboarding's buttons, its back arrow and the program sheets it opens are the
+  same deeper purple as the rest of the app. They were a lighter purple that left the white text
+  on Next and Continue hard to read. The file picker for importing from Strong or Hevy uses the
+  same purple now.
+
 ## 1.10.1 (2026-10-17)
 
 - Settings has Send Feedback, next to the App Store review. It opens an email to
