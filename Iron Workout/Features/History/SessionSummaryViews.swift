@@ -73,7 +73,7 @@ struct SessionRecordsCard: View {
                     HStack(alignment: .firstTextBaseline, spacing: DesignTokens.Spacing.sm) {
                         Ph.trophy.fill
                             .icon(size: 16)
-                            .foregroundStyle(DesignTokens.ColorToken.State.warning)
+                            .foregroundStyle(DesignTokens.Palette.State.warning)
                             .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(record.exerciseName)
@@ -169,7 +169,7 @@ struct SessionExerciseDetailCard: View {
         return HStack(alignment: .firstTextBaseline, spacing: DesignTokens.Spacing.md) {
             Text(label)
                 .font(.subheadline.weight(.semibold).monospacedDigit())
-                .foregroundStyle(set.setType == .warmup ? AnyShapeStyle(DesignTokens.ColorToken.State.warning) : AnyShapeStyle(.secondary))
+                .foregroundStyle(set.setType == .warmup ? AnyShapeStyle(DesignTokens.Palette.State.warning) : AnyShapeStyle(.secondary))
                 .frame(width: 24, alignment: .leading)
             if done {
                 Text(setText(set))
@@ -177,7 +177,7 @@ struct SessionExerciseDetailCard: View {
                 if set.setType == .drop || set.setType == .failure {
                     Text(set.setType.displayName)
                         .font(.caption.weight(.semibold))
-                        .foregroundStyle(set.setType == .drop ? DesignTokens.Common.primary(colorScheme) : DesignTokens.ColorToken.State.error)
+                        .foregroundStyle(set.setType == .drop ? DesignTokens.Common.primary(colorScheme) : DesignTokens.Palette.State.error)
                 }
             } else {
                 Text(set.isCompleted ? "Skipped" : "Not done")

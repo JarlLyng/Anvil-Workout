@@ -145,7 +145,7 @@ struct OnboardingView: View {
         StepLayout {
             StepHeader(
                 icon: Ph.heart.fill,
-                tint: DesignTokens.ColorToken.State.error,
+                tint: DesignTokens.Palette.State.error,
                 title: "Apple Health",
                 message: "Anvil can save each finished workout to Health, and show the calories and heart rate your watch or another source recorded during it."
             )
@@ -180,7 +180,7 @@ struct OnboardingView: View {
                 if let importedWorkouts {
                     StartOption(
                         icon: Ph.checkCircle.fill,
-                        iconTint: DesignTokens.ColorToken.State.success,
+                        iconTint: DesignTokens.Palette.State.success,
                         title: "History imported",
                         detail: "\(importedWorkouts) \(importedWorkouts == 1 ? "workout is" : "workouts are") in your history. Now pick or build a program to train with.",
                         action: nil

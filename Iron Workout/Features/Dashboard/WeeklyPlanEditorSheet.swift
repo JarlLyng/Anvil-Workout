@@ -89,7 +89,7 @@ struct WeeklyPlanEditorSheet: View {
                     } label: {
                         Ph.minusCircle.fill
                             .icon(size: 20)
-                            .foregroundStyle(DesignTokens.ColorToken.State.error)
+                            .foregroundStyle(DesignTokens.Palette.State.error)
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Remove \(displayName) from \(Self.dayNames[dayIndex])")
@@ -133,7 +133,7 @@ struct WeeklyPlanEditorSheet: View {
                         if isPlanned(template, in: dayIndex) {
                             Ph.checkCircle.fill
                                 .icon(size: 18)
-                                .foregroundStyle(DesignTokens.ColorToken.State.success)
+                                .foregroundStyle(DesignTokens.Palette.State.success)
                         }
                     }
                 }

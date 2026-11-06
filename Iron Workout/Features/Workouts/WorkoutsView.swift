@@ -298,7 +298,7 @@ struct WorkoutsView: View {
                         if template.isFavorite {
                             Ph.star.fill
                                 .icon(size: 14)
-                                .foregroundStyle(DesignTokens.ColorToken.State.warning)
+                                .foregroundStyle(DesignTokens.Palette.State.warning)
                         }
                         Text(displayName)
                             .font(.headline)

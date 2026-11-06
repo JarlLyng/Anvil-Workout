@@ -207,7 +207,7 @@ struct ExerciseDetailView: View {
                     HStack(spacing: 4) {
                         Ph.checkCircle.fill
                             .icon(size: 14)
-                            .foregroundStyle(DesignTokens.ColorToken.State.success)
+                            .foregroundStyle(DesignTokens.Palette.State.success)
                         if let reps = set.actualReps {
                             Text("\(reps) reps")
                                 .font(.caption)
