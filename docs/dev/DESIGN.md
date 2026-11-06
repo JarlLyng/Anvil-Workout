@@ -29,10 +29,13 @@ DesignTokens.Common.Text.secondary(colorScheme)
 // Backgrounds
 DesignTokens.Common.Background.app(colorScheme)
 
-// State colors
-DesignTokens.ColorToken.State.success   // green (completed, approved)
-DesignTokens.ColorToken.State.warning   // yellow/orange (pause, rest, favorites)
-DesignTokens.ColorToken.State.error     // red (error, delete, heart rate)
+// State colors for text, icons and tints; they adapt to light and dark by themselves
+DesignTokens.Palette.State.success   // green (completed, approved)
+DesignTokens.Palette.State.warning   // orange (warm-up, rest, supersets, warnings)
+DesignTokens.Palette.State.error     // red (error, delete, heart rate)
+
+// State fills, the same in both modes: translucent backgrounds only, never text
+DesignTokens.ColorToken.State.warning.opacity(0.12)
 
 // OnPrimary (text on primary-colored surfaces)
 DesignTokens.Common.OnPrimary.text(colorScheme)  // #FFFFFF in light, #000000 in dark
@@ -44,6 +47,10 @@ DesignTokens.Common.primary(colorScheme)          // accent color
 ### OnPrimary rule
 
 Text on primary-colored surfaces (`.borderedProminent` buttons, accent-colored badges like the weekly plan today-indicator) **must** use `DesignTokens.Common.OnPrimary.text(colorScheme)`, not hardcoded `.white` or SwiftUI's default button text color. This ensures correct contrast in both light and dark mode.
+
+### State colour rule
+
+`ColorToken.State.*` are fills, one colour for both modes. As text they fail contrast: the warning and success fills fall below 3:1 on white, and the error fill below 4.5:1 on black. Text, icons, tints and thin marks such as the superset bar use `DesignTokens.Palette.State.*`, which is a darker shade in light mode and a lighter one in dark mode. `ColorToken.State` stays only as a translucent background, like the rest banner and a completed set's row (#102).
 
 ### Spacing
 
@@ -88,7 +95,7 @@ Ph.pauseCircle.fill.icon(size: 60)         // 60x60 (hero)
 // With color
 Ph.checkCircle.fill
     .icon()
-    .foregroundStyle(DesignTokens.ColorToken.State.success)
+    .foregroundStyle(DesignTokens.Palette.State.success)
 
 // The helper replaces this verbose chain:
 // Ph.timer.regular.resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20)

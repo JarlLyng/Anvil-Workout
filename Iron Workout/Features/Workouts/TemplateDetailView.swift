@@ -190,7 +190,7 @@ struct TemplateDetailView: View {
     private func supersetBlock(_ block: [WorkoutTemplateExercise]) -> some View {
         HStack(alignment: .top, spacing: DesignTokens.Spacing.md) {
             RoundedRectangle(cornerRadius: 2)
-                .fill(DesignTokens.ColorToken.State.warning)
+                .fill(DesignTokens.Palette.State.warning)
                 .frame(width: 4)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
@@ -200,7 +200,7 @@ struct TemplateDetailView: View {
                     Ph.link.bold.icon(size: 12)
                 }
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(DesignTokens.ColorToken.State.warning)
+                .foregroundStyle(DesignTokens.Palette.State.warning)
                 ForEach(block, id: \.id) { item in
                     exerciseRow(item)
                 }

@@ -114,7 +114,7 @@ struct SettingsView: View {
                         } icon: {
                             Ph.star.fill
                                 .icon()
-                                .foregroundStyle(DesignTokens.ColorToken.State.warning)
+                                .foregroundStyle(DesignTokens.Palette.State.warning)
                         }
                     }
                     .accessibilityHint("Opens the App Store to write a review")
@@ -195,7 +195,7 @@ struct SettingsView: View {
                         HStack {
                             Ph.heart.fill
                                 .icon()
-                                .foregroundStyle(DesignTokens.ColorToken.State.error)
+                                .foregroundStyle(DesignTokens.Palette.State.error)
                             Text("Apple Health")
                             Spacer()
                             healthStatusControl
@@ -206,11 +206,11 @@ struct SettingsView: View {
                                     if messageIsError {
                                         Ph.warningCircle.regular
                                             .icon()
-                                            .foregroundStyle(DesignTokens.ColorToken.State.error)
+                                            .foregroundStyle(DesignTokens.Palette.State.error)
                                     } else {
                                         Ph.checkCircle.regular
                                             .icon()
-                                            .foregroundStyle(DesignTokens.ColorToken.State.success)
+                                            .foregroundStyle(DesignTokens.Palette.State.success)
                                     }
                                 }
                                 Text(msg)
@@ -250,7 +250,7 @@ struct SettingsView: View {
                 HStack(spacing: 6) {
                     Ph.checkCircle.fill
                         .icon(size: 16)
-                        .foregroundStyle(DesignTokens.ColorToken.State.success)
+                        .foregroundStyle(DesignTokens.Palette.State.success)
                     Text("Connected")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
