@@ -10,10 +10,14 @@ Anvil Workout uses **IAMJARL Design Tokens** ([iamjarl-design](https://github.co
 
 | Mode | Hex | Description |
 |------|-----|-------------|
-| Light | `#CE63FF` | Purple |
+| Light | `#A435D2` | Purple |
 | Dark | `#D0FF00` | Neon green |
 
-Defined in `Assets.xcassets/AccentColor.colorset` and used automatically as the tint color throughout the app.
+The source is the token, `DesignTokens.Common.primary(colorScheme)`. `RootView` in `Iron_WorkoutApp.swift` applies it with `.tint` above both onboarding and `ContentView`, so every SwiftUI screen and every sheet presented from one gets it.
+
+`Assets.xcassets/AccentColor.colorset` holds the same two values for whatever `.tint` does not reach, such as the share sheet and the file picker that UIKit draws. When the design system changes the primary, change the asset in the same change: `AccentColorTests` fails while the two differ. The asset once kept the old light primary, `#CE63FF`, which carries white text at only 3:1, and onboarding drew in it.
+
+The widgets and the watch app have AccentColor assets of their own and do not read this one.
 
 ### Design tokens
 
