@@ -67,7 +67,7 @@ struct WorkoutTimerBar: View {
                         if isPaused {
                             Ph.pauseCircle.fill
                                 .icon()
-                                .foregroundStyle(DesignTokens.ColorToken.State.warning)
+                                .foregroundStyle(DesignTokens.Palette.State.warning)
                         } else {
                             Ph.timer.regular
                                 .icon()
@@ -80,7 +80,7 @@ struct WorkoutTimerBar: View {
                     if isPaused {
                         Text("Paused")
                             .font(.caption.weight(.semibold))
-                            .foregroundStyle(DesignTokens.ColorToken.State.warning)
+                            .foregroundStyle(DesignTokens.Palette.State.warning)
                     }
                     Spacer()
                     if totalSets > 0 {
@@ -117,7 +117,7 @@ struct WorkoutPauseOverlay: View {
         VStack(spacing: DesignTokens.Spacing.xxl) {
             Ph.pauseCircle.fill
                 .icon(size: 60)
-                .foregroundStyle(DesignTokens.ColorToken.State.warning)
+                .foregroundStyle(DesignTokens.Palette.State.warning)
             Text("Workout Paused")
                 .font(.title2.bold())
             Text("Timer is stopped. Tap Resume to continue.")
@@ -181,7 +181,7 @@ struct WorkoutRestBar: View {
                     .accessibilityHint("Ends rest and moves on")
             }
             ProgressView(value: Double(seconds), total: Double(max(totalSeconds, 1)))
-                .tint(DesignTokens.ColorToken.State.warning)
+                .tint(DesignTokens.Palette.State.warning)
         }
         .padding(.horizontal)
         .padding(.vertical, DesignTokens.Spacing.md)
@@ -214,9 +214,9 @@ struct WorkoutSetRow: View {
     private func colorForSetType(_ type: SetType) -> Color {
         switch type {
         case .working: return .primary
-        case .warmup: return DesignTokens.ColorToken.State.warning
+        case .warmup: return DesignTokens.Palette.State.warning
         case .drop: return DesignTokens.Common.primary(colorScheme)
-        case .failure: return DesignTokens.ColorToken.State.error
+        case .failure: return DesignTokens.Palette.State.error
         }
     }
 
@@ -410,7 +410,7 @@ struct WorkoutSetRow: View {
                 if isSkipped {
                     Ph.minusCircle.regular.icon().foregroundStyle(.secondary)
                 } else if set.isCompleted {
-                    Ph.checkCircle.fill.icon().foregroundStyle(DesignTokens.ColorToken.State.success)
+                    Ph.checkCircle.fill.icon().foregroundStyle(DesignTokens.Palette.State.success)
                         .transition(.scale.combined(with: .opacity))
                 } else {
                     Ph.circle.regular.icon().foregroundStyle(.tertiary)

@@ -183,7 +183,7 @@ struct ActiveWorkoutView: View {
     private func toolbarContent(state: ActiveWorkoutState) -> some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
             Button("End") { showEndConfirm = true }
-                .foregroundStyle(DesignTokens.ColorToken.State.error)
+                .foregroundStyle(DesignTokens.Palette.State.error)
                 .accessibilityLabel("End workout")
                 .accessibilityHint("Saves the current workout and returns to the dashboard")
         }
@@ -296,8 +296,8 @@ struct ActiveWorkoutView: View {
                 VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxl) {
                     if block.count > 1 {
                         HStack {
-                            Ph.link.fill.icon().foregroundStyle(DesignTokens.ColorToken.State.warning)
-                            Text("Superset").font(.headline).foregroundStyle(DesignTokens.ColorToken.State.warning)
+                            Ph.link.fill.icon().foregroundStyle(DesignTokens.Palette.State.warning)
+                            Text("Superset").font(.headline).foregroundStyle(DesignTokens.Palette.State.warning)
                         }
                         .padding(.bottom, -DesignTokens.Spacing.md)
                     }
@@ -490,7 +490,7 @@ struct ActiveWorkoutView: View {
                 if block.count > 1 {
                     Ph.link.fill
                         .icon(size: 12)
-                        .foregroundStyle(DesignTokens.ColorToken.State.warning)
+                        .foregroundStyle(DesignTokens.Palette.State.warning)
                 }
                 Text(block.map(\.exerciseName).joined(separator: " + "))
                     .font(.subheadline.weight(.medium))
@@ -513,7 +513,7 @@ struct ActiveWorkoutView: View {
             Spacer()
             Ph.checkCircle.fill
                 .icon(size: 60)
-                .foregroundStyle(DesignTokens.ColorToken.State.success)
+                .foregroundStyle(DesignTokens.Palette.State.success)
             Text("All Exercises Completed")
                 .font(.title2.bold())
             Text("\(session.completedSetCount) total sets")

@@ -3,6 +3,12 @@
 What changed in each version of Anvil Workout, newest first. Dates are when a version was tagged
 for release; it reaches the App Store after review.
 
+## Unreleased
+
+- Orange, green and red text and icons are easier to read in light mode. Warm-up sets, supersets,
+  exercise notes, plate warnings, records, checkmarks, the End button and the rest timer's bar now
+  use a darker shade on a light background. In dark mode only the red changes, and only slightly.
+
 ## 1.10.1 (2026-10-17)
 
 - Settings has Send Feedback, next to the App Store review. It opens an email to

@@ -261,7 +261,7 @@ private struct TemplateExerciseRowLabel: View {
     private var supersetLinkIcon: some View {
         Ph.link.bold
             .icon(size: 16)
-            .foregroundStyle(DesignTokens.ColorToken.State.warning)
+            .foregroundStyle(DesignTokens.Palette.State.warning)
     }
 
     private var exerciseMetaColumn: some View {
