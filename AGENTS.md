@@ -144,7 +144,8 @@ The repo is public, so anything written here is written for that audience.
 
 - **English UI** throughout the app
 - **Feature-based folders** under `Features/`. No ViewModels; logic lives in services or views
-- **Design tokens only** via `IAMJARLDesignTokens`. Never hardcode colors or spacing
+- **Design tokens only** via `IAMJARLDesignTokens` (`iamjarl-design`, Up to Next Major from 1.35.4). Never hardcode colors or spacing
+- **State colours as text or icons** use `DesignTokens.Palette.State.*`. `ColorToken.State.*` are fills, and as text they fail contrast in one mode or the other; keep them for translucent backgrounds only (#102)
 - **Phosphor icons only**, `Ph.iconName.regular` / `.fill`, never SF Symbols (except the tab bar, where SwiftUI requires them). Use the `.icon(size:)` helper
 - **OnPrimary text** on primary-colored surfaces: `DesignTokens.Common.OnPrimary.text(colorScheme)`
 - **Error handling**: `@State private var errorMessage: String?` plus `.alert()` in every view that saves

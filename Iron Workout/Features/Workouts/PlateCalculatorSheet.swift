@@ -92,7 +92,7 @@ struct PlateCalculatorSheet: View {
             if loading.belowBar {
                 Text("Target is lighter than the bar.")
                     .font(.subheadline)
-                    .foregroundStyle(DesignTokens.ColorToken.State.warning)
+                    .foregroundStyle(DesignTokens.Palette.State.warning)
             } else if loading.perSide.isEmpty {
                 Text("Just the bar — no plates needed.")
                     .font(.subheadline)
@@ -118,7 +118,7 @@ struct PlateCalculatorSheet: View {
             if loading.unmatchedPerSide > 0 {
                 Text("Closest match — \(formattedUnmatched(loading.unmatchedPerSide)) per side can't be matched with standard plates.")
                     .font(.caption)
-                    .foregroundStyle(DesignTokens.ColorToken.State.warning)
+                    .foregroundStyle(DesignTokens.Palette.State.warning)
             }
         }
     }

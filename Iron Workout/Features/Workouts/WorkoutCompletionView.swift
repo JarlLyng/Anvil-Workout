@@ -60,7 +60,7 @@ struct WorkoutCompletionView: View {
                 Ph.checkCircle.fill.icon(size: 18)
             }
             .font(.subheadline.weight(.semibold))
-            .foregroundStyle(DesignTokens.ColorToken.State.success)
+            .foregroundStyle(DesignTokens.Palette.State.success)
             Text(session.templateName)
                 .font(.title.bold())
                 .accessibilityAddTraits(.isHeader)

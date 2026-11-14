@@ -143,7 +143,7 @@ struct ProgramLibraryDetailView: View {
             if let notes = exercise.notes, !notes.isEmpty {
                 Text(notes)
                     .font(.caption)
-                    .foregroundStyle(DesignTokens.ColorToken.State.warning)
+                    .foregroundStyle(DesignTokens.Palette.State.warning)
             }
         }
         .padding(.vertical, 2)
