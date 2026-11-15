@@ -116,7 +116,11 @@ final class ActiveWorkoutState {
 
     // MARK: - Set actions
 
-    func markSetDone(_ set: PerformedSet, exercise: WorkoutSessionExercise) {
+    func markSetDone(
+        _ set: PerformedSet,
+        exercise: WorkoutSessionExercise,
+        from source: DiagnosticsService.SetSource = .phone
+    ) {
         if set.actualReps == nil { set.actualReps = set.targetReps }
         // Same resolution the row displays and the editor pre-fills, so completing a set
         // without opening it records the weight the user was actually shown (#79).
@@ -127,6 +131,7 @@ final class ActiveWorkoutState {
         saveContext()
 
         SentrySDK.addBreadcrumb(DiagnosticsService.workoutBreadcrumb("Set completed"))
+        DiagnosticsService.countSetCompleted(from: source)
 
         onSetCompleted?()
         startRestIfNeeded(exercise: exercise)
@@ -336,7 +341,7 @@ final class ActiveWorkoutState {
         switch action {
         case .markSetDone(let setID):
             if let pair = findSet(setID) {
-                markSetDone(pair.set, exercise: pair.exercise)
+                markSetDone(pair.set, exercise: pair.exercise, from: .watch)
             }
         case .markSetSkipped(let setID):
             if let pair = findSet(setID) {

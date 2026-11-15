@@ -134,6 +134,7 @@ private struct WorkoutImportFlow: ViewModifier {
         pendingImport = nil
         do {
             let summary = try WorkoutCSVImportService.save(parsed, modelContext: modelContext)
+            DiagnosticsService.countImportFinished(from: summary.format)
             var text = "Imported \(summary.importedSessions) workouts (\(summary.importedSets) sets) from \(summary.format.rawValue)."
             if summary.createdExercises > 0 {
                 text += "\n\nAdded \(summary.createdExercises) new custom \(summary.createdExercises == 1 ? "exercise" : "exercises")."

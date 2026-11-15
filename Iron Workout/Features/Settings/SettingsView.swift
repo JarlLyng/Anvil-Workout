@@ -17,7 +17,8 @@ struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \WorkoutSession.startedAt, order: .reverse) private var sessions: [WorkoutSession]
     @AppStorage(WeightFormatter.appStorageKey) private var weightUnit: String = WeightUnit.kg.rawValue
-    /// Opt-out switch for crash reporting (#91). Same key and default as DiagnosticsService.
+    /// Opt-out switch for all diagnostics: crash reports, sessions and the counts (#91, #130).
+    /// Same key and default as DiagnosticsService.
     @AppStorage(DiagnosticsService.preferenceKey) private var crashReportingEnabled = true
     @State private var requestInProgress = false
     @State private var message: String?
@@ -79,7 +80,7 @@ struct SettingsView: View {
                 Section {
                     Toggle(isOn: $crashReportingEnabled) {
                         Label {
-                            Text("Send Crash Reports")
+                            Text("Send Anonymous Diagnostics")
                         } icon: {
                             Ph.bug.regular
                                 .icon()
@@ -91,7 +92,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Privacy")
                 } footer: {
-                    Text("If the app crashes, hangs or hits an error, a report is sent so it can be fixed. Reports never include your workouts, notes or Health data. Turning this off stops them straight away.")
+                    Text("Sends crash and error reports, and counts of finished workouts, logged sets and imports. None of it carries an ID or anything from your workouts, notes or Health data. Turning this off stops all of it straight away.")
                 }
 
                 Section {

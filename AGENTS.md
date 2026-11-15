@@ -122,7 +122,7 @@ The repo is public, so anything written here is written for that audience.
 **Other surfaces**
 - Native iPad layout with multi-pane navigation and a two-column active workout screen. The same layout fills iPhone Duo's inner display when it is unfolded; folded, it is the iPhone layout. A workout stays on screen when the layout swaps under it (1.10.1)
 - Apple Watch companion for logging sets, skipping sets and rest haptics; the workout screen fits on one screen and shows weight in the user's unit (1.9.1)
-- Settings switch to turn crash reporting off (1.9.0)
+- Settings switch that turns off everything sent to Sentry: crash reports (1.9.0) and, on `main` for the next release, the sessions and feature counts too. Its label is Send Anonymous Diagnostics (#130)
 - Send Feedback in Settings: an email to support@iamjarl.com in the user's mail app, with the app and system version filled in, which they read before sending. Nothing is sent from the app itself (1.10.1)
 
 ### Features that do NOT exist (common hallucination targets)
@@ -136,8 +136,11 @@ The repo is public, so anything written here is written for that audience.
 - **Import reads Strong and Hevy only**, and it does **not** read Anvil's own CSV export. Export and import are not a round trip.
 - **Export covers sessions, exercises and sets only.** Not programs, not the weekly plan, not custom exercise definitions.
 - **No timed or distance sets.** Planks, carries and cardio cannot be represented; `PerformedSet` stores reps and weight. The importer reports these as skipped rather than inventing values.
-- **No in-app analytics, no ads, no tracking.** From 1.9.0 the only outbound traffic is Sentry crash, hang and error reports, with no session tracking and no workout names or numbers in breadcrumbs, all defined in `DiagnosticsService`. 1.8.0 and earlier also sent a session record on every launch and workout breadcrumbs carrying program and exercise names. Never call any of it "anonymous": reports carry a per-installation identifier.
-- **Crash reporting is opt-out, not opt-in.** On by default; from 1.9.0 it can be switched off in Settings. Say it "can be turned off", never that it is "optional" or "anonymous".
+- **No ads, no tracking, no analytics SDK or ID.** The only outbound traffic is Sentry, all of it defined in `DiagnosticsService`.
+  - **Up to 1.10.1:** crash, hang and error reports only, with no workout names or numbers in breadcrumbs. These reports carry a per-installation identifier, so never call 1.10.1 or earlier "anonymous". 1.8.0 and earlier also sent a session record on every launch, and workout breadcrumbs carrying program and exercise names.
+  - **On `main` for the next release (#129, #130):** anonymous by recipe. One shared user, `anonymous`, no installation ID, device ID or vendor-ID hash, and the SDK's `INSTALLATION` file pinned to the shared user. It adds crash-free sessions, MetricKit diagnostics and exactly three counts: `workout.finished`, `set.completed` (`source` phone or watch) and `import.finished` (`source` strong or hevy).
+  - **Never sent:** nothing from the user's data, so no names, weights, reps, notes or record IDs. No performance tracing, screenshots or view hierarchy in release builds. Only call it anonymous for the release that ships this.
+- **Diagnostics are opt-out, not opt-in.** On by default; from 1.9.0 the switch in Settings turns them off, and it covers the sessions and counts too. Say it "can be turned off", never that it is "optional".
 - **No subscription and no in-app purchases.** Never describe the app as "free".
 
 ## Key conventions
@@ -165,6 +168,7 @@ The repo is public, so anything written here is written for that audience.
 - The app opens its store in `init`, after `DiagnosticsService.startIfAllowed()`. A property initializer runs before `init`, so a failure there crashes before Sentry can report it.
 - The Sentry script phase must come after "Embed Foundation Extensions" to avoid a dependency cycle.
 - New files are picked up automatically (`PBXFileSystemSynchronizedRootGroup`); no pbxproj editing needed.
+- **Anonymous is a recipe, not Sentry's default.** Out of the box sentry-cocoa sends an installation ID as the user, as every session's `did` and on every metric. After any sentry-cocoa upgrade, rerun the envelope test in `docs/dev/SETUP.md` before shipping.
 - **Privacy copy must match what the SDK sends.** Before writing any privacy claim on the site or in the privacy policy, read `DiagnosticsService.swift` and every `addBreadcrumb`, `setExtra` and `capture` call. Site copy describes the **released** app, not `main`: Pages deploys `main` at once, so change privacy copy only when the release carrying the change is live. The site once said "no workout data" while three breadcrumbs sent program and exercise names, and "only on crash" while session tracking reported every launch.
 
 ## Workflow

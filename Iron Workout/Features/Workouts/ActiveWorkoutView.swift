@@ -559,6 +559,7 @@ struct ActiveWorkoutView: View {
             await MainActor.run {
                 do {
                     try WorkoutSessionService.finalizeSession(session, modelContext: context)
+                    DiagnosticsService.countWorkoutFinished()
                 } catch {
                     SentrySDK.capture(error: error)
                     state.errorMessage = "Could not save: \(error.localizedDescription)"

@@ -204,6 +204,7 @@ struct ContentView: View {
             await MainActor.run {
                 do {
                     try WorkoutSessionService.finalizeSession(session, endedAt: endDate, modelContext: context)
+                    DiagnosticsService.countWorkoutFinished()
                 } catch {
                     SentrySDK.capture(error: error)
                     staleSessionError = "Could not save the workout: \(error.localizedDescription)"

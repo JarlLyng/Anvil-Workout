@@ -55,7 +55,7 @@ Iron Workout/
 │   │   └── OnboardingView.swift       # First launch: unit, Apple Health, how to start (library, import, build)
 │   │
 │   └── Settings/
-│       ├── SettingsView.swift         # Units, CSV export/import (Strong/Hevy), Health, crash reports, feedback, About
+│       ├── SettingsView.swift         # Units, CSV export/import (Strong/Hevy), Health, diagnostics switch, feedback, About
 │       └── WorkoutImportFlow.swift    # Strong/Hevy import: picker, preview, result; used by Settings, onboarding, Home
 │
 └── Shared/
@@ -266,6 +266,6 @@ These Codable contracts live in `Shared/Watch/WatchContracts.swift` and are **mi
 
 | Package | Version | Purpose |
 |---------|---------|--------|
-| [sentry-cocoa](https://github.com/getsentry/sentry-cocoa) | 9.7.0 | Crash reporting and performance |
-| [iamjarl-design](https://github.com/JarlLyng/iamjarl-design) | branch: main | Design tokens (colors, spacing, typography) |
+| [sentry-cocoa](https://github.com/getsentry/sentry-cocoa) | 9.34.0 | Anonymous crash reports, sessions, MetricKit and feature counts |
+| [iamjarl-design](https://github.com/JarlLyng/iamjarl-design) | 1.35.4 | Design tokens (colors, spacing, typography) |
 | [phosphor-swift](https://github.com/phosphor-icons/swift) | 2.1.0 | Icon library |
