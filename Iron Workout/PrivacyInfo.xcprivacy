@@ -10,14 +10,14 @@
 	<array>
 		<dict>
 			<key>NSPrivacyCollectedDataType</key>
-			<string>NSPrivacyCollectedDataTypeHealthAndFitness</string>
+			<string>NSPrivacyCollectedDataTypeFitness</string>
 			<key>NSPrivacyCollectedDataTypeLinked</key>
 			<false/>
 			<key>NSPrivacyCollectedDataTypeTracking</key>
 			<false/>
 			<key>NSPrivacyCollectedDataTypePurposes</key>
 			<array>
-				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+				<string>NSPrivacyCollectedDataTypePurposeAnalytics</string>
 			</array>
 		</dict>
 		<dict>
