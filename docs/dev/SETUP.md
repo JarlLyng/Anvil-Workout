@@ -55,9 +55,9 @@ The `ModelContainer` in `Iron_WorkoutApp.swift` uses `.groupContainer(.identifie
 
 ---
 
-## Sentry (crash and performance monitoring)
+## Sentry (anonymous diagnostics)
 
-The app uses [Sentry](https://sentry.io) (sentry-cocoa) for crash reporting and performance monitoring.
+The app uses [Sentry](https://sentry.io) (sentry-cocoa) for anonymous diagnostics: crash, hang and error reports, MetricKit diagnostics, crash-free sessions and three feature counts. `Iron Workout/Shared/Services/DiagnosticsService.swift` defines all of it, and the switch in Settings (Send Anonymous Diagnostics) turns all of it off straight away.
 
 ### Configuration
 
@@ -83,6 +83,41 @@ DeveloperSettings.xcconfig -> (#include? Secrets.xcconfig) -> Build Settings -> 
 - `Info.plist` contains `$(SENTRY_DSN)` which Xcode expands from build settings.
 - `SentryConfig.swift` reads DSN from `Bundle.main.infoDictionary`.
 - If DSN is empty or missing, Sentry is not started — the app runs normally.
+- Sentry is not started when the app runs as the unit tests' host, so test runs send nothing.
+
+### What is sent, and why it is anonymous
+
+Anonymous is a recipe, not Sentry's default. Out of the box sentry-cocoa sends a random installation ID as the user, as every session's `did` and on every metric, and a hash of the vendor ID (`contexts.app.device_app_hash`) on every event (#129). `DiagnosticsService` therefore:
+
+1. puts one shared user, `anonymous`, on the initial scope, and sets it again in `beforeSend`, which in sentry-cocoa 9 sees every error, crash report, MetricKit diagnostic and trace;
+2. drops `contexts.app.device_app_hash` and `contexts.device.id` in `beforeSend`;
+3. keeps only the SDK's coarse facts (release, environment, OS, device model) and the app's own `source` attribute in `beforeSendMetric`, so a count never carries `user.id`;
+4. writes `anonymous` into the SDK's `INSTALLATION` file in Caches before the SDK starts, because a session's `did` always comes from that file, whatever user is set;
+5. keeps `sendDefaultPii` off, and in release builds has no screenshots, no view hierarchy and no performance tracing (`tracesSampleRate` 0);
+6. reports the environment as `development` for Debug and simulator builds, `testflight` for TestFlight (a sandbox receipt) and `production` only for App Store builds.
+
+The counts, all with `value` 1:
+
+| Count | Attribute | When |
+|-------|-----------|------|
+| `workout.finished` | none | a workout is saved, from End or from the prompt for a workout left running |
+| `set.completed` | `source`: `phone` or `watch` | a set is marked done |
+| `import.finished` | `source`: `strong` or `hevy` | an import from Strong or Hevy is saved |
+
+Nothing from the user's data goes out: no program or exercise names, weights, reps, notes or record IDs, in a count, an event or a breadcrumb. `PersistenceLogger` sends a failing file's name, never its path, which holds the app container's per-install UUID.
+
+The Sentry organisation also removes `user.id`, `contexts.device.id` and `contexts.app.device_app_hash` before storage and stores no IP addresses. That is set up in Sentry, as the safety net for crashes the app's code can't reach.
+
+### The envelope test (after every sentry-cocoa upgrade)
+
+Points 3 and 4 lean on SDK internals, so check the outgoing payload after each upgrade, before shipping:
+
+1. Run a small HTTP server on `127.0.0.1` that saves each POST body, gunzipped.
+2. Build Release for a simulator with `SENTRY_DSN=http://test@127.0.0.1:<port>/1` and `SENTRY_AUTH_TOKEN=` on the `xcodebuild` command line, over an install whose `Library/Caches/INSTALLATION` holds a random ID.
+3. Make it crash once, then launch it again, capture a message and a count, and send it to the background so the session ends and the metrics flush. A temporary launch-argument switch in `DiagnosticsService.start()` does this; don't commit it.
+4. Search every saved envelope for the old installation ID and for `device_app_hash`, and check that `user`, a metric's attributes and the session's `did` say `anonymous`.
+
+Last run: sentry-cocoa 9.34.0, 2026-11-15, on an install whose `INSTALLATION` held a random ID. A crash report, an error, a session and the three counts all said `anonymous`; the old ID and `device_app_hash` appeared nowhere. The first run found the app's bundle path, with its per-install container UUID, in stack frames and debug images, which is why `beforeSend` now replaces that UUID with a fixed one. The second run confirmed it, with the app's frames still marked as in-app.
 
 ### dSYM upload to Sentry (optional, recommended for production)
 

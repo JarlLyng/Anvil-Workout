@@ -50,7 +50,7 @@ The developer half: what the app is built with, how to build and run it, how it 
 | Tests | Swift Testing |
 | Language | Swift, in the Swift 5 language mode; English UI |
 
-There is no backend and no login. The app talks to Apple Health on the device and, unless crash reporting is turned off in Settings, sends crash and error reports to Sentry.
+There is no backend and no login. The app talks to Apple Health on the device and, unless the switch in Settings is turned off, sends anonymous diagnostics to Sentry: crash and error reports, crash-free sessions, MetricKit diagnostics and three feature counts, with no installation or device ID and nothing from your workouts. `Shared/Services/DiagnosticsService.swift` defines all of it.
 
 ### Build and run
 
