@@ -106,6 +106,8 @@ The counts, all with `value` 1:
 
 Nothing from the user's data goes out: no program or exercise names, weights, reps, notes or record IDs, in a count, an event or a breadcrumb. `PersistenceLogger` sends a failing file's name, never its path, which holds the app container's per-install UUID.
 
+`Iron Workout/PrivacyInfo.xcprivacy` declares Crash Data, Performance Data and Other Diagnostic Data (purpose App Functionality) and Product Interaction (purpose Analytics), all not linked to the user and not used for tracking. The App Store label for the release that ships this reads Data Not Linked to You: Diagnostics (Crash Data, Performance Data, Other Diagnostic Data) and Usage Data (Product Interaction).
+
 The Sentry organisation also removes `user.id`, `contexts.device.id` and `contexts.app.device_app_hash` before storage and stores no IP addresses. That is set up in Sentry, as the safety net for crashes the app's code can't reach.
 
 ### The envelope test (after every sentry-cocoa upgrade)
