@@ -1,6 +1,6 @@
 # Anvil Workout
 
-> Anvil Workout is a paid iOS, watchOS, and iPadOS strength training app (one-time purchase, no subscription) for planning workouts, tracking sets and reps, and reviewing progress over time. It needs no internet connection and no account, and has no ads and no in-app analytics. Workout history is stored only on the device and is never uploaded or synced. Data is per device: there is no sync between iPhone and iPad.
+> Anvil Workout is a paid iOS, watchOS, and iPadOS strength training app (one-time purchase, no subscription) for planning workouts, tracking sets and reps, and reviewing progress over time. It needs no internet connection and no account, and has no ads. Workout history is stored only on the device and is never uploaded or synced. The app sends anonymous diagnostics with no identifier (crash and error reports, and counts of finished workouts, logged sets and imports), which the user can turn off. Data is per device: there is no sync between iPhone and iPad.
 
 Anvil Workout is developed by IAMJARL and is available on the Apple App Store for iPhone, iPad, and Apple Watch: https://apps.apple.com/app/id6760627760. The app focuses on a streamlined gym experience: users create workout programs with exercises, sets, reps, weight targets, and rest timers, then follow them in real time during training.
 
@@ -30,10 +30,10 @@ Anvil Workout is a paid app with a one-time purchase price on the App Store. The
 - **RPE Tracking** per set (1–10, half steps) for intensity trends, included in CSV export/import
 - **Pre-Completion Set Entry**: tap a pending set to enter the actual weight and reps before marking it done
 - **Previous-Session Reference** on every pending set, showing the weight and reps from the matching set last time, with one tap to reuse them (imported history counts, so it works from the first workout after switching apps)
-- **Crash-Reporting Switch** in Settings, under Privacy, to turn crash reports off entirely (1.9.0). Reports never include workout, note or Health data
+- **Send Anonymous Diagnostics** switch in Settings, under Privacy, which turns off everything the app sends: crash, hang and error reports, session records and three feature counts (the switch since 1.9.0). None of it carries an identifier or any workout, note or Health data
 - **Send Feedback** in Settings (1.10.1): opens an email to support@iamjarl.com in the user's mail app with the app and system version filled in, for the user to read and send. Nothing is sent from the app itself
 - **Searchable Exercise Library** and workout history
-- **Works offline**: no account, no internet connection needed, no ads, no in-app analytics. Workout history is never uploaded or synced. The only outbound traffic is a crash, hang or error report to Sentry, which carries no workout or Health data and can be turned off in Settings
+- **Works offline**: no account, no internet connection needed, no ads. Workout history is never uploaded or synced. The only outbound traffic is anonymous diagnostics to Sentry, sent when there is a connection (crash, hang and error reports, session records, and a count each time a workout is finished, a set logged on the phone or the watch, or an import from Strong or Hevy made). They carry no identifier and no workout or Health data, and can be turned off in Settings
 
 ## Technical details
 
@@ -42,7 +42,7 @@ Anvil Workout is a paid app with a one-time purchase price on the App Store. The
 - WidgetKit home screen widget (week streak and weekly stats for iPhone; Smart Stack widget for Apple Watch)
 - ActivityKit Live Activity (Lock Screen and Dynamic Island for iPhone)
 - HealthKit integration for workout sessions, calories, and heart rate
-- No backend and no cloud sync. The only third-party service in the app is Sentry, for crash and error reports, which the user can turn off (the marketing website uses Umami for anonymous, cookieless page-view counts)
+- No backend and no cloud sync. The only third-party service in the app is Sentry, for anonymous diagnostics (crash and error reports, session records and three feature counts), which the user can turn off (the marketing website uses Umami for anonymous, cookieless page-view counts)
 
 ## Links
 

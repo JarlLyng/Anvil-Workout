@@ -53,7 +53,7 @@
         "name": "Anvil Workout",
         "url": "https://anvilworkout.iamjarl.com/"
       },
-      "dateModified": "2026-09-27"
+      "dateModified": "2026-11-15"
     }
     </script>
 
@@ -94,10 +94,10 @@
 <main id="main">
     <div class="container privacy">
         <h1>Privacy Policy</h1>
-        <span class="date">Last updated: September 2026</span>
+        <span class="date">Last updated: November 2026</span>
 
         <h2>Summary</h2>
-        <p>Your workout history is stored on your device, and in your device backup if you use one. It is never uploaded or synced. The only thing the app sends is a crash report when something goes wrong, which you can turn off, and the Crash reporting section below lists exactly what it contains.</p>
+        <p>Your workout history is stored on your device, and in your device backup if you use one. It is never uploaded or synced. The only thing the app sends is anonymous diagnostics, which are reports when something goes wrong and counts of finished workouts, logged sets and imports. None of it carries an ID or anything from your workouts, notes or Health data, you can turn it off, and the Diagnostics section below lists exactly what it contains.</p>
 
         <h2>Data storage</h2>
         <p>Your workout programs, session history and preferences are stored locally on your device using Apple's SwiftData framework. It is never uploaded or synced to any server. If you use iCloud Backup or back up to a computer, it is included in that backup, which Apple handles, not us. Each device keeps its own data; nothing syncs between your iPhone and iPad.</p>
@@ -105,23 +105,27 @@
         <h2>Apple Health</h2>
         <p>If you grant permission, Anvil Workout writes workout sessions to Apple Health and reads calories burned and heart rate data. This data is handled entirely by Apple's HealthKit framework and stays within Apple's Health ecosystem. So your history can show them, Anvil keeps a copy of each workout's calories and average heart rate in its own on-device storage. It does not send Health data anywhere, and the CSV export does not include it.</p>
 
-        <h2>Crash reporting</h2>
-        <p>If the app crashes, hangs or hits an error, it sends a report to <a href="https://sentry.io">Sentry</a> so we can find and fix the problem. Nothing is sent otherwise. A report contains:</p>
+        <h2>Diagnostics</h2>
+        <p>The app sends anonymous diagnostics to <a href="https://sentry.io">Sentry</a>, so we can find and fix problems and see which parts of the app are used. It sends nothing else to any server. There are three kinds.</p>
+        <p><strong>Reports.</strong> If the app crashes, hangs or hits an error, it sends a report. It also passes on Apple's own diagnostics about hangs, CPU use and disk writes. A report contains:</p>
         <ul>
             <li>Device model and OS version</li>
             <li>App version and build number</li>
             <li>What went wrong: the error or the crash stack trace</li>
             <li>Recent app activity leading up to it, such as which screen was open and that a workout was running, without the names of your programs or exercises or any numbers from them</li>
-            <li>A random identifier created on your device the first time the app runs, so one problem is counted once rather than many times. It is not linked to your name, Apple ID or email.</li>
         </ul>
-        <p>Reports never include your workouts, notes or Health data. Sentry is configured not to store IP addresses, and data is stored in its EU region. You can turn crash reporting off at any time in the app's Settings, under Privacy, and it stops straight away.</p>
+        <p><strong>Sessions.</strong> Each time you use the app, it sends whether the session ended normally or in a crash, so we can see how stable each version is.</p>
+        <p><strong>Counts.</strong> The app counts finished workouts, logged sets and finished imports from Strong or Hevy. Like a report, a count carries the device model and the app and OS versions. A set also says whether it was logged on the phone or the watch, and an import says which app it came from. A count carries no exercise, program name, weight, reps or duration.</p>
+        <p>None of it carries an identifier. Every copy of the app reports as the same anonymous user, so no identifier ties one report, session or count to another, to your device or to you. Diagnostics never include your workouts, notes or Health data, and never a screenshot. Sentry is configured not to store IP addresses, and data is stored in its EU region.</p>
+        <p>Diagnostics are on until you turn them off. You can do that at any time in the app's Settings, under Privacy, with Send Anonymous Diagnostics, and it stops all of it straight away.</p>
+        <p>Versions up to 1.10.1 sent reports with a random identifier, created on your device the first time the app ran, so one problem was counted once rather than many times. It was not linked to your name, Apple ID or email. Later versions send no identifier.</p>
 
         <h2>Analytics</h2>
-        <p>The Anvil Workout iOS app does not use analytics or ad tracking and contains no ads.</p>
+        <p>The app counts finished workouts, logged sets and imports anonymously, as described under Diagnostics. It has no ad tracking and no advertising identifier, and contains no ads.</p>
         <p>This marketing website (anvilworkout.iamjarl.com) uses <a href="https://umami.is">Umami</a>, a privacy-respecting, cookieless analytics service, to count anonymous page visits. Umami does not use cookies, does not track visitors across sites, and collects no personal data. The collected data is limited to aggregate page-view counts, referrer, and general device/browser type.</p>
 
         <h2>Third-party services</h2>
-        <p>The external services used are Sentry (crash reporting from the app) and Umami (anonymous visit counts on the marketing website). No data is shared with advertisers, data brokers, or any other third party.</p>
+        <p>The external services used are Sentry (anonymous diagnostics from the app) and Umami (anonymous visit counts on the marketing website). No data is shared with advertisers, data brokers, or any other third party.</p>
 
         <h2>Children's privacy</h2>
         <p>Anvil Workout does not knowingly collect data from children under 13.</p>
