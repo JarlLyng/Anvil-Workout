@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import Sentry
+import IAMJARLDesignTokens
 
 @main
 struct Iron_WorkoutApp: App {
@@ -97,7 +98,12 @@ struct Iron_WorkoutApp: App {
 /// Hoists the universal-link handler to the top-level scene so a shared-program link
 /// works from any state — onboarding, main app, foreground or cold launch. The
 /// `ImportProgramSheet` is presented above whatever view is currently visible.
+///
+/// It also gives every screen the token primary as its tint: onboarding, `ContentView` and
+/// every sheet presented from them. The tint used to be set on `ContentView`, so onboarding
+/// and the import sheet fell back to the AccentColor asset, which had drifted from the token.
 private struct RootView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @State private var pendingImport: SharedProgramPayload?
     @State private var importError: String?
@@ -143,6 +149,7 @@ private struct RootView: View {
             }
         }
         .animation(.easeInOut, value: importToast)
+        .tint(DesignTokens.Common.primary(colorScheme))
     }
 
     private func handleIncomingURL(_ url: URL) {

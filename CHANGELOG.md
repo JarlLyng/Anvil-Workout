@@ -17,6 +17,10 @@ for release; it reaches the App Store after review.
 - Orange, green and red text and icons are easier to read in light mode. Warm-up sets, supersets,
   exercise notes, plate warnings, records, checkmarks, the End button and the rest timer's bar now
   use a darker shade on a light background. In dark mode only the red changes, and only slightly.
+- In light mode, onboarding's buttons, its back arrow and the program sheets it opens are the
+  same deeper purple as the rest of the app. They were a lighter purple that left the white text
+  on Next and Continue hard to read. The file picker for importing from Strong or Hevy uses the
+  same purple now.
 
 ## 1.10.1 (2026-10-17)
 

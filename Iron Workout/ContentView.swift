@@ -8,7 +8,6 @@
 import SwiftUI
 import SwiftData
 import Sentry
-import IAMJARLDesignTokens
 
 /// Top-level destinations shared between the iPhone tab bar and the iPad
 /// sidebar. Adding a new tab? Add it here once and it appears in both layouts.
@@ -43,7 +42,6 @@ enum RootDestination: String, CaseIterable, Identifiable, Hashable {
 }
 
 struct ContentView: View {
-    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.modelContext) private var modelContext
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
@@ -90,7 +88,6 @@ struct ContentView: View {
                 onEndWorkout: { activeWorkout.session = nil }
             )
         }
-        .tint(DesignTokens.Common.primary(colorScheme))
         .task { checkForStaleSession() }
         .alert(
             "Unfinished workout",
