@@ -158,11 +158,10 @@ struct ProgramLibraryDetailView: View {
             UINotificationFeedbackGenerator().notificationOccurred(.success)
             onImportComplete(program.name)
         } catch {
-            PersistenceLogger.capture(error, operation: "import-program", extra: [
-                // No programID: library IDs are readable slugs ("stronglifts-5x5"), so they
-                // would put a program name in the report (#91).
-                "workoutCount": program.workouts.count
-            ])
+            // No program ID and no workout count: library IDs are readable slugs
+            // ("stronglifts-5x5", #91), and in a library this small a count names the
+            // program too (6 is only the push/pull/legs split).
+            PersistenceLogger.capture(error, operation: "import-program")
             errorMessage = PersistenceLogger.userMessage(prefix: "Could not import program", error: error)
             isImporting = false
         }

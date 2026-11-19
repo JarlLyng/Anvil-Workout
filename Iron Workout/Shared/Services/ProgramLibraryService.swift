@@ -62,9 +62,10 @@ enum ProgramLibraryService {
     /// with a single workout produce one template named after the program itself.
     ///
     /// All exercises in the program are resolved against the current `Exercise` library
-    /// by name — unknown names are logged to Sentry and skipped. This shouldn't happen
-    /// in production because the library and programs are curated together; the fallback
-    /// keeps the import partially useful if the library drifts ahead of our curated set.
+    /// by name — unknown names are skipped and reported to Sentry, without the name. This
+    /// shouldn't happen in production because the library and programs are curated together;
+    /// the fallback keeps the import partially useful if the library drifts ahead of our
+    /// curated set, or the user renamed or deleted a library exercise.
     ///
     /// Suggested weights are kilograms; for someone lifting in `unit` pounds they are rounded
     /// to the nearest 5 lb, so the first workout asks for weights a bar can be loaded to.
@@ -95,10 +96,9 @@ enum ProgramLibraryService {
 
             for (sortOrder, programExercise) in workout.exercises.enumerated() {
                 guard let exercise = exerciseByName[programExercise.exerciseName] else {
-                    let missing = programExercise.exerciseName
-                    SentrySDK.capture(
-                        message: "ProgramLibrary import: exercise '\(missing)' not in library (program: \(entry.id))"
-                    )
+                    // Fixed text only: the exercise name and the program's slug would
+                    // say what the user trains (#91, #129).
+                    SentrySDK.capture(message: "ProgramLibrary import: a library exercise is missing from the store")
                     continue
                 }
                 let te = WorkoutTemplateExercise(
