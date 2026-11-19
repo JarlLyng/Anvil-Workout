@@ -6,8 +6,9 @@ for release; it reaches the App Store after review.
 ## Unreleased
 
 - Diagnostics are anonymous. Every install reports as the same user, and reports no longer carry
-  an installation ID, a device ID or a hash of the vendor ID. File paths and the IDs of programs
-  and exercises are gone from error reports too.
+  an installation ID, a device ID or a hash of the vendor ID. File paths, and the names and IDs of
+  programs and exercises, are gone from error reports too. That includes the report sent when a
+  library program is imported without an exercise you renamed or deleted.
 - Besides crash reports, the app now sends whether a session ended in a crash, Apple's own hang,
   CPU and disk-write diagnostics, and a count each time you finish a workout, log a set (on the
   phone or the watch) or import from Strong or Hevy. Never a name, a weight, reps or a note.
